@@ -1,12 +1,13 @@
 /*
- * Project 64 Legacy - A Nintendo 64 emulator.
+ * MiB64 - A Nintendo 64 emulator.
  *
- * (c) Copyright 2001 Zilmar, Jabo, Smiff, Gent, Witten 
- * (c) Copyright 2010 PJ64LegacyTeam
+ * Project64 (c) Copyright 2001 Zilmar, Jabo, Smiff, Gent, Witten
+ * Projectg64 Legacy (c) Copyright 2010 PJ64LegacyTeam
+ * MiB64 (c) Copyright 2024 MiB64Team
  *
- * Project64 Legacy Homepage: www.project64-legacy.com
+ * MiB64 Homepage: www.mib64.net
  *
- * Permission to use, copy, modify and distribute Project64 in both binary and
+ * Permission to use, copy, modify and distribute MiB64 in both binary and
  * source form, for non-commercial purposes, is hereby granted without fee,
  * providing that this license information and copyright notice appear with
  * all copies and any derived work.
@@ -15,9 +16,9 @@
  * warranty. In no event shall the authors be held liable for any damages
  * arising from the use of this software.
  *
- * Project64 is freeware for PERSONAL USE only. Commercial users should
+ * MiB64 is freeware for PERSONAL USE only. Commercial users should
  * seek permission of the copyright holders first. Commercial use includes
- * charging money for Project64 or software derived from Project64.
+ * charging money for MiB64 or software derived from MiB64.
  *
  * The copyright holders request that bug fixes and improvements to the code
  * should be forwarded to them so if they want them.
@@ -104,7 +105,7 @@ BOOL LoadAudioDll(char * AudioDll) {
 	InitiateAudio = (BOOL (__cdecl *)(AUDIO_INFO))GetProcAddress( hAudioDll, "InitiateAudio" );
 	if (InitiateAudio == NULL) { return FALSE; }
 	AiRomOpen = (void(__cdecl*)(void))GetProcAddress(hAudioDll, "RomOpen");
-	if (AiRomOpen == NULL) { return FALSE; }
+	//if (AiRomOpen == NULL) { return FALSE; }
 	AiRomClosed = (void (__cdecl *)(void))GetProcAddress( hAudioDll, "RomClosed" );
 	if (AiRomClosed == NULL) { return FALSE; }
 	ProcessAList = (void (__cdecl *)(void))GetProcAddress( hAudioDll, "ProcessAList" );	
@@ -272,18 +273,24 @@ BOOL LoadRSPDll(char * RspDll) {
 
 void TerminateAudioThread()
 {
+	int sleepCnt = 0;
 	if (AiCloseDLL != NULL) {
 		AiCloseDLL();
-	} else if (AiUpdate != NULL) {
+	}
+
+	while (AiUpdate != NULL && !bAudioThreadExiting) {
 		bTerminateAudioThread = TRUE;
-		Sleep(1);
-		if (!bAudioThreadExiting) {
-			DisplayError("Audio thread failed to stop gracefully");
+		Sleep(10);
+		sleepCnt++;
+
+		if (!bAudioThreadExiting && sleepCnt >= 50) {
+			//DisplayError("Audio thread failed to stop gracefully");
 
 			// This is a last resort when the audio thread refuses to gracefully exit.
 			// Calling this function WILL cause problems!
 			// SEE: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-terminatethread#remarks
 			TerminateThread(hAudioThread, 0);
+			break;
 		}
 	}
 	FreeLibrary(hAudioDll);

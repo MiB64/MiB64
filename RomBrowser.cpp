@@ -1,12 +1,13 @@
 /*
- * Project 64 Legacy - A Nintendo 64 emulator.
+ * MiB64 - A Nintendo 64 emulator.
  *
- * (c) Copyright 2001 Zilmar, Jabo, Smiff, Gent, Witten
- * (c) Copyright 2010 PJ64LegacyTeam
+ * Project64 (c) Copyright 2001 Zilmar, Jabo, Smiff, Gent, Witten
+ * Projectg64 Legacy (c) Copyright 2010 PJ64LegacyTeam
+ * MiB64 (c) Copyright 2024 MiB64Team
  *
- * Project64 Legacy Homepage: www.project64-legacy.com
+ * MiB64 Homepage: www.mib64.net
  *
- * Permission to use, copy, modify and distribute Project64 in both binary and
+ * Permission to use, copy, modify and distribute MiB64 in both binary and
  * source form, for non-commercial purposes, is hereby granted without fee,
  * providing that this license information and copyright notice appear with
  * all copies and any derived work.
@@ -15,9 +16,9 @@
  * warranty. In no event shall the authors be held liable for any damages
  * arising from the use of this software.
  *
- * Project64 is freeware for PERSONAL USE only. Commercial users should
+ * MiB64 is freeware for PERSONAL USE only. Commercial users should
  * seek permission of the copyright holders first. Commercial use includes
- * charging money for Project64 or software derived from Project64.
+ * charging money for MiB64 or software derived from MiB64.
  *
  * The copyright holders request that bug fixes and improvements to the code
  * should be forwarded to them so if they want them.
@@ -281,8 +282,8 @@ void LoadRomList(void) {
 
 	GetModuleFileName(NULL, path_buffer, sizeof(path_buffer));
 	_splitpath(path_buffer, drive, dir, fname, ext);
-	sprintf(FileName, "%s%s%s", drive, dir, ROC_NAME);
-	
+	sprintf(FileName, "%s%sConfig\\%s", drive, dir, ROC_NAME);
+
 	hFile = CreateFile(FileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
 	if (hFile == INVALID_HANDLE_VALUE) {
 		RefreshRomBrowser();
@@ -981,7 +982,7 @@ void SaveRomList(void) {
 
 	GetModuleFileName(NULL, path_buffer, sizeof(path_buffer));
 	_splitpath(path_buffer, drive, dir, fname, ext);
-	sprintf(FileName, "%s%s%s", drive, dir, ROC_NAME);
+	sprintf(FileName, "%s%sConfig\\%s", drive, dir, ROC_NAME);
 
 	hFile = CreateFile(FileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
 	Size = sizeof(ROM_INFO);
@@ -1046,8 +1047,8 @@ void SelectRomDir(void) {
 	LPITEMIDLIST pidl;
 	BROWSEINFO bi = { 0 };	// Initialization to 0 prevents XP crash
 	
-	TerminateAudioThread();
-	SetupPlugins(hMainWindow);
+	//TerminateAudioThread();
+	//SetupPlugins(hMainWindow);
 
 	Settings_GetDirectory(RomDir, RomDirectory, sizeof(RomDirectory));
 
