@@ -105,7 +105,7 @@ BOOL LoadAudioDll(char * AudioDll) {
 	InitiateAudio = (BOOL (__cdecl *)(AUDIO_INFO))GetProcAddress( hAudioDll, "InitiateAudio" );
 	if (InitiateAudio == NULL) { return FALSE; }
 	AiRomOpen = (void(__cdecl*)(void))GetProcAddress(hAudioDll, "RomOpen");
-	if (AiRomOpen == NULL) { return FALSE; }
+	//if (AiRomOpen == NULL) { return FALSE; }
 	AiRomClosed = (void (__cdecl *)(void))GetProcAddress( hAudioDll, "RomClosed" );
 	if (AiRomClosed == NULL) { return FALSE; }
 	ProcessAList = (void (__cdecl *)(void))GetProcAddress( hAudioDll, "ProcessAList" );	
@@ -273,18 +273,24 @@ BOOL LoadRSPDll(char * RspDll) {
 
 void TerminateAudioThread()
 {
+	int sleepCnt = 0;
 	if (AiCloseDLL != NULL) {
 		AiCloseDLL();
-	} else if (AiUpdate != NULL) {
+	}
+
+	while (AiUpdate != NULL && !bAudioThreadExiting) {
 		bTerminateAudioThread = TRUE;
-		Sleep(1);
-		if (!bAudioThreadExiting) {
-			DisplayError("Audio thread failed to stop gracefully");
+		Sleep(10);
+		sleepCnt++;
+
+		if (!bAudioThreadExiting && sleepCnt >= 50) {
+			//DisplayError("Audio thread failed to stop gracefully");
 
 			// This is a last resort when the audio thread refuses to gracefully exit.
 			// Calling this function WILL cause problems!
 			// SEE: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-terminatethread#remarks
 			TerminateThread(hAudioThread, 0);
+			break;
 		}
 	}
 	FreeLibrary(hAudioDll);

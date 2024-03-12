@@ -282,8 +282,8 @@ void LoadRomList(void) {
 
 	GetModuleFileName(NULL, path_buffer, sizeof(path_buffer));
 	_splitpath(path_buffer, drive, dir, fname, ext);
-	sprintf(FileName, "%s%s%s", drive, dir, ROC_NAME);
-	
+	sprintf(FileName, "%s%sConfig\\%s", drive, dir, ROC_NAME);
+
 	hFile = CreateFile(FileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
 	if (hFile == INVALID_HANDLE_VALUE) {
 		RefreshRomBrowser();
@@ -982,7 +982,7 @@ void SaveRomList(void) {
 
 	GetModuleFileName(NULL, path_buffer, sizeof(path_buffer));
 	_splitpath(path_buffer, drive, dir, fname, ext);
-	sprintf(FileName, "%s%s%s", drive, dir, ROC_NAME);
+	sprintf(FileName, "%s%sConfig\\%s", drive, dir, ROC_NAME);
 
 	hFile = CreateFile(FileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
 	Size = sizeof(ROM_INFO);
@@ -1047,8 +1047,8 @@ void SelectRomDir(void) {
 	LPITEMIDLIST pidl;
 	BROWSEINFO bi = { 0 };	// Initialization to 0 prevents XP crash
 	
-	TerminateAudioThread();
-	SetupPlugins(hMainWindow);
+	//TerminateAudioThread();
+	//SetupPlugins(hMainWindow);
 
 	Settings_GetDirectory(RomDir, RomDirectory, sizeof(RomDirectory));
 
