@@ -61,6 +61,7 @@ Contributors are always welcome!
 - Hacktarux - Current contributor
 - Kimbjo - Current maintainer
 - parasyte - Current contributor
+- Modman - Current contributor
 
 
 
