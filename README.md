@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://www.mib64.net/data/uploads/mib64_banner_logo.png" alt="logo" width="433" />
+  <img src="https://www.mib64.net/data/uploads/mib64_banner_logo.png" alt="logo" width="600" />
 </p>
 
 # MiB64
