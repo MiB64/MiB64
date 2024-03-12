@@ -57,7 +57,6 @@ Contributors are always welcome!
 - Gent - Current maintainer
 - Azimer - Current contributor
 - Icepir8 - Current maintainer
-- Nekokabu - Current contributor
 - Hacktarux - Current contributor
 - Kimbjo - Current maintainer
 - parasyte - Current contributor
