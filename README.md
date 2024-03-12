@@ -18,7 +18,7 @@ MiB64 is a free and open-source emulator for the Nintendo 64 and is a continuati
 ## Screenshot
 
 <p align="center">
-  <img src="https://www.mib64.net/data/uploads/Docs/" alt="screenshot" width="400" />
+  <img src="https://www.mib64.net/data/uploads/Docs/screen_about.png" alt="screenshot" width="400" />
 </p>
 
 ## Installation
