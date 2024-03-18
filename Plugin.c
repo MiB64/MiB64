@@ -366,6 +366,10 @@ void ResetAudio(HWND hWnd) {
 
 void SetupPlugins (HWND hWnd) {
 	static DWORD AI_DUMMY = 0;
+
+	if (PluginsInitilized) // Do not load plugins if they are already loaded. 
+		return;
+
 	ShutdownPlugins();
 	GetCurrentDlls();
 
