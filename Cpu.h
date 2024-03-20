@@ -55,6 +55,7 @@ typedef struct {
 	BOOL DoInterrupt;
 	BOOL Stepping;
 	BOOL Skipping;
+	BOOL ResetCPU;
 } CPU_ACTION;
 
 
@@ -83,6 +84,7 @@ int  DelaySlotEffectsJump(MIPS_DWORD JumpPC);
 void DoSomething(void);
 void InPermLoop(void);
 void InitiliazeCPUFlags(void);
+void Reset_CPU(void);
 BOOL Machine_LoadState(void);
 BOOL Machine_SaveState(void);
 void PauseCpu(void);

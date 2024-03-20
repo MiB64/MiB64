@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by PJ64_Cheat.rc
+// Used by MiB64_Cheat.rc
 //
 #define IDD_Cheats_Search               101
 #define IDD_Cheats_Search_Edit          102
@@ -50,7 +50,7 @@
 #define IDC_CASE_SENSITIVE              1040
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        104
