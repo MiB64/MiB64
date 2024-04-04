@@ -43,11 +43,14 @@ GFXDEBUG_INFO GFXDebug;
 RSPDEBUG_INFO RspDebug;
 CONTROL Controllers[4];
 BOOL PluginsInitilized = FALSE;
+BOOL InternalRSP = FALSE;
 
 BOOL PluginsChanged ( HWND hDlg );
 BOOL ValidPluginVersion ( PLUGIN_INFO * PluginInfo );
 volatile BOOL bTerminateAudioThread = FALSE;
 volatile BOOL bAudioThreadExiting = FALSE;
+
+static const char InternalRspName[] = "Internal MiB RSP";
 
 void __cdecl AudioThread (void) {
 	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL );
@@ -226,6 +229,12 @@ BOOL LoadGFXDll(char * GfxDll) {
 }
 
 BOOL LoadRSPDll(char * RspDll) {
+	if (strcmp(RspDll, InternalRspName) == 0) {
+		return loadInternalRSP();
+	}
+
+	InternalRSP = FALSE;
+
 	PLUGIN_INFO PluginInfo;
 	char DllName[300];
 
@@ -267,6 +276,29 @@ BOOL LoadRSPDll(char * RspDll) {
 	InitiateRSPDebugger = (void (__cdecl *)(DEBUG_INFO))GetProcAddress( hRspDll, "InitiateRSPDebugger" );
 	RSPDllConfig = (void (__cdecl *)(HWND))GetProcAddress( hRspDll, "DllConfig" );
 	SetRomHeader = (DWORD(__cdecl*)(BYTE*))GetProcAddress(hRspDll, "SetRomHeader");
+
+	return TRUE;
+}
+
+BOOL loadInternalRSP() {
+	InternalRSP = TRUE;
+
+	RspDebug.UseBPoints = FALSE;
+
+	GetDllInfo = NULL;
+
+	DoRspCycles = NULL;
+
+	InitiateRSP_1_0 = NULL;
+	InitiateRSP_1_1 = NULL;
+	
+	RSPRomOpen = NULL;
+	RSPRomClosed = NULL;
+	RSPCloseDLL = NULL;
+	GetRspDebugInfo = NULL;
+	InitiateRSPDebugger = NULL;
+	RSPDllConfig = NULL;
+	SetRomHeader = NULL;
 
 	return TRUE;
 }
@@ -475,7 +507,7 @@ void SetupPlugins (HWND hWnd) {
 		DisplayError(GS(MSG_FAIL_INIT_RSP));
 		PluginsInitilized = FALSE;
 	}
-	else {
+	else if(!InternalRSP) {
 		RSP_INFO_1_0 RspInfo10;
 		RSP_INFO_1_1 RspInfo11;
 
@@ -746,8 +778,17 @@ void SetupPluginScreen (HWND hDlg) {
 			break;
 		}
 		PluginCount += 1;
-		if (FindNextFile(hFind,&FindData) == 0) { return; }
+		if (FindNextFile(hFind,&FindData) == 0) { break; }
 	}
+	PluginNames[PluginCount] = malloc(strlen(InternalRspName) + 1);
+	strcpy(PluginNames[PluginCount], InternalRspName);
+	index = SendMessage(GetDlgItem(hDlg, RSP_LIST), CB_ADDSTRING, (WPARAM)0, (LPARAM)&InternalRspName);
+	SendMessage(GetDlgItem(hDlg, RSP_LIST), CB_SETITEMDATA, (WPARAM)index, (LPARAM)PluginCount);
+	if (_stricmp(RspDLL, PluginNames[PluginCount]) == 0) {
+		SendMessage(GetDlgItem(hDlg, RSP_LIST), CB_SETCURSEL, (WPARAM)index, (LPARAM)0);
+		EnableWindow(GetDlgItem(hDlg, RSP_ABOUT), FALSE);
+	}
+	PluginCount += 1;
 }
 
 void ShutdownPlugins(void) {
