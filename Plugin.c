@@ -50,8 +50,6 @@ BOOL ValidPluginVersion ( PLUGIN_INFO * PluginInfo );
 volatile BOOL bTerminateAudioThread = FALSE;
 volatile BOOL bAudioThreadExiting = FALSE;
 
-static const char InternalRspName[] = "Internal MiB RSP";
-
 void __cdecl AudioThread (void) {
 	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL );
 	while (bTerminateAudioThread == 0) {

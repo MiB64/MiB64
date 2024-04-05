@@ -568,12 +568,17 @@ BOOL CALLBACK PluginSelectProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 				if (index == CB_ERR) { break; } // *** Add in Build 53
 				index = SendMessage(GetDlgItem(hDlg, RSP_LIST), CB_GETITEMDATA, (WPARAM)index, 0);
 
-				Settings_GetDirectory(PluginDir, Plugin, sizeof(Plugin));
-				strcat(Plugin, PluginNames[index]);
-				hLib = LoadLibrary(Plugin);
-				if (hLib == NULL) { DisplayError("%s %s", GS(MSG_FAIL_LOAD_PLUGIN), Plugin); }
-				RSPDllAbout = (void(__cdecl*)(HWND))GetProcAddress(hLib, "DllAbout");
-				EnableWindow(GetDlgItem(hDlg, RSP_ABOUT), RSPDllAbout != NULL ? TRUE : FALSE);
+				if (strcmp(PluginNames[index], InternalRspName) != 0) {
+					Settings_GetDirectory(PluginDir, Plugin, sizeof(Plugin));
+					strcat(Plugin, PluginNames[index]);
+					hLib = LoadLibrary(Plugin);
+					if (hLib == NULL) { DisplayError("%s %s", GS(MSG_FAIL_LOAD_PLUGIN), Plugin); }
+					RSPDllAbout = (void(__cdecl*)(HWND))GetProcAddress(hLib, "DllAbout");
+					EnableWindow(GetDlgItem(hDlg, RSP_ABOUT), RSPDllAbout != NULL ? TRUE : FALSE);
+				}
+				else {
+					EnableWindow(GetDlgItem(hDlg, RSP_ABOUT), FALSE);
+				}
 			}
 			break;
 

@@ -37,6 +37,8 @@
 // Added NRage Legacy input as default (Gent)
 #define DefaultControllerDll		"NRage_Legacy_Input.dll"
 
+#define InternalRspName				"Internal MiB RSP"
+
 #define PLUGIN_TYPE_RSP				1
 #define PLUGIN_TYPE_GFX				2
 #define PLUGIN_TYPE_AUDIO			3
