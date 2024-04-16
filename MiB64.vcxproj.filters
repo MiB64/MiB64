@@ -70,6 +70,12 @@
     <Filter Include="Header Files\Compression Headers">
       <UniqueIdentifier>{31849a03-28d6-477f-bb84-61ef4162340f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\RSP Souce">
+      <UniqueIdentifier>{110d04af-1cae-40a6-8d15-0796ee4dde46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\RSP Headers">
+      <UniqueIdentifier>{047f0822-bf8f-4d02-8ff0-b890a893242e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BreakPoints.c">
@@ -281,6 +287,12 @@
     </ClCompile>
     <ClCompile Include="Settings Api.c">
       <Filter>Source Files\General Source</Filter>
+    </ClCompile>
+    <ClCompile Include="RSP\rsp_config.c">
+      <Filter>Source Files\RSP Souce</Filter>
+    </ClCompile>
+    <ClCompile Include="RSP\rsp_Cpu.c">
+      <Filter>Source Files\RSP Souce</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -506,12 +518,24 @@
     <ClInclude Include="xxhash64.h">
       <Filter>Header Files\General Header</Filter>
     </ClInclude>
+    <ClInclude Include="RSP\rsp_config.h">
+      <Filter>Header Files\RSP Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RSP\rsp_Cpu.h">
+      <Filter>Header Files\RSP Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MiB64.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
     <ResourceCompile Include="MiB64_Cheat.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="RSP\RSP.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

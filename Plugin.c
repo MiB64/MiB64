@@ -33,6 +33,7 @@
 #include "settings.h"
 #include "EmulateAI.h"
 #include "resource.h"
+#include "RSP/rsp_config.h"
 
 char RspDLL[100], GfxDLL[100], AudioDLL[100],ControllerDLL[100], * PluginNames[MaxDlls];
 HINSTANCE hAudioDll, hControllerDll, hGfxDll, hRspDll;
@@ -49,6 +50,8 @@ BOOL PluginsChanged ( HWND hDlg );
 BOOL ValidPluginVersion ( PLUGIN_INFO * PluginInfo );
 volatile BOOL bTerminateAudioThread = FALSE;
 volatile BOOL bAudioThreadExiting = FALSE;
+
+static BOOL loadInternalRSP();
 
 void __cdecl AudioThread (void) {
 	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL );
@@ -278,7 +281,7 @@ BOOL LoadRSPDll(char * RspDll) {
 	return TRUE;
 }
 
-BOOL loadInternalRSP() {
+static BOOL loadInternalRSP() {
 	InternalRSP = TRUE;
 
 	RspDebug.UseBPoints = FALSE;
@@ -295,7 +298,7 @@ BOOL loadInternalRSP() {
 	RSPCloseDLL = NULL;
 	GetRspDebugInfo = NULL;
 	InitiateRSPDebugger = NULL;
-	RSPDllConfig = NULL;
+	RSPDllConfig = rspConfig;
 	SetRomHeader = NULL;
 
 	return TRUE;

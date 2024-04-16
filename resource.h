@@ -2,6 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by PJ64.rc
 //
+#define IDC_STATIC						-1
 #define MAIN_MENU                       116
 #define IDD_Settings_PlugSel            121
 #define IDR_WINDOWMODE                  122
@@ -272,6 +273,32 @@
 #define IDC_BOOKMARK_PADDR              1262
 #define IDC_START                       1263
 #define IDC_ISVIEWER                    1264
+#define IDC_CHECK_SSE                   1265
+#define IDC_CHECK_MMX                   1266
+#define IDC_CHECK_MMX2                  1267
+#define IDC_COMPILER_DEST               1268
+#define IDC_COMPILER_ACCUM              1269
+#define IDC_COMPILER_FLAGS              1270
+#define IDC_COMPILER_REORDER            1271
+#define IDC_COMPILER_SECTIONS           1272
+#define IDC_COMPILER_ALIGNGPR           1273
+#define IDC_COMPILER_ALIGNVEC           1274
+#define IDC_COMPILER_GPRCONSTANTS       1275
+#define IDC_COMPILER_BUFFERS            1276
+#define IDC_AUDIOHLE                    1277
+#define IDC_GRAPHICSHLE                 1278
+#define IDC_COMPILER_SELECT             1279
+#define ID_RSPCOMMANDS                  5001
+#define ID_RSPREGISTERS                 5002
+#define ID_PROFILING_ON                 5003
+#define ID_PROFILING_OFF                5004
+#define ID_PROFILING_LOGINDIVIDUALBLOCKS 5005
+#define ID_PROFILING_RESETSTATS         5006
+#define ID_PROFILING_GENERATELOG        5007
+#define ID_DUMP_RSPCODE                 5008
+#define ID_DUMP_DMEM                    5009
+#define ID_SHOWCOMPILERERRORS           5011
+#define ID_COMPILER                     5012
 #define ID_FILE_OPEN_ROM                40001
 #define ID_FILE_ROM_INFO                40002
 #define ID_FILE_EXIT                    40005
