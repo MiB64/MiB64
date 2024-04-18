@@ -488,9 +488,7 @@ void SP_DMA_READ(void) {
 	if ((SP_DRAM_ADDR_REG & 3) != 0) { _asm int 3 }
 	if (((SP_RD_LEN_REG + 1) & 3) != 0) { _asm int 3 }
 	*/
-	if (length == 0)
-		length = 1;
-	length = ((length + 7) & 0x01FF8);
+	length = ((length + 8) & 0x01FF8);
 	for (int i = 0; i <= count; i++)
 	{
 		if (IDMEM_SELECT == 0x1000)
@@ -551,9 +549,7 @@ void SP_DMA_WRITE(void) {
 	//if ((SP_DRAM_ADDR_REG & 3) != 0) { _asm int 3 }
 	//if (((SP_WR_LEN_REG + 1) & 3) != 0) { _asm int 3 }
 
-	if (length == 0)
-		length = 1;
-	length = ((length + 7) & 0x01FF8);
+	length = ((length + 8) & 0x01FF8);
 	for (int i = 0; i <= count; i++)
 	{
 		int remainingLength = length;
