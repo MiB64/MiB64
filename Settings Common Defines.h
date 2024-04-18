@@ -107,3 +107,9 @@
 #define STR_LEFT "%s Left"
 #define STR_WIDTH "%s Width"
 #define STR_HEIGHT "%s Height"
+
+// The strings used for the internal rsp
+#define STR_RSP_SETTINGS "RSP Settings"
+#define STR_AUDIO_HLE "Audio HLE"
+#define STR_GRAPHICS_HLE "Graphics HLE"
+#define STR_RSP_CORE "RSP Cpu Core"

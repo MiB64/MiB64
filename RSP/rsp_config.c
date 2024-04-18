@@ -26,15 +26,14 @@
 
 #include "../main.h"
 #include "../resource.h"
+#include "../Settings Common Defines.h"
 
 #include <windows.h>
 #include <windowsx.h>
 
 BOOL AudioHle = FALSE;
 BOOL GraphicsHle = FALSE;
-int CPUCore = 0;
-
-static BOOL SettingsLoaded = FALSE;
+int RspCPUCore = 0;
 
 BOOL GetBooleanCheck(HWND hDlg, DWORD DialogID) {
 	return (IsDlgButtonChecked(hDlg, DialogID) == BST_CHECKED) ? TRUE : FALSE;
@@ -57,7 +56,7 @@ static BOOL CALLBACK ConfigDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
 		hWndItem = GetDlgItem(hDlg, IDC_COMPILER_SELECT);
 		ComboBox_AddString(hWndItem, "Interpreter");
 		ComboBox_AddString(hWndItem, "Recompiler");
-		ComboBox_SetCurSel(hWndItem, CPUCore);
+		ComboBox_SetCurSel(hWndItem, RspCPUCore);
 		break;
 
 	case WM_COMMAND:
@@ -84,10 +83,14 @@ static BOOL CALLBACK ConfigDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
 	return TRUE;
 }
 
+static void LoadRspSettings() {
+	AudioHle = Settings_ReadBool(APPS_NAME, STR_RSP_SETTINGS, STR_AUDIO_HLE, Default_AudioHLE);
+	GraphicsHle = Settings_ReadBool(APPS_NAME, STR_RSP_SETTINGS, STR_GRAPHICS_HLE, Default_GraphicsHLE);
+	RspCPUCore = Settings_ReadInt(APPS_NAME, STR_RSP_SETTINGS, STR_RSP_CORE, Default_RspCore);;
+}
+
 void __cdecl rspConfig(HWND hWnd) {
-	if (!SettingsLoaded) {
-		LoadSettings();
-	}
+	LoadRspSettings();
 
 	DialogBox(hInst, "RSPCONFIG", hWnd, ConfigDlgProc);
 }

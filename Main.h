@@ -122,6 +122,11 @@ extern "C" {
 #define Default_Recursion			TRUE
 #define Default_RomStatus			"Unknown"
 
+/*********** RSP Settings ************/
+#define Default_AudioHLE			FALSE
+#define Default_GraphicsHLE			FALSE
+#define Default_RspCore				0
+
 /************* Logging ***************/
 //#define Log_x86Code
 
