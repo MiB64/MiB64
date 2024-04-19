@@ -52,15 +52,15 @@ void * RSP_Lc2[32];
 void * RSP_Sc2[32];
 
 void BuildInterpreterCPU(void);
-void BuildRecompilerCPU(void);
+void BuildRecompilerCPU(void);*/
 
-extern HANDLE hMutex;*/
+extern HANDLE hRspConfigMutex;
 
 void __cdecl LogMessage(char* Message, ...);
 
-void SetCPU(DWORD core) {
-	/*WaitForSingleObjectEx(hMutex, INFINITE, FALSE);
-	CPUCore = core;
+void SetRspCPU(DWORD core) {
+	WaitForSingleObjectEx(hRspConfigMutex, INFINITE, FALSE);
+	/*CPUCore = core;
 	switch (core) {
 	case RecompilerCPU:
 		BuildRecompilerCPU();
@@ -68,8 +68,8 @@ void SetCPU(DWORD core) {
 	case InterpreterCPU:
 		BuildInterpreterCPU();
 		break;
-	}
-	ReleaseMutex(hMutex);*/
+	}*/
+	ReleaseMutex(hRspConfigMutex);
 	LogMessage("rsp_Cpu.c: SetCPU");
 }
 

@@ -440,5 +440,8 @@ extern RSPDEBUG_INFO RspDebug;
 extern CONTROL Controllers[4];
 extern WORD RSPVersion;
 extern BOOL PluginsInitilized;
+extern BOOL InternalRSP;
+
+void InitiateInternalRSP();
 
 #endif

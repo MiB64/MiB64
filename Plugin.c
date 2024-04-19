@@ -616,6 +616,8 @@ void SetupPlugins (HWND hWnd) {
 		{
 			SetRomHeader((BYTE*)RomHeader);
 		}
+	} else {
+		InitiateInternalRSP();
 	}
 	
 	if (HaveDebugger) {

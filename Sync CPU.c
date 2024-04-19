@@ -148,6 +148,10 @@ void ProtectMemory (void) {
 }
 
 void ReInitializeRSP (void) {
+	if (InternalRSP) {
+		InitiateInternalRSP();
+	}
+
 	RSP_INFO_1_0 RspInfo10;
 	RSP_INFO_1_1 RspInfo11;
 

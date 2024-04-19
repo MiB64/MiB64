@@ -27,6 +27,7 @@
 #include "../main.h"
 #include "../resource.h"
 #include "../Settings Common Defines.h"
+#include "rsp_Cpu.h"
 
 #include <windows.h>
 #include <windowsx.h>
@@ -34,6 +35,7 @@
 BOOL AudioHle = FALSE;
 BOOL GraphicsHle = FALSE;
 int RspCPUCore = 0;
+HANDLE hRspConfigMutex = NULL;
 
 BOOL GetBooleanCheck(HWND hDlg, DWORD DialogID) {
 	return (IsDlgButtonChecked(hDlg, DialogID) == BST_CHECKED) ? TRUE : FALSE;
@@ -42,6 +44,8 @@ BOOL GetBooleanCheck(HWND hDlg, DWORD DialogID) {
 static BOOL CALLBACK ConfigDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	HWND hWndItem;
 	DWORD value;
+
+	UNREFERENCED_PARAMETER(lParam);
 
 	switch (uMsg) {
 	case WM_INITDIALOG:
@@ -64,7 +68,7 @@ static BOOL CALLBACK ConfigDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
 		case IDOK:
 			hWndItem = GetDlgItem(hDlg, IDC_COMPILER_SELECT);
 			value = ComboBox_GetCurSel(hWndItem);
-			SetCPU(value);
+			SetRspCPU(value);
 
 			AudioHle = GetBooleanCheck(hDlg, IDC_AUDIOHLE);
 			GraphicsHle = GetBooleanCheck(hDlg, IDC_GRAPHICSHLE);
@@ -100,4 +104,31 @@ void __cdecl rspConfig(HWND hWnd) {
 	LoadRspSettings();
 
 	DialogBox(hInst, "RSPCONFIG", hWnd, ConfigDlgProc);
+}
+
+void InitiateInternalRSP() {
+	/*DWORD dwSize, lResult, Disposition;
+
+	memset(&Compiler, 0, sizeof(Compiler));
+
+	Compiler.bAlignGPR = TRUE;
+	Compiler.bAlignVector = TRUE;
+	Compiler.bFlags = TRUE;
+	Compiler.bReOrdering = TRUE;
+	Compiler.bSections = TRUE;
+	Compiler.bDest = TRUE;
+	Compiler.bAccum = TRUE;
+	Compiler.bGPRConstants = TRUE;
+
+	DetectCpuSpecs();*/
+	hRspConfigMutex = CreateMutex(NULL, FALSE, NULL);
+
+	LoadRspSettings();
+
+	/*AllocateMemory();
+	InitilizeRSPRegisters();
+	Build_RSP();
+#ifdef GenerateLog
+	Start_Log();
+#endif*/
 }
