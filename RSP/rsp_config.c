@@ -69,6 +69,13 @@ static BOOL CALLBACK ConfigDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
 			AudioHle = GetBooleanCheck(hDlg, IDC_AUDIOHLE);
 			GraphicsHle = GetBooleanCheck(hDlg, IDC_GRAPHICSHLE);
 
+			Settings_Write(APPS_NAME, STR_RSP_SETTINGS, STR_AUDIO_HLE, AudioHle ? "True" : "False");
+			Settings_Write(APPS_NAME, STR_RSP_SETTINGS, STR_GRAPHICS_HLE, GraphicsHle ? "True" : "False");
+
+			char tmpBuf[3];
+			sprintf(tmpBuf, "%2d", value);
+			Settings_Write(APPS_NAME, STR_RSP_SETTINGS, STR_RSP_CORE, tmpBuf);
+
 			EndDialog(hDlg, TRUE);
 			break;
 		case IDCANCEL:
