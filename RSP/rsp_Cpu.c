@@ -26,9 +26,9 @@
 
 #include <windows.h>
 /*#include <stdio.h>
-#include <float.h>
-#include "RSP.h"
-#include "Cpu.h"
+#include <float.h>*/
+#include "rsp_config.h"
+/*#include "Cpu.h"
 #include "RSP registers.h"
 #include "RSP Command.h"
 #include "memory.h"
@@ -49,10 +49,10 @@ void * RSP_Cop0[32];
 void * RSP_Cop2[32];
 void * RSP_Vector[64];
 void * RSP_Lc2[32];
-void * RSP_Sc2[32];
+void * RSP_Sc2[32];*/
 
-void BuildInterpreterCPU(void);
-void BuildRecompilerCPU(void);*/
+void BuildInterpreterRspCPU(void);
+/*void BuildRecompilerCPU(void);*/
 
 extern HANDLE hRspConfigMutex;
 
@@ -60,17 +60,17 @@ void __cdecl LogMessage(char* Message, ...);
 
 void SetRspCPU(DWORD core) {
 	WaitForSingleObjectEx(hRspConfigMutex, INFINITE, FALSE);
-	/*CPUCore = core;
+	RspCPUCore = core;
 	switch (core) {
 	case RecompilerCPU:
-		BuildRecompilerCPU();
+		/*BuildRecompilerCPU();*/
+		LogMessage("TODO: rsp_Cpu.c: SetRspCPU RecompilerCPU");
 		break;
 	case InterpreterCPU:
-		BuildInterpreterCPU();
+		BuildInterpreterRspCPU();
 		break;
-	}*/
+	}
 	ReleaseMutex(hRspConfigMutex);
-	LogMessage("rsp_Cpu.c: SetCPU");
 }
 
 /*void Build_RSP ( void ) {

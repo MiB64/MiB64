@@ -288,6 +288,7 @@
     <ClCompile Include="r4300i Registers.c" />
     <ClCompile Include="Real-Time Clock.c" />
     <ClCompile Include="RomTools_Common.cpp" />
+    <ClCompile Include="RSP\RSP Interpreter CPU.c" />
     <ClCompile Include="RSP\rsp_Cpu.c" />
     <ClCompile Include="RSP\rsp_config.c" />
     <ClCompile Include="Sessions.cpp" />
@@ -363,6 +364,7 @@
     <ClInclude Include="resource1.h" />
     <ClInclude Include="resource_cheat.h" />
     <ClInclude Include="RomTools_Common.h" />
+    <ClInclude Include="RSP\RSP Interpreter CPU.h" />
     <ClInclude Include="RSP\rsp_Cpu.h" />
     <ClInclude Include="RSP\rsp_config.h" />
     <ClInclude Include="SessionMemBookmarks.h" />

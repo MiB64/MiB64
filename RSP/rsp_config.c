@@ -34,7 +34,7 @@
 
 BOOL AudioHle = FALSE;
 BOOL GraphicsHle = FALSE;
-int RspCPUCore = 0;
+DWORD RspCPUCore = 0;
 HANDLE hRspConfigMutex = NULL;
 
 BOOL GetBooleanCheck(HWND hDlg, DWORD DialogID) {
