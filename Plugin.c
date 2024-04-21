@@ -34,6 +34,7 @@
 #include "EmulateAI.h"
 #include "resource.h"
 #include "RSP/rsp_config.h"
+#include "RSP/rsp_main.h"
 
 char RspDLL[100], GfxDLL[100], AudioDLL[100],ControllerDLL[100], * PluginNames[MaxDlls];
 HINSTANCE hAudioDll, hControllerDll, hGfxDll, hRspDll;
@@ -288,7 +289,7 @@ static BOOL loadInternalRSP() {
 
 	GetDllInfo = NULL;
 
-	DoRspCycles = NULL;
+	DoRspCycles = InternalDoRspCycles;
 
 	InitiateRSP_1_0 = NULL;
 	InitiateRSP_1_1 = NULL;
@@ -612,7 +613,7 @@ void SetupPlugins (HWND hWnd) {
 			break;
 		}
 
-		if (((DWORD)SetRomHeader) != NULL)
+		if (SetRomHeader != NULL)
 		{
 			SetRomHeader((BYTE*)RomHeader);
 		}

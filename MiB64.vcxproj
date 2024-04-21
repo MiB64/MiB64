@@ -291,6 +291,7 @@
     <ClCompile Include="RSP\RSP Interpreter CPU.c" />
     <ClCompile Include="RSP\rsp_Cpu.c" />
     <ClCompile Include="RSP\rsp_config.c" />
+    <ClCompile Include="RSP\rsp_main.c" />
     <ClCompile Include="Sessions.cpp" />
     <ClCompile Include="Settings Api.c" />
     <ClCompile Include="TLB Display.c" />
@@ -367,6 +368,7 @@
     <ClInclude Include="RSP\RSP Interpreter CPU.h" />
     <ClInclude Include="RSP\rsp_Cpu.h" />
     <ClInclude Include="RSP\rsp_config.h" />
+    <ClInclude Include="RSP\rsp_main.h" />
     <ClInclude Include="SessionMemBookmarks.h" />
     <ClInclude Include="Sessions.h" />
     <ClInclude Include="Settings Api.h" />
