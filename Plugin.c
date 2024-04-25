@@ -624,7 +624,8 @@ void SetupPlugins (HWND hWnd) {
 	if (HaveDebugger) {
 		DEBUG_INFO DebugInfo;
 
-		if (GetRspDebugInfo != NULL) { GetRspDebugInfo(&RspDebug); }				
+		if (GetRspDebugInfo != NULL) { GetRspDebugInfo(&RspDebug); }
+		else if (InternalRSP) { GetInternalRspDebugInfo(&RspDebug); }
 		if (GetGfxDebugInfo != NULL) { GetGfxDebugInfo(&GFXDebug); }
 		
 		DebugInfo.UpdateBreakPoints = RefreshBreakPoints;

@@ -28,6 +28,7 @@
 #pragma once
 
 #include <windows.h>
+#include "../Plugin.h"
 
 #define InterpreterCPU	0
 #define RecompilerCPU	1
@@ -39,5 +40,6 @@ extern DWORD RspCPUCore;
 extern HANDLE hRspConfigMutex;
 
 void __cdecl rspConfig(HWND hwnd);
+void GetInternalRspDebugInfo(RSPDEBUG_INFO* DebugInfo);
 
 void __cdecl LogMessage(char* Message, ...);

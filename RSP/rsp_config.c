@@ -26,6 +26,7 @@
  */
 
 #include "../main.h"
+#include "../Plugin.h"
 #include "../resource.h"
 #include "../Settings Common Defines.h"
 #include "rsp_Cpu.h"
@@ -37,6 +38,7 @@ BOOL AudioHle = FALSE;
 BOOL GraphicsHle = FALSE;
 DWORD RspCPUCore = 0;
 HANDLE hRspConfigMutex = NULL;
+HMENU hRSPMenu = NULL;
 
 BOOL GetBooleanCheck(HWND hDlg, DWORD DialogID) {
 	return (IsDlgButtonChecked(hDlg, DialogID) == BST_CHECKED) ? TRUE : FALSE;
@@ -132,4 +134,153 @@ void InitiateInternalRSP() {
 #ifdef GenerateLog
 	Start_Log();
 #endif*/
+}
+
+void __cdecl ProcessMenuItem(int ID) {
+	/*DWORD Disposition;
+	HKEY hKeyResults;
+	char String[200];
+	long lResult;
+	UINT uState;
+
+	switch (ID) {
+	case ID_RSPCOMMANDS: Enter_RSP_Commands_Window(); break;
+	case ID_RSPREGISTERS: Enter_RSP_Register_Window(); break;
+	case ID_DUMP_RSPCODE: DumpRSPCode(); break;
+	case ID_DUMP_DMEM: DumpRSPData(); break;
+	case ID_PROFILING_ON:
+	case ID_PROFILING_OFF:
+		uState = GetMenuState(hRSPMenu, ID_PROFILING_ON, MF_BYCOMMAND);
+		hKeyResults = 0;
+		Disposition = 0;
+
+		if (uState & MFS_CHECKED) {
+			CheckMenuItem(hRSPMenu, ID_PROFILING_ON, MF_BYCOMMAND | MFS_UNCHECKED);
+			CheckMenuItem(hRSPMenu, ID_PROFILING_OFF, MF_BYCOMMAND | MFS_CHECKED);
+			GenerateTimerResults();
+			Profiling = FALSE;
+		}
+		else {
+			CheckMenuItem(hRSPMenu, ID_PROFILING_ON, MF_BYCOMMAND | MFS_CHECKED);
+			CheckMenuItem(hRSPMenu, ID_PROFILING_OFF, MF_BYCOMMAND | MFS_UNCHECKED);
+			ResetTimerList();
+			Profiling = TRUE;
+		}
+
+		sprintf(String, "Software\\N64 Emulation\\DLL\\%s", AppName);
+		lResult = RegCreateKeyEx(HKEY_CURRENT_USER, String, 0, "",
+			REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKeyResults, &Disposition);
+
+		if (lResult == ERROR_SUCCESS) {
+			RegSetValueEx(hKeyResults, "Profiling On", 0, REG_DWORD, (BYTE*)&Profiling, sizeof(DWORD));
+		}
+		RegCloseKey(hKeyResults);
+		break;
+	case ID_PROFILING_RESETSTATS: ResetTimerList(); break;
+	case ID_PROFILING_GENERATELOG: GenerateTimerResults(); break;
+	case ID_PROFILING_LOGINDIVIDUALBLOCKS:
+		uState = GetMenuState(hRSPMenu, ID_PROFILING_LOGINDIVIDUALBLOCKS, MF_BYCOMMAND);
+		hKeyResults = 0;
+		Disposition = 0;
+
+		ResetTimerList();
+		if (uState & MFS_CHECKED) {
+			CheckMenuItem(hRSPMenu, ID_PROFILING_LOGINDIVIDUALBLOCKS, MF_BYCOMMAND | MFS_UNCHECKED);
+			IndvidualBlock = FALSE;
+		}
+		else {
+			CheckMenuItem(hRSPMenu, ID_PROFILING_LOGINDIVIDUALBLOCKS, MF_BYCOMMAND | MFS_CHECKED);
+			IndvidualBlock = TRUE;
+		}
+
+		sprintf(String, "Software\\N64 Emulation\\DLL\\%s", AppName);
+		lResult = RegCreateKeyEx(HKEY_CURRENT_USER, String, 0, "",
+			REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKeyResults, &Disposition);
+
+		if (lResult == ERROR_SUCCESS) {
+			RegSetValueEx(hKeyResults, "Log Indvidual Blocks", 0, REG_DWORD,
+				(BYTE*)&IndvidualBlock, sizeof(DWORD));
+		}
+		RegCloseKey(hKeyResults);
+		break;
+	case ID_SHOWCOMPILERERRORS:
+		uState = GetMenuState(hRSPMenu, ID_SHOWCOMPILERERRORS, MF_BYCOMMAND);
+
+		if (uState & MFS_CHECKED) {
+			CheckMenuItem(hRSPMenu, ID_SHOWCOMPILERERRORS, MF_BYCOMMAND | MFS_UNCHECKED);
+			ShowErrors = FALSE;
+		}
+		else {
+			CheckMenuItem(hRSPMenu, ID_SHOWCOMPILERERRORS, MF_BYCOMMAND | MFS_CHECKED);
+			ShowErrors = TRUE;
+		}
+		sprintf(String, "Software\\N64 Emulation\\DLL\\%s", AppName);
+		lResult = RegCreateKeyEx(HKEY_CURRENT_USER, String, 0, "",
+			REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKeyResults, &Disposition);
+
+		if (lResult == ERROR_SUCCESS) {
+			RegSetValueEx(hKeyResults, "Show Compiler Errors", 0, REG_DWORD,
+				(BYTE*)&ShowErrors, sizeof(DWORD));
+		}
+		RegCloseKey(hKeyResults);
+		break;
+	case ID_COMPILER:
+		DialogBox(hinstDLL, "RSPCOMPILER", HWND_DESKTOP, CompilerDlgProc);
+		break;
+	}*/
+}
+
+void GetInternalRspDebugInfo(RSPDEBUG_INFO* DebugInfo) {
+	/*HKEY hKeyResults = 0;
+	char String[200];
+	long lResult;*/
+
+	hRSPMenu = LoadMenu(hInst, "RspMenu");
+	DebugInfo->hRSPMenu = hRSPMenu;
+	DebugInfo->ProcessMenuItem = ProcessMenuItem;
+
+	DebugInfo->UseBPoints = TRUE;
+	/*sprintf(DebugInfo->BPPanelName, " RSP ");
+	DebugInfo->Add_BPoint = Add_BPoint;
+	DebugInfo->CreateBPPanel = CreateBPPanel;
+	DebugInfo->HideBPPanel = HideBPPanel;
+	DebugInfo->PaintBPPanel = PaintBPPanel;
+	DebugInfo->RefreshBpoints = RefreshBpoints;
+	DebugInfo->RemoveAllBpoint = RemoveAllBpoint;
+	DebugInfo->RemoveBpoint = RemoveBpoint;
+	DebugInfo->ShowBPPanel = ShowBPPanel;
+
+	DebugInfo->Enter_RSP_Commands_Window = Enter_RSP_Commands_Window;
+
+	sprintf(String, "Software\\N64 Emulation\\DLL\\%s", AppName);
+	lResult = RegOpenKeyEx(HKEY_CURRENT_USER, String, 0, KEY_ALL_ACCESS, &hKeyResults);
+	if (lResult == ERROR_SUCCESS) {
+		DWORD Type, Bytes = 4;
+
+		lResult = RegQueryValueEx(hKeyResults, "Profiling On", 0, &Type, (LPBYTE)(&Profiling), &Bytes);
+		if (Type != REG_DWORD || lResult != ERROR_SUCCESS) {
+			Profiling = Default_ProfilingOn;
+		}
+		lResult = RegQueryValueEx(hKeyResults, "Log Indvidual Blocks", 0, &Type, (LPBYTE)(&IndvidualBlock), &Bytes);
+		if (Type != REG_DWORD || lResult != ERROR_SUCCESS) {
+			IndvidualBlock = Default_IndvidualBlock;
+		}
+		lResult = RegQueryValueEx(hKeyResults, "Show Compiler Errors", 0, &Type, (LPBYTE)(&ShowErrors), &Bytes);
+		if (Type != REG_DWORD || lResult != ERROR_SUCCESS) {
+			ShowErrors = Default_ShowErrors;
+		}
+		RegCloseKey(hKeyResults);
+	}
+	if (Profiling) {
+		CheckMenuItem(hRSPMenu, ID_PROFILING_ON, MF_BYCOMMAND | MFS_CHECKED);
+	}
+	else {
+		CheckMenuItem(hRSPMenu, ID_PROFILING_OFF, MF_BYCOMMAND | MFS_CHECKED);
+	}
+	if (IndvidualBlock) {
+		CheckMenuItem(hRSPMenu, ID_PROFILING_LOGINDIVIDUALBLOCKS, MF_BYCOMMAND | MFS_CHECKED);
+	}
+	if (ShowErrors) {
+		CheckMenuItem(hRSPMenu, ID_SHOWCOMPILERERRORS, MF_BYCOMMAND | MFS_CHECKED);
+	}*/
 }
