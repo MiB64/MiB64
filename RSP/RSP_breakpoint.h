@@ -27,21 +27,25 @@
 
 #pragma once
 
-#include <windows.h>
-#include "../Plugin.h"
+#define MaxRspBPoints			0x30
 
-#define InterpreterCPU	0
-#define RecompilerCPU	1
+typedef struct {
+   unsigned int Location;
+} RspBPOINT;
 
-extern BOOL AudioHle;
-extern BOOL GraphicsHle;
-extern DWORD RspCPUCore;
-extern BOOL RspProfiling;
-extern BOOL IndividualRspBlock;
+RspBPOINT RspBPoint[MaxRspBPoints];
+int	NoOfRspBpoints;
 
-extern HANDLE hRspConfigMutex;
+void __cdecl Add_TextFieldRspBPoint ( void );
+void __cdecl CreateRspBPPanel ( HWND hDlg, RECT rcBox );
+/*void HideBPPanel ( void );
+void PaintBPPanel ( PAINTSTRUCT ps );
+void ShowBPPanel ( void );
+void RefreshBpoints ( HWND hList );
+void RemoveBpoint ( HWND hList, int index );
+void RemoveAllBpoint ( void );*/
 
-void __cdecl rspConfig(HWND hwnd);
-void GetInternalRspDebugInfo(RSPDEBUG_INFO* DebugInfo);
+int  AddRSP_BPoint ( DWORD Location, int Confirm );
+/*int  CheckForRSPBPoint ( DWORD Location );
+void RemoveRSPBreakPoint (DWORD Location);*/
 
-void __cdecl LogMessage(char* Message, ...);

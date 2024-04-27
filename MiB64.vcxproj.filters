@@ -76,6 +76,12 @@
     <Filter Include="Header Files\RSP Headers">
       <UniqueIdentifier>{047f0822-bf8f-4d02-8ff0-b890a893242e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\RSP Headers\RSP Debugger Headers">
+      <UniqueIdentifier>{4d3b6c5f-5ce9-4105-85a5-51c21ec42def}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RSP Souce\RSP Debugger Source">
+      <UniqueIdentifier>{84d26b56-ebab-40f3-928d-b1603719bf91}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BreakPoints.c">
@@ -301,6 +307,12 @@
       <Filter>Source Files\RSP Souce</Filter>
     </ClCompile>
     <ClCompile Include="RSP\RSP Recompiler CPU.c">
+      <Filter>Source Files\RSP Souce</Filter>
+    </ClCompile>
+    <ClCompile Include="RSP\RSP_breakpoint.c">
+      <Filter>Source Files\RSP Souce\RSP Debugger Source</Filter>
+    </ClCompile>
+    <ClCompile Include="RSP\RSP_Profiling.c">
       <Filter>Source Files\RSP Souce</Filter>
     </ClCompile>
   </ItemGroup>
@@ -555,6 +567,12 @@
       <Filter>Header Files\CPU Header</Filter>
     </ClInclude>
     <ClInclude Include="RSP\RSP Recompiler CPU.h">
+      <Filter>Header Files\RSP Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="RSP\RSP_breakpoint.h">
+      <Filter>Header Files\RSP Headers\RSP Debugger Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="RSP\RSP_Profiling.h">
       <Filter>Header Files\RSP Headers</Filter>
     </ClInclude>
   </ItemGroup>

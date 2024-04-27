@@ -30,6 +30,7 @@
 #include "../resource.h"
 #include "../Settings Common Defines.h"
 #include "rsp_Cpu.h"
+#include "RSP_breakpoint.h"
 
 #include <windows.h>
 #include <windowsx.h>
@@ -37,6 +38,8 @@
 BOOL AudioHle = FALSE;
 BOOL GraphicsHle = FALSE;
 DWORD RspCPUCore = 0;
+BOOL RspProfiling = FALSE;
+BOOL IndividualRspBlock = FALSE;
 HANDLE hRspConfigMutex = NULL;
 HMENU hRSPMenu = NULL;
 
@@ -240,10 +243,10 @@ void GetInternalRspDebugInfo(RSPDEBUG_INFO* DebugInfo) {
 	DebugInfo->ProcessMenuItem = ProcessMenuItem;
 
 	DebugInfo->UseBPoints = TRUE;
-	/*sprintf(DebugInfo->BPPanelName, " RSP ");
-	DebugInfo->Add_BPoint = Add_BPoint;
-	DebugInfo->CreateBPPanel = CreateBPPanel;
-	DebugInfo->HideBPPanel = HideBPPanel;
+	sprintf(DebugInfo->BPPanelName, " RSP ");
+	DebugInfo->Add_BPoint = Add_TextFieldRspBPoint;
+	DebugInfo->CreateBPPanel = CreateRspBPPanel;
+	/*DebugInfo->HideBPPanel = HideBPPanel;
 	DebugInfo->PaintBPPanel = PaintBPPanel;
 	DebugInfo->RefreshBpoints = RefreshBpoints;
 	DebugInfo->RemoveAllBpoint = RemoveAllBpoint;

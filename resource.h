@@ -3,6 +3,7 @@
 // Used by PJ64.rc
 //
 #define IDC_STATIC						-1
+#define IDC_LOCATION_EDIT				105
 #define MAIN_MENU                       116
 #define IDD_Settings_PlugSel            121
 #define IDR_WINDOWMODE                  122

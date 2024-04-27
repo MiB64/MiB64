@@ -29,7 +29,9 @@
 #include "rsp_main.h"
 #include "rsp_memory.h"
 #include "rsp_registers.h"
+#include "RSP_Profiling.h"
 #include "RSP Recompiler CPU.h"
+#include "RSP Interpreter CPU.h"
 #include "../Plugin.h"
 #include "../mi_registers.h"
 #include "../rdp_registers.h"
@@ -72,9 +74,9 @@ DWORD __cdecl InternalDoRspCycles(DWORD numberOfCycles) {
 	}
 
 #if !defined(EXTERNAL_RELEASE)
-	if (Profiling) {
-		StopTimer();
-		if (!IndvidualBlock) { StartTimer("RSP Running"); }
+	if (RspProfiling) {
+		StopRspTimer();
+		if (!IndividualRspBlock) { StartRspTimer("RSP Running"); }
 	}
 #endif
 
@@ -88,13 +90,16 @@ DWORD __cdecl InternalDoRspCycles(DWORD numberOfCycles) {
 	case InterpreterCPU:
 		executedCycles = RunInterpreterRspCPU(numberOfCycles);
 		break;
+	default:
+		// shoud never happen
+		return 0;
 	}
 	ReleaseMutex(hRspConfigMutex);
 
 #if !defined(EXTERNAL_RELEASE)
-	if (Profiling) {
-		StopTimer();
-		StartTimer("r4300i code");
+	if (RspProfiling) {
+		StopRspTimer();
+		StartRspTimer("r4300i code");
 	}
 #endif
 

@@ -40,10 +40,10 @@
 #include "x86.h"
 
 UDWORD EleSpec[32], Indx[32];
-OPCODE RSPOpC;
-DWORD *PrgCount, NextInstruction, RSP_Running;
+OPCODE RSPOpC;*/
+/*DWORD NextInstruction, RSP_Running*/;
 
-void * RSP_Opcode[64];
+/*void * RSP_Opcode[64];
 void * RSP_RegImm[32];
 void * RSP_Special[64];
 void * RSP_Cop0[32];
