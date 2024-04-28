@@ -38,14 +38,14 @@ int	NoOfRspBpoints;
 
 void __cdecl Add_TextFieldRspBPoint ( void );
 void __cdecl CreateRspBPPanel ( HWND hDlg, RECT rcBox );
-/*void HideBPPanel ( void );
-void PaintBPPanel ( PAINTSTRUCT ps );
-void ShowBPPanel ( void );
-void RefreshBpoints ( HWND hList );
-void RemoveBpoint ( HWND hList, int index );
-void RemoveAllBpoint ( void );*/
+void __cdecl HideRspBPPanel ( void );
+void __cdecl PaintRspBPPanel ( PAINTSTRUCT ps );
+void __cdecl ShowRspBPPanel ( void );
+void __cdecl RefreshRspBpoints ( HWND hList );
+void __cdecl RemoveRspBpoint ( HWND hList, int index );
+void __cdecl RemoveAllRspBpoint ( void );
 
 int  AddRSP_BPoint ( DWORD Location, int Confirm );
-/*int  CheckForRSPBPoint ( DWORD Location );
-void RemoveRSPBreakPoint (DWORD Location);*/
+/*int  CheckForRSPBPoint ( DWORD Location );*/
+void RemoveRSPBreakPoint (DWORD Location);
 

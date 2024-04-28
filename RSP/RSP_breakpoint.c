@@ -107,35 +107,35 @@ void __cdecl CreateRspBPPanel ( HWND hDlg, RECT rcBox ) {
 	}
 }
 
-/*void HideBPPanel ( void ) {
+void __cdecl HideRspBPPanel ( void ) {
 	ShowWindow(hRSPLocation,FALSE);
 }
 
-void PaintBPPanel ( PAINTSTRUCT ps ) {
+void __cdecl PaintRspBPPanel ( PAINTSTRUCT ps ) {
 	TextOut( ps.hdc, 29,60,"Break when the Program Counter equals",37);
 	TextOut( ps.hdc, 59,85,"0x",2);
 }
 
-void ShowBPPanel ( void ) {
+void __cdecl ShowRspBPPanel ( void ) {
 	ShowWindow(hRSPLocation,TRUE);
 }
 
-void RefreshBpoints ( HWND hList ) {
+void __cdecl RefreshRspBpoints ( HWND hList ) {
 	char Message[100];
 	int count, location;
 
-	for (count = 0; count < NoOfBpoints; count ++ ) {
-		sprintf(Message," at 0x%03X (RSP)", BPoint[count].Location);
+	for (count = 0; count < NoOfRspBpoints; count ++ ) {
+		sprintf(Message," at 0x%03X (RSP)", RspBPoint[count].Location);
 		location = SendMessage(hList,LB_ADDSTRING,0,(LPARAM)Message);	
-		SendMessage(hList,LB_SETITEMDATA,(WPARAM)location,(LPARAM)BPoint[count].Location);	
+		SendMessage(hList,LB_SETITEMDATA,(WPARAM)location,(LPARAM)RspBPoint[count].Location);	
 	}
 }
 
-void RemoveAllBpoint ( void ) {
-	NoOfBpoints = 0;
+void __cdecl RemoveAllRspBpoint ( void ) {
+	NoOfRspBpoints = 0;
 }
 
-void RemoveBpoint ( HWND hList, int index ) {
+void __cdecl RemoveRspBpoint ( HWND hList, int index ) {
 	DWORD location;
 	
 	location = SendMessage(hList,LB_GETITEMDATA,(WPARAM)index,0);	
@@ -145,18 +145,18 @@ void RemoveBpoint ( HWND hList, int index ) {
 void RemoveRSPBreakPoint (DWORD Location) {
 	int count, location = -1;
 	
-	for (count = 0; count < NoOfBpoints; count ++){
-		if (BPoint[count].Location == Location) {
+	for (count = 0; count < NoOfRspBpoints; count ++){
+		if (RspBPoint[count].Location == Location) {
 			location = count;
-			count = NoOfBpoints;
+			count = NoOfRspBpoints;
 		}
 	}
 	
 	if (location >= 0) {
-		for (count = location; count < NoOfBpoints - 1; count ++ ){ 
-			BPoint[count].Location = BPoint[count + 1].Location;
+		for (count = location; count < NoOfRspBpoints - 1; count ++ ){ 
+			RspBPoint[count].Location = RspBPoint[count + 1].Location;
 		}
-		NoOfBpoints -= 1;
-		DebugInfo.UpdateBreakPoints();
+		NoOfRspBpoints -= 1;
+		RefreshBreakPoints();
 	}
-}*/
+}

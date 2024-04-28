@@ -246,14 +246,14 @@ void GetInternalRspDebugInfo(RSPDEBUG_INFO* DebugInfo) {
 	sprintf(DebugInfo->BPPanelName, " RSP ");
 	DebugInfo->Add_BPoint = Add_TextFieldRspBPoint;
 	DebugInfo->CreateBPPanel = CreateRspBPPanel;
-	/*DebugInfo->HideBPPanel = HideBPPanel;
-	DebugInfo->PaintBPPanel = PaintBPPanel;
-	DebugInfo->RefreshBpoints = RefreshBpoints;
-	DebugInfo->RemoveAllBpoint = RemoveAllBpoint;
-	DebugInfo->RemoveBpoint = RemoveBpoint;
-	DebugInfo->ShowBPPanel = ShowBPPanel;
+	DebugInfo->HideBPPanel = HideRspBPPanel;
+	DebugInfo->PaintBPPanel = PaintRspBPPanel;
+	DebugInfo->RefreshBpoints = RefreshRspBpoints;
+	DebugInfo->RemoveAllBpoint = RemoveAllRspBpoint;
+	DebugInfo->RemoveBpoint = RemoveRspBpoint;
+	DebugInfo->ShowBPPanel = ShowRspBPPanel;
 
-	DebugInfo->Enter_RSP_Commands_Window = Enter_RSP_Commands_Window;
+	/*DebugInfo->Enter_RSP_Commands_Window = Enter_RSP_Commands_Window;
 
 	sprintf(String, "Software\\N64 Emulation\\DLL\\%s", AppName);
 	lResult = RegOpenKeyEx(HKEY_CURRENT_USER, String, 0, KEY_ALL_ACCESS, &hKeyResults);
