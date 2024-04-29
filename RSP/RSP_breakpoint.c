@@ -92,8 +92,6 @@ int AddRSP_BPoint( DWORD Location, int Confirm ) {
 void __cdecl CreateRspBPPanel ( HWND hDlg, RECT rcBox ) {
 	UNREFERENCED_PARAMETER(rcBox);
 
-	if (hRSPLocation != NULL) { return; }
-
 	BPoint_Win_hDlg = hDlg;
 	
 	hRSPLocation = CreateWindowEx(0,"EDIT","", WS_CHILD | WS_BORDER | ES_UPPERCASE | WS_TABSTOP,
