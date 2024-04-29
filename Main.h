@@ -126,6 +126,9 @@ extern "C" {
 #define Default_AudioHLE			FALSE
 #define Default_GraphicsHLE			FALSE
 #define Default_RspCore				0
+#define	Default_RspProfilingOn		FALSE
+#define Default_RspIndividualBlock	FALSE
+#define Default_RspShowErrors		FALSE
 
 /************* Logging ***************/
 //#define Log_x86Code

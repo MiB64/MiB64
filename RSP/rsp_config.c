@@ -31,6 +31,7 @@
 #include "../Settings Common Defines.h"
 #include "rsp_Cpu.h"
 #include "RSP_breakpoint.h"
+#include "RSP Command.h"
 
 #include <windows.h>
 #include <windowsx.h>
@@ -40,6 +41,7 @@ BOOL GraphicsHle = FALSE;
 DWORD RspCPUCore = 0;
 BOOL RspProfiling = FALSE;
 BOOL IndividualRspBlock = FALSE;
+BOOL RspShowErrors = FALSE;
 HANDLE hRspConfigMutex = NULL;
 HMENU hRSPMenu = NULL;
 
@@ -103,7 +105,7 @@ static BOOL CALLBACK ConfigDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
 static void LoadRspSettings() {
 	AudioHle = Settings_ReadBool(APPS_NAME, STR_RSP_SETTINGS, STR_AUDIO_HLE, Default_AudioHLE);
 	GraphicsHle = Settings_ReadBool(APPS_NAME, STR_RSP_SETTINGS, STR_GRAPHICS_HLE, Default_GraphicsHLE);
-	RspCPUCore = Settings_ReadInt(APPS_NAME, STR_RSP_SETTINGS, STR_RSP_CORE, Default_RspCore);;
+	RspCPUCore = Settings_ReadInt(APPS_NAME, STR_RSP_SETTINGS, STR_RSP_CORE, Default_RspCore);
 }
 
 void __cdecl rspConfig(HWND hWnd) {
@@ -234,10 +236,6 @@ void __cdecl ProcessMenuItem(int ID) {
 }
 
 void GetInternalRspDebugInfo(RSPDEBUG_INFO* DebugInfo) {
-	/*HKEY hKeyResults = 0;
-	char String[200];
-	long lResult;*/
-
 	hRSPMenu = LoadMenu(hInst, "RspMenu");
 	DebugInfo->hRSPMenu = hRSPMenu;
 	DebugInfo->ProcessMenuItem = ProcessMenuItem;
@@ -253,37 +251,22 @@ void GetInternalRspDebugInfo(RSPDEBUG_INFO* DebugInfo) {
 	DebugInfo->RemoveBpoint = RemoveRspBpoint;
 	DebugInfo->ShowBPPanel = ShowRspBPPanel;
 
-	/*DebugInfo->Enter_RSP_Commands_Window = Enter_RSP_Commands_Window;
+	DebugInfo->Enter_RSP_Commands_Window = Enter_RSP_Commands_Window;
 
-	sprintf(String, "Software\\N64 Emulation\\DLL\\%s", AppName);
-	lResult = RegOpenKeyEx(HKEY_CURRENT_USER, String, 0, KEY_ALL_ACCESS, &hKeyResults);
-	if (lResult == ERROR_SUCCESS) {
-		DWORD Type, Bytes = 4;
+	RspProfiling = Settings_ReadBool(APPS_NAME, STR_RSP_SETTINGS, STR_RSP_PROFILING, Default_RspProfilingOn);
+	IndividualRspBlock = Settings_ReadBool(APPS_NAME, STR_RSP_SETTINGS, STR_INDIVIDUAL_RSP_BLOCK, Default_RspIndividualBlock);
+	RspShowErrors = Settings_ReadBool(APPS_NAME, STR_RSP_SETTINGS, STR_RSP_SHOW_ERRORS, Default_RspShowErrors);
 
-		lResult = RegQueryValueEx(hKeyResults, "Profiling On", 0, &Type, (LPBYTE)(&Profiling), &Bytes);
-		if (Type != REG_DWORD || lResult != ERROR_SUCCESS) {
-			Profiling = Default_ProfilingOn;
-		}
-		lResult = RegQueryValueEx(hKeyResults, "Log Indvidual Blocks", 0, &Type, (LPBYTE)(&IndvidualBlock), &Bytes);
-		if (Type != REG_DWORD || lResult != ERROR_SUCCESS) {
-			IndvidualBlock = Default_IndvidualBlock;
-		}
-		lResult = RegQueryValueEx(hKeyResults, "Show Compiler Errors", 0, &Type, (LPBYTE)(&ShowErrors), &Bytes);
-		if (Type != REG_DWORD || lResult != ERROR_SUCCESS) {
-			ShowErrors = Default_ShowErrors;
-		}
-		RegCloseKey(hKeyResults);
-	}
-	if (Profiling) {
+	if (RspProfiling) {
 		CheckMenuItem(hRSPMenu, ID_PROFILING_ON, MF_BYCOMMAND | MFS_CHECKED);
 	}
 	else {
 		CheckMenuItem(hRSPMenu, ID_PROFILING_OFF, MF_BYCOMMAND | MFS_CHECKED);
 	}
-	if (IndvidualBlock) {
+	if (IndividualRspBlock) {
 		CheckMenuItem(hRSPMenu, ID_PROFILING_LOGINDIVIDUALBLOCKS, MF_BYCOMMAND | MFS_CHECKED);
 	}
-	if (ShowErrors) {
+	if (RspShowErrors) {
 		CheckMenuItem(hRSPMenu, ID_SHOWCOMPILERERRORS, MF_BYCOMMAND | MFS_CHECKED);
-	}*/
+	}
 }

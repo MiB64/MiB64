@@ -113,3 +113,6 @@
 #define STR_AUDIO_HLE "Audio HLE"
 #define STR_GRAPHICS_HLE "Graphics HLE"
 #define STR_RSP_CORE "RSP Cpu Core"
+#define STR_RSP_PROFILING "RSP Profiling"
+#define STR_INDIVIDUAL_RSP_BLOCK "RSP Individual Blocks"
+#define STR_RSP_SHOW_ERRORS "RSP Show Errors"
