@@ -4,7 +4,7 @@
 
 # MiB64
 
-MiB64 is a free and open-source emulator for the Nintendo 64 and is a continuation of the original Project 64 Legacy source. Legacy is written in C/C++ currently only for Windows (possible planned support for other platforms in the future).
+MiB64 is a free and open-source emulator for the Nintendo 64 and is a continuation/re-working  of the original Project 64 Legacy project. Legacy is written in C/C++ currently only for Windows (possible planned support for other platforms in the future).
 
 ## Features
 
@@ -36,8 +36,8 @@ MiB64 is a Portable Emulator and all you need to do is right click and Extract H
 * RAM
   * 512MB or more
 * Graphics card
-  * DirectX 8 capable (Jabo's Direct3D8/Icepir8sLegacyLLE)
-  * OpenGL 3.3 capable (Icepir8sLegacyLLE/GLideN64)
+  * DirectX 8 capable
+  * OpenGL 3.3 capable
   
 <sub>Intel integrated graphics can have issues that are not present with Nvidia and AMD GPU's even when the requirements are met.</sub>
 
