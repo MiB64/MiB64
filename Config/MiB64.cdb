@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------------
-// MiB64 1.0 Official (Cheat Data Base) by Gent of MiB64team
-// Based On Our Original Project64 Official CHT/CDB by Gent/Project64/Legacy/MiB64team
+// MiB64 1.0 Official (Cheat Data Base) by Gent of MiB64Team
+// Based On Our Original MiB64 Official CHT by Gent/MiB64 team
 // All Region Cheat Codes are a Collabaration of:
 // ARHQ, Codejunkies, Gameshark Central, Kai666, Gent, Parasyte, Emucheats over the years.
 // ----------------------------------------------------------------------------
@@ -12,12 +12,12 @@
 [Meta] // Metadata: information for MiB64 GUI, Help > About INI files
 
 // Be sure to edit this section if you release a modified CDB file!
-// Please also use "Author=" to credit, e.g. "[your name here], based on file by MiB64team"
+// Please also use "Author=" to credit, e.g. "[your name here], based on file by MiB64Team"
 // "Homepage=" if used, should be used to give users a source for updates to your file
 // Note that MiB64 automatically prefixes "http://"
 
 Author=MiB64Team
-Date=17th February 2024 Version: 1
+Date=1st May 2024 Version: 1
 Homepage=www.mib64.net
 Version=MiB64 1.0
 
@@ -27,9 +27,7 @@ Version=MiB64 1.0
 // If you would wish to use or modify this file for your project, please contact The Team on Dicored via the link in Help Menu.
 // & kindly give credit to orginal project/file, autor.
 //
-// Thank you and please enjoy your MiB64 experience..
-
-//--------------- Global Options ----------------------------------------------
+// Thank you and please enjoy your MiB64 experience.
 
 // Global Non Game Specific Options
 
@@ -575,6 +573,15 @@ Medals=$00 None,$01 Bronze Medal,$02 Silver Medal,$03 Gold Medal
 Medals Note=Press F9 at Select Level Menu. Once In-Game, Abort the Mission to have code Saved to Game Pak.
 Weapon=$01 Ion Cannon,$02 Missiles,$03 Seeker Missiles,$04 Bombs,$05 Proton Bombs,$07 Cluster Missiles,$08 Seeker Torpedos,$09 Seeker Cluster Missiles
 
+[B3313]
+Cap Note=Here you can Choose Options for Mario with His Cap on
+Coins Note=Press GS Once on a Level To Get that amount of Coins
+Level Note=Select a Level. Jump Into a Painting. Press A at the Stars Collected Screen. As Stats are fading hold L, and you'll jump to the level you've selected.
+Level Select=$01 Intro,$04 Big Boo's Haunt,$05 Cool Cool Mountain,$06 Mushroom Castle,$07 Hazy Maze Cave,$08 Shifting Sand Land,$09 Bob omb Battlefield,$0A Snowman's Land,$0B Wet Dry World,$0C Jolly Roger Bay,$0D Tiny Huge World,$0E Tick tock Clock,$0F Rainbow Ride,$10 Mushroom Castle Field,$11 Bowser In The Dark World,$12 Vanish Cap Under The Moat,$13 Bowser In The Fire Sea,$14 The Secret Aquarium,$15 Bowser In The Sky,$16 Lethal Lava Land,$17 Dire Dire Docks,$18 Whomp's Fortress,$19 The End,$1A Castle Courtyard,$1B The Princess's Secret Slide,$1C Cavern Of The Metal Cap,$1D Tower Of The Wing Cap,$1E Bowser In The Dark World Boss,$1F Wing Mario Over The Rainbow,$21 Bowser In The Fire Sea Boss,$22 Bowser In The Sky Boss,$24 Tall Tall Mountain
+Levitate Note=Press R to levitate & Let go to land
+Marios Cap=$09 No Hat,$10 Normal,$12 Invisible Mario,$15 Metal Mario,$16 Invisible Metal Mario,$19 Flying Mario
+Slot Note=Once the Code is activated, you will see it as a new option in the chosen Save Slot.This will have the Cannon open already to get upto Yoshi on the Roof. but make sure to save the game after collecting Red Coins and turn this code off before saving. you will now have it all saved to mempak
+
 [SuperMario]
 Cap Note=Here you can Choose Options for Mario with His Cap on
 Coins Note=Press GS Once on a Level To Get that amount of Coins
@@ -725,7 +732,7 @@ Health=$08 Infinite Health,$09 Infinite Max Health
 
 [ZeldaOOT]
 AdultItem=$2D Pocket Egg,$2E Pocket Cucco,$2F Cojiro,$30 Odd Mushroom,$31 Odd Potion,$32 Poacher's Saw,$33 Goron's Sword (Broken),$34 Prescription,$35 Eyeball Frog,$36 Eye Drops,$37 Claim Check
-Appear Note=If you go to an area where Link is immobile or invisible, using the "appear in strange places" code will almost always fix it, but you'll start somewhere outside of the Arena and in air. I recommend using the infinite step Hover boots code already supplied with PJ64 so you can float back into the arena in the event that this happens.
+Appear Note=If you go to an area where Link is immobile or invisible, using the "appear in strange places" code will almost always fix it, but you'll start somewhere outside of the Arena and in air. I recommend using the infinite step Hover boots code already supplied with MiB64 so you can float back into the arena in the event that this happens.
 Beta Interface Note=If you go to an area where the interface is accessible, this signigfies that you're not in 'beta' mode anymore. Using the "interface always off/on" code, you can stay in 'beta' mode regardless of what happens. This may cause more crashes in SOME areas, but it's rare and is not too severe. If you need to explore a beta area with the interface, "use the interface always on" portion of the code. Don't use the codes as you start the game. If you need the interface on/off at a specific time, start the game, go to the area, activate the code, keep it on until next reset.
 BetaQuest=$00 World 01,$01 World 02,$02 World 03,$03 World 04,$04 World 05,$07 World 06,$08 World 07,$16 World 08
 BetaQuest Note=Put on the code on load up,After the Nintendo logo you will be in Beta Mode,There are no icons, energy bar etc. on the screen.When you press a C-Buttton you can use an object.Here the objects for the C-Buttons:C-left: arrows, C-down: bombs, C-right: Ocarina of Time. There is also no Navi and start menu.When you go to some places the game will freeze or you can't move.
@@ -766,7 +773,7 @@ YoungItem=$21 Weird Egg,$22 Chicken,$23 Zelda's Letter,$24 Keaton Mask,$25 Skull
 
 [ZeldaCosmic]
 AdultItem=$2D Pocket Egg,$2E Pocket Cucco,$2F Cojiro,$30 Odd Mushroom,$31 Odd Potion,$32 Poacher's Saw,$33 Goron's Sword (Broken),$34 Prescription,$35 Eyeball Frog,$36 Eye Drops,$37 Claim Check
-Appear Note=If you go to an area where Link is immobile or invisible, using the "appear in strange places" code will almost always fix it, but you'll start somewhere outside of the Arena and in air. I recommend using the infinite step Hover boots code already supplied with PJ64 so you can float back into the arena in the event that this happens.
+Appear Note=If you go to an area where Link is immobile or invisible, using the "appear in strange places" code will almost always fix it, but you'll start somewhere outside of the Arena and in air. I recommend using the infinite step Hover boots code already supplied with MiB64 so you can float back into the arena in the event that this happens.
 Beta Interface Note=If you go to an area where the interface is accessible, this signigfies that you're not in 'beta' mode anymore. Using the "interface always off/on" code, you can stay in 'beta' mode regardless of what happens. This may cause more crashes in SOME areas, but it's rare and is not too severe. If you need to explore a beta area with the interface, "use the interface always on" portion of the code. Don't use the codes as you start the game. If you need the interface on/off at a specific time, start the game, go to the area, activate the code, keep it on until next reset.
 BetaQuest=$00 World 01,$01 World 02,$02 World 03,$03 World 04,$04 World 05,$07 World 06,$08 World 07,$16 World 08
 BetaQuest Note=Put on the code on load up,After the Nintendo logo you will be in Beta Mode,There are no icons, energy bar etc. on the screen.When you press a C-Buttton you can use an object.Here the objects for the C-Buttons:C-left: arrows, C-down: bombs, C-right: Ocarina of Time. There is also no Navi and start menu.When you go to some places the game will freeze or you can't move.
@@ -11421,6 +11428,44 @@ Cheat20_O=[SuperMario]Level Select
 
 //----
 
+[321A53A7-FF6C1805-C:4A]
+Name=Super Mario 64 Internal Plexus (B3313) (J) (V1.0) (Hack)
+Cheat0="Press GS For 255 Coins",8933B218 00FF
+Cheat0_N=[B3313]Coins Note
+Cheat1="Have\Level Select",A032D58C 00??
+Cheat1_O=@Off and On 1
+Cheat2="Don't Hurt Mario\Monsters",A033B197 0001
+Cheat3="Infinite\Lives",8033B21D 0064
+Cheat4="Infinite\Energy & Breath",8033B21E 0008
+Cheat5="Have\Debug Mode",A032D598 00??
+Cheat5_O=@Off and On 1
+Cheat6="Mario's Cap On Options",8033B177 00??
+Cheat6_N=[B3313]Cap Note
+Cheat6_O=[B3313]Marios Cap
+Cheat7="Press R To Levitate",D033AFA1 0010,8133B1BC 4220,D033B1BD 0020,8133B17C 0300,D033B1BD 0020,8133B17E 0880
+Cheat7_N=[B3313]Levitate Note
+Cheat8="[Slot A Codes]\Have All\120 Stars",80207723 0001,8020770B 00C7,50001101 0000,8020770C 00FF
+Cheat8_N=[B3313]Slot Note
+Cheat9="[Slot A Codes]\Have All\Key doors unlocked (and mote empty)",8020770A 007E
+Cheat10="[Slot A Codes]\Have All\Max 100 Coin Records For All Levels",50000F01 0000,80207725 0064
+Cheat11="[Slot B Codes]\Have All\120 Stars",80207793 0001,8020777B 00C7,50001101 0000,8020777C 00FF
+Cheat11_N=[B3313]Slot Note
+Cheat12="[Slot B Codes]\Have All\Key doors unlocked (and mote empty)",8020777A 007E
+Cheat13="[Slot B Codes]\Have All\Max 100 Coin Records For All Levels",50000F01 0000,80207795 0064
+Cheat14="[Slot C Codes]\Have All\120 Stars",80207803 0001,802077EB 00C7,50001101 0000,802077EC 00FF
+Cheat14_N=[B3313]Slot Note
+Cheat15="[Slot C Codes]\Have All\Key doors unlocked (and mote empty)",802077EA 007E
+Cheat16="[Slot C Codes]\Have All\Max 100 Coin Records For All Levels",50000F01 0000,80207805 0064
+Cheat17="[Slot D Codes]\Have All\120 Stars",80207873 0001,8020785B 00C7,50001101 0000,8020785C 00FF
+Cheat17_N=[B3313]Slot Note
+Cheat18="[Slot D Codes]\Have All\Key doors unlocked (and mote empty)",8020785A 007E
+Cheat19="[Slot D Codes]\Have All\Max 100 Coin Records For All Levels",50000F01 0000,80207875 0064
+Cheat20="Level Select",D033AFA1 0010,A032DDF9 00??
+Cheat20_N=[B3313]Level Note
+Cheat20_O=[B3313]Level Select
+
+//----
+
 [AD788469-B0FBA7D9-C:45]
 Name=Super Mario 64 - Star Road (U) (Hack)
 Cheat0="Press GS For 255 Coins",8919F178 00FF
@@ -15320,7 +15365,7 @@ Cheat0="Infinite\Health",801D7F3D 0064
 Cheat1="Infinite\99 Lives",801D7F3E 0064
 Cheat2="Infinite\99 Dark Knight Discus",801D7F4A 0063
 Cheat3="Infinite\Max Charge & Magnetic Nun Chaku",801D7F06 0064
-Cheat4="Press F9 to Have Key",D01BB5FE 0008,801D7D70 0020
+Cheat4="Press D-UP to Have Key",D01BB5FE 0008,801D7D70 0020
 Cheat5="Weapon Select",801D7F43 00??
 Cheat5_O=[BatmanReturn]Weapon
 Cheat6="Suit Select",801D7F40 00??
@@ -23305,7 +23350,7 @@ Cheat58_N=[ZeldaOOT]Gannons Timer Note
 
 [7280E03F-497689BA-C:00]
 Name=Viewpoint2064 (J) [T-Eng]
-Cheat0="Infinite Max Health",8011249D 00A0
+Cheat0="Infinite Max Energy",8011249D 00A0,802903EC 0000
 Cheat1="Infinite Max Shield",801124A3 00A0
 Cheat2="Infinite Max Lives",801124B4 0009
 
@@ -24068,6 +24113,28 @@ Cheat13_N=This unlocks Special Assigment Dual and also the Classic Weapons for J
 
 //----
 
+[3E9385E0-7BDD1C1E-C:00]
+Name=Riqa1 (PD)
+Cheat0="Infinite Ammo",810E7048 4479
+Cheat1="Infinite 999 Frag Grenades",810E52F8 03E7
+Cheat2="Infinite 999 Grenades",810E52C0 03E7
+Cheat3="Infinite 999 Trip Wire",810E5448 03E7
+Cheat4="Infinite 999 3-Way Homing Shot",810E5368 03E7
+Cheat5="Infinite 500-500 Health",810E7034 43FA,810E7038 43FA
+
+//----
+
+[55CCFED4-2AE928F0-C:45]
+Name=Riqa (U) Final 1 (Prototype) [F1]
+Cheat0="Infinite Ammo",810E7048 4479
+Cheat1="Infinite 999 Frag Grenades",810E52F8 03E7
+Cheat2="Infinite 999 Grenades",810E52C0 03E7
+Cheat3="Infinite 999 Trip Wire",810E5448 03E7
+Cheat4="Infinite 999 3-Way Homing Shot",810E5368 03E7
+Cheat5="Infinite 500-500 Health",810E7034 43FA,810E7038 43FA
+
+//----
+
 [77233244-E374BB0F-C:50]
 Name=Rocket - Robot on Wheels (Prototype)
 Cheat0="Infinite & Max Health",8109FB82 000C,8109FB84 000A
@@ -24228,7 +24295,7 @@ Cheat3="Max Brightness",8016E91F 0080
 
 [5D40ED2C-10D6ABCF-C:00]
 Name=Viewpoint2064-Prototype
-Cheat0="Infinite Max Health",8011249D 00A0
+Cheat0="Infinite Max Energy",8011249D 00A0,802903EC 0000
 Cheat1="Infinite Max Shield",801124A3 00A0
 Cheat2="Infinite Max Lives",801124B4 0009
 
@@ -26995,6 +27062,16 @@ Cheat4="Enable All Levels (Trial Mode)",810F919C FFFF,810F919E FFFF
 
 //------ Homebrew --------
 
+[462D612A-4862147B-C:00]
+Name=Flappy Bird for N64 (PD)
+Cheat0="Play as",8009113B 00??
+Cheat0_O=$00 Yellow Bird,$01 Blue Bird,$02 Red Bird
+Cheat1="Have 9999  Score",81091156 03E7
+Cheat1_N=Score Display
+Cheat2="999 Best Score",81091E5A 03E7
+Cheat2_N=Score Display
+Score Display=This displays at the end of the round
+
 [176EFEA7-A704929E-C:20]
 Name=Mission Lost Control (PD by NAN)
 Cheat0="Game Fix For Interpreter",80032648 0024
@@ -27176,6 +27253,117 @@ Cheat40="Cheat Menu\Infinite Dog Tags",801577C9 00??
 Cheat40_O=$00 Off (Default),$01 On
 Cheat41="Enable Cheat Menu and Backer Menu:",810342F2 0004,81034540 0C05,81034542 19EC,81034ACC 0C05,81034ACE 19EC,811467B0 03E0,811467B2 F025,811467B4 9382,811467B6 8322,811467B8 0002,811467BA 1080,811467BC 3C01,811467BE 8012,811467C0 0041,811467C2 1021,811467C4 8C55,811467C6 DEE8,811467C8 8EA4,811467CA 00E0,811467CC 3405,811467CE 000F,811467D0 0C00,811467D2 86F0,811467D4 3406,811467D6 0016,811467D8 8EA4,811467DA 0010,811467DC 3405,811467DE 000F,811467E0 0C00,811467E2 86F0,811467E4 3406,811467E6 0018,811467E8 9382,811467EA 8322,811467EC 03C0,811467EE 0008,811467F0 2406,811467F2 001A
 Cheat41_N=This Enables and Displays the Developer Cheat and Backer Menus
+
+//------ NES 2 N64 --------
+
+[CC255C6A-7FAA7C38-C:41]
+Name=NES 2 NEON64 Game JAPAN & USA
+Cheat0="1942\Infinite Max Lives\Player 1",800EEC32 0009 
+Cheat1="1942\Infinite Max Rolls\Player 1",800EEC36 0009
+Cheat2="1942\Infinite Max Lives\Player 2",800EEC33 0009 
+Cheat3="1942\Infinite Max Rolls\Player 2",800EEC37 0009 
+Cheat4="Contra\Invincible\Player 1",800EE8AE 0028
+Cheat5="Contra\Infinite Max Lives\Player 1",800EE832 0009
+Cheat6="Contra\Weapon Select\Player 1",800EE8AA 00??
+Cheat6_O=$00 Riffle,$01 Machine Gun,$02 Flame-Thrower,$03 Spread Gun,$04 Laser Gun
+Cheat7="Contra\Invincible\Player 2",800EE8AF 0028
+Cheat8="Contra\Infinite Max Lives\Player 2",800EE833 0009
+Cheat9="Contra\Weapon Select\Player 2",800EE8AB 00??
+Cheat9_O=$00 Riffle,$01 Machine Gun,$02 Flame-Thrower,$03 Spread Gun,$04 Laser Gun
+Cheat10="Donkey-Kong-Jr\Infinite Lives (Both Players)",800EE84C 0009
+Cheat11="Excitebike\Never Overheat",800EEBB6 
+Cheat12="Excitebike\Always 1st",800EE853 0001
+Cheat13="Excitebike\Freeze Timer",810EE868 0000,810EE86A 0000
+Cheat14="Mario-Bros\Infinite Lives\Player 1",800EE848 0009
+Cheat15="Mario-Bros\Infinite Lives\Player 2",800EE84C 0009
+Cheat16="Mach Rider\Infinite Max Shots",800EE85F 0050
+Cheat17="Mach Rider\Infinite Max Energy",800EE85D 0050
+Cheat17_N=You can still explode but you will never die and have to restart the race
+Cheat18="Pinball\Infinite Max Balls\Player 1",800EE951 0009
+Cheat18_N=Turn this Off When you want the Balls to start Running out
+Cheat19="Pinball\Infinite Max Balls\Player 2",800EE952 0009
+Cheat19_N=Turn this Off When you want the Balls to start Running out
+Cheat20="Soccer\Player 1 Scores",8000E3A6 00??,8000E3A7 00??
+Cheat20_O=$00 0 Goals,$09 99 Goals
+Cheat21="Soccer\Player 2 Scores",8000E3B8 00??,8000E3B9 00??
+Cheat21_O=$00 0 Goals,$09 99 Goals
+Cheat22="Soccer\Freeze Timer",800EE843 0015,800EE844 0000
+
+[CC255C6A-7FAA7C38-C:45]
+Name=NES 2 NEON64 Game USA
+Cheat0="1942\Infinite Max Lives\Player 1",800EEC32 0009 
+Cheat1="1942\Infinite Max Rolls\Player 1",800EEC36 0009
+Cheat2="1942\Infinite Max Lives\Player 2",800EEC33 0009 
+Cheat3="1942\Infinite Max Rolls\Player 2",800EEC37 0009 
+Cheat4="Contra\Invincible\Player 1",800EE8AE 0028
+Cheat5="Contra\Infinite Max Lives\Player 1",800EE832 0009
+Cheat6="Contra\Weapon Select\Player 1",800EE8AA 00??
+Cheat6_O=$00 Riffle,$01 Machine Gun,$02 Flame-Thrower,$03 Spread Gun,$04 Laser Gun
+Cheat7="Contra\Invincible\Player 2",800EE8AF 0028
+Cheat8="Contra\Infinite Max Lives\Player 2",800EE833 0009
+Cheat9="Contra\Weapon Select\Player 2",800EE8AB 00??
+Cheat9_O=$00 Riffle,$01 Machine Gun,$02 Flame-Thrower,$03 Spread Gun,$04 Laser Gun
+Cheat10="Donkey-Kong-Jr\Infinite Lives (Both Players)",800EE84C 0009
+Cheat11="Excitebike\Never Overheat",800EEBB6 
+Cheat12="Excitebike\Always 1st",800EE853 0001
+Cheat13="Excitebike\Freeze Timer",810EE868 0000,810EE86A 0000
+Cheat14="Mario-Bros\Infinite Lives\Player 1",800EE848 0009
+Cheat15="Mario-Bros\Infinite Lives\Player 2",800EE84C 0009
+Cheat16="Mach Rider\Infinite Max Shots",800EE85F 0050
+Cheat17="Mach Rider\Infinite Max Energy",800EE85D 0050
+Cheat17_N=You can still explode but you will never die and have to restart the race
+Cheat18="Pinball\Infinite Max Balls\Player 1",800EE951 0050
+Cheat18_N=Turn this Off When you want the Balls to start Running out
+Cheat19="Pinball\Infinite Max Balls\Player 2",800EE952 0050
+Cheat19_N=Turn this Off When you want the Balls to start Running out
+Cheat20="Soccer\Player 1 Scores",8000E3A6 00??,8000E3A7 00??
+Cheat20_O=$00 0 Goals,$09 99 Goals
+Cheat21="Soccer\Player 2 Scores",8000E3B8 00??,8000E3B9 00??
+Cheat21_O=$00 0 Goals,$09 99 Goals
+Cheat22="Soccer\Freeze Timer",800EE843 0015,800EE844 0000
+
+[CC255C6A-7FAA7C38-C:50]
+Name=NES 2 NEON64 Game EUR
+Cheat0="1942\Infinite Max Lives\Player 1",800EEC32 0009 
+Cheat1="1942\Infinite Max Rolls\Player 1",800EEC36 0009
+Cheat2="1942\Infinite Max Lives\Player 2",800EEC33 0009 
+Cheat3="1942\Infinite Max Rolls\Player 2",800EEC37 0009 
+Cheat4="Contra\Invincible\Player 1",800EE8AE 0028
+Cheat5="Contra\Infinite Max Lives\Player 1",800EE832 0009
+Cheat6="Contra\Weapon Select\Player 1",800EE8AA 00??
+Cheat6_O=$00 Riffle,$01 Machine Gun,$02 Flame-Thrower,$03 Spread Gun,$04 Laser Gun
+Cheat7="Contra\Invincible\Player 2",800EE8AF 0028
+Cheat8="Contra\Infinite Max Lives\Player 2",800EE833 0009
+Cheat9="Contra\Weapon Select\Player 2",800EE8AB 00??
+Cheat9_O=$00 Riffle,$01 Machine Gun,$02 Flame-Thrower,$03 Spread Gun,$04 Laser Gun
+Cheat10="Donkey-Kong-Jr\Infinite Lives (Both Players)",800EE84C 0009
+Cheat11="Excitebike\Never Overheat",800EEBB6 
+Cheat12="Excitebike\Always 1st",800EE853 0001
+Cheat13="Excitebike\Freeze Timer",810EE868 0000,810EE86A 0000
+Cheat14="Mario-Bros\Infinite Lives\Player 1",800EE848 0009
+Cheat15="Mario-Bros\Infinite Lives\Player 2",800EE84C 0009
+Cheat16="Mach Rider\Infinite Max Shots",800EE85F 0050
+Cheat17="Mach Rider\Infinite Max Energy",800EE85D 0050
+Cheat17_N=You can still explode but you will never die and have to restart the race
+Cheat18="Pinball\Infinite Max Balls\Player 1",800EE951 0050
+Cheat18_N=Turn this Off When you want the Balls to start Running out
+Cheat19="Pinball\Infinite Max Balls\Player 2",800EE952 0050
+Cheat19_N=Turn this Off When you want the Balls to start Running out
+Cheat20="Soccer\Player 1 Scores",8000E3A6 00??,8000E3A7 00??
+Cheat20_O=$00 0 Goals,$09 99 Goals
+Cheat21="Soccer\Player 2 Scores",8000E3B8 00??,8000E3B9 00??
+Cheat21_O=$00 0 Goals,$09 99 Goals
+Cheat22="Soccer\Freeze Timer",800EE843 0015,800EE844 0000
+
+//------ SNES 2 N64 --------
+
+[7F92722F-FD3D0B0F-C:00]
+Name=SNES2N64 (PAL)
+Cheat0="Aladdin (E)\Infinite 99 Gems",8006D36B 0099
+Cheat1="Aladdin (E)\Infinite Max Lives",8006D364 000A
+Cheat2="Aladdin (E)\Infinite Max Health",8006D367 000A
+Cheat3="Aladdin (E)\Infinite 99 Apples",8006D369 0099
+Cheat4="Aladdin (E)\Infinite 9 Credits",8006D35B 0009
 
 //-------------------- W.I.P Cheats ---------------
 
@@ -28337,6 +28525,91 @@ Cheat45="Enable Widescreen",80455007 0001
 
 //----
 
+[05B0BBA9-8F6E3D9D-C:45]
+Name=SMASH REMIX (U) 1.5.1
+Cheat0="Give Kirby A Wierd Blow-Up",8025E158 000A
+Cheat1="Story Mode\Skip Straight To Master Hand",800A4AE7 000D
+Cheat2="Story Mode\Infinite Time",810A4B2E 43CB
+Cheat3="Story Mode\Player 1\Infinite Lives",800A4B43 0004
+Cheat4="Story Mode\Player 2\Infinite Lives",800A4BB7 0004
+Cheat5="Story Mode\Player 3\Infinite Lives",800A4C2B 0004
+Cheat6="Story Mode\Player 4\Infinite Lives",800A4C9F 0004
+Cheat7="Story Mode\Player 1\Low % Health",810A4B86 0000
+Cheat8="Story Mode\Player 2\Low % Health",810A4BFA 0000
+Cheat9="Story Mode\Player 3\Low % Health",810A4C6E 0000
+Cheat10="Story Mode\Player 4\Low % Health",810A4CE2 0000
+Cheat11="Story Mode\Player 1\Character Modifier",800A4B3B 00??
+Cheat11_N=[SuperSmashBrothers]Character Note
+Cheat11_O=[SuperSmashBrothers]Character Mod
+Cheat12="Story Mode\Player 2\Character Modifier",800A4BAF 00??
+Cheat12_N=[SuperSmashBrothers]Character Note
+Cheat12_O=[SuperSmashBrothers]Character Mod
+Cheat13="Story Mode\Player 3\Character Modifier",800A4C23 00?? 
+Cheat13_N=[SuperSmashBrothers]Character Note
+Cheat13_O=[SuperSmashBrothers]Character Mod
+Cheat14="Story Mode\Player 4\Character Modifier",800A4C97 00??
+Cheat14_N=[SuperSmashBrothers]Character Note
+Cheat14_O=[SuperSmashBrothers]Character Mod
+Cheat15="Story Mode\Player 1\Kirby B Button Move\Hyrule Castle",80268B0F 00??
+Cheat15_O=[SuperSmashBrothers]Kirby B Button Move
+Cheat16="Story Mode\Player 1\Kirby B Button Move\Yoshi's Island",80268E4F 00??
+Cheat16_O=[SuperSmashBrothers]Kirby B Button Move
+Cheat17="Story Mode\Player 1\Kirby B Button Move\Sector Z",802710F7 00??
+Cheat17_O=[SuperSmashBrothers]Kirby B Button Move
+Cheat18="Story Mode\Player 1\Kirby B Button Move\Peach's Castle",80263D9F 00??
+Cheat18_O=[SuperSmashBrothers]Kirby B Button Move
+Cheat19="Story Mode\Player 1\Kirby B Button Move\Saffron City",80273A97 00??
+Cheat19_O=[SuperSmashBrothers]Kirby B Button Move
+Cheat20="Story Mode\Player 1\Kirby B Button Move\Congo Jungle",80270ACF 00??
+Cheat20_O=[SuperSmashBrothers]Kirby B Button Move
+Cheat21="Story Mode\Player 1\Kirby B Button Move\Kirby's Dreamland",8026DB3F 00??
+Cheat21_O=[SuperSmashBrothers]Kirby B Button Move
+Cheat22="Story Mode\Player 1\Kirby B Button Move\Planet Zebes",8026FFA7 00??
+Cheat22_O=[SuperSmashBrothers]Kirby B Button Move
+Cheat23="Story Mode\Player 1\Kirby B Button Move\Metal Mario Stage",80263597 00??
+Cheat23_O=[SuperSmashBrothers]Kirby B Button Move
+Cheat24="Story Mode\Player 1\Kirby B Button Move\Fighting Polygon Team",8026271F 00??
+Cheat24_O=[SuperSmashBrothers]Kirby B Button Move
+Cheat25="Story Mode\Player 1\Kirby B Button Move\Master Hand Stage",80271C4F 00??
+Cheat25_O=[SuperSmashBrothers]Kirby B Button Move
+Cheat26="VS. Mode\Infinite Time",810A4D1E 43CB
+Cheat27="VS. Mode\Player 1\Low % Health",810A4D76 0000
+Cheat28="VS. Mode\Player 2\Low % Health",810A4DEA 0000
+Cheat29="VS. Mode\Player 3\Low % Health",810A4E5E 0000
+Cheat30="VS. Mode\Player 4\Low % Health",810A4ED2 0000
+Cheat31="VS. Mode\Player 1\Character Modifier",800A4D2B 00??
+Cheat31_N=[SuperSmashBrothers]=Character Note
+Cheat31_O=[SuperSmashBrothers]Character Mod
+Cheat32="VS. Mode\Player 2\Character Modifier",800A4D9F 00??
+Cheat32_N=[SuperSmashBrothers]Character Note
+Cheat32_O=[SuperSmashBrothers]Character Mod
+Cheat33="VS. Mode\Player 3\Character Modifier",800A4E13 00??
+Cheat33_N=[SuperSmashBrothers]Character Note
+Cheat33_O=[SuperSmashBrothers]Character Mod
+Cheat34="VS. Mode\Player 4\Character Modifier",800A4E87 00??
+Cheat34_N=[SuperSmashBrothers]Character Note
+Cheat34_O=[SuperSmashBrothers]Character Mod
+Cheat35="VS. Mode\Player 1\Kirby B Button Move\Hyrule Castle",802639EF 00??
+Cheat35_O=[SuperSmashBrothers]Kirby B Button Move
+Cheat36="VS. Mode\Player 1\Kirby B Button Move\Yoshi's Island",8026E2B7 00??
+Cheat36_O=[SuperSmashBrothers]Kirby B Button Move
+Cheat37="VS. Mode\Player 1\Kirby B Button Move\Sector Z",8026BF87 00??
+Cheat37_O=[SuperSmashBrothers]Kirby B Button Move
+Cheat38="P1 Press Down On D-Pad To Make Items Appear In Random Spots",D109EFA4 0400,8118D0A2 0001
+Cheat39="Have All Characters",810A4938 0FF0
+Cheat40="VS. Mode\Have\Mushroom Kindom",800A4937 00FF
+Cheat41="Story Mode\Always Get Pacifist (60,000 Points)",810A4B6E 0000
+Cheat42="Bonus Stage Character Modifier (Training Mode)",8018F1D3 00??
+Cheat42_N=[SuperSmashBrothers]Character Note
+Cheat42_O=[SuperSmashBrothers]Character Mod
+Cheat43="Enable Item Switch Menu (All Modes)",811348E2 0004
+Cheat43_N=[SuperSmashBrothers]Switch Menu Note
+Cheat44="Story Mode\Player 1\Stage Select",D1045188 0010,800A4AE7 00??
+Cheat44_O=[SuperSmashBrothers]Stage Select
+Cheat45="Enable Widescreen",80455007 0001
+
+//----
+
 [EBDCEEF7-E9B171B5-C:45]
 Name=Spiderman_Smash_Remix_Beta v0.6
 Cheat0="Give Kirby A Wierd Blow-Up",8025E158 000A
@@ -28761,12 +29034,3 @@ Cheat12_O=$00 Wash,$01 Rest,$02 Work,$03 Use an item,$04 Do nothing
 
 //End Of File----------> Anything under here was put in by you <--------------------------------
 
-[462D612A-4862147B-C:00]
-Name=Flappy Bird for N64 (PD)
-Cheat0="Play as",8009113B 00??
-Cheat0_O=$00 Yellow Bird,$01 Blue Bird,$02 Red Bird
-Cheat1="Have 9999  Score",81091156 03E7
-Cheat1_N=Score Display
-Cheat2="999 Best Score",81091E5A 03E7
-Cheat2_N=Score Display
-Score Display=This displays at the end of the round

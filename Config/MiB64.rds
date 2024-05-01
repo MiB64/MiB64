@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------------
 // MiB64 Official RDS (Rom Database Information) by MiB64Team
-// Based On Our Original Project64 Official RDB by Smiff/Gent/Project64/Legacy/MiB64Team
+// Based On the Original Project64 Legacy Official RDS by Gent/MiB64 team
 // ----------------------------------------------------------------------------
 //
 // This file is only to be used with MiB64 1.0 & higher
@@ -19,7 +19,7 @@
 // Note that MiB64 automatically prefixes "http://"
 
 Author=MiB64Team
-Date=26th September 2023 Version: 1
+Date=1st May 2024 Version: 1
 Homepage=www.mib64.net
 Version=MiB64 1.0
 
@@ -43,14 +43,39 @@ Compatible=006600
 Compatible.Sel=006600
 Compatible.Seltext=FFFFFF
 
-//Added by Gent to show that it is a Prototype
-Prototype=006600
-Prototype.Sel=006600
+//Added by Gent to show that it is a Prototype & caution is required as most were unfinished.
+Prototype=827B00
+Prototype.Sel=827B00
 Prototype.Seltext=FFFFFF
+
+//Added by Gent to show that it is a NES 2 NEAON64 & caution is required as most may have issues
+NES-2-NEAON64=827B00
+NES-2-NEAON64.Sel=827B00
+NES-2-NEAON64.Seltext=FFFFFF
+
+//Added by Gent to show that it is a SNES 2 N64 & caution is required as most may have issues
+SNES-2-N64=827B00
+SNES-2-N64.Sel=827B00
+SNES-2-N64.Seltext=FFFFFF
+
+//Added by Gent to show that it is a compatible but has no native save function.
+iQue-No-Save=827B00
+iQue-No-Save.Sel=827B00
+iQue-No-Save.Seltext=FFFFFF
+
+//Added by Gent to show that it is a Rom-Hsck & subject to issues.
+Hack=827B00
+Hack.Sel=827B00
+Hack.Seltext=FFFFFF
 
 Interpreter only=003300
 Interpreter only.Sel=003300
 Interpreter only.Seltext=FFFFFF
+
+//Added by Gent to show that The Icepir8 RSP on Interpreter Core is to be used
+RSP-Interpreter=003300
+RSP-Interpreter.Sel=003300
+RSP-Interpreter.Seltext=FFFFFF
 
 Issues (mixed)=827B00
 Issues (mixed).Sel=827B00
@@ -64,11 +89,6 @@ Issues (core).Seltext=FFFFFF
 Issues (Prototype)=827B00
 Issues (Prototype).Sel=827B00
 Issues (Prototype).Seltext=FFFFFF
-
-//Added by Gent to show that it is an iQue Game with issues
-Issues (iQue)=827B00
-Issues (iQue).Sel=827B00
-Issues (iQue).Seltext=FFFFFF
 
 Issues (64DD)=827B00
 Issues (64DD).Sel=827B00
@@ -237,6 +257,8 @@ Linking=Off
 Save Type=First Save Type
 Self-modifying code Method=Protected Memory
 Status=Compatible
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=810072EC 2400 //This fixes the PAL on NTSC system Region Lockout
 
 [033F4C13-319EE7A7-C:45]
 Name=007 - The World is Not Enough (U)
@@ -336,7 +358,7 @@ Status=Prototype
 Name=1080 Snowboarding (E) (M4)
 CPU Type=Recompiler
 Counter Factor=2
-Linking=On
+Linking=Off
 Plugin Note=[audio] (see GameFAQ)
 Save Type=First Save Type
 Self-modifying code Method=Protected Memory
@@ -368,10 +390,9 @@ Name=64 de Hakken!! Tamagotchi Minna de Tamagotchi World (J)
 CPU Type=Recompiler
 Counter Factor=2
 Linking=Global
-Plugin Note=[video] Jabo errors (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Protected Memory
-Status=Use GLideN64 Video
+Status=Compatible
 Use Large Buffer
 
 [36F22FBF-318912F2-C:4A]
@@ -757,6 +778,8 @@ Plugin Note=[video] errors:menus, missile on level2+?
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
 Status=Issues (plugin)
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
+//Cheat1=81012F20 2400 //This fixes the NTSC on PAL system Region Lockout
 
 [B210DF19-98B58D1A-C:50]
 Name=Army Men - Sarge's Heroes (E) (M3)
@@ -767,6 +790,8 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Compatible
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=80000E88 0014 //This fixes the NTSC on PAL system Region Lockout
 
 [862C0657-8DFD896D-C:45]
 Name=Army Men - Sarge's Heroes (U)
@@ -777,6 +802,8 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Compatible
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
+//Cheat1=80000E58 0010 //This fixes the NTSC on PAL system Region Lockout
 
 [B20F73B6-2975FC34-C:45]
 Name=Army Men - Sarge's Heroes 2 (U)
@@ -788,6 +815,9 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Compatible
+//For some reason this is never triggered on the emulator
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
+//Cheat1=80000F24 0010 //This fixes the NTSC on PAL system Region Lockout
 
 [D1F7D8AB-293B0446-C:45]
 Name=Asteroids Hyper 64 (U)
@@ -799,32 +829,35 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Use GLideN64 Video
+//For some reason this is never triggered on the emulator
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
 
 [FC7797BF-4A95E83C-C:50]
 Name=Automobili Lamborghini (E)
 CPU Type=Recompiler
+Cheat0=80001433 0001 //Always 30fps. This prevents 40fps from happening and the steering being insane.
 Counter Factor=2
 Disable TLB
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Compatible
-VI=1300
 
 [41B25DC4-1B726786-C:45]
 Name=Automobili Lamborghini (U)
 CPU Type=Recompiler
+Cheat0=8000140B 0001 //Always 30fps. This prevents 40fps from happening and the steering being insane.
 Counter Factor=2
 Disable TLB
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Compatible
-VI=1300
 
 [DB833E34-63548286-C:45]
 Name=Automobili Lamborghini (U)
 CPU Type=Recompiler
+Cheat0=8000140B 0001 //Always 30fps. This prevents 40fps from happening and the steering being insane.
 Counter Factor=2
 Disable TLB
 Linking=Global
@@ -1058,6 +1091,8 @@ Linking=Off
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
 Status=Compatible
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
+//Cheat1=80112108 0010 //This fixes the NTSC on PAL system Region Lockout
 
 [9C7318D2-24AE0DC1-C:4A]
 Name=Beetle Adventure Racing (J)
@@ -1108,6 +1143,8 @@ Plugin Note=[video] errors:menus (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Use GLideN64 Video
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
+//Cheat1=81300274 0024 //This fixes the NTSC on PAL system Region Lockout
 
 [AB7C101D-EC58C8B0-C:50]
 Name=Bio F.R.E.A.K.S. (E)
@@ -1227,6 +1264,8 @@ Plugin Note=[video] [Clipping fix] (see GameFAQ)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
+//Cheat1=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat2=81078CFC 2400 //This fixes the PAL on NTSC system Region Lockout
 
 [5326696F-FE9A99C3-C:45]
 Name=Body Harvest (U)
@@ -1240,6 +1279,8 @@ Plugin Note=[video] errors:clipping (see GameFAQ)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
+//Cheat1=81078B08 2400 //This fixes the NTSC on PAL system Region Lockout
 
 [B3D451C6-E1CB58E2-C:4A]
 Name=Bokujou Monogatari 2 (J) (V1.0)
@@ -1359,6 +1400,8 @@ Plugin Note=[video] depth problem
 Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Compatible
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
+//Cheat1=8104D65A 0000 //This fixes the NTSC on PAL system Region Lockout
 
 [D5B2339C-CABCCAED-C:50]
 Name=Buck Bumble (E) (M5)
@@ -1803,6 +1846,8 @@ Save Type=16kbit Eeprom
 Self-modifying code Method=Protected Memory
 Status=Compatible
 Use Large Buffer
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=811EC3D4 2400 //This fixes the NTSC on PAL system Region Lockout
 
 [30C7AC50-7704072D-C:45]
 Name=Conker's Bad Fur Day (U)
@@ -2367,7 +2412,7 @@ Disable TLB
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
-Status=Compatible
+Status=Recompiler only
 
 [B6524461-ED6D04B1-C:50]
 Name=Dual Heroes (E)
@@ -2787,6 +2832,8 @@ Plugin Note=[video] errors:status bar
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=8100FCBC 1000 //This fixes the PAL on NTSC system Region Lockout
 
 [6DFF4C37-B1B763FD-C:4A]
 Name=Famista 64 (J)
@@ -2808,6 +2855,8 @@ Plugin Note=[video] errors:resolution issues
 Save Type=First Save Type
 Self-modifying code Method=Change Memory
 Status=Use GLideN64 Video
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=80054E2D 0000//This fixes the PAL on NTSC system Region Lockout
 
 [20EC5CAB-0A027F26-C:45]
 Name=F1 Racing Championship (U) (Prototype)
@@ -2819,6 +2868,8 @@ Plugin Note=[video] errors:resolution issues
 Save Type=First Save Type
 Self-modifying code Method=Change Memory
 Status=Use GLideN64 Video
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
+//Cheat1=80054F6D 0000//This fixes the NTSC on PAL system Region Lockout
 
 [3CECBCB8-6126BF07-C:45]
 Name=F1 Racing Championship (U) (M5) [f1] (NTSC)
@@ -3310,7 +3361,7 @@ Counter Factor=2
 Linking=Global
 Plugin Note=[video] errors:various in some levels
 Save Type=First Save Type
-Self-modifying code Method=Check Memory & cache
+Self-modifying code Method=Check Memory Advance
 Status=Compatible
 
 [4690FB1C-4CD56D44-C:45]
@@ -3512,6 +3563,8 @@ Plugin Note=[input] needs Voice-Pak [audio] (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Issues (plugin)
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
+//Cheat1=8100A934 1400 //This fixes the NTSC on PAL system Region Lockout
 
 [277B129D-DD3879FF-C:50]
 Name=Holy Magic Century (E)
@@ -3679,6 +3732,8 @@ Plugin Note=[video] boat select [audio] (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+/Cheat1=8022F200 0010 //This fixes the PAL on NTSC system Region Lockout
 
 [29A045CE-ABA9060E-C:46]
 Name=Hydro Thunder (F)
@@ -3691,11 +3746,13 @@ Plugin Note=[video] boat select [audio] (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=8022F200 0010 //This fixes the PAL on NTSC system Region Lockout
 
 [C8DC65EB-3D8C8904-C:45]
 Name=Hydro Thunder (U)
 Audio Signal
-CPU Type=Recompiler
+CPU Type=
 Counter Factor=2
 Emulate AI
 ExpansionPak
@@ -3704,6 +3761,8 @@ Plugin Note=[video] boat select [audio] (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
+//Cheat0=80000303 0000 // This boots in NTSC Mode on the RDRAM
+//Cheat1=8022F210 0010 //This fixes the NTSC on PAL system Region Lockout
 
 [2FC5C34C-7A05CC9D-C:4A]
 Name=Hyper Olympics in Nagano 64 (J)
@@ -3809,6 +3868,8 @@ Linking=Off
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
 Status=Compatible
+//Cheat0=80000303 0003 // This boots in NTSC Mode on the RDRAM
+//Cheat1=81003290 0010 //This fixes the NTSC on PAL system Region Lockout (Not fix on console)
 
 [BAE8E871-35FF944E-C:59]
 Name=International Superstar Soccer 2000 (E) (M2) (Fre-Ita)
@@ -3819,6 +3880,8 @@ Linking=Off
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
 Status=Compatible
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=80003291 0000 //This fixes the NTSC on PAL system Region Lockout
 
 [8E835437-CD5748B4-C:45]
 Name=International Superstar Soccer 2000 (U) (M2)
@@ -4735,6 +4798,7 @@ Status=Use 3rd party video
 [C3B6DE9D-65D2DE76-C:50]
 Name=Mario Kart 64 (E) (V1.0)
 CPU Type=Recompiler
+Cheat0=81001A1C 2409,81001A1E 0002,81001C74 240A,81001C76 0002 //Multiplayer timing fix
 Counter Factor=2
 Linking=Global
 Save Type=First Save Type
@@ -4744,6 +4808,7 @@ Status=Compatible
 [2577C7D4-D18FAAAE-C:50]
 Name=Mario Kart 64 (E) (V1.1)
 CPU Type=Recompiler
+Cheat0=81001A1C 2409,81001A1E 0002,81001C74 240A,81001C76 0002 //Multiplayer timing fix
 Counter Factor=2
 Linking=Global
 Save Type=First Save Type
@@ -4753,6 +4818,7 @@ Status=Compatible
 [6BFF4758-E5FF5D5E-C:4A]
 Name=Mario Kart 64 (J) (V1.0)
 CPU Type=Recompiler
+Cheat0=81001A1C 2409,81001A1E 0002,81001C74 240A,81001C76 0002 //Multiplayer timing fix
 Counter Factor=2
 Linking=Global
 Save Type=First Save Type
@@ -4762,6 +4828,7 @@ Status=Compatible
 [C9C3A987-5810344C-C:4A]
 Name=Mario Kart 64 (J) (V1.1)
 CPU Type=Recompiler
+Cheat0=81001A1C 2409,81001A1E 0002,81001C74 240A,81001C76 0002 //Multiplayer timing fix
 Counter Factor=2
 Linking=Global
 Save Type=First Save Type
@@ -4771,6 +4838,7 @@ Status=Compatible
 [3E5055B6-2E92DA52-C:45]
 Name=Mario Kart 64 (U)
 CPU Type=Recompiler
+Cheat0=81001A20 2409,81001A22 0002,81001C78 240A,81001C7A 0002 //Multiplayer timing fix
 Counter Factor=2
 Linking=Global
 Save Type=First Save Type
@@ -4954,6 +5022,8 @@ Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
 Status=Use 3rd party video
 Use Large Buffer
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=80088EE5 0000 //This fixes the NTSC on PAL system Region Lockout (Does not work)
 
 [736AE6AF-4117E9C7-C:4A]
 Name=Mickey no Racing Challenge USA (J)
@@ -5152,6 +5222,8 @@ Plugin Note=[video] errors:resolution issues
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
+//Cheat1=80054F0D 0000//This fixes the NTSC on PAL system Region Lockout
 
 [5AC383E1-D712E387-C:45]
 Name=Monopoly (U) (M2)
@@ -5339,6 +5411,8 @@ Plugin Note=[video] errors:resolution issues
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=80054F6D 0000//This fixes the PAL on NTSC system Region Lockout
 
 //
 //-------------------------  N  --------------------------
@@ -5602,6 +5676,7 @@ Plugin Note=[audio] (See Gamefaq)
 Save Type=FlashRam
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
+VI=1350
 
 [147E0EDB-36C5B12C-C:4A]
 Name=Neon Genesis Evangelion (J)
@@ -6090,11 +6165,13 @@ Core Note=high system requirement
 Counter Factor=2
 ExpansionPak
 Linking=Off
-Plugin Note=[video] errors:various (see GameFAQ)
 Save Type=16kbit Eeprom
 Self-modifying code Method=Protected Memory
-Status=Compatible
+Status=Use GLideN64 Video
 Use Large Buffer
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=811EC3D4 2400 //This fixes the NTSC on PAL system Region Lockout
+
 
 [96747EB4-104BB243-C:4A]
 Name=Perfect Dark (J)
@@ -6103,24 +6180,22 @@ Core Note=high system requirement
 Counter Factor=2
 ExpansionPak
 Linking=Off
-Plugin Note=[video] errors:various (see GameFAQ)
 Save Type=16kbit Eeprom
 Self-modifying code Method=Protected Memory
-Status=Compatible
+Status=Use GLideN64 Video
 Use Large Buffer
 
 [DDF460CC-3CA634C0-C:45]
 Name=Perfect Dark (U) (V1.0)
-CPU Type=Interpreter
+CPU Type=Recompiler
 Core Note=high system requirement
 Counter Factor=2
 Disable Reg Cache
 ExpansionPak
 Linking=Off
-Plugin Note=[video] errors:various (see GameFAQ)
 Save Type=16kbit Eeprom
 Self-modifying code Method=Protected Memory
-Status=Compatible
+Status=Use GLideN64 Video
 Use Large Buffer
 
 [41F2B98F-B458B466-C:45]
@@ -6130,10 +6205,9 @@ Core Note=high system requirement
 Counter Factor=2
 ExpansionPak
 Linking=Off
-Plugin Note=[video] errors:various (see GameFAQ)
 Save Type=16kbit Eeprom
 Self-modifying code Method=Protected Memory
-Status=Compatible
+Status=Use GLideN64 Video
 Use Large Buffer
 
 [EE08C602-6BC2D5A6-C:50]
@@ -6573,6 +6647,8 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Protected Memory
 Status=Compatible
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=800046E1 0000 //This fixes the NTSC on PAL system Region Lockout (Does not work)
 
 [9BA10C4E-0408ABD3-C:4A]
 Name=Pro Mahjong Kiwame 64 (J) (V1.0)
@@ -6703,6 +6779,8 @@ Plugin Note=[video] errors:resolution issues
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Issues (plugin)
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=80054F6D 0000 //This fixes the PAL on NTSC system Region Lockout
 
 [67D21868-C5424061-C:50]
 Name=Rakuga Kids (E)
@@ -7957,6 +8035,7 @@ Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Compatible
 
+
 [D6FBA4A8-6326AA2C-C:4A]
 Name=Super Mario 64 - Shindou Pack Taiou Version (J) (V1.3)
 CPU Type=Recompiler
@@ -8023,12 +8102,14 @@ Status=Compatible
 [9CE02E22-206EF1B0-C:4A]
 Name=Super Speed Race 64 (J)
 CPU Type=Recompiler
+Cheat0=800014A3 0001 //Always 30fps. This prevents 40fps from happening and the steering by insane.
 Counter Factor=2
 Disable TLB
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Compatible
+
 
 [2CBB127F-09C2BFD8-C:50]
 Name=Supercross 2000 (E) (M3)
@@ -8040,6 +8121,8 @@ Plugin Note=[video] Jabo errors (Use 3rd party plugin (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Use 3rd party video
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=800BAAE8 0014 //This fixes the PAL on NTSC system Region Lockout
 
 [C1452553-5D7B24D9-C:45]
 Name=Supercross 2000 (U)
@@ -8051,6 +8134,8 @@ Plugin Note=[video] Jabo errors (Use 3rd party plugin (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Use 3rd party video
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
+//Cheat1=800BB274 0010 //This fixes the NTSC on PAL system Region Lockout
 
 [B44CAB74-07029A29-C:50]
 Name=Superman (E) (M6)
@@ -8101,6 +8186,8 @@ Plugin Note=(See GameFAQ)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=8004E509 0000//This fixes the PAL on NTSC system Region Lockout
 
 [963ADBA6-F7D5C89B-C:4A]
 Name=Tetris 64 (J)
@@ -8443,6 +8530,8 @@ Plugin Note=[video] errors:background
 Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Compatible
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+/Cheat1=800272BC 0014,80027490 0014 //This fixes the PAL on NTSC system Region Lockout
 
 [EF9E9714-C03B2C7D-C:45]
 Name=Tonic Trouble (U) (V1.1)
@@ -8766,11 +8855,11 @@ Status=Compatible
 [2F7009DD-FC3BAC53-C:50]
 Name=Turok - Dinosaur Hunter (E) (V1.0)
 CPU Type=Recompiler
-Core Note=(see GameFAQ)
+Core Note=
 Counter Factor=2
+Disable Reg Cache
 ExpansionPak
 Linking=Global
-Plugin Note=[video] texture [Audio] (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
@@ -8778,10 +8867,9 @@ Status=Compatible
 [2F700DCD-176CC5C9-C:50]
 Name=Turok - Dinosaur Hunter (E) (V1.1)-(V1.2)
 CPU Type=Recompiler
-Core Note=(see GameFAQ)
+Core Note=
 Counter Factor=2
 Linking=Global
-Plugin Note=[video] texture [Audio] (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
@@ -8789,10 +8877,9 @@ Status=Compatible
 [665FD963-B5CC6612-C:44]
 Name=Turok - Dinosaur Hunter (G) (V1.0)
 CPU Type=Recompiler
-Core Note=(see GameFAQ)
+Core Note=
 Counter Factor=2
 Linking=Global
-Plugin Note=[video] texture [Audio] (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
@@ -8800,10 +8887,9 @@ Status=Compatible
 [665FC793-6934A73B-C:44]
 Name=Turok - Dinosaur Hunter (G) (V1.1)-(V1.2)
 CPU Type=Recompiler
-Core Note=(see GameFAQ)
+Core Note=
 Counter Factor=1
 Linking=Global
-Plugin Note=[video] texture [Audio] (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Compatible
@@ -8811,10 +8897,9 @@ Status=Compatible
 [2F70F10D-5C4187FF-C:45]
 Name=Turok - Dinosaur Hunter (U) (V1.0)
 CPU Type=Recompiler
-Core Note=(see GameFAQ)
+Core Note=
 Counter Factor=2
 Linking=Global
-Plugin Note=[video] texture [Audio] (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
@@ -8822,10 +8907,9 @@ Status=Compatible
 [2F700DCD-176CC5C9-C:45]
 Name=Turok - Dinosaur Hunter (U) (V1.1)-(V1.2)
 CPU Type=Recompiler
-Core Note=(see GameFAQ)
+Core Note=
 Counter Factor=2
 Linking=Global
-Plugin Note=[video] texture [Audio] (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
@@ -9696,11 +9780,13 @@ Use Large Buffer
 [2D21C57B-8FE4C58C-C:50]
 Name=Worms - Armageddon (E) (M6)
 CPU Type=Recompiler
+Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
 Counter Factor=2
 Linking=On
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
+//Cheat1=8001DD91 0000 //This fixes the PAL on NTSC system Region Lockout
 
 [13E959A0-0E93CAB0-C:45]
 Name=Worms - Armageddon (U) (M3)
@@ -9790,6 +9876,8 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Change Memory
 Status=Compatible
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=80106888 0014 //This fixes the PAL on NTSC system Region Lockout
 
 [4E4B0640-1B49BCFB-C:45]
 Name=WWF No Mercy (U) (V1.0)
@@ -9847,6 +9935,8 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Compatible
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=8003C5CC 0014 //This fixes the PAL on NTSC system Region Lockout
 
 [0553AE9D-EAD8E0C1-C:45]
 Name=Xena Warrior Princess - Talisman of Fate (U)
@@ -9857,6 +9947,8 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Compatible
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
+//Cheat1=8103C3E0 1400 //This fixes the NTSC on PAL system Region Lockout
 
 //
 //-------------------------  Y  --------------------------
@@ -13149,6 +13241,7 @@ Save Type=First Save Type
 Self-modifying code Method=Protected Memory
 Status=Unsupported
 
+
 [BADDF714-A1FF1B80-C:45]
 Name=Bomberman - Arcade Edition (J) (T-Eng)
 CPU Type=Recompiler
@@ -13323,8 +13416,10 @@ CPU Type=Recompiler
 Cheat0=8106137C 2400 //By Pass Game Note Creation Game Fix (8103C77C For ROM)
 Core Note=No Save Support
 Counter Factor=2
+Disable Reg Cache
 ExpansionPak
 Linking=Global
+Plugin Note=Use GlideN64
 Resolution Height=240
 Resolution Width=320
 Save Type=First Save Type
@@ -13338,6 +13433,7 @@ Core Note=No Save Support
 Counter Factor=2
 ExpansionPak
 Linking=Global
+Plugin Note=Use GlideN64
 Resolution Height=240
 Resolution Width=320
 Save Type=First Save Type
@@ -13351,6 +13447,7 @@ Core Note=Game incomplete
 Counter Factor=2
 ExpansionPak
 Linking=Global
+Plugin Note=Use GlideN64
 Resolution Height=240
 Resolution Width=320
 Save Type=First Save Type
@@ -13667,6 +13764,8 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
 Status=Region issue (c)
+//Cheat0=80000303 0001 // This boots in NTSC Mode on the RDRAM
+//Cheat1=8107F03C 2400 //This fixes the PAL on NTSC system Region Lockout
 
 [2655BB70-667D9925-C:45]
 Name=O.D.T (Or Die Trying) (U) (M3) (Unreleased Final)
@@ -13677,6 +13776,8 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
 Status=Compatible
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
+//Cheat1=8107F02C 2400 //This fixes the NTSC on PAL system Region Lockout
 
 [0ADAECA7-B17F9795-C:45]
 Name=Ogre Battle 64 - Person of Lordly Caliber (U) (V1.1)
@@ -13695,10 +13796,9 @@ Core Note=high system requirement
 Counter Factor=2
 ExpansionPak
 Linking=Off
-Plugin Note=[video] errors:various (see GameFAQ)
 Save Type=16kbit Eeprom
 Self-modifying code Method=Protected Memory
-Status=Compatible
+Status=Use GLideN64 Video
 Use Large Buffer
 
 [E0044E9E-CD659D0D-C:4A]
@@ -13946,6 +14046,8 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Default
 Status=Compatible
+//Cheat0=80000303 0000 // This boots in PAL Mode on the RDRAM
+//Cheat1=8004E4D9 0000//This fixes the NTSC on PAL system Region Lockout
 
 [D55891EB-2BEFD9C8-C:00]
 Name=The MGC 2011 DEMO
@@ -14212,6 +14314,7 @@ Status=Compatible
 [AF7C97CF-24755D18-C:00]
 Name=Hi Pai Paradise [Aleck64]
 CPU Type=Recompiler
+Core Note=Hmmmm
 Counter Factor=1
 ExpansionPak
 Linking=Global
@@ -14585,7 +14688,7 @@ Status=Issues (64DD)
 
 [7D1FA66C-075977A2-C:AA]
 Name=Conker's Bad Fur Day (U) (Debug Version)
-CPU Type=Interpreter
+CPU Type=Recompiler
 Core Note=unknown country, failed to open mempak
 Counter Factor=2
 Linking=Global
@@ -14663,7 +14766,7 @@ Linking=Off
 Plugin Note=[video] errors:various (see GameFAQ)
 Save Type=16kbit Eeprom
 Self-modifying code Method=Protected Memory
-Status=Compatible
+Status=Hack
 Use Large Buffer
 
 [70065A02-0CA063AB-C:45]
@@ -14676,7 +14779,7 @@ Linking=Off
 Plugin Note=[video] errors:various (see GameFAQ)
 Save Type=First Save Type
 Self-modifying code Method=Protected Memory
-Status=Compatible
+Status=Hack
 Use Large Buffer
 
 [B2242748-FFBD61DA-C:45]
@@ -14698,7 +14801,7 @@ ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Default
-Status=Compatible
+Status=Hack
 
 [8CDD7051-8FE39E38-C:45]
 Name=Legend of Zelda - The Missing Link (Hack)
@@ -14708,13 +14811,13 @@ ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Default
-Status=Compatible
+Status=Hack
 
 [3EC36C75-F03048F1-C:F9]
 Name=Perfect Dark (U) (Debug Version)
 CPU Type=Recompiler
 Core Note=failed to open Eeprom error
-Counter Factor=2
+Counter Factor=1
 ExpansionPak
 Linking=Global
 Save Type=16kbit Eeprom
@@ -14766,7 +14869,7 @@ ExpansionPak
 Linking=Off
 Plugin Note=[video] (see GameFAQ)
 Save Type=First Save Type
-Self-modifying code Method=Change Memory
+Self-modifying code Method=Check Memory & cache
 Status=Compatible
 
 [EBDCEEF7-E9B171B5-C:45]
@@ -14801,7 +14904,7 @@ ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Default
-Status=Compatible
+Status=Hack
 
 [FACADCD2-C22E9DD0-C:45]
 Name=Super Mario 64 - Junuary Project (U) [V3.4.14] (Hack)
@@ -14811,7 +14914,7 @@ ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
-Status=Use GLideN64 Video
+Status=Hack
 
 [FF95988A-548A491D-C:45]
 Name=Super Mario 64 - Kirby Edition (v1.1) (U)
@@ -14857,7 +14960,7 @@ Plugin Note=[video] missing:dissolve effect (see GameFAQ)
 SP Hack
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=Hack
 
 [7BFD81D7-1AD5F4B9-C:4A]
 Name=SM64 - Reduced Lag (J) (Hack) v1
@@ -14869,7 +14972,7 @@ Plugin Note=[video] missing:dissolve effect (see GameFAQ)
 SP Hack
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=Hack
 
 [041ACAB1-C239679B-C:45]
 Name=SM64 - Reduced Lag (U) (Hack) v1
@@ -14881,7 +14984,7 @@ Plugin Note=[video] missing:dissolve effect (see GameFAQ)
 SP Hack
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=Hack
 
 [3114B9B3-05DCE9CA-C:4A]
 Name=SM64 - Shindou Improvement (Hack) v1
@@ -14893,7 +14996,7 @@ Plugin Note=[video] missing:dissolve effect (see GameFAQ)
 SP Hack
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=Hack
 
 [7301E2C3-BE9383E5-C:45]
 Name=SM and the Marvel Adventure (Hack)
@@ -14905,8 +15008,7 @@ Linking=Global
 SP Hack
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
-
+Status=Hack
 
 [80AA9870-0BEF5B37-C:45]
 Name=SUPER LUIGI 64 (U) v2.0 (Hack)
@@ -14918,7 +15020,7 @@ Plugin Note=[video] missing:dissolve effect (see GameFAQ)
 SP Hack
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Use GLideN64 Video
+Status=Hack
 
 [D0EEB49E-22A3C5CC-C:45]
 Name=SM64 Twisted Adventures (U) 1.0 (Hack)
@@ -14930,7 +15032,7 @@ Plugin Note=[video] missing:dissolve effect (see GameFAQ)
 SP Hack
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=Hack
 
 [5AE2B156-C43A321A-C:45]
 Name=SM64 Twisted Adventures (U) 2.0 (Hack)
@@ -14942,7 +15044,7 @@ Plugin Note=[video] missing:dissolve effect (see GameFAQ)
 SP Hack
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=Hack
 
 [2DBBF3CF-C685C65F-C:45]
 Name=SM64 Star Road (U) (Hack)
@@ -14953,7 +15055,7 @@ ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
-Status=Compatible
+Status=Hack
 
 [EC0E7243-9814B50A-C:45]
 Name=SUPER MARIO 64 (U) - Smoke Fix (Hack) v2
@@ -14965,7 +15067,7 @@ Plugin Note=[video] missing:dissolve effect (see GameFAQ)
 SP Hack
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=Hack
 
 [D9042FBB-FCFF997C-C:46]
 Name=Telefoot Soccer 2000 (F)
@@ -14990,7 +15092,7 @@ Linking=Global
 Plugin Note=[video] framebuffer  (Use 3rd party plugin for perfection) (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=Hack
 
 [65825A56-CC1B70D0-C:45]
 Name=The Legend of Zelda - Ocarina of Time (USA) OOT Redux Romhack
@@ -15003,7 +15105,7 @@ Linking=Off
 Save Type=First Save Type
 Self-modifying code 
 Self-modifying code Method=Default
-Status=Compatible
+Status=Hack
 
 [F3FA4EC4-A3369766-C:45]
 Name=The Legend of Zelda - Ocarina of Time (USA) Master Quest Redux Romhack
@@ -15016,7 +15118,7 @@ Linking=Off
 Save Type=First Save Type
 Self-modifying code 
 Self-modifying code Method=Default
-Status=Compatible
+Status=Hack
 
 [5D40ED2C-10D6ABCF-C:00]
 Name=Viewpoint2064-Prototype
@@ -15025,7 +15127,7 @@ Counter Factor=Default
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
-Status=Compatible
+Status=ProtoType
 
 //
 //-------------------- iQue ---------------
@@ -15035,11 +15137,11 @@ Status=Compatible
 Name=Animal Crossing (CHN) (iQue)
 CPU Type=Recompiler
 Core Note=Boots and hangs?
-Counter Factor=1
+Counter Factor=2
 Disable Reg Cache
 Linking=Off
-Save Type=FlashRam
-Self-modifying code Method=Default
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
 Status=Unsupported
 
 [A78C688A-FE16A636-C:43]
@@ -15049,6 +15151,16 @@ Counter Factor=2
 Linking=Off
 Save Type=FlashRam
 Self-modifying code Method=Check Memory Advance
+Status=Compatible
+
+[6C77A104-B47FCA52-C:43]
+Name=Animal Crossing (CHN) (iQue) (GameFix) (NTSC-PAL)[6103]
+CPU Type=Recompiler
+Counter Factor=1
+Disable Reg Cache
+Linking=Off
+Save Type=First Save Type
+Self-modifying code Method=Default
 Status=GlideN64 & RSP Emulation
 
 [3EA79920-2FA5A328-C:00]
@@ -15060,7 +15172,7 @@ ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Issues (core)
+Status=iQue-No-Save
 
 [B6BBEE96-61A68F52-C:43]
 Name=Custom Robo (CHN) [SaveFix]
@@ -15074,7 +15186,7 @@ Status=Compatible
 
 [EF62A343-11E41E37-C:00]
 Name=Dr. Mario 64 (CHN) (iQue)
-CPU Type=Interpreter
+CPU Type=Recompiler
 Core Note=No native save support
 Counter Factor=2
 Disable Reg Cache
@@ -15084,11 +15196,11 @@ Linking=Global
 Plugin Note=Use GlideN64 (Jabo Errors)
 Save Type=First Save Type
 Self-modifying code Method=Cache
-Status=Issues (core)
+Status=iQue-No-Save
 
 [A94DA89B-30EDCFE9-C:43]
 Name=Dr. Mario 64 (CHN) (iQue) [SaveFix]
-CPU Type=Interpreter
+CPU Type=Recompiler
 Core Note=No native save support
 Counter Factor=2
 Disable Reg Cache
@@ -15098,7 +15210,7 @@ Linking=Global
 Plugin Note=Use GlideN64 (Jabo Errors)
 Save Type=First Save Type
 Self-modifying code Method=Cache
-Status=Issues (core)
+Status=Recompiler only
 
 [EBB201AE-834EDE73-C:00]
 Name=Excitebike 64 (CHN)
@@ -15112,7 +15224,7 @@ ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
-Status=Issues (core)
+Status=iQue-No-Save
 WaitMult=50000
 
 [0F2CF814-145BD26D-C:43]
@@ -15127,19 +15239,19 @@ ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Default
-Status=Issues (core)
+Status=Compatible
 WaitMult=50000
 
 [1E52CA5B-CB213443-C:00]
 Name=F-Zero X (CHN)
 CPU Type=Recompiler
-Core Note=No native save support
 Counter Factor=2
 Linking=Off
 //Plugin Note=RSP Emulation Plugin
 Save Type=First Save Type
 Self-modifying code Method=Change Memory
-Status=Issues (core)
+Status=iQue-No-Save
+Core Note=No native save support
 ExpansionPak
 
 [3DB79532-CAB986D5-C:43]
@@ -15155,12 +15267,13 @@ Status=Compatible
 [187D2A75-372D1426-C:00]
 Name=iQue Club (CHN) (v3) (iQue)
 CPU Type=Interpreter
+Core Note=No native save support
 Counter Factor=Default
 ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Default
-Status=Unknown
+Status=Unsupported
 
 [8B0E9A08-B9A9B85A-C:00]
 Name=Mario Kart 64 (CHN)
@@ -15172,7 +15285,7 @@ ExpansionPak
 Linking=On
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=iQue-No-Save
 
 [F1B77784-FA24A650-C:00]
 Name=Mario Kart 64 (CHN) (v5) (iQue)
@@ -15185,7 +15298,7 @@ ExpansionPak
 Linking=Off
 Save Type=First Save Type
 Self-modifying code Method=Cache
-Status=Interpreter only
+Status=iQue-No-Save
 
 [0A69DC75-D134FF02-C:43]
 Name=Mario Kart 64 (CHN) [SaveFix]
@@ -15287,8 +15400,18 @@ ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
-Status=Issues (core)
+Status=iQue-No-Save
 WaitMult=500
+
+[AAA7D336-0428D610-C:00]
+Name=Super Mario 64 - Shindou (iQue) [4ksavefix]
+CPU Type=Recompiler
+Counter Factor=2
+Linking=Global
+Plugin Note=[video] missing:dissolve effect (see GameFAQ)
+Save Type=4kbit Eeprom
+Self-modifying code Method=Cache
+Status=Compatible
 
 [F026CCEB-E9B0E4AF-C:00]
 Name=Super Smash Bros. (CHN)
@@ -15327,7 +15450,7 @@ ExpansionPak
 Linking=On
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=iQue-No-Save
 //WaitMult=5000
 
 [B1E1E07B-051269DD-C:45]
@@ -15343,7 +15466,7 @@ Linking=Off
 Plugin Note=GFX Subscreen/Inventory JaboD3D
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Interpreter only
+Status=iQue-No-Save
 //WaitMult=5000
 
 [3D81FB3E-BD843E34-C:00]
@@ -15358,7 +15481,7 @@ ExpansionPak
 Linking=On
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=iQue-No-Save
 //DlistWait=2
 
 [059B1E1C-EBE44F04-C:43]
@@ -15397,6 +15520,18 @@ Status=Compatible
 ExpansionPak
 //WaitMult=5000
 
+[6F4DF892-D3FFBD5B-C:43]
+Name=The Legend of Zelda - Majora's Mask (CHN) (iQue)
+CPU Type=Recompiler
+Core Note=No native save support
+Counter Factor=2
+Disable TLB
+ExpansionPak
+Linking=Off
+Plugin Note=[video] errors:day_transistion (see GameFAQ)
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Compatible
 
 [E4688B68-08E1973A-C:00]
 Name=Wave Race 64 (CHN)
@@ -15413,6 +15548,32 @@ Self-modifying code Method=Check Memory & cache
 Status=Issues (core)
 WaitMult=500
 
+[49552381-CD856CE8-C:43]
+Name=Wave Race 64 - Shindou (iQue) [4ksavefix]
+CPU Type=Recompiler
+Counter Factor=2
+Disable Reg Cache
+Disable TLB
+DlistWait=1
+Linking=Global
+Save Type=4kbit Eeprom
+Self-modifying code Method=Check Memory & cache
+Status=Compatible
+//WaitMult=500
+
+[8F5AA717-E4CA0FD9-C:43]
+Name=Wave Race 64 (CHN) (iQue) [4ksavefix]
+CPU Type=Recompiler
+Counter Factor=2
+Disable Reg Cache
+Disable TLB
+DlistWait=1
+Linking=Global
+Save Type=4kbit Eeprom
+Self-modifying code Method=Check Memory & cache
+Status=Compatible
+//WaitMult=500
+
 [CED13EDF-A3C5182C-C:00]
 Name=Yoshi's Story (CHN) (iQue)
 CPU Type=Recompiler
@@ -15422,7 +15583,7 @@ Counter Factor=2
 Linking=Global
 Save Type=16kbit Eeprom
 Self-modifying code Method=Check Memory & cache
-Status=Issues (core)
+Status=iQue-No-Save
 
 [8C04964A-80112706-C:43]
 Name=Yoshi's Story (CHN) [f1]
@@ -15445,7 +15606,6 @@ Linking=Global
 Save Type=16kbit Eeprom
 Self-modifying code Method=Check Memory & cache
 Status=Issues (core)
-
 
 
 //------ iQue Manuals ---------
@@ -15667,16 +15827,6 @@ Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
 Status=Use GLideN64 Video
 Use Large Buffer
-
-[6C77A104-B47FCA52-C:43]
-Name=Animal Crossing (CHN) (iQue) (GameFix) (NTSC-PAL)[6103]
-CPU Type=Recompiler
-Counter Factor=1
-Disable Reg Cache
-Linking=Off
-Save Type=First Save Type
-Self-modifying code Method=Default
-Status=GlideN64 & RSP Emulation
 
 [B5D4E47A-FFAB5DB0-C:50]
 Name=Army Men - Air Combat (E) [NTSC-PAL]
@@ -16099,6 +16249,7 @@ Plugin Note=[audio] (See Gamefaq)
 Save Type=FlashRam
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
+VI=1350
 
 [8D60D5D6-FA2C3730-C:50]
 Name=NFL Blitz - Special Edition (E) [NTSC-PAL]
@@ -16299,7 +16450,7 @@ Counter Factor=2
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
-Status=Compatible
+Status=Hack
 
 [6D1A2C2E-F7928F7E-C:50]
 Name=The Legend Of Banjo Kazooie - The Jiggies Of Time (E) [NTSC-PAL] (Hack)
@@ -16311,7 +16462,7 @@ Linking=Global
 Plugin Note=[video] framebuffer  (Use 3rd party plugin (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=Hack
 
 [6D1A2C2E-F7928F7E-C:55]
 Name=The Legend Of Banjo Kazooie - The Jiggies Of Time (A) [NTSC-PAL] (Hack)
@@ -16324,21 +16475,16 @@ Linking=Global
 Plugin Note=[video] framebuffer  (Use 3rd party plugin for perfection) (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=Hack
 
 [AE0E932E-38C98087-C:45]
 Name=The Legend of Zelda - Master of Time (PAL60) (Hack)
-CPU Type=Default
-Core Note=(see GameFAQ)
-Counter Factor=2
-Disable TLB
-Emulate AI
-ExpansionPak
-Linking=Off
+CPU Type=Recompiler
+Counter Factor=1
+Linking=Global
 Save Type=First Save Type
-Self-modifying code 
-Self-modifying code Method=Default
-Status=Compatible
+Self-modifying code Method=Check Memory & cache
+Status=Hack
 
 [A5F56EF5-E779DCDC-C:50]
 Name=Tony Hawk's Pro Skater 3 (E) [NTSC-PAL]
@@ -16396,6 +16542,138 @@ Status=Compatible
 
 [E1B71595-95B3BA0F-C:00]
 Name=Telocation: Gemini 64
+CPU Type=Interpreter
+Counter Factor=2
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory & cache
+Status=Interpreter only
+
+[E9675D3A-84A5F92E-C:00]
+Name=Kumi-Daiko Beatoff 64
+CPU Type=Recompiler
+//Cheat0=800274A8 0024
+Core Note=Demo
+Counter Factor=2
+Disable Reg Cache
+Disable TLB
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory & cache
+Status=Prototype
+
+[7AABCF07-73F39DA2-C:20]
+Name=Dead Ritual (Home Brew)
+CPU Type=Recompiler
+Counter Factor=1
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+
+[2FCDBA91-1140401F-C:00]
+Name=Fanger's Lightmare! (PD)
+CPU Type=Recompiler
+Counter Factor=Default
+Linking=On
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Compatible
+
+[462D612A-4862147B-C:00]
+Name=Flappy Bird for N64 (PD)
+CPU Type=Recompiler
+Counter Factor=2
+Linking=On
+Plugin Note=Use HLE Legacy Plugin 1.4
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Issues (plugin)
+
+[2A21BB77-9D240CED-C:00]
+Name=Krom's Lossless Bad Apple for Nintendo 64
+CPU Type=Interpreter
+Counter Factor=1
+Disable Reg Cache
+Disable TLB
+Linking=On
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Compatible
+
+[2A21BB77-9D240CED-C:50]
+Name=Krom's Lossless Bad Apple for Nintendo 64 (EUR)
+CPU Type=Interpreter
+Counter Factor=1
+Disable Reg Cache
+Disable TLB
+Linking=On
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Compatible
+
+[176EFEA7-A704929E-C:20]
+Name=Mission Lost Control (PD by NAN)
+CPU Type=Interpreter
+Cheat0=80032648 0024 //Game Fix (Interpreter)
+Counter Factor=2
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Compatible
+
+[A89B78F6-3F5B3390-C:20]
+Name=portal_pak_000 (patched) 0.12.0.z64
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=On
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Compatible
+
+[01DF51BC-EBA4E907-C:00]
+Name=SuperSnooperSpookers (PD)
+CPU Type=Recompiler
+Counter Factor=1
+Disable TLB
+Linking=On
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Compatible
+
+[71643B6C-ED18290A-C:00]
+Name=The Ultimate Doom (HomeBrew)
+CPU Type=Interpreter
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Plugin Note=[video] (see GameFAQ)
+Save Type=First Save Type
+Self-modifying code Method=Cache
+Status=Compatible
+
+[470112E9-53C66CB4-C:41]
+Name=XENO CRISIS 64 (JU)
+CPU Type=Recompiler
+Counter Factor=2
+Disable Reg Cache
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Use GLideN64 HLE Video
+
+[470112E9-53C66CB4-C:50]
+Name=XENO CRISIS 64 (E)
+CPU Type=Recompiler
+Counter Factor=2
+Disable Reg Cache
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Use GLideN64 HLE Video
+
+[E1B71595-95B3BA0F-C:00]
+Name=Telocation: Gemini 64
 CPU Type=Recompiler
 Counter Factor=2
 Linking=On
@@ -16415,8 +16693,6 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Prototype
-
-//------ Homebrew --------
 
 [7AABCF07-73F39DA2-C:20]
 Name=Dead Ritual (Home Brew)
@@ -16564,7 +16840,7 @@ ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Default
-Status=Compatible
+Status=Recompiler only
 
 [EC0214A9-D430D27F-C:47]
 Name=Excitebike 64 (Gateway)
@@ -16862,6 +17138,85 @@ Save Type=16kbit Eeprom
 Self-modifying code Method=Check Memory Advance
 Status=Compatible
 
+//-------- NES2NEON64 --------
+
+[CC255C6A-7FAA7C38-C:41]
+Name=NES 2 NEON64 Game JAPAN & USA
+CPU Type=Recompiler
+Core Note=Shared CRC
+Counter Factor=Default
+Disable Reg Cache
+ExpansionPak
+Linking=On
+RDRAM Size=Default
+Save Type=First Save Type
+Self-modifying code Method=Default
+Status=NES-2-NEAON64
+
+[CC255C6A-7FAA7C38-C:45]
+Name=NES 2 NEON64 Game USA
+CPU Type=Recompiler
+Core Note=Shared CRC
+Counter Factor=Default
+Disable Reg Cache
+ExpansionPak
+Linking=On
+RDRAM Size=Default
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=NES-2-NEAON64
+
+[CC255C6A-7FAA7C38-C:50]
+Name=NES 2 NEON64 Game EUR
+CPU Type=Recompiler
+Core Note=Shared CRC
+Counter Factor=Default
+Disable Reg Cache
+ExpansionPak
+Linking=On
+RDRAM Size=Default
+Save Type=First Save Type
+Self-modifying code Method=Default
+Status=NES-2-NEAON64
+
+//
+//-------- SNES2N64 --------
+
+[7F92722F-FD3D0B0F-C:00]
+Name=SNES2N64
+CPU Type=Recompiler
+Counter Factor=2
+Disable Reg Cache
+Emulate AI
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=SNES-2-N64
+
+//
+//-------- Vulnerability Checks --------
+//
+
+[A061C871-B3EDDA14-C:45]
+Name=Victory Download (U)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Cache
+
+[BD5F9470-3E81E3CE-C:45]
+Name=MYSTERY OF PS (U)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Cache
+
+
 //------ New Additions --------
 
 [77233244-E374BB0F-C:50]
@@ -16884,7 +17239,6 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
 Status=Issues (Prototype)
-VI=1400
 
 [12678830-4E5AE439-C:38]
 Name=GameBooster 64 (V1.1_NTSC) (Unl)
@@ -16964,32 +17318,6 @@ Save Type=First Save Type
 Self-modifying code Method=Default
 Status=Unsupported
 
-[49552381-CD856CE8-C:43]
-Name=Wave Race 64 - Shindou (iQue) [4ksavefix]
-CPU Type=Recompiler
-Counter Factor=2
-Disable Reg Cache
-Disable TLB
-DlistWait=1
-Linking=Global
-Save Type=4kbit Eeprom
-Self-modifying code Method=Check Memory & cache
-Status=Compatible
-//WaitMult=500
-
-[8F5AA717-E4CA0FD9-C:43]
-Name=Wave Race 64 (CHN) (iQue) [4ksavefix]
-CPU Type=Recompiler
-Counter Factor=2
-Disable Reg Cache
-Disable TLB
-DlistWait=1
-Linking=Global
-Save Type=4kbit Eeprom
-Self-modifying code Method=Check Memory & cache
-Status=Compatible
-//WaitMult=500
-
 [6F72A924-EE8EA790-C:00]
 Name=Super Mario 64 - Shindou Pack Taiou Version (J) (T-Eng)
 CPU Type=Recompiler
@@ -16997,16 +17325,6 @@ Counter Factor=2
 Linking=Global
 Plugin Note=[video] missing:dissolve effect (see GameFAQ)
 Save Type=First Save Type
-Self-modifying code Method=Cache
-Status=Compatible
-
-[AAA7D336-0428D610-C:00]
-Name=Super Mario 64 - Shindou (iQue) [4ksavefix]
-CPU Type=Recompiler
-Counter Factor=2
-Linking=Global
-Plugin Note=[video] missing:dissolve effect (see GameFAQ)
-Save Type=4kbit Eeprom
 Self-modifying code Method=Cache
 Status=Compatible
 
@@ -17167,7 +17485,7 @@ Linking=Off
 Save Type=First Save Type
 Self-modifying code 
 Self-modifying code Method=Default
-Status=Compatible
+Status=Hack
 
 [E27F4A0D-3173AC9B-C:45]
 Name=LoZ Ocarina of Time (USA) (Hack) Nimpize Adventure v1.0
@@ -17180,7 +17498,7 @@ Linking=Off
 Save Type=First Save Type
 Self-modifying code 
 Self-modifying code Method=Default
-Status=Compatible
+Status=Hack
 
 [1E3E437F-5F1C663A-C:45]
 Name=LoZ Ocarina of Time (USA) (Hack) The Fate of Bombiwa v1.0.3
@@ -17193,10 +17511,11 @@ Linking=Off
 Save Type=First Save Type
 Self-modifying code 
 Self-modifying code Method=Default
-Status=Compatible
+Status=Hack
 
 [F099270C-B3639549-C:45]
-Name=LoZ Ocarina of Time (USA) (Hack) Master of Time v1.0
+Name=The Legend of Zelda - Master of Time (U) (V1.0) (Hack)
+CPU Type=Recompiler
 Core Note=(see GameFAQ)
 Counter Factor=2
 Disable TLB
@@ -17206,7 +17525,7 @@ Linking=Off
 Save Type=First Save Type
 Self-modifying code 
 Self-modifying code Method=Default
-Status=Compatible
+Status=Hack
 
 [698DF68E-821897D8-C:45]
 Name=The Legend of Zelda - Ocarina of Time - Gold Quest (U) (V1.0)
@@ -17454,34 +17773,31 @@ Linking=Off
 //Plugin Note=RSP Emulation Plugin
 Save Type=First Save Type
 Self-modifying code Method=Change Memory
-Status=Compatible
+Status=Hack
 
 [86F8D376-D720DCFA-C:45]
 Name=F-ZERO X - Climax by Philippe Brodier  (U) (V1.1) (Hack)
 CPU Type=Recompiler
 Counter Factor=2
 Linking=Off
-//Plugin Note=RSP Emulation Plugin
 Save Type=First Save Type
 Self-modifying code Method=Change Memory
-Status=Compatible
+Status=Hack
 
 [AF159408-B54C8B3D-C:45]
 Name=F-ZERO LXK by lucariokiddos (Hack)
 CPU Type=Recompiler
 Counter Factor=2
 Linking=Off
-//Plugin Note=RSP Emulation Plugin
 Save Type=First Save Type
 Self-modifying code Method=Change Memory
-Status=Compatible
+Status=Hack
 
 [9F4D17B2-C04673D1-C:45]
 Name=F-ZERO X - 10th Anniversary by Philippe Brodier (Hack
 CPU Type=Recompiler
 Counter Factor=2
 Linking=Off
-//Plugin Note=RSP Emulation Plugin
 Save Type=First Save Type
 Self-modifying code Method=Change Memory
 Status=Compatible
@@ -18288,7 +18604,7 @@ ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Change Memory
-Status=Compatible
+Status=Prototype
 
 [A7501E4F-28F539E5-C:45]
 Name=Road Rash 64 (USA) (Prototype) (2)
@@ -18310,7 +18626,6 @@ Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Compatible
 
-
 [904626B3-4A2E48D5-C:45]
 Name=Return To Yoshi's Island 64 (U) Demo (Hack)
 CPU Type=Recompiler
@@ -18319,31 +18634,7 @@ ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
-
-[D6824921-8779FEEF-C:00]
-Name=The Legend of Zelda - Majora's Mask (CHN)
-CPU Type=Recompiler
-Counter Factor=2
-Disable TLB
-ExpansionPak
-Linking=Off
-Plugin Note=[video] errors:day_transistion (see GameFAQ)
-Save Type=First Save Type
-Self-modifying code Method=Change Memory
-Status=Compatible
-
-[44806EB2-31B15E21-C:45]
-Name=n64-systemtest (U)
-CPU Type=Interpreter
-Counter Factor=Default
-Disable Reg Cache
-ExpansionPak
-Linking=On
-Save Type=First Save Type
-Self-modifying code Method=Check Memory Advance
-Status=Unsupported
-Use Large Buffer
+Status=Hack
 
 [AB7C9861-4DA44119-C:00]
 Name=GL Demo (PD)
@@ -18356,38 +18647,6 @@ Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
 Status=Uncertain
 
-[CE72E06C-82E0B2EC-C:00]
-Name=Spritemap (PD)
-CPU Type=Recompiler
-Counter Factor=2
-ExpansionPak
-Linking=On
-Save Type=First Save Type
-Self-modifying code Method=Check Memory Advance
-Status=Compatible
-
-[D06080CD-1F73F9FE-C:20]
-Name=Perfect Trainer 2003 (PD by NAN)
-CPU Type=Interpreter
-Core Note=Unhandled 4300i OpCode
-Counter Factor=2
-Linking=Global
-Save Type=First Save Type
-Self-modifying code Method=Protected Memory
-Status=Unsupported
-Use Large Buffer
-
-[7F6279D3-99E87C04-C:37]
-Name=EMS N64 Passport Plus V3.1
-CPU Type=Recompiler
-Core Note=Needs a Rom Inserted to boot
-Counter Factor=Default
-ExpansionPak
-Linking=Global
-Save Type=First Save Type
-Self-modifying code Method=Check Memory Advance
-Status=Only intro/part OK
-
 [F6136DC4-2ECEDCA1-C:45]
 Name=Captain Falcon 64 1.3 (U) (Hack)
 CPU Type=Recompiler
@@ -18397,36 +18656,37 @@ Linking=Global
 Plugin Note=[video] missing:dissolve effect (see GameFAQ)
 Save Type=First Save Type
 Self-modifying code Method=Cache
-Status=Compatible
+Status=Hack
 
 [DC493C8D-E033E6F2-C:45]
-Name=SM64 LAST IMPACT (U)
+Name=SM64 LAST IMPACT (U) (Hack)
 CPU Type=Recompiler
 Counter Factor=2
 ExpansionPak
 Linking=Global
 Plugin Note=[video] missing:dissolve effect (see GameFAQ)
 Save Type=First Save Type
-Self-modifying code Method=Cache
-Status=Compatible
+Self-modifying code Method=Change Memory
+Status=Hack
 
 [52FAC839-70B6B138-C:45]
-Name=Mario Kart 64 Deluxe BETA 0.8 (U)
+Name=Mario Kart 64 Deluxe BETA 0.8 (U) (Hack)
 CPU Type=Recompiler
 Counter Factor=2
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
-Status=Compatible
+Status=Hack
 
 [EA063BAB-461003E2-C:45]
-Name=SMASH BROTHERS 3D (U)
+Name=SMASH BROTHERS 3D (U) (Hack)
 CPU Type=Recompiler
 Counter Factor=2
 ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
+Status=Hack
 
 [57AF893E-884A377C-C:45]
 Name=Wave Race 64 (U) (Rev B) (Rumble Edition)
@@ -18465,18 +18725,6 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 
-[6F4DF892-D3FFBD5B-C:43]
-Name=The Legend of Zelda - Majora's Mask (CHN) (iQue)
-CPU Type=Recompiler
-Counter Factor=2
-Disable TLB
-ExpansionPak
-Linking=Off
-Plugin Note=[video] errors:day_transistion (see GameFAQ)
-Save Type=First Save Type
-Self-modifying code Method=Check Memory Advance
-Status=Compatible
-
 [9E4F76B4-011CFB03-C:45]
 Name=WinBack - Covert Operations (USA) (Prototype)
 CPU Type=Recompiler
@@ -18498,18 +18746,6 @@ ExpansionPak
 Linking=On
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-
-[C7C1E826-2297B78F-C:37]
-Name=n64-systemtest (Beta)
-CPU Type=Interpreter
-Counter Factor=Default
-Disable Reg Cache
-ExpansionPak
-Linking=Global
-Save Type=First Save Type
-Self-modifying code Method=Default
-Status=Unsupported
-Use Large Buffer
 
 [D3C08E78-57C7BB7E-C:45]
 Name=Shotgun Mario 64 (U) (Rom Hack)
@@ -18545,50 +18781,6 @@ Save Type=First Save Type
 Self-modifying code Method=Cache
 Status=Issues (plugin)
 
-[BC58A74A-9F855497-C:00]
-Name=Libdragon Test ROM (PD)
-CPU Type=Recompiler
-Counter Factor=Default
-Disable Reg Cache
-ExpansionPak
-Linking=Global
-Save Type=First Save Type
-Self-modifying code Method=Cache
-Use Large Buffer
-
-[318B3640-72EC843F-C:00]
-Name=testcart_reflash
-CPU Type=Interpreter
-Counter Factor=Default
-ExpansionPak
-Linking=Global
-Save Type=First Save Type
-Self-modifying code Method=Default
-Status=Compatible
-
-[CE54F86A-3D2E0607-C:00]
-Name=GL Demo (PD)
-CPU Type=Interpreter
-Counter Factor=Default
-ExpansionPak
-Linking=Global
-Save Type=First Save Type
-Self-modifying code Method=Default
-Status=Unsupported
-
-[BDFEF553-94A42EF9-C:00]
-Name=testcart_runtime_v2
-CPU Type=Interpreter
-Counter Factor=Default
-ExpansionPak
-Linking=Global
-Save Type=First Save Type
-Self-modifying code Method=Default
-Status=Compatible
-
-//
-//-------- Any entries below this point are for ROMs you have added yourself via the GUI [EOF] --------
-
 [93E973B4-D62B35A0-C:45]
 Name=Wario Land 64 (U) (Hack)
 CPU Type=Recompiler
@@ -18597,48 +18789,18 @@ ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
-[00000000-00000000-C:00]
-Name=OPUS Test (PD)
-CPU Type=Interpreter
-Counter Factor=1
-Disable Reg Cache
-Emulate AI
-ExpansionPak
-Linking=Global
-Save Type=First Save Type
-Self-modifying code Method=Check Memory Advance
-[9CB0CBA9-B51BE98F-C:00]
-Name=H264 (PD)
-CPU Type=Interpreter
-Counter Factor=2
-Disable Reg Cache
-Emulate AI
-ExpansionPak
-Linking=Global
-Save Type=First Save Type
-Self-modifying code Method=Check Memory Advance
-[51D69066-4B280A44-C:00]
-Name=H264 (PD)
-CPU Type=Interpreter
-Counter Factor=2
-Disable Reg Cache
-Emulate AI
-ExpansionPak
-Linking=Global
-Save Type=First Save Type
-Self-modifying code Method=Check Memory Advance
+Status=Hack
 
 [614DAD43-93171AD5-C:45]
 Name=Super Mario 64 - Peach's Fury (U) (v1.1) (Hack)
 CPU Type=Recompiler
 Counter Factor=2
 ExpansionPak
-Linking=Global
+Linking=On
 SP Hack
 Save Type=First Save Type
-Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Self-modifying code Method=Cache
+Status=Hack
 
 [13CD0830-3CCF65E9-C:45]
 Name=Super Mario 64 - Multiplayer Splitscreen (U) (Hack)
@@ -18649,7 +18811,7 @@ Linking=Global
 SP Hack
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=Hack
 
 [7EB5E238-0E7F7010-C:45]
 Name=Banjo Kazooie - Tooty Adventure (U) (v1.0.5) (Hack)
@@ -18662,8 +18824,7 @@ Linking=Global
 Plugin Note=[video] framebuffer  (Use 3rd party plugin for perfection) (See Gamefaq)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
-
+Status=Hack
 
 [88EC3675-59CE4583-C:45]
 Name=Super Mario 64 (U) (v.3.9) (Spanish-Trans) [Rumble-Edition]
@@ -18731,7 +18892,7 @@ Linking=Global
 Plugin Note=[video] (see GameFAQ)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
-Status=Compatible
+Status=Hack
 
 [C2029FEC-EC140915-C:45]
 Name=GoldenEye - The Janus Alternative (U) (Hack)
@@ -18743,7 +18904,7 @@ Linking=Off
 Plugin Note=[video] errors:various (see GameFAQ)
 Save Type=First Save Type
 Self-modifying code Method=Protected Memory
-Status=Compatible
+Status=Hack
 Use Large Buffer
 
 [CC861730-A5AD22C2-C:45]
@@ -18769,7 +18930,7 @@ Linking=Off
 Plugin Note=[video] errors:various (see GameFAQ)
 Save Type=First Save Type
 Self-modifying code Method=Check Memory Advance
-Status=Compatible
+Status=Hack
 Use Large Buffer
 
 [AD788469-B0FBA7D9-C:45]
@@ -18780,7 +18941,7 @@ ExpansionPak
 Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Cache
-Status=Compatible
+Status=Hack
 
 [EB04918B-40EC99DA-C:50]
 Name=Super Mario 64 - Star Road. (E) (v1.0) [NTSC-PAL] - (17 July 2023)
@@ -18849,4 +19010,361 @@ Linking=Global
 Save Type=First Save Type
 Self-modifying code Method=Check Memory & cache
 Status=Compatible
+
+[45229879-A46F22BC-C:45]
+Name=Mario Party 3 - StarStruck (U) (v1.0) (Hack)
+CPU Type=Recompiler
+Counter Factor=1
+ExpansionPak
+Linking=Global
+Plugin Note=[video] (see GameFAQ)
+Save Type=16kbit Eeprom
+Self-modifying code Method=Protected Memory
+Status=Hack
+
+[C1711384-22415038-C:45]
+Name=Paper Mario 64 - The Thousand Year Door (U) (V1,0) (Hack)
+CPU Type=Recompiler
+Counter Factor=1
+ExpansionPak
+Linking=Global
+Plugin Note=[video] (see GameFAQ)
+Save Type=First Save Type
+Self-modifying code Method=Check Memory & cache
+Status=Hack
+
+[B9730816-0285077B-C:45]
+Name=Super Mario 64 - Beyond the Cursed Mirror (U) (V1.3.1) (Hack)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory & cache
+Status=Hack
+
+[E0497CE4-5F747691-C:50]
+Name=F-ZERO X - Climax by Philippe Brodier  (E) (V1.1) [NTSC-PAL ](Hack)
+CPU Type=Recompiler
+Counter Factor=2
+Linking=Off
+//Plugin Note=RSP Emulation Plugin
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Hack
+ExpansionPak
+
+[12633AEB-D898CF33-C:50]
+Name=Super Mario 64 - Beyond the Cursed Mirror (E) (V1.3.1) [NTSC-PAL] (Hack)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory & cache
+Status=Hack
+
+[2EFFE979-023ADFF7-C:45]
+Name=Mario Kart 64 (Amped Up) (U) (v2.98) (Hack)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Cache
+Status=Hack
+
+[912F522C-C76743B5-C:50]
+Name=Mario Kart 64 (Amped Up) (E) (v2.98) [NTSC-PAL] (Hack)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Cache
+Status=Hack
+
+[0A738D62-8C765F34-C:45]
+Name=Super Mario 64 Land (U) (v1.0) (Hack)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Cache
+Status=Compatible
+
+[7FBF0DAA-CE2D7D1B-C:45]
+Name=Star Fox 64 - Survival (U) (V1.4) (Hack)
+CPU Type=Recompiler
+Core Note=(see GameFAQ)
+Counter Factor=2
+Disable TLB
+Emulate AI
+ExpansionPak
+Linking=Off
+Save Type=First Save Type
+Self-modifying code 
+Self-modifying code Method=Check Memory Advance
+Status=Hack
+
+[651B7232-D876AEB0-C:45]
+Name=Mario and Yoshua (U) (Hack)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Cache
+
+[FC30B872-FC0E7C2A-C:45]
+Name=THROUGH THE AGES (U)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Cache
+
+[BA681CA4-BAF6427C-C:45]
+Name=THROUGH THE AGES (U)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Hack
+
+[13F662CF-B13702C6-C:45]
+Name=Hat Kid 64 (U) (Hack)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Hack
+
+[5F9B2EA3-E70BD0A0-C:45]
+Name=Lego Mario 64 (U) (Hack)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Cache
+Status=Hack
+
+[23B24342-A4340E4D-C:45]
+Name=ONLY UP 64 (U) (Hack)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Cache
+Status=Hack
+
+[79EC8735-D64B35DE-C:45]
+Name=The Legend Of Zelda Sealed Palace Dialogue (U) (Hack) (French-Trans)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Off
+Plugin Note=[video] errors:day_transistion (see GameFAQ)
+Save Type=First Save Type
+Self-modifying code Method=Change Memory
+Status=Compatible
+
+[79EC8735-D64B35DE-C:50]
+Name=THE LEGEND OF ZELDA (E)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Off
+Plugin Note=[video] errors:day_transistion (see GameFAQ)
+Save Type=First Save Type
+Self-modifying code Method=Change Memory
+Status=Compatible
+
+[90F8ADAD-FCDFC196-C:45]
+Name=Dinosaur Planet (U) (Prototype) (02.25.2024)(Cosmetic Text)
+CPU Type=Recompiler
+Core Note=Prototype; incomplete
+Counter Factor=1
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Issues (Prototype)
+
+[4ABEADCF-BAC4E51F-C:45]
+Name=Dinosaur Planet (U) (Prototype) (02.25.2024)(CT) [6103]
+CPU Type=Recompiler
+Core Note=Prototype; incomplete
+Counter Factor=1
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Issues (Prototype)
+
+[11B2358B-B773BE57-C:50]
+Name=Dinosaur Planet (E) (Prototype) (02.25.2024)(CT) [6103] [NTSC-PAL]
+CPU Type=Recompiler
+Core Note=Prototype; incomplete
+Counter Factor=1
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=Issues (Prototype)
+
+[05B0BBA9-8F6E3D9D-C:45]
+Name=SMASH REMIX (U) 1.5.1
+CPU Type=Recompiler
+Counter Factor=2
+Disable Reg Cache
+Disable TLB
+ExpansionPak
+Linking=Off
+Plugin Note=[video] (see GameFAQ)
+Save Type=First Save Type
+Self-modifying code Method=Check Memory & cache
+Status=Compatible
+
+[E4F73A03-BEA9E284-C:50]
+Name=SMASH REMIX (E) 1.5.1
+CPU Type=Recompiler
+Counter Factor=2
+Disable Reg Cache
+Disable TLB
+ExpansionPak
+Linking=Off
+Plugin Note=[video] (see GameFAQ)
+Save Type=First Save Type
+Self-modifying code Method=Check Memory & cache
+Status=Compatible
+
+[321A53A7-FF6C1805-C:4A]
+Name=Super Mario 64 Internal Plexus (B3313) (J) (V1.0) (Hack)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Plugin Note=[video] missing:dissolve effect (see GameFAQ)
+Save Type=First Save Type
+Self-modifying code Method=Cache
+Status=Compatible
+
+[9CE02E20-9449F832-C:4A]
+Name=Super Speed Race 64 (J) [Retroben f2]
+CPU Type=Recompiler
+Counter Factor=2
+Disable TLB
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Cache
+Status=Compatible
+
+[41B25DF8-B7A49DD9-C:45]
+Name=Automobili Lamborghini (U) [Retroben f2]
+CPU Type=Recompiler
+Counter Factor=2
+Disable TLB
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Cache
+Status=Compatible
+
+[FC7797BD-870C5658-C:50]
+Name=Automobili Lamborghini (E) [Retroben f2]
+CPU Type=Recompiler
+Counter Factor=2
+Disable TLB
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Cache
+Status=Compatible
+
+[3E9385E0-7BDD1C1E-C:00]
+Name=Riqa1 (PD)
+CPU Type=Recompiler
+Counter Factor=2
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+
+[55CCFED4-2AE928F0-C:45]
+Name=Riqa (U) Final 1 (Prototype) [F1]
+CPU Type=Recompiler
+Counter Factor=1
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+
+//
+//-------- NES2NEON64 --------
+
+[CC255C6A-7FAA7C38-C:41]
+Name=NES 2 NEON64 Game JAPAN & USA
+CPU Type=Recompiler
+Core Note=Shared CRC
+Counter Factor=Default
+Disable Reg Cache
+ExpansionPak
+Linking=On
+RDRAM Size=Default
+Save Type=First Save Type
+Self-modifying code Method=Default
+Status=NES-2-NEAON64
+
+[CC255C6A-7FAA7C38-C:45]
+Name=NES 2 NEON64 Game USA
+CPU Type=Recompiler
+Core Note=Shared CRC
+Counter Factor=Default
+Disable Reg Cache
+ExpansionPak
+Linking=On
+RDRAM Size=Default
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=NES-2-NEAON64
+
+[CC255C6A-7FAA7C38-C:50]
+Name=NES 2 NEON64 Game EUR
+CPU Type=Recompiler
+Core Note=Shared CRC
+Counter Factor=Default
+Disable Reg Cache
+ExpansionPak
+Linking=On
+RDRAM Size=Default
+Save Type=First Save Type
+Self-modifying code Method=Default
+Status=NES-2-NEAON64
+
+//
+//-------- SNES2N64 --------
+
+[7F92722F-FD3D0B0F-C:00]
+Name=SNES2N64
+CPU Type=Recompiler
+Counter Factor=2
+Disable Reg Cache
+Emulate AI
+ExpansionPak
+Linking=Global
+Save Type=First Save Type
+Self-modifying code Method=Check Memory Advance
+Status=SNES-2-N64
+
+
+//
+//-------- Any entries below this point are for ROMs you have added yourself via the GUI [EOF] --------
+
 

@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------------
 // MiB64 Official RDI (Rom Database Information) By MiB64Team
-// Based On Our Original Project64 Official RDX by Smiff/Gent/Project64/Legacy/MiB64Team
+// Based On Our Original Project64 Legacy Official RDI by Gent/MiB64 team
 // ----------------------------------------------------------------------------
 // 
 // This file is only to be used with MiB64 1.0 & higher
@@ -15,12 +15,11 @@
 // Note that MiB64 automatically prefixes "http://"
 
 Author=MiB64Team
-Date=26th September 2023 Version: 1
+Date=1st May 2024 Version: 1
 Homepage=www.mib64.net
 Version=MiB64 1.0
 
 //-------------------------  0-9  --------------------------
-
 
 [033F4C13-319EE7A7-C:45]
 Name=007 - The World is Not Enough (U)
@@ -876,7 +875,7 @@ ReleaseDate=1999/02/05
 Name=Bokujo Monogatari 2 (J) (V1.1)
 Developer=Victor
 ForceFeedback=No
-GameInformation=
+GameInformation=harvest-moon-64-bokuj-monogatari-2
 Genre=Simulation
 Players=1
 ReleaseDate=1999/02/05
@@ -885,7 +884,7 @@ ReleaseDate=1999/02/05
 Name=Bokujo Monogatari 2 (J) (V1.2)
 Developer=Victor
 ForceFeedback=No
-GameInformation=
+GameInformation=harvest-moon-64-bokuj-monogatari-2
 Genre=Simulation
 Players=1
 ReleaseDate=
@@ -912,7 +911,7 @@ ReleaseDate=2001/12/20
 Name=Bomberman 64 - The Second Attack! (U) [!]
 Developer=Hudson Soft
 ForceFeedback=Yes
-GameInformation=
+GameInformation=bomberman-64-the-second-attack/
 Genre=Action
 Players=4
 ReleaseDate=2000/05/29
@@ -1011,7 +1010,7 @@ ReleaseDate=1998/09/30
 Name=Bust-A-Move 2 - Arcade Edition (E) [!]
 Developer=Probe Entertainment
 ForceFeedback=No
-GameInformation=
+GameInformation=bust-a-move-2-arcade-edition
 Genre=Puzzle
 Players=2
 ReleaseDate=1998/05/20
@@ -1204,7 +1203,7 @@ Developer=Japan System Supply
 ForceFeedback=Yes
 GameInformation=chameleon-twist-2
 Genre=Platform
-Players=1
+Players=
 ReleaseDate=1999/04/14
 
 [FB3C48D0-8D28F69F-C:50]
@@ -1600,7 +1599,7 @@ ReleaseDate=1999/07/30
 Name=Densha de Go! 64 (J) [f1] (PAL).
 Developer=Taito
 ForceFeedback=No
-GameInformation=
+GameInformation=densha-de-go-64
 Genre=Simulation
 Players=1
 ReleaseDate=1999/07/30
@@ -2400,7 +2399,7 @@ ReleaseDate=2004/02/25
 Name=F-Zero X Expansion Kit [64DD] [English]
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=
+GameInformation=f-zero-x
 Genre=Racing-Utility
 Players=4
 ReleaseDate=2000/04/21
@@ -2553,7 +2552,7 @@ ReleaseDate=1998/02/11
 Name=Fighting Force 64 (E) [!]
 Developer=Core
 ForceFeedback=Yes
-GameInformation=
+GameInformation=fighting-force-64
 Genre=Action/Fighting 
 Players=2
 ReleaseDate=1999/12/??
@@ -3051,7 +3050,7 @@ ReleaseDate=1997/05/31
 Name=Hey You, Pikachu! (U) [!]
 Developer=Ambrella (Marigul) / Marigul Management, Inc.
 ForceFeedback=Yes
-GameInformation=
+GameInformation=hey-you-pikachu-pikach-genki-dech
 Genre=Simulation
 Players=1
 ReleaseDate=2000/11/06
@@ -3065,7 +3064,7 @@ Genre=Action
 Players=2
 ReleaseDate=1998/12/18
 
-[AF7C97CF-24755D18-C:0]
+[AF7C97CF-24755D18-C:00]
 Name=Hi Pai Paradise [Aleck64]
 Developer=Aruze Corp
 ForceFeedback=Yes
@@ -3096,7 +3095,7 @@ ReleaseDate=1998/09/30
 Name=Holy Magic Century (F)
 Developer=Konami
 ForceFeedback=No
-GameInformation=
+GameInformation=eltale-monsters-quest-64-holy-magic-century
 Genre=RPG
 Players=1
 ReleaseDate=1998/06/11
@@ -3150,7 +3149,7 @@ ReleaseDate=2002/??/??
 Name=Hot Wheels Turbo Racing (E) [!]
 Developer=Stormfront Studios
 ForceFeedback=Yes
-GameInformation=
+GameInformation=hot-wheels-turbo-racing
 Genre=Racing-Toy
 Players=2
 ReleaseDate=1999/09/22
@@ -3159,7 +3158,7 @@ ReleaseDate=1999/09/22
 Name=Hot Wheels Turbo Racing (U) [!]
 Developer=Stormfront Studios
 ForceFeedback=Yes
-GameInformation=
+GameInformation=hot-wheels-turbo-racing
 Genre=Racing-Toy
 Players=2
 ReleaseDate=1999/09/22
@@ -3532,7 +3531,7 @@ ReleaseDate=2000/02/28
 Name=Jeremy McGrath Supercross 2000 (U) [!]
 Developer=Acclaim Studios Salt Lake City
 ForceFeedback=Yes
-GameInformation=
+GameInformation=jeremy-mcgrath-supercross-2000
 Genre=Racing-Motorbk
 Players=4
 ReleaseDate=2000/02/28
@@ -3876,7 +3875,7 @@ ReleaseDate=1999/10/03
 Name=Kobe Bryant in NBA Courtside (E) [!]
 Developer=Left Field Productions, Inc.
 ForceFeedback=Yes
-GameInformation=
+GameInformation=kobe-bryant-in-nba-courtside
 Genre=Sport-Basket
 Players=4
 ReleaseDate=1998/04/27
@@ -3885,7 +3884,7 @@ ReleaseDate=1998/04/27
 Name=Kobe Bryant in NBA Courtside (U) [!]
 Developer=Left Field Productions, Inc.
 ForceFeedback=Yes
-GameInformation=
+GameInformation=kobe-bryant-in-nba-courtside
 Genre=Sport-Basket
 Players=4
 ReleaseDate=1998/04/27
@@ -3949,7 +3948,7 @@ ReleaseDate=1999/05/28
 Name=Legend of Zelda, The - Majora's Mask (E) (M4) (v1.0)
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
+GameInformation=the-legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
 Genre=Action-Adventure
 Players=1
 ReleaseDate=2000/11/17
@@ -3958,7 +3957,7 @@ ReleaseDate=2000/11/17
 Name=Legend of Zelda, The - Majora's Mask (E) (M4) (v1.1)
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
+GameInformation=the-legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
 Genre=Action-Adventure
 Players=1
 ReleaseDate=2000/11/17
@@ -3967,7 +3966,7 @@ ReleaseDate=2000/11/17
 Name=The Legend of Zelda - Majora's Mask (E) (M4) (Debug Version)
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=
+GameInformation=the-legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
 Genre=Action-Adventure
 Players=1
 ReleaseDate=Scene Released
@@ -3976,7 +3975,7 @@ ReleaseDate=Scene Released
 Name=Legend of Zelda, The - Majora's Mask (E) [T-Bra] (V1.1)
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
+GameInformation=the-legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
 Genre=Action-Adventure
 Players=1
 ReleaseDate=2000/11/17
@@ -3985,7 +3984,7 @@ ReleaseDate=2000/11/17
 Name=Legend of Zelda 2, The - Majora's Mask (U) [!]
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
+GameInformation=the-legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
 Genre=Action-Adventure
 Players=1
 ReleaseDate=2000/10/26
@@ -4048,7 +4047,7 @@ ReleaseDate=1999/??/??
 Name=Legend of Zelda, The - Ocarina of Time - Master Quest (U) (GC Version)
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=
+GameInformation=legend-of-zelda-ocarina-of-time-master-quest-zelda-no-densetsu-toki-no-ocarina-gc-ura
 Genre=Action-Adventure
 Players=1
 ReleaseDate=2003/??/??
@@ -4057,7 +4056,7 @@ ReleaseDate=2003/??/??
 Name=Legend of Zelda, The - Ocarina of Time - Master Quest (U) [Fix]
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=
+GameInformation=legend-of-zelda-ocarina-of-time-master-quest-zelda-no-densetsu-toki-no-ocarina-gc-ura
 Genre=Action-Adventure
 Players=1
 ReleaseDate=Unreleased
@@ -4066,7 +4065,7 @@ ReleaseDate=Unreleased
 Name=Legend of Zelda, The - Ocarina of Time (U) (GC Version)
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=
+GameInformation=legend-of-zelda-ocarina-of-time-master-quest-zelda-no-densetsu-toki-no-ocarina-gc-ura
 Genre=Action-Adventure
 Players=1
 ReleaseDate=2003/??/??
@@ -4093,7 +4092,7 @@ ReleaseDate=2003/11/17
 Name=Legend of Zelda, The - Ocarina of Time - Master Quest (E) [h1C]
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=
+GameInformation=legend-of-zelda-ocarina-of-time-master-quest-zelda-no-densetsu-toki-no-ocarina-gc-ura
 Genre=Action-Adventure
 Players=1
 ReleaseDate=2003/??/
@@ -4102,7 +4101,7 @@ ReleaseDate=2003/??/
 Name=Legend of Zelda, The - Ocarina of Time - Master Quest (E)
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=
+GameInformation=legend-of-zelda-ocarina-of-time-master-quest-zelda-no-densetsu-toki-no-ocarina-gc-ura
 Genre=Action-Adventure
 Players=1
 ReleaseDate=2003/??/??
@@ -4111,7 +4110,7 @@ ReleaseDate=2003/??/??
 Name=Legend of Zelda, The - Ocarina of Time - Master Quest (E) [f1] (NTSC)
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=
+GameInformation=legend-of-zelda-ocarina-of-time-master-quest-zelda-no-densetsu-toki-no-ocarina-gc-ura
 Genre=Action-Adventure
 Players=1
 ReleaseDate=2003/??/??
@@ -4120,7 +4119,7 @@ ReleaseDate=2003/??/??
 Name=Legend of Zelda, The - Majora's Mask - Collector's Edition (U) (GC Version)
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=
+GameInformation=the-legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
 Genre=Action-Adventure
 Players=1
 ReleaseDate=2003/??/??
@@ -4129,7 +4128,7 @@ ReleaseDate=2003/??/??
 Name=Legend of Zelda, The - Majora's Mask (U) (GC Version)
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=
+GameInformation=the-legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
 Genre=Action-Adventure
 Players=1
 ReleaseDate=2003/??/??
@@ -4138,7 +4137,7 @@ ReleaseDate=2003/??/??
 Name=Legend of Zelda, The - Ocarina of Time - Master Quest (U) (Debug Rom)
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=
+GameInformation=legend-of-zelda-ocarina-of-time-master-quest-zelda-no-densetsu-toki-no-ocarina-gc-ura
 Genre=Action-Adventure
 Players=1
 ReleaseDate=Unreleased
@@ -4147,7 +4146,7 @@ ReleaseDate=Unreleased
 Name=Legend of Zelda - Ocarina of Time - Master Quest (U) [T-Bra]
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=
+GameInformation=legend-of-zelda-ocarina-of-time-master-quest-zelda-no-densetsu-toki-no-ocarina-gc-ura
 Genre=Action-Adventure
 Players=1
 ReleaseDate=Unreleased
@@ -4156,7 +4155,7 @@ ReleaseDate=Unreleased
 Name=Legend of Zelda, The - Majora's Mask - Collector's Edition (E) (GC Version)
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=
+GameInformation=the-legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
 Genre=Action-Adventure
 Players=1
 ReleaseDate=2003/??/??
@@ -4165,7 +4164,7 @@ ReleaseDate=2003/??/??
 Name=Legend of Zelda, The - Majora's Mask - Preview Demo (U)
 Developer=Nintendo
 ForceFeedback=Yes
-GameInformation=
+GameInformation=the-legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
 Genre=Action-Adventure
 Players=1
 ReleaseDate=2000/??/??
@@ -4210,7 +4209,7 @@ ReleaseDate=1998/10/09
 Name=Lode Runner 3-D (E) [!]
 Developer=Big Bang
 ForceFeedback=Yes
-GameInformation=
+GameInformation=lode-runner-3-d
 Genre=Puzzle
 Players=1
 ReleaseDate=1999/03/31
@@ -4219,7 +4218,7 @@ ReleaseDate=1999/03/31
 Name=Lode Runner 3-D (J) [!]
 Developer=Big Bang
 ForceFeedback=Yes
-GameInformation=
+GameInformation=lode-runner-3-d
 Genre=Puzzle
 Players=1
 ReleaseDate=1999/07/30
@@ -4228,7 +4227,7 @@ ReleaseDate=1999/07/30
 Name=Lode Runner 3-D (U) [!]
 Developer=Big Bang
 ForceFeedback=Yes
-GameInformation=
+GameInformation=lode-runner-3-d
 Genre=Puzzle
 Players=1
 ReleaseDate=1999/03/26
@@ -4572,7 +4571,7 @@ ReleaseDate=2003/11/17
 Name=Mario no Photopie (J) [!]
 Developer=Tokyo Electron
 ForceFeedback=No
-GameInformation=
+GameInformation=mario-no-photopie
 Genre=Miscellaneous (Misc)
 Players=1
 ReleaseDate=1998/12/02
@@ -4671,7 +4670,7 @@ ReleaseDate=2000/08/11
 Name=Mario Tennis (E) [!]
 Developer=Camelot Software Planning
 ForceFeedback=Yes
-GameInformation=
+GameInformation=mario-tennis-mario-tennis-64
 Genre=Sport-Tennis
 Players=4
 ReleaseDate=2000/08/28
@@ -4680,7 +4679,7 @@ ReleaseDate=2000/08/28
 Name=Mario Tennis (J) [!]
 Developer=Camelot Software Planning
 ForceFeedback=Yes
-GameInformation=
+GameInformation=mario-tennis-mario-tennis-64
 Genre=Sport-Tennis
 Players=4
 ReleaseDate=2000/07/21
@@ -4689,7 +4688,7 @@ ReleaseDate=2000/07/21
 Name=Mario Tennis (U) [!]
 Developer=Camelot Software Planning
 ForceFeedback=Yes
-GameInformation=
+GameInformation=mario-tennis-mario-tennis-64
 Genre=Sport-Tennis
 Players=4
 ReleaseDate=2000/08/28
@@ -4914,7 +4913,7 @@ ReleaseDate=1998/07/18
 Name=Monaco Grand Prix (U) [!]
 Developer=Ubi Soft
 ForceFeedback=Yes
-GameInformation=
+GameInformation=monaco-grand-prix-racing-simulation-2
 Genre=Racing-F1
 Players=2
 ReleaseDate=1999/09/01
@@ -5150,7 +5149,7 @@ ReleaseDate=1998/01/10
 Name=Namco Museum 64 (U) [!]
 Developer=Mass Media
 ForceFeedback=No
-GameInformation=
+GameInformation=namco-museum-64
 Genre=Action
 Players=
 ReleaseDate=1999/11/29
@@ -5838,7 +5837,7 @@ ReleaseDate=2000/06/15
 Name=Pikachu Genki Dechu (J) [!]
 Developer=Nintendo
 ForceFeedback=No
-GameInformation=
+GameInformation=hey-you-pikachu-pikach-genki-dech
 Genre=Simulation
 Players=1
 ReleaseDate=1998/12/12
@@ -6000,7 +5999,7 @@ ReleaseDate=1999/06/30
 Name=Pokemon Snap Station (U) [!]
 Developer=HAL Laboratory
 ForceFeedback=Yes
-GameInformation=
+GameInformation=pocket-monsters-snap-pokemon-snap
 Genre=Simulation
 Players=1
 ReleaseDate=1999/07/27
@@ -6009,7 +6008,7 @@ ReleaseDate=1999/07/27
 Name=Pokemon Stadium - Kiosk (U) (V1.1) [!]
 Developer=Nintendo / HAL Laboratory
 ForceFeedback=No
-GameInformation=
+GameInformation=pocket-monsters-stadium-2-pokemon-stadium
 Genre=Battle
 Players=4
 ReleaseDate=
@@ -6281,7 +6280,7 @@ ReleaseDate=1998/03/24
 Name=Quake II (E) [!]
 Developer=Raster Productions
 ForceFeedback=Yes
-GameInformation=
+GameInformation=quake-ii
 Genre=Action
 Players=4
 ReleaseDate=1999/02/07
@@ -6290,7 +6289,7 @@ ReleaseDate=1999/02/07
 Name=Quake II (U) [!]
 Developer=Raster Productions
 ForceFeedback=Yes
-GameInformation=
+GameInformation=quake-ii
 Genre=Action
 Players=4
 ReleaseDate=1999/06/30
@@ -6310,7 +6309,7 @@ ReleaseDate=1998/06/11
 Name=Racing Simulation - Monaco Grand Prix (E) [!]
 Developer=Ubi Soft
 ForceFeedback=Yes
-GameInformation=
+GameInformation=monaco-grand-prix-racing-simulation-2
 Genre=Racing-F1
 Players=2
 ReleaseDate=1999/04/30
@@ -6319,7 +6318,7 @@ ReleaseDate=1999/04/30
 Name=Racing Simulation 2 (G) [!]
 Developer=Guillemot
 ForceFeedback=Yes
-GameInformation=
+GameInformation=monaco-grand-prix-racing-simulation-2
 Genre=Racing-F1
 Players=2
 ReleaseDate=1999/09/01
@@ -6816,4 +6815,2589 @@ ReleaseDate=1999/09/03
 Name=Shadow Man (G) [!]
 Developer=Acclaim Studios Teeside
 ForceFeedback=Yes
-GameInformat
+GameInformation=shadow-man
+Genre=Action
+Players=1
+ReleaseDate=1999/09/03
+
+[3A4760B5-2D74D410-C:45]
+Name=Shadow Man (U) [!]
+Developer=Acclaim Studios Teeside
+ForceFeedback=Yes
+GameInformation=shadow-man
+Genre=Action
+Players=1
+ReleaseDate=1999/08/31
+
+[93A625B9-2D6022E6-C:42]
+Name=Shadow Man (B)
+Developer=Acclaim Studios Teeside
+ForceFeedback=Yes
+GameInformation=shadow-man
+Genre=Action
+Players=1
+ReleaseDate=1999/08/31
+
+[D84EEA84-45B2F1B4-C:50]
+Name=Shadowgate 64 - Trials of the Four Towers (E) [!]
+Developer=Infinite Ventures
+ForceFeedback=No
+GameInformation=shadowgate-64-trials-of-the-four-towers
+Genre=Adventure
+Players=1
+ReleaseDate=1999/07/??
+
+[2BC1FCF2-7B9A0DF4-C:58]
+Name=Shadowgate 64 - Trials of the Four Towers (FGD) [!]
+Developer=Infinite Ventures
+ForceFeedback=No
+GameInformation=shadowgate-64-trials-of-the-four-towers
+Genre=Adventure
+Players=1
+ReleaseDate=1999/07/??
+
+[02B46F55-61778D0B-C:59]
+Name=Shadowgate 64 - Trials of the Four Towers (IS)
+Developer=Infinite Ventures
+ForceFeedback=No
+GameInformation=shadowgate-64-trials-of-the-four-towers
+Genre=Adventure
+Players=1
+ReleaseDate=1999/06/09
+
+[CCEDB696-D3883DB4-C:4A]
+Name=Shadowgate 64 - Trials of the Four Towers (J) [!]
+Developer=Infinite Ventures
+ForceFeedback=No
+GameInformation=shadowgate-64-trials-of-the-four-towers
+Genre=Adventure
+Players=1
+ReleaseDate=1999/05/31
+
+[036897CE-E0D4FA54-C:45]
+Name=Shadowgate 64 - Trials of the Four Towers (U) [!]
+Developer=Infinite Ventures
+ForceFeedback=No
+GameInformation=shadowgate-64-trials-of-the-four-towers
+Genre=Adventure
+Players=1
+ReleaseDate=1999/08/13
+
+[41B3B9A1-BAD72112-C:45]
+Name=Shadowgate 64 - Trials of the Four Towers (USA) (Prototype)
+Developer=Infinite Ventures
+ForceFeedback=No
+GameInformation=shadowgate-64-trials-of-the-four-towers
+Genre=Adventure
+Players=1
+ReleaseDate=2022/07/05
+
+[EF703CA4-4D4A9AC9-C:4A]
+Name=Toukon Road - Brave Spirits (J) [!]
+Developer=Hudson Soft
+ForceFeedback=No
+GameInformation=shin-nihon-pro-wrestling-toukon-road-brave-spirits
+Genre=Wrestling
+Players=2
+ReleaseDate=1998/01/04
+
+[551C7F43-9149831C-C:4A]
+Name=Shin Nihon Pro wrestling Toukon Road 2 - The Next Generation (J)
+Developer=Hudson Soft
+ForceFeedback=No
+GameInformation=shin-nihon-pro-wrestling-toukon-road-2-the-next-generation
+Genre=Wrestling
+Players=2
+ReleaseDate=1998/12/26
+
+[B1D5280C-4BA7BC2A-C:4A]
+Name=Sim City 2000 (J) [!]
+Developer=Imagineer
+ForceFeedback=No
+GameInformation=sim-city-2000
+Genre=Strategy
+Players=1
+ReleaseDate=1998/01/30
+
+[909535F8-118FEF8F-C:4A]
+Name=Sim City 64 [64DD] [English]
+Developer=HAL Laboratory
+ForceFeedback=No
+GameInformation=sim-city-2000
+Genre=City Building Sim
+Players=1
+ReleaseDate=200/02/23
+
+[B6BC0FB0-E3812198-C:4A]
+Name=Sin and Punishment - Tsumi To Batsu (J) [!]
+Developer=Treasure
+ForceFeedback=Yes
+GameInformation=sin-and-punishment-tsumi-to-batsu-hoshi-no-keishsha
+Genre=Action
+Players=2
+ReleaseDate=2000/11/21
+
+[4F48B0FD-8E7173F4-C:45]
+Name=Sin and Punishment - Successor of the Earth (U) [!]
+Developer=Treasure
+ForceFeedback=Yes
+GameInformation=sin-and-punishment-tsumi-to-batsu-hoshi-no-keishsha
+Genre=Action
+Players=2
+ReleaseDate=2000/11/21
+
+[782D10F5-345AE6FC-C:00]
+Name=Sin and Punishment (CHN)
+Developer=Treasure
+ForceFeedback=Yes
+GameInformation=sin-and-punishment-tsumi-to-batsu-hoshi-no-keishsha
+Genre=Action
+Players=2
+ReleaseDate=2004/09/25
+
+[7331A7C7-B5C2937C-C:43]
+Name=Sin and Punishment (CHN) [SaveFix]
+Developer=Treasure
+ForceFeedback=Yes
+GameInformation=sin-and-punishment-tsumi-to-batsu-hoshi-no-keishsha
+Genre=Action
+Players=2
+ReleaseDate=2004/09/25
+
+[2EF4D519-C64A0C5E-C:4A]
+Name=Snow Speeder (J) [!]
+Developer=Imagineer
+ForceFeedback=Yes
+GameInformation=big-mountain-2000
+Genre=Racing-Snowbk
+Players=2
+ReleaseDate=1998/12/26
+
+[5FD7CDA0-D9BB51AD-C:50]
+Name=Snowboard Kids (E) [!]
+Developer=Racdym
+ForceFeedback=Yes
+GameInformation=snowbo-kids-snowboard-kids
+Genre=Sport-Snowbd
+Players=4
+ReleaseDate=1998/03/15
+
+[DBF4EA9D-333E82C0-C:45]
+Name=Snowboard Kids (U) [!]
+Developer=Racdym
+ForceFeedback=Yes
+GameInformation=snowbo-kids-snowboard-kids
+Genre=Sport-Snowbd
+Players=4
+ReleaseDate=1998/03/15
+
+[84FC04FF-B1253CE9-C:4A]
+Name=Snowbow Kids (J) [!]
+Developer=Racdym
+ForceFeedback=Yes
+GameInformation=snowbo-kids-snowboard-kids
+Genre=Sport-Snowbd
+Players=4
+ReleaseDate=1997/12/??
+
+[C2751D1A-F8C19BFF-C:50]
+Name=Snowboard Kids 2 (E) [!]
+Developer=Racdym
+ForceFeedback=Yes
+GameInformation=chou-snowbo-kids-snowboard-kids-2
+Genre=Sport-Snowbd
+Players=4
+ReleaseDate=1999/04/30
+
+[930C29EA-939245BF-C:45]
+Name=Snowboard Kids 2 (U) [!]
+Developer=Racdym
+ForceFeedback=Yes
+GameInformation=chou-snowbo-kids-snowboard-kids-2
+Genre=Sport-Snowbd
+Players=4
+ReleaseDate=1999/03/02
+
+[22212351-4046594B-C:4A]
+Name=Sonic Wings Assault (J) [!]
+Developer=Video System
+ForceFeedback=Yes
+GameInformation=aero-fighters-assault
+Genre=Action
+Players=2
+ReleaseDate=1997/10/30
+
+[20B53662-7B61899F-C:50]
+Name=South Park (E) [!]
+Developer=Iguana Entertainment
+ForceFeedback=Yes
+GameInformation=south-park
+Genre=Action
+Players=4
+ReleaseDate=1999/05/03
+
+[91B66D42-16AC4E46-C:44]
+Name=South Park (G) [!]
+Developer=Iguana Entertainment
+ForceFeedback=Yes
+GameInformation=south-park
+Genre=Action
+Players=4
+ReleaseDate=1999/05/03
+
+[D21AF769-DE1A0E3D-C:42]
+Name=South Park (B)
+Developer=Iguana Entertainment
+ForceFeedback=Yes
+GameInformation=south-park
+Genre=Action
+Players=4
+ReleaseDate=1999/05/03
+
+[7ECBE939-3C331795-C:45]
+Name=South Park (U) [!]
+Developer=Iguana Entertainment
+ForceFeedback=Yes
+GameInformation=south-park
+Genre=Action
+Players=4
+ReleaseDate=1998/12/21
+
+[C00CA948-8E60D34B-C:50]
+Name=South Park - Chef's Luv Shack (E) [!]
+Developer=Acclaim Studios Austin
+ForceFeedback=No
+GameInformation=south-park-chefs-luv-shack
+Genre=Puzzle
+Players=4
+ReleaseDate=1999/10/31
+
+[C00CA948-8E60D34B-C:45]
+Name=South Park - Chef's Luv Shack (U) [!]
+Developer=Acclaim Studios Austin
+ForceFeedback=No
+GameInformation=south-park-chefs-luv-shack
+Genre=Puzzle
+Players=4
+ReleaseDate=1999/10/12
+
+[4F8AFC3A-F7912DF2-C:50]
+Name=South Park Rally (E) [!]
+Developer=Tantalus
+ForceFeedback=Yes
+GameInformation=south-park-rally
+Genre=Racing-Car
+Players=4
+ReleaseDate=2000/03/03
+
+[07F3B276-EC8F3D39-C:45]
+Name=South Park Rally (U) [!]
+Developer=Tantalus
+ForceFeedback=Yes
+GameInformation=south-park-rally
+Genre=Racing-Car
+Players=4
+ReleaseDate=2000/02/28
+
+[37463412-EAC5388D-C:4A]
+Name=Space Dynamites (J) [!]
+Developer=Vic Tokai
+ForceFeedback=No
+GameInformation=dark-rift
+Genre=Fighting
+Players=2
+ReleaseDate=1998/03/27
+
+[EBFE2397-FF74DA34-C:45]
+Name=Space Invaders (U) [!]
+Developer=Z-Axis
+ForceFeedback=Yes
+GameInformation=space-invaders
+Genre=Action
+Players=2
+ReleaseDate=1999/11/30
+
+[FC70E272-08FFE7AA-C:50]
+Name=Spacestation Silicon Valley (E)/(F) [!]
+Developer=DMA Design
+ForceFeedback=Yes
+GameInformation=space-station-silicon-valley
+Genre=Platform
+Players=1
+ReleaseDate=1998/11/??
+
+[BFE23884-EF48EAAF-C:4A]
+Name=Spacestation Silicon Valley (J) [!]
+Developer=DMA Design
+ForceFeedback=Yes
+GameInformation=space-station-silicon-valley
+Genre=Platform
+Players=1
+ReleaseDate=2017/06/26
+
+[BFE23884-EF48EAAF-C:45]
+Name=Spacestation Silicon Valley (U) [!]
+Developer=DMA Design
+ForceFeedback=Yes
+GameInformation=space-station-silicon-valley
+Genre=Platform
+Players=1
+ReleaseDate=1998/10/21
+
+[A60ED171-3D85D06E-C:45]
+Name=Spider-Man (U) [!]
+Developer=Neversoft Entertainment / Edge of Reality
+ForceFeedback=Yes
+GameInformation=spider-man
+Genre=Adventure
+Players=1
+ReleaseDate=2000/11/21
+
+[FFCAA7C1-68858537-C:4A]
+Name=Star Fox 64 (J) [!]
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=lylat-wars-star-fox-64
+Genre=Flight-Action
+Players=4
+ReleaseDate=1997/04/27
+
+[65AEDEEF-3857C728-C:4A]
+Name=Star Fox 64 (J) (V1.1) (VC)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=lylat-wars-star-fox-64
+Genre=Flight-Action
+Players=4
+ReleaseDate=2007/04/20
+
+[A7D015F8-2289AA43-C:45]
+Name=Star Fox 64 (U) [!]
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=lylat-wars-star-fox-64
+Genre=Flight-Action
+Players=4
+ReleaseDate=1997/06/30
+
+[BA780BA0-0F21DB34-C:45]
+Name=Star Fox 64 (U) (V1.1)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=lylat-wars-star-fox-64
+Genre=Flight-Action
+Players=4
+ReleaseDate=1998/??/??
+
+[79D25B51-2350B06E-C:00]
+Name=Star Fox 64 (CHN) (iQue)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=lylat-wars-star-fox-64
+Genre=Flight-Action
+Players=4
+ReleaseDate=2003/11/17
+
+[B703EB23-28AAE53A-C:4A]
+Name=Star Soldier Vanishing Earth (J) [!]
+Developer=Hudson Soft
+ForceFeedback=Yes
+GameInformation=star-soldier-vanishing-earth
+Genre=Action
+Players=1
+ReleaseDate=1998/06/10
+
+[315C7466-3A453265-C:4A]
+Name=Star Soldier : Vanishing Earth (J) [ALECK64]
+Developer=Hudson Soft
+ForceFeedback=Yes
+GameInformation=star-soldier-vanishing-earth
+Genre=Action
+Players=1
+ReleaseDate=1998/11/??
+
+[DDD93C85-DAE381E8-C:45]
+Name=Star Soldier Vanishing Earth (U) [!]
+Developer=Hudson Soft
+ForceFeedback=Yes
+GameInformation=star-soldier-vanishing-earth
+Genre=Action
+Players=1
+ReleaseDate=1998/12/15
+
+[F163A242-F2449B3B-C:4A]
+Name=Star Twins (J) [!]
+Developer=Rare
+ForceFeedback=Yes
+GameInformation=jet-force-gemini-startwins
+Genre=Action
+Players=4
+ReleaseDate=1999/12/01
+
+[7EE0E8BB-49E411AA-C:50]
+Name=Star Wars - Rogue Squadron (E) [!]
+Developer=Factor 5 / LucasArts
+ForceFeedback=Yes
+GameInformation=star-wars-rogue-squadron-shutsugeki-rogue-chuutai
+Genre=Action
+Players=1
+ReleaseDate=1999/01/10
+
+[219191C1-33183C61-C:50]
+Name=Star Wars - Rogue Squadron (E) (V1.1)
+Developer=Factor 5 / LucasArts
+ForceFeedback=Yes
+GameInformation=star-wars-rogue-squadron-shutsugeki-rogue-chuutai
+Genre=Action
+Players=1
+ReleaseDate=1999/??/??
+
+[66A24BEC-2EADD94F-C:45]
+Name=Star Wars - Rogue Squadron (U) [!]
+Developer=Factor 5 / LucasArts
+ForceFeedback=Yes
+GameInformation=star-wars-rogue-squadron-shutsugeki-rogue-chuutai
+Genre=Action
+Players=1
+ReleaseDate=1998/12/07
+
+[4D486681-AB7D9245-C:50]
+Name=Star Wars - Shadows of the Empire (E) [!]
+Developer=LucasArts
+ForceFeedback=No
+GameInformation=star-wars-shadows-of-the-empire-teikoku-no-kage
+Genre=Action
+Players=1
+ReleaseDate=1997/03/01
+
+[FE24AC63-1B41AA17-C:4A]
+Name=Star Wars - Shadows of the Empire (J) [!]
+Developer=LucasArts
+ForceFeedback=No
+GameInformation=star-wars-shadows-of-the-empire-teikoku-no-kage
+Genre=Action
+Players=1
+ReleaseDate=1997/06/14
+
+[264D7E5C-18874622-C:45]
+Name=Star Wars - Shadows of the Empire (U) (V1.0) [!]
+Developer=LucasArts
+ForceFeedback=No
+GameInformation=star-wars-shadows-of-the-empire-teikoku-no-kage
+Genre=Action
+Players=1
+ReleaseDate=1996/12/02
+
+[4147B091-63251060-C:45]
+Name=Star Wars - Shadows of the Empire (U) (V1.1) [!]
+Developer=LucasArts
+ForceFeedback=No
+GameInformation=star-wars-shadows-of-the-empire-teikoku-no-kage
+Genre=Action
+Players=1
+ReleaseDate=????/??/??
+
+[4DD7ED54-74F9287D-C:45]
+Name=Star Wars - Shadows of the Empire (U) (V1.2) [!]
+Developer=LucasArts
+ForceFeedback=No
+GameInformation=star-wars-shadows-of-the-empire-teikoku-no-kage
+Genre=Action
+Players=1
+ReleaseDate=????/??/??
+
+[827E4890-958468DC-C:4A]
+Name=Star Wars - Shuggeki Rogue Chitai (J) [!]
+Developer=LucasArts
+ForceFeedback=No
+GameInformation=star-wars-rogue-squadron-shutsugeki-rogue-chuutai
+Genre=Action
+Players=1
+ReleaseDate=1999/10/27
+
+[EAE6ACE2-020B4384-C:50]
+Name=Star Wars Episode I - Battle for Naboo (E) [!]
+Developer=Factor 5 / LucasArts
+ForceFeedback=Yes
+GameInformation=star-wars-episode-i-battle-for-naboo
+Genre=Action
+Players=1
+ReleaseDate=2001/03/30
+
+[3D02989B-D4A381E2-C:45]
+Name=Star Wars Episode I - Battle for Naboo (U) [!]
+Developer=Factor 5 / LucasArts
+ForceFeedback=Yes
+GameInformation=star-wars-episode-i-battle-for-naboo
+Genre=Action
+Players=1
+ReleaseDate=2000/12/18
+
+[53ED2DC4-06258002-C:50]
+Name=Star Wars Episode I - Racer (E) [!]
+Developer=LucasArts
+ForceFeedback=Yes
+GameInformation=star-wars-episode-i-racer
+Genre=Racing-Future
+Players=2
+ReleaseDate=1999/06/04
+
+[61F5B152-046122AB-C:4A]
+Name=Star Wars Episode I - Racer (J) [!]
+Developer=LucasArts
+ForceFeedback=Yes
+GameInformation=star-wars-episode-i-racer
+Genre=Racing-Future
+Players=2
+ReleaseDate=1999/07/21
+
+[72F70398-6556A98B-C:45]
+Name=Star Wars Episode I - Racer (U) [!]
+Developer=LucasArts
+ForceFeedback=Yes
+GameInformation=star-wars-episode-i-racer
+Genre=Racing-Future
+Players=2
+ReleaseDate=1999/05/18
+
+[86EDC3C1-E983A7BF-C:45]
+Name=Star Wars Episode I - Racer (U) [Save Fix]
+Developer=LucasArts
+ForceFeedback=Yes
+GameInformation=star-wars-episode-i-racer
+Genre=Racing-Future
+Players=2
+ReleaseDate=1999/05/18
+
+[BC9B2CC3-4ED04DA5-C:37]
+Name=StarCraft 64 (E) [!]
+Developer=Blizzard / Mass Media
+ForceFeedback=Yes
+GameInformation=starcraft-64
+Genre=RT Strategy
+Players=2
+ReleaseDate=Unreleased
+
+[42CF5EA3-9A1334DF-C:50]
+Name=StarCraft 64 (E) [!]
+Developer=Blizzard / Mass Media
+ForceFeedback=Yes
+GameInformation=starcraft-64
+Genre=RT Strategy
+Players=2
+ReleaseDate=2001/05/25
+
+[0684FBFB-5D3EA8A5-C:45]
+Name=StarCraft 64 (U) [!]
+Developer=Blizzard / Mass Media
+ForceFeedback=Yes
+GameInformation=starcraft-64
+Genre=RT Strategy
+Players=2
+ReleaseDate=2000/06/12
+
+[BC9B2CC3-4ED04DA5-C:37]
+Name=StarCraft 64 (Beta)
+Developer=Blizzard / Mass Media
+ForceFeedback=Unknown
+GameInformation=starcraft-64
+Genre=RT Strategy
+Players=2
+ReleaseDate=????/??/??
+
+[D89E0E55-B17AA99A-C:50]
+Name=Starshot - Space Circus Fever (E) [!]
+Developer=Infogames
+ForceFeedback=No
+GameInformation=starshot-space-circus-fever
+Genre=Action
+Players=1
+ReleaseDate=1998/12/04
+
+[94EDA5B8-8673E903-C:45]
+Name=Starshot - Space Circus Fever (U) [!]
+Developer=Infogames
+ForceFeedback=No
+GameInformation=starshot-space-circus-fever
+Genre=Action
+Players=1
+ReleaseDate=1999/06/30
+
+[9510D8D7-35100DD2-C:45]
+Name=Stunt Racer 64 (U) [!]
+Developer=Boss Game Studios
+ForceFeedback=Yes
+GameInformation=stunt-racer-64
+Genre=Racing-Stunt
+Players=4
+ReleaseDate=2000/10/01
+
+[F4646B69-C5751095-C:4A]
+Name=Super B-Daman - Battle Phoenix 64 (J) [!]
+Developer=Hudson Soft
+ForceFeedback=No
+GameInformation=super-b-daman-battle-phoenix-64
+Genre=Action
+Players=2
+ReleaseDate=1998/07/24
+
+[F3F2F385-6E490C7F-C:4A]
+Name=Super Bowling (J) [!]
+Developer=Athena
+ForceFeedback=Yes
+GameInformation=super-bowling
+Genre=Sport-Bowling
+Players=4
+ReleaseDate=2001/01/16
+
+[AA1D215A-91CBBE9A-C:45]
+Name=Super Bowling 64 (U) [!]
+Developer=Athena
+ForceFeedback=Yes
+GameInformation=super-bowling
+Genre=Sport-Bowling
+Players=4
+ReleaseDate=2001/01/16
+
+[A03CF036-BCC1C5D2-C:50]
+Name=Super Mario 64 (E) [!]
+Developer=Nintendo
+ForceFeedback=No
+GameInformation=super-mario-64
+Genre=Platform
+Players=1
+ReleaseDate=1996/09/26
+
+[4EAA3D0E-74757C24-C:4A]
+Name=Super Mario 64 (J) [!]
+Developer=Nintendo
+ForceFeedback=No
+GameInformation=super-mario-64
+Genre=Platform
+Players=1
+ReleaseDate=1996/09/26
+
+[4EAA3D0E-74757C24-C:4A]
+Name=Super Mario 64 (J) [!]
+Developer=Nintendo
+ForceFeedback=No
+GameInformation=super-mario-64
+Genre=Platform
+Players=1
+ReleaseDate=1996/09/26
+
+[480B85A4-640135A3-C:00]
+Name=Super Mario 64 (CHN)
+Developer=Nintendo
+ForceFeedback=No
+GameInformation=super-mario-64
+Genre=Platform
+Players=1
+ReleaseDate=2003/11/21
+
+[3728A23B-16401DFB-C:00]
+Name=Super Mario 64 (CHN)-03-10-15 iQue
+Developer=Nintendo
+ForceFeedback=No
+GameInformation=super-mario-64
+Genre=Platform
+Players=1
+ReleaseDate=2003/11/21
+
+[6F72A924-EE8EA790-C:00]
+Name=Super Mario 64 - Shindou Pack Taiou Version (J) (T-Eng)
+Developer=Nintendo
+ForceFeedback=No
+GameInformation=super-mario-64
+Genre=Platform
+Players=1
+ReleaseDate=2003/11/21
+
+[AAA7D336-0428D610-C:00]
+Name=Super Mario 64 - Shindou (iQue) [4ksavefix]
+Developer=Nintendo
+ForceFeedback=No
+GameInformation=super-mario-64
+Genre=Platform
+Players=1
+ReleaseDate=2003/11/21
+
+[635A42C5-BDC58EDC-C:45]
+Name=Super Mario 64 (U) [T-Bra]
+Developer=Nintendo
+ForceFeedback=No
+GameInformation=super-mario-64
+Genre=Platform
+Players=1
+ReleaseDate=??/??/??
+
+[D6FBA4A8-6326AA2C-C:4A]
+Name=Super Mario 64 - Shindou Pack Taiou Version (J) (V1.3)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=super-mario-64
+Genre=Platform
+Players=1
+ReleaseDate=1996/09/26
+
+[66572080-28E348E1-C:4A]
+Name=Super Robot Spirits (J) [!]
+Developer=Banpresto
+ForceFeedback=Yes
+GameInformation=super-robot-spirits
+Genre=Fighting
+Players=2
+ReleaseDate=1998/07/17
+
+[1649D810-F73AD6D2-C:4A]
+Name=Super Robot Taisen 64 (J) [!]
+Developer=Banpresto
+ForceFeedback=No
+GameInformation=super-robot-taisen-64
+Genre=Strategy
+Players=1
+ReleaseDate=1999/10/29
+
+[997D29AE-C13FF636-C:4A]
+Name=Super Real Mahjong VS [Aleck 64]
+Developer=Seta
+ForceFeedback=Yes
+GameInformation=super-real-mahjong-vs
+Genre=Puzzle
+Players=1
+ReleaseDate=1999/??/??
+
+[DD26FDA1-CB4A6BE3-C:55]
+Name=Super Smash Bros. (A) [!]
+Developer=HAL Laboratory
+ForceFeedback=Yes
+GameInformation=nintendo-all-star-dairantou-smash-brothers-super-smash-bros
+Genre=Fighting
+Players=4
+ReleaseDate=1999/11/19
+
+[93945F48-5C0F2E30-C:50]
+Name=Super Smash Bros. (E) [!]
+Developer=HAL Laboratory
+ForceFeedback=Yes
+GameInformation=nintendo-all-star-dairantou-smash-brothers-super-smash-bros
+Genre=Fighting
+Players=4
+ReleaseDate=1999/11/19
+
+[916B8B5B-780B85A4-C:45]
+Name=Super Smash Bros. (U) [!]
+Developer=HAL Laboratory
+ForceFeedback=Yes
+GameInformation=nintendo-all-star-dairantou-smash-brothers-super-smash-bros
+Genre=Fighting
+Players=4
+ReleaseDate=1999/04/26
+
+[F026CCEB-E9B0E4AF-C:00]
+Name=Super Smash Bros. (CHN)
+Developer=HAL Laboratory
+ForceFeedback=Yes
+GameInformation=nintendo-all-star-dairantou-smash-brothers-super-smash-bros
+Genre=Fighting
+Players=4
+ReleaseDate=2005/11/15
+
+[76F623A0-4BF72D22-C:43]
+Name=Super Smash Bros. (CHN) [SaveFix]
+Developer=HAL Laboratory
+ForceFeedback=Yes
+GameInformation=nintendo-all-star-dairantou-smash-brothers-super-smash-bros
+Genre=Fighting
+Players=4
+ReleaseDate=2005/11/15
+
+[9CE02E22-206EF1B0-C:4A]
+Name=Super Speed Race 64 (J) [!]
+Developer=Taito
+ForceFeedback=Yes
+GameInformation=automobili-lamborghini
+Genre=Racing-Car
+Players=4
+ReleaseDate=1998/05/29
+
+[2CBB127F-09C2BFD8-C:50]
+Name=Supercross 2000 (E) [!]
+Developer=MBL Research
+ForceFeedback=Yes
+GameInformation=supercross-2000
+Genre=Racing-Motorbk
+Players=2
+ReleaseDate=1999/12/03
+
+[C1452553-5D7B24D9-C:45]
+Name=Supercross 2000 (U) [!]
+Developer=MBL Research
+ForceFeedback=Yes
+GameInformation=supercross-2000
+Genre=Racing-Motorbk
+Players=2
+ReleaseDate=1999/12/03
+
+[B44CAB74-07029A29-C:50]
+Name=Superman (E) [!]
+Developer=Titus
+ForceFeedback=Yes
+GameInformation=superman
+Genre=Action
+Players=4
+ReleaseDate=1999/07/23
+
+[A2E8F35B-C9DC87D9-C:45]
+Name=Superman (U) [!]
+Developer=Titus
+ForceFeedback=Yes
+GameInformation=superman
+Genre=Action
+Players=4
+ReleaseDate=1999/05/28
+
+[944FAFC4-B288266A-C:00]
+Name=Superman (U) (M2) (Prototype)
+Developer=Titus
+ForceFeedback=Yes
+GameInformation=superman
+Genre=Action
+Players=4
+ReleaseDate=2016/11/22
+
+[35E811F3-99792724-C:4A]
+Name=Susume! Taisen Puzzle Dama Toukon! Marumata Chou (J) [!]
+Developer=Konami
+ForceFeedback=No
+GameInformation=susume-taisen-puzzle-dama-toukon-marumata-chou
+Genre=Puzzle
+Players=2
+ReleaseDate=1998/03/25
+
+[53C277D5-DB9DF2B4-C:0]
+Name=SYD2K (EUR) [PAL60 FIX]
+Developer=Attention To Detail
+ForceFeedback=No
+GameInformation=sydney-2000
+Genre=Sport
+Players=1
+ReleaseDate=Unreleased
+
+[80A78080-5F9F8833-C:0]
+Name=Sydney 2000 (E) (Unreleased)
+Developer=Attention To Detail
+ForceFeedback=No
+GameInformation=sydney-2000
+Genre=Sport
+Players=1
+ReleaseDate=Unreleased
+
+[80A78080-5F9F8833-C:0]
+Name=Sydney 2000 (U) (Unreleased)
+Developer=Attention To Detail
+ForceFeedback=No
+GameInformation=sydney-2000
+Genre=Sport
+Players=1
+ReleaseDate=Unreleased
+
+[34C55221-5F1D6BC6-C:0]
+Name=Sydney 2000 (U)
+Developer=Attention To Detail
+ForceFeedback=No
+GameInformation=sydney-2000
+Genre=Sport
+Players=1
+ReleaseDate=Unreleased
+
+[ECBD95DD-1FAB637D-C:0]
+Name=Sydney 2000 (E) (Unreleased)
+Developer=Attention To Detail
+ForceFeedback=No
+GameInformation=sydney-2000
+Genre=Sport
+Players=1
+ReleaseDate=Unreleased
+
+//-------------------------  T  --------------------------
+
+[AEBCDD54-15FF834A-C:50]
+Name=Taz Express (E) [!]
+Developer=Infogrames
+ForceFeedback=No
+GameInformation=taz-express
+Genre=Platform
+Players=1
+ReleaseDate=2000/08/01
+
+[6C2C6C49-9BE5CA66-C:45]
+Name=Taz Express (U) (Unreleased)
+Developer=Infogrames
+ForceFeedback=No
+GameInformation=taz-express
+Genre=Platform
+Players=1
+ReleaseDate=Unreleased
+
+[D9042FBB-FCFF997C-C:46]
+Name=Telefoot Soccer 2000 (F) [!]
+Developer=Guillemot
+ForceFeedback=No
+GameInformation=mia-hamm-soccer-64-michael-owens-wl-rtl-wl-telefoot-soccer-2000
+Genre=Sport-Soccer
+Players=4
+ReleaseDate=2000/11/10
+
+[963ADBA6-F7D5C89B-C:4A]
+Name=Tetris 64 (J) [!]
+Developer=Amtex
+ForceFeedback=Yes
+GameInformation=tetris-64
+Genre=Puzzle
+Players=4
+ReleaseDate=1998/11/13
+
+[0FE684A9-8BB77AC4-C:50]
+Name=Tetrisphere (E) [!]
+Developer=H2O Entertainment
+ForceFeedback=No
+GameInformation=tetrisphere
+Genre=Puzzle
+Players=2
+ReleaseDate=1997/08/11
+
+[3C1FDABE-02A4E0BA-C:45]
+Name=Tetrisphere (U) [!]
+Developer=H2O Entertainment
+ForceFeedback=No
+GameInformation=tetrisphere
+Genre=Puzzle
+Players=2
+ReleaseDate=1997/08/11
+
+[E61CFF0A-CE1C0D71-C:50]
+Name=The New Tetris (E) [!]
+Developer=H2O Interactive
+ForceFeedback=No
+GameInformation=the-new-tetris
+Genre=Puzzle
+Players=4
+ReleaseDate=1999/07/31
+
+[2153143F-992D6351-C:45]
+Name=The New Tetris  (U) [!]
+Developer=H2O Interactive
+ForceFeedback=No
+GameInformation=the-new-tetris
+Genre=Puzzle
+Players=4
+ReleaseDate=1999/07/31
+
+[E0C4F72F-769E1506-C:50]
+Name=Tigger's Honey Hunt (E) [!]
+Developer=Doki Denki Studio
+ForceFeedback=No
+GameInformation=tiggers-honey-hunt
+Genre=Action
+Players=1
+ReleaseDate=2000/11/01
+
+[4EBFDD33-664C9D84-C:45]
+Name=Tigger's Honey Hunt (U) [!]
+Developer=Doki Denki Studio
+ForceFeedback=No
+GameInformation=tiggers-honey-hunt
+Genre=Action
+Players=1
+ReleaseDate=2000/11/01
+
+[2B4F4EFB-43C511FE-C:50]
+Name=Tom and Jerry in Fists of Furry (E) [!]
+Developer=Vis
+ForceFeedback=Yes
+GameInformation=tom-and-jerry-in-fists-of-furry
+Genre=Action
+Players=2
+ReleaseDate=2002/03/15
+
+[63E7391C-E6CCEA33-C:45]
+Name=Tom and Jerry in Fists of Furry (U) [!]
+Developer=Vis
+ForceFeedback=Yes
+GameInformation=tom-and-jerry-in-fists-of-furry
+Genre=Action
+Players=2
+ReleaseDate=2000/11/8
+
+[9A746EBF-2802EA99-C:00]
+Name=Toon Panic (J) (Prototype)
+Developer=Vis
+ForceFeedback=Yes
+GameInformation=toon-panic
+Genre=Action
+Players=2
+ReleaseDate=2000/11/12
+
+[21260D94-06AE1DFE-C:45]
+Name=Tommy Thunder (U) (Unreleased Alpha)
+Developer=Vis
+ForceFeedback=Yes
+GameInformation=tommy-thunder
+Genre=Action
+Players=2
+ReleaseDate=2000/11/12
+
+
+[4875AF3D-9A66D3A2-C:50]
+Name=Tom Clancy's Rainbow Six (E) [!]
+Developer=Saffire
+ForceFeedback=Yes
+GameInformation=tom-clancys-rainbow-six
+Genre=Action
+Players=2
+ReleaseDate=1999/11/17
+
+[486BF335-034DCC81-C:46]
+Name=Tom Clancy's Rainbow Six (F)
+Developer=Saffire
+ForceFeedback=Yes
+GameInformation=tom-clancys-rainbow-six
+Genre=Action
+Players=2
+ReleaseDate=1999/11/17
+
+[8D412933-588F64DB-C:44]
+Name=Tom Clancy's Rainbow Six (G) [!]
+Developer=Saffire
+ForceFeedback=Yes
+GameInformation=tom-clancys-rainbow-six
+Genre=Action
+Players=2
+ReleaseDate=1999/11/17
+
+[392A0C42-B790E77D-C:45]
+Name=Tom Clancy's Rainbow Six (U) [!]
+Developer=Saffire
+ForceFeedback=Yes
+GameInformation=tom-clancys-rainbow-six
+Genre=Action
+Players=2
+ReleaseDate=1999/11/17
+
+[093F916E-4408B698-C:50]
+Name=Tonic Trouble (E) [!]
+Developer=Ubi Soft
+ForceFeedback=No
+GameInformation=tonic-trouble
+Genre=Platform
+Players=1
+ReleaseDate=1999/09/07
+
+[EF9E9714-C03B2C7D-C:45]
+Name=Tonic Trouble (U) (V1.1) [!]
+Developer=Ubi Soft
+ForceFeedback=No
+GameInformation=tonic-trouble
+Genre=Platform
+Players=1
+ReleaseDate=2000/??/??
+
+[9F8926A5-0587B409-C:50]
+Name=Tony Hawk's Pro Skater (E) [!]
+Developer=Edge of Reality
+ForceFeedback=Yes
+GameInformation=tony-hawks-pro-skater-tony-hawks-skateboarding
+Genre=Sport-Skating
+Players=2
+ReleaseDate=2000/03/15
+
+[204EC022-B119D185-C:45]
+Name=Tony Hawk's Pro Skater (U) [!]
+Developer=Edge of Reality
+ForceFeedback=Yes
+GameInformation=tony-hawks-pro-skater-tony-hawks-skateboarding
+Genre=Sport-Skating
+Players=2
+ReleaseDate=2000/03/15
+
+[E0144180-650B78C9-C:45]
+Name=Tony Hawk's Pro Skater (V1.1) [!]
+Developer=Edge of Reality
+ForceFeedback=Yes
+GameInformation=tony-hawks-pro-skater-tony-hawks-skateboarding
+Genre=Sport-Skating
+Players=2
+ReleaseDate=2000/03/15
+
+[84EAB557-C88A190F-C:50]
+Name=Tony Hawk's Pro Skater 2 (E) [!]
+Developer=Edge of Reality
+ForceFeedback=Yes
+GameInformation=tony-hawks-pro-skater-2
+Genre=Sport-Skating
+Players=2
+ReleaseDate=2001/08/15
+
+[99150E18-1266E6A5-C:45]
+Name=Tony Hawk's Pro Skater 2 (U) [!]
+Developer=Edge of Reality
+ForceFeedback=Yes
+GameInformation=tony-hawks-pro-skater-2
+Genre=Sport-Skating
+Players=2
+ReleaseDate=2001/08/15
+
+[1A7F70B5-00B7B9FD-C:45]
+Name=Tony Hawk's Pro Skater 3 (U)
+Developer=Activision
+ForceFeedback=Yes
+GameInformation=tony-hawks-pro-skater-3
+Genre=Sport-Skating
+Players=2
+ReleaseDate=2002/08/20
+
+[9A746EBF-2802EA99-C:0]
+Name=Toon Panic (J) (Beta)
+Developer=Bottom Up
+ForceFeedback=Yes
+GameInformation=toon-panic
+Genre=Action-Fighter
+Players=2
+ReleaseDate=Unreleased
+
+[5F3F49C6-0DC714B0-C:50]
+Name=Top Gear Hyper-Bike (E) [!]
+Developer=Snowblind Studios
+ForceFeedback=Yes
+GameInformation=top-gear-hyper-bike
+Genre=Racing-Motorbk
+Players=4
+ReleaseDate=2000/??/??
+
+[845B0269-57DE9502-C:4A]
+Name=Top Gear Hyper-Bike (J) [!]
+Developer=Snowblind Studios
+ForceFeedback=Yes
+GameInformation=top-gear-hyper-bike
+Genre=Racing-Motorbk
+Players=4
+ReleaseDate=2000/03/27
+
+[8ECC02F0-7F8BDE81-C:45]
+Name=Top Gear Hyper-Bike (U) [!]
+Developer=Snowblind Studios
+ForceFeedback=Yes
+GameInformation=top-gear-hyper-bike
+Genre=Racing-Motorbk
+Players=4
+ReleaseDate=2000/03/27
+
+[75FBDE20-A3189B31-C:0]
+Name=Top Gear Hyper Bike (Beta)
+Developer=Snowblind Studios
+ForceFeedback=Yes
+GameInformation=top-gear-hyper-bike
+Genre=Racing-Motorbk
+Players=4
+ReleaseDate=Unreleased
+
+[D09BA538-1C1A5489-C:50]
+Name=Top Gear Overdrive (E) [!]
+Developer=Snowblind Studios
+ForceFeedback=Yes
+GameInformation=top-gear-overdrive
+Genre=Racing-Car
+Players=4
+ReleaseDate=1998/11/23
+
+[0578F24F-9175BF17-C:4A]
+Name=Top Gear Overdrive (J) [!]
+Developer=Snowblind Studios
+ForceFeedback=Yes
+GameInformation=top-gear-overdrive
+Genre=Racing-Car
+Players=4
+ReleaseDate=1998/11/23
+
+[D741CD80-ACA9B912-C:45]
+Name=Top Gear Overdrive (U) [!]
+Developer=Snowblind Studios
+ForceFeedback=Yes
+GameInformation=top-gear-overdrive
+Genre=Racing-Car
+Players=4
+ReleaseDate=1998/11/23
+
+[7F43E701-536328D1-C:50]
+Name=Top Gear Rally (E) [!]
+Developer=Boss Game Studios
+ForceFeedback=Yes
+GameInformation=top-gear-rally
+Genre=Racing-Rally
+Players=2
+ReleaseDate=1997/10/01
+
+[0E596247-753D4B8B-C:4A]
+Name=Top Gear Rally (J) [!]
+Developer=Boss Game Studios
+ForceFeedback=Yes
+GameInformation=top-gear-rally
+Genre=Racing-Rally
+Players=2
+ReleaseDate=1997/10/01
+
+[62269B3D-FE11B1E8-C:45]
+Name=Top Gear Rally (U) [!]
+Developer=Boss Game Studios
+ForceFeedback=Yes
+GameInformation=top-gear-rally
+Genre=Racing-Rally
+Players=2
+ReleaseDate=1997/10/01
+
+[BEBAB677-51B0B5E4-C:50]
+Name=Top Gear Rally 2 (E) [!]
+Developer=Saffire
+ForceFeedback=Yes
+GameInformation=top-gear-rally-2
+Genre=Racing-Rally
+Players=4
+ReleaseDate=1999/12/03
+
+[F82DD377-8C3FB347-C:58]
+Name=TG Rally 2 (UK Version)
+Developer=Saffire
+ForceFeedback=Yes
+GameInformation=top-gear-rally-2
+Genre=Racing-Rally
+Players=4
+ReleaseDate=1999/12/03
+
+[CFEF2CD6-C9E973E6-C:4A]
+Name=Top Gear Rally 2 (J) [!]
+Developer=Saffire
+ForceFeedback=Yes
+GameInformation=top-gear-rally-2
+Genre=Racing-Rally
+Players=4
+ReleaseDate=1999/12/03
+
+[BE5973E0-89B0EDB8-C:45]
+Name=Top Gear Rally 2 (U) [!]
+Developer=Saffire
+ForceFeedback=Yes
+GameInformation=top-gear-rally-2
+Genre=Racing-Rally
+Players=4
+ReleaseDate=1999/12/03
+
+[EFDF9140-A4168D6B-C:0]
+Name=Top Gear Rally 2 (Beta)
+Developer=Saffire
+ForceFeedback=Yes
+GameInformation=top-gear-rally-2
+Genre=Racing-Rally
+Players=4
+ReleaseDate=Unreleased
+
+[90AF8D2C-E1AC1B37-C:00]
+Name=Tower & Shaft (J) [ALECK64]
+Developer=Aruze
+ForceFeedback=No
+GameInformation=top-gear-rally-2
+Genre=Racing-Rally
+Players=4
+ReleaseDate=2003/??/??
+
+[CCEB3858-26952D97-C:50]
+Name=Toy Story 2 (E) [!]
+Developer=Traveller's Tales
+ForceFeedback=Yes
+GameInformation=toy-story-2-buzz-lightyear-to-the-rescue
+Genre=Platform
+Players=1
+ReleaseDate=1999/11/17
+
+[CB93DB97-7F5C63D5-C:46]
+Name=Toy Story 2 (F) [!]
+Developer=Traveller's Tales
+ForceFeedback=Yes
+GameInformation=toy-story-2-buzz-lightyear-to-the-rescue
+Genre=Platform
+Players=1
+ReleaseDate=1999/11/17
+
+[782A9075-E552631D-C:44]
+Name=Toy Story 2 (G) [!]
+Developer=Traveller's Tales
+ForceFeedback=Yes
+GameInformation=toy-story-2-buzz-lightyear-to-the-rescue
+Genre=Platform
+Players=1
+ReleaseDate=1999/11/17
+
+[A150743E-CF2522CD-C:45]
+Name=Toy Story 2 (U) [!]
+Developer=Traveller's Tales
+ForceFeedback=Yes
+GameInformation=toy-story-2-buzz-lightyear-to-the-rescue
+Genre=Platform
+Players=1
+ReleaseDate=1999/11/17
+
+[C151AD61-280FFF22-C:45]
+Name=Toy Story 2 - Buzz Lightyear to the Rescue! (U) (V1.1)
+Developer=Traveller's Tales
+ForceFeedback=Yes
+GameInformation=toy-story-2-buzz-lightyear-to-the-rescue
+Genre=Platform
+Players=1
+ReleaseDate=1999/11/17
+
+[91691C3D-F4AC5B4D-C:4A]
+Name=Transformers - Beast Wars Metals 64 (J)
+Developer=Takara
+ForceFeedback=Yes
+GameInformation=transformers-beast-wars-metals-64-transmetals
+Genre=Fighting
+Players=2
+ReleaseDate=1999/10/01
+
+[4D79D316-E8501B33-C:45]
+Name=Transformers - Beast Wars Transmetal (U)
+Developer=Takara
+ForceFeedback=Yes
+GameInformation=transformers-beast-wars-metals-64-transmetals
+Genre=Fighting
+Players=2
+ReleaseDate=1999/10/01
+
+[90AF8D2C-E1AC1B37-C:0]
+Name=Tower & Shaft (J) [ALECK64]
+Developer=Aruze
+ForceFeedback=No
+GameInformation=towershaft-aleck64
+Genre=Action-Adventure
+Players=1
+ReleaseDate=2003/??/??
+
+[FE4B6B43-081D29A7-C:45]
+Name=Triple Play 2000 (U) [!]
+Developer=Treyarch
+ForceFeedback=Yes
+GameInformation=triple-play-2000
+Genre=Sport-Baseball
+Players=2
+ReleaseDate=1999/03/22
+
+[916AE6B8-8817AB22-C:4A]
+Name=Jikuu Senshi Turok (J)
+Developer=Iguana Entertainment
+ForceFeedback=No
+GameInformation=jikuu-senshi-turok-turok-dinosaur-hunter
+Genre=Action
+Players=1
+ReleaseDate=1997/02/28
+
+[2F7009DD-FC3BAC53-C:50]
+Name=Turok - Dinosaur Hunter (E) (V1.0) [!]
+Developer=Iguana Entertainment
+ForceFeedback=No
+GameInformation=jikuu-senshi-turok-turok-dinosaur-hunter
+Genre=Action
+Players=1
+ReleaseDate=1997/02/28
+
+[665F09DD-FC3BAC53-C:50]
+Name=Turok - Dinosaur Hunter (E) (V1.0) [a1]
+Developer=Iguana Entertainment
+ForceFeedback=No
+GameInformation=jikuu-senshi-turok-turok-dinosaur-hunter
+Genre=Action
+Players=1
+ReleaseDate=1997/02/28
+
+[2F700DCD-176CC5C9-C:50]
+Name=Turok - Dinosaur Hunter (E) (V1.1)/(V1.2) [!]
+Developer=Iguana Entertainment
+ForceFeedback=No
+GameInformation=jikuu-senshi-turok-turok-dinosaur-hunter
+Genre=Action
+Players=1
+ReleaseDate=1998/??/??
+
+[665FD963-B5CC6612-C:44]
+Name=Turok - Dinosaur Hunter (G) [!]
+Developer=Iguana Entertainment
+ForceFeedback=No
+GameInformation=jikuu-senshi-turok-turok-dinosaur-hunter
+Genre=Action
+Players=1
+ReleaseDate=1997/02/28
+
+[2F70F10D-5C4187FF-C:45]
+Name=Turok - Dinosaur Hunter (U) (V1.0) [!]
+Developer=Iguana Entertainment
+ForceFeedback=No
+GameInformation=jikuu-senshi-turok-turok-dinosaur-hunter
+Genre=Action
+Players=1
+ReleaseDate=1997/02/28
+
+[2F700DCD-176CC5C9-C:45]
+Name=Turok - Dinosaur Hunter (U) (V1.1)/(v1.2) [!]
+Developer=Iguana Entertainment
+ForceFeedback=No
+GameInformation=jikuu-senshi-turok-turok-dinosaur-hunter
+Genre=Action
+Players=1
+ReleaseDate=1998/??/??
+
+[66E4FA0F-DE88C7D0-C:44]
+Name=Turok - Legenden des Verlorenen Landes (Rage Wars) (G) [!]
+Developer=Acclaim Studios Austin
+ForceFeedback=Yes
+GameInformation=turok-legenden-des-verlorenen-landes-rage-wars/
+Genre=Action
+Players=4
+ReleaseDate=1999/11/23
+
+[1EA26214-E790900F-C:50]
+Name=Turok - Rage Wars (E) [!]
+Developer=Acclaim Studios Austin
+ForceFeedback=Yes
+GameInformation=turok-legenden-des-verlorenen-landes-rage-wars/
+Genre=Action
+Players=4
+ReleaseDate=1999/11/23
+
+[B6BE20A5-FACAF66D-C:58]
+Name=Turok - Rage Wars (E) (M3) (Eng-Fre-Ita)
+Developer=Acclaim Studios Austin
+ForceFeedback=Yes
+GameInformation=turok-legenden-des-verlorenen-landes-rage-wars/
+Genre=Action
+Players=4
+ReleaseDate=1999/11/23
+
+[ADB9498B-DAF28F55-C:45]
+Name=Turok - Rage Wars (U) [!]
+Developer=Acclaim Studios Austin
+ForceFeedback=Yes
+GameInformation=turok-legenden-des-verlorenen-landes-rage-wars/
+Genre=Action
+Players=4
+ReleaseDate=1999/11/23
+
+[2E0E7749-B8B49D59-C:58]
+Name=Turok 2 - Seeds of Evil (FIS)
+Developer=Acclaim Studios Austin
+ForceFeedback=Yes
+GameInformation=violence-killer-turok-new-generation-turok-2-seeds-of-evil/
+Genre=Action
+Players=4
+ReleaseDate=1999/11/23
+
+[E8C95AFC-35D121DA-C:50]
+Name=Turok 2 - Seeds of Evil - Kiosk (E) [!]
+Developer=Iguana Entertainment
+ForceFeedback=Yes
+GameInformation=violence-killer-turok-new-generation-turok-2-seeds-of-evil/
+Genre=Action
+Players=4
+ReleaseDate=1998/12/10
+
+[E8C95AFC-35D121DA-C:45]
+Name=Turok 2 - Seeds of Evil - Kiosk (U) [!]
+Developer=Iguana Entertainment
+ForceFeedback=Yes
+GameInformation=violence-killer-turok-new-generation-turok-2-seeds-of-evil/
+Genre=Action
+Players=4
+ReleaseDate=1998/12/10
+
+[E0B92B94-80E87CBD-C:50]
+Name=Turok 2 - Seeds of Evil (E) [!]
+Developer=Iguana Entertainment
+ForceFeedback=Yes
+GameInformation=violence-killer-turok-new-generation-turok-2-seeds-of-evil/
+Genre=Action
+Players=4
+ReleaseDate=1998/12/10
+
+[FE05840B-9393320C-C:44]
+Name=Turok 2 - Seeds of Evil (G) [!]
+Developer=Iguana Entertainment
+ForceFeedback=Yes
+GameInformation=violence-killer-turok-new-generation-turok-2-seeds-of-evil/
+Genre=Action
+Players=4
+ReleaseDate=1998/12/10
+
+[2E0E7749-B8B49D59-C:58]
+Name=Turok 2 - Seeds of Evil (FIS)
+Developer=Iguana Entertainment
+ForceFeedback=Yes
+GameInformation=violence-killer-turok-new-generation-turok-2-seeds-of-evil/
+Genre=Action
+Players=4
+ReleaseDate=1998/12/10
+
+[49088A11-6494957E-C:45]
+Name=Turok 2 - Seeds of Evil (U) [!]
+Developer=Iguana Entertainment
+ForceFeedback=Yes
+GameInformation=violence-killer-turok-new-generation-turok-2-seeds-of-evil/
+Genre=Action
+Players=4
+ReleaseDate=1998/12/10
+
+[E0B92B94-B9A7E025-C:45]
+Name=Turok 2 - Seeds of Evil (U) (V1.1)
+Developer=Iguana Entertainment
+ForceFeedback=Yes
+GameInformation=violence-killer-turok-new-generation-turok-2-seeds-of-evil/
+Genre=Action
+Players=4
+ReleaseDate=1998/12/10
+
+[6A162FF2-2093704C-C:50]
+Name=Turok 3 - Shadow of Oblivion (E) [!]
+Developer=Acclaim Studios Austin
+ForceFeedback=Yes
+GameInformation=turok-3-shadow-of-oblivion
+Genre=Action
+Players=4
+ReleaseDate=2000/08/31
+
+[89A579F1-667E97EF-C:45]
+Name=Turok 3 - Shadow of Oblivion (U) [!]
+Developer=Acclaim Studios Austin
+ForceFeedback=Yes
+GameInformation=turok-3-shadow-of-oblivion
+Genre=Action
+Players=4
+ReleaseDate=2000/08/31
+
+[37FA8F16-5F824D37-C:44]
+Name=Turok 3 - Shadow of Oblivion (G) (Beta)
+Developer=Acclaim Studios Austin
+ForceFeedback=Yes
+GameInformation=turok-3-shadow-of-oblivion
+Genre=Action
+Players=4
+ReleaseDate=Unreleased
+
+[D25C1211-13EEBF67-C:44]
+Name=Turok 3 - Shadow of Oblivion (G) (Beta-WIP)
+Developer=Acclaim Studios Austin
+ForceFeedback=Yes
+GameInformation=turok-3-shadow-of-oblivion
+Genre=Action
+Players=4
+ReleaseDate=Unreleased
+
+[E688A5B8-B14B3F18-C:50]
+Name=Twisted Edge Extreme Snowboarding (E) [!]
+Developer=Boss Game Studios
+ForceFeedback=Yes
+GameInformation=king-hill-64-extreme-snowboarding
+Genre=Sport-Snowbd
+Players=2
+ReleaseDate=1999/03/12
+
+[BBC99D32-117DAA80-C:45]
+Name=Twisted Edge Extreme Snowboarding (U) [!]
+Developer=Boss Game Studios
+ForceFeedback=Yes
+GameInformation=king-hill-64-extreme-snowboarding
+Genre=Sport-Snowbd
+Players=2
+ReleaseDate=1998/11/10
+
+//-------------------------  U  --------------------------
+
+[28D5562D-E4D5AE50-C:4A]
+Name=Utchan Nanchan no Hono no Challenger - Denryuu Ira Ira Bou
+Developer=Hudson Soft
+ForceFeedback=No
+GameInformation=utchan-nanchan-no-hono-no-challenger-denryuu-ira-ira-bou
+Genre=Puzzle
+Players=2
+ReleaseDate=1997/12/19
+
+//-------------------------  V  --------------------------
+
+[5D40ED2C-10D6ABCF-C:00]
+Name=Viewpoint2064-Prototype
+Developer=Nintendo EAD
+ForceFeedback=Yes
+GameInformation=viewpoint2064
+Genre=Action
+Players=1
+ReleaseDate=2020/03/28
+
+[151F79F4-8EEDC8E5-C:50]
+Name=Vigilante 8 (E) [!]
+Developer=Luxoflux Corp.
+ForceFeedback=Yes
+GameInformation=vigilante-8
+Genre=Action
+Players=4
+ReleaseDate=1999/03/17
+
+[E2BC82A2-591CD694-C:46]
+Name=Vigilante 8 (F) [!]
+Developer=Luxoflux Corp.
+ForceFeedback=Yes
+GameInformation=vigilante-8
+Genre=Action
+Players=4
+ReleaseDate=1999/03/17
+
+[6EDA5178-D396FEC1-C:44]
+Name=Vigilante 8 (G) [!]
+Developer=Luxoflux Corp.
+ForceFeedback=Yes
+GameInformation=vigilante-8
+Genre=Action
+Players=4
+ReleaseDate=1999/03/17
+
+[EA71056A-E4214847-C:45]
+Name=Vigilante 8 (U) [!]
+Developer=Luxoflux Corp.
+ForceFeedback=Yes
+GameInformation=vigilante-8
+Genre=Action
+Players=4
+ReleaseDate=1999/03/17
+
+[DD10BC7E-F900B351-C:50]
+Name=Vigilante 8 - 2nd Offence (E) [!]
+Developer=Luxoflux Corp.
+ForceFeedback=Yes
+GameInformation=vigilante-8-2nd-offence
+Genre=Action
+Players=4
+ReleaseDate=2000/02/02
+
+[F5C5866D-052713D9-C:45]
+Name=Vigilante 8 - 2nd Offense (U) [!]
+Developer=Luxoflux Corp.
+ForceFeedback=Yes
+GameInformation=vigilante-8-2nd-offence
+Genre=Action
+Players=4
+ReleaseDate=2000/02/02
+
+[60006C98-2605A381-C:4A]
+Name=Violence Killer - Turok New Generation (J) [!]
+Developer=Gen Soft
+ForceFeedback=No
+GameInformation=violence-killer-turok-new-generation-turok-2-seeds-of-evil
+Genre=Action
+Players=4
+ReleaseDate=1999/06/18
+
+[2FDAA221-A588A7CE-C:50]
+Name=Virtual Chess 64 (E) [!]
+Developer=Titus
+ForceFeedback=No
+GameInformation=virtual-chess-64
+Genre=Strategy
+Players=2
+ReleaseDate=1998/06/10
+
+[82B3248B-E73E244D-C:45]
+Name=Virtual Chess 64 (U) [!]
+Developer=Titus
+ForceFeedback=No
+GameInformation=virtual-chess-64
+Genre=Strategy
+Players=2
+ReleaseDate=1998/06/10
+
+[98F9F2D0-03D9F09C-C:50]
+Name=Virtual Pool 64 (E) [!]
+Developer=Celeris Corporation
+ForceFeedback=Yes
+GameInformation=virtual-pool-64
+Genre=Simulation
+Players=2
+ReleaseDate=1998/12/17
+
+[4E4A7643-A37439D7-C:45]
+Name=Virtual Pool 64 (U) [!]
+Developer=Celeris Corporation
+ForceFeedback=Yes
+GameInformation=virtual-pool-64
+Genre=Simulation
+Players=2
+ReleaseDate=1998/12/17
+
+[045C08C4-4AFD798B-C:4A]
+Name=Virtual Pro Wrestling (J) [!]
+Developer=Aki Corporation / Asmik Ace Enterainment
+ForceFeedback=Yes
+GameInformation=virtual-pro-wrestling-6
+Genre=Sport-Wrestlng
+Players=4
+ReleaseDate=1997/12/19
+
+[CD094235-88074B62-C:4A]
+Name=Virtual Pro Wrestling 2 (J) [!]
+Developer=Aki Corporation / Asmik Ace Enterainment
+ForceFeedback=Yes
+GameInformation=virtual-pro-wrestling-2-oudou-keishou
+Genre=Sport-Wrestlng
+Players=4
+ReleaseDate=2000/01/28
+
+[B9D26545-B3B49E66-C:4A]
+Name=Virtual Pro Wrestling 2 (J) [T-Eng]
+Developer=Aki Corporation / Asmik Ace Enterainment
+ForceFeedback=Yes
+GameInformation=virtual-pro-wrestling-2-oudou-keishou
+Genre=Sport-Wrestlng
+Players=4
+ReleaseDate=2000/01/28
+
+[636E6B19-E57DDC5F-C:50]
+Name=V-Rally Edition 99 (E) [!]
+Developer=Eden Studios
+ForceFeedback=Yes
+GameInformation=v-rally-edition-99
+Genre=Racing-Rally
+Players=2
+ReleaseDate=1999/09/18
+
+[4D0224A5-1BEB5794-C:4A]
+Name=V-Rally Edition 99 (J) [!]
+Developer=Eden Studios
+ForceFeedback=Yes
+GameInformation=v-rally-edition-99
+Genre=Racing-Rally
+Players=2
+ReleaseDate=1999/09/18
+
+[3C059038-C8BF2182-C:45]
+Name=V-Rally Edition 99 (U) [!]
+Developer=Eden Studios
+ForceFeedback=Yes
+GameInformation=v-rally-edition-99
+Genre=Racing-Rally
+Players=2
+ReleaseDate=1999/09/18
+
+[2F57C9F7-F1E29CA6-C:4A]
+Name=Vivid Dolls (J) [ALECK64]
+Developer=Visco
+ForceFeedback=no
+GameInformation=vivid-dolls
+Genre=Puzzle
+Players=1
+ReleaseDate=1999/??/??
+
+//-------------------------  W  --------------------------
+
+[93053075-261E0F43-C:50]
+Name=Waialae Country Club-True Golf Classics (E) (V1.0) [!]
+Developer=T&E Soft
+ForceFeedback=Yes
+GameInformation=waialae-country-club-true-golf-classics
+Genre=Sport-Golf
+Players=2
+ReleaseDate=1998/07/29
+
+[0C5057AD-046E126E-C:50]
+Name=Waialae Country Club-True Golf Classics (E) (V1.1) [!]
+Developer=T&E Soft
+ForceFeedback=Yes
+GameInformation=waialae-country-club-true-golf-classics
+Genre=Sport-Golf
+Players=2
+ReleaseDate=1999/??/??
+
+[8066D58A-C3DECAC1-C:45]
+Name=Waialae Country Club-True Golf Classics (U) [!]
+Developer=T&E Soft
+ForceFeedback=Yes
+GameInformation=waialae-country-club-true-golf-classics
+Genre=Sport-Golf
+Players=2
+ReleaseDate=1998/07/29
+
+[D715CC70-271CF5D6-C:50]
+Name=War Gods (E) [!]
+Developer=Eurocom
+ForceFeedback=No
+GameInformation=war-gods
+Genre=Fighting
+Players=2
+ReleaseDate=1997/05/21
+
+[F7FE28F6-C3F2ACC3-C:45]
+Name=War Gods (U) [!]
+Developer=Eurocom
+ForceFeedback=No
+GameInformation=war-gods
+Genre=Fighting
+Players=2
+ReleaseDate=1997/05/21
+
+[650EFA96-30DDF9A7-C:50]
+Name=Wave Race 64 (E) [!]
+Developer=Nintendo
+ForceFeedback=No
+GameInformation=wave-race-64
+Genre=Racing-Waterbk
+Players=2
+ReleaseDate=1996/11/05
+
+[5C9191D6-B30AC306-C:4A]
+Name=Wave Race 64 (J) [!]
+Developer=Nintendo
+ForceFeedback=No
+GameInformation=wave-race-64
+Genre=Racing-Waterbk
+Players=2
+ReleaseDate=1996/09/27
+
+[44995484-20A5FC5E-C:4A]
+Name=Wave Race 64 (J) (V1.1) [!]
+Developer=Nintendo
+ForceFeedback=No
+GameInformation=wave-race-64
+Genre=Racing-Waterbk
+Players=2
+ReleaseDate=1996/09/27
+
+[7DE11F53-74872F9D-C:45]
+Name=Wave Race 64 (U) (V1.0) [!]
+Developer=Nintendo
+ForceFeedback=No
+GameInformation=wave-race-64
+Genre=Racing-Waterbk
+Players=2
+ReleaseDate=1996/11/05
+
+[492F4B61-04E5146A-C:45]
+Name=Wave Race 64 (U) (V1.1) [!]
+Developer=Nintendo
+ForceFeedback=No
+GameInformation=wave-race-64
+Genre=Racing-Waterbk
+Players=2
+ReleaseDate=1997/??/??
+
+[535DF3E2-609789F1-C:4A]
+Name=Wave Race 64 Shindou Edition (J) (V1.2) [!]
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=wave-race-64
+Genre=Racing-Waterbk
+Players=2
+ReleaseDate=1998/??/??
+
+[49552381-CD856CE8-C:43]
+Name=Wave Race 64 - Shindou (iQue) [4ksavefix]
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=wave-race-64
+Genre=Racing-Waterbk
+Players=2
+ReleaseDate=1998/??/??
+
+[57AF893E-884A377C-C:45]
+Name=Wave Race 64 (U) (Rev B) (Rumble Edition)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=wave-race-64
+Genre=Racing-Waterbk
+Players=2
+ReleaseDate=1998/??/??
+
+[2209094B-2C9559AF-C:50]
+Name=Wayne Gretzky's 3D Hockey (E) [!]
+Developer=Williams
+ForceFeedback=No
+GameInformation=wayne-gretzkys-3d-hockey
+Genre=Sport-Hockey
+Players=4
+ReleaseDate=1996/11/14
+
+[F1301043-FD80541A-C:4A]
+Name=Wayne Gretzky's 3D Hockey (J) [!]
+Developer=Williams
+ForceFeedback=No
+GameInformation=wayne-gretzkys-3d-hockey
+Genre=Sport-Hockey
+Players=4
+ReleaseDate=1996/11/14
+
+[6B45223F-F00E5C56-C:45]
+Name=Wayne Gretzky's 3D Hockey (U) [!]
+Developer=Williams
+ForceFeedback=No
+GameInformation=wayne-gretzkys-3d-hockey
+Genre=Sport-Hockey
+Players=4
+ReleaseDate=1996/11/14
+
+[DC3BAA59-0ABB456A-C:45]
+Name=Wayne Gretzky's 3D Hockey (U) (V1.1)
+Developer=Williams
+ForceFeedback=No
+GameInformation=wayne-gretzkys-3d-hockey
+Genre=Sport-Hockey
+Players=4
+ReleaseDate=1997/??/??
+
+[661B45F3-9ED6266D-C:50]
+Name=Wayne Gretzky's 3D Hockey '98 (E) [!]
+Developer=Software Creations
+ForceFeedback=No
+GameInformation=wayne-gretzkys-3d-hockey-98
+Genre=Sport-Hockey
+Players=4
+ReleaseDate=1997/12/03
+
+[5A9D3859-97AAE710-C:45]
+Name=Wayne Gretzky's 3D Hockey '98 (U) [!]
+Developer=Software Creations
+ForceFeedback=No
+GameInformation=wayne-gretzkys-3d-hockey-98
+Genre=Sport-Hockey
+Players=4
+ReleaseDate=1997/12/03
+
+[396F5ADD-6693ECA7-C:45]
+Name=WCW Backstage Assault (U) [!]
+Developer=Kodiak Interactive
+ForceFeedback=Yes
+GameInformation=wcw-backstage-assault
+Genre=Wrestling
+Players=2
+ReleaseDate=2000/12/12
+
+[AA7B0658-9C96937B-C:50]
+Name=WCW Mayhem (E) [!]
+Developer=Kodiak Interactive
+ForceFeedback=Yes
+GameInformation=wcw-mayhem
+Genre=Wrestling
+Players=4
+ReleaseDate=1999/09/22
+
+[33BE8CD6-EC186912-C:45]
+Name=WCW Mayhem (U) [!]
+Developer=Kodiak Interactive
+ForceFeedback=Yes
+GameInformation=wcw-mayhem
+Genre=Wrestling
+Players=4
+ReleaseDate=1999/09/22
+
+[D4C45A1A-F425B25E-C:45]
+Name=WCW Nitro (U) [!]
+Developer=Inland Productions
+ForceFeedback=Yes
+GameInformation=wcw-nitro
+Genre=Wrestling
+Players=4
+ReleaseDate=1999/02/10
+
+[8BDBAF68-345B4B36-C:50]
+Name=WCW vs. nWo - World Tour (E) [!]
+Developer=Asmik Ace Enterainment / Aki Corporation
+ForceFeedback=Yes
+GameInformation=wcw-vs-nwo-world-tour
+Genre=Wrestling
+Players=4
+ReleaseDate=1997/11/28
+
+[2C3E19BD-5113EE5E-C:45]
+Name=WCW vs. nWo - World Tour (U) (V1.0) [!]
+Developer=Asmik Ace Enterainment / Aki Corporation
+ForceFeedback=Yes
+GameInformation=wcw-vs-nwo-world-tour
+Genre=Wrestling
+Players=4
+ReleaseDate=1997/11/28
+
+[71BE60B9-1DDBFB3C-C:45]
+Name=WCW vs. nWo - World Tour (U) (V1.1) [!]
+Developer=Asmik Ace Enterainment / Aki Corporation
+ForceFeedback=Yes
+GameInformation=wcw-vs-nwo-world-tour
+Genre=Wrestling
+Players=4
+ReleaseDate=1998/??/??
+
+[68E8A875-0CE7A486-C:50]
+Name=WCW-nWo Revenge (E) [!]
+Developer=Asmik Ace Enterainment / Aki Corporation
+ForceFeedback=Yes
+GameInformation=wcw-nwo-revenge
+Genre=Wrestling
+Players=4
+ReleaseDate=1998/10/26
+
+[DEE596AB-AF3B7AE7-C:45]
+Name=WCW-nWo Revenge (U) [!]
+Developer=Asmik Ace Enterainment / Aki Corporation
+ForceFeedback=Yes
+GameInformation=wcw-nwo-revenge
+Genre=Wrestling
+Players=4
+ReleaseDate=1998/10/26
+
+[CEA8B54F-7F21D503-C:50]
+Name=Wetrix (E) [!]
+Developer=Ocean
+ForceFeedback=No
+GameInformation=wetrix
+Genre=Puzzle
+Players=2
+ReleaseDate=1998/06/12
+
+[DCB6EAFA-C6BBCFA3-C:4A]
+Name=Wetrix (J) [!]
+Developer=Ocean
+ForceFeedback=No
+GameInformation=wetrix
+Genre=Puzzle
+Players=2
+ReleaseDate=1998/06/12
+
+[CEA8B54F-7F21D503-C:45]
+Name=Wetrix (U) [!]
+Developer=Ocean
+ForceFeedback=No
+GameInformation=wetrix
+Genre=Puzzle
+Players=2
+ReleaseDate=1998/06/12
+
+[E896092B-DC244D4E-C:45]
+Name=Wheel of Fortune (U) [!]
+Developer=GameTek
+ForceFeedback=Yes
+GameInformation=wheel-of-fortune
+Genre=Puzzle
+Players=3
+ReleaseDate=1997/11/28
+
+[0CEBC4C7-0C9CE932-C:4A]
+Name=Wild Choppers (J) [!]
+Developer=Seta Corporation
+ForceFeedback=No
+GameInformation=chopper-attack
+Genre=Action
+Players=1
+ReleaseDate=1997/11/28
+
+[A04237B9-68F62C72-C:00]
+Name=WildWaters - Extreme Kayak (U) (Prototype)
+Developer=Looking Glass Studios
+ForceFeedback=No
+GameInformation=wildwaters-extreme-kayak-prototype
+Genre=Sport
+Players=2
+ReleaseDate=2012/04/01
+
+[D5898CAF-6007B65B-C:50]
+Name=WinBack - Covert Operations (E) [!]
+Developer=Omega Force
+ForceFeedback=Yes
+GameInformation=operation-winback-winback-covert-operations-winback
+Genre=Action
+Players=4
+ReleaseDate=2000/07/07
+
+[1FA056E0-A4B9946A-C:4A]
+Name=WinBack - Covert Operations (J) [!]
+Developer=Omega Force
+ForceFeedback=Yes
+GameInformation=operation-winback-winback-covert-operations-winback
+Genre=Action
+Players=4
+ReleaseDate=1999/09/23
+
+[ED98957E-8242DCAC-C:45]
+Name=WinBack - Covert Operations (U) [!]
+Developer=Omega Force
+ForceFeedback=Yes
+GameInformation=operation-winback-winback-covert-operations-winback
+Genre=Action
+Players=4
+ReleaseDate=1999/09/30
+
+[54310E7D-6B5430D8-C:50]
+Name=Wipeout 64 (E) [!]
+Developer=Psygnosis
+ForceFeedback=Yes
+GameInformation=wipeout-64
+Genre=Racing-Future
+Players=4
+ReleaseDate=1998/11/02
+
+[136EBEE3-35B7229E-C:50]
+Name=Wipeout 64 (E) (Prototype)
+Developer=Psygnosis
+ForceFeedback=Yes
+GameInformation=wipeout-64
+Genre=Racing-Future
+Players=4
+ReleaseDate=1998/11/02
+
+[132D2732-C70E9118-C:45]
+Name=Wipeout 64 (U) [!]
+Developer=Psygnosis
+ForceFeedback=Yes
+GameInformation=wipeout-64
+Genre=Racing-Future
+Players=4
+ReleaseDate=1998/11/02
+
+[E43C9765-05B1C1BE-C:4A]
+Name=Wonder Project J2 (J) [!]
+Developer=Enix
+ForceFeedback=No
+GameInformation=wonder-project-j2-koruro-no-mori-no-jozet
+Genre=RPG
+Players=1
+ReleaseDate=1996/10/31
+
+[4F1E88F7-4A5A3F96-C:4A]
+Name=Wonder Project J2 (U)
+Developer=Enix
+ForceFeedback=No
+GameInformation=wonder-project-j2-koruro-no-mori-no-jozet
+Genre=RPG
+Players=1
+ReleaseDate=Unreleased
+
+[F9FC3090-FF014EC2-C:50]
+Name=World Cup 98 (E) [!]
+Developer=EA Sports
+ForceFeedback=No
+GameInformation=world-cup-98
+Genre=Sport-Soccer
+Players=4
+ReleaseDate=1998/05/18
+
+[BD636D6A-5D1F54BA-C:45]
+Name=World Cup 98 (U) [!]
+Developer=EA Sports
+ForceFeedback=No
+GameInformation=world-cup-98
+Genre=Sport-Soccer
+Players=4
+ReleaseDate=1998/05/18
+
+[AC062778-DFADFCB8-C:50]
+Name=World Driver Championship (E) [!]
+Developer=Boss Game Studios
+ForceFeedback=Yes
+GameInformation=world-driver-championship
+Genre=Racing-Rally
+Players=2
+ReleaseDate=1999/06/16
+
+[308DFEC8-CE2EB5F6-C:45]
+Name=World Driver Championship (U) [!]
+Developer=Boss Game Studios
+ForceFeedback=Yes
+GameInformation=world-driver-championship
+Genre=Racing-Rally
+Players=2
+ReleaseDate=1999/06/16
+
+[3B941695-F90A5EEB-C:50]
+Name=World is Not Enough, The (E) [!]
+Developer=Eurocom
+ForceFeedback=Yes
+GameInformation=007-the-world-is-not-enough
+Genre=Shooter FP
+Players=4
+ReleaseDate=2000/10/17
+
+[033F4C13-319EE7A7-C:45]
+Name=World is Not Enough, The (U) [!]
+Developer=Eurocom
+ForceFeedback=Yes
+GameInformation=007-the-world-is-not-enough
+Genre=Shooter FP
+Players=4
+ReleaseDate=2000/10/17
+
+[7BD65F9E-76B6A083-C:45]
+Name=007 - The World is Not Enough (U) (Prototype - 2020 release)
+Developer=Eurocom
+ForceFeedback=Yes
+GameInformation=007-twine-prototype-2020
+Genre=Shooter FP
+Players=4
+ReleaseDate=2000/10/17
+
+[7BD65F86-27DD800E-C:45]
+Name=007 - The World Is Not Enough (U) (Prototype - 2020 release) [f1]
+Developer=Eurocom
+ForceFeedback=Yes
+GameInformation=007-twine-prototype-2020
+Genre=Shooter FP
+Players=4
+ReleaseDate=2000/10/17
+
+[309ACF96-B3DAD623-C:50]
+Name=007 - The World Is Not Enough (E) (Prototype - 2020 release) [f1]
+Developer=Eurocom
+ForceFeedback=Yes
+GameInformation=007-twine-prototype-2020
+Genre=Shooter FP
+Players=4
+ReleaseDate=2000/10/17
+
+[309ACF96-B3DAD623-C:55]
+Name=007 - The World Is Not Enough (A) (Prototype - 2020 release) [f1]
+Developer=Eurocom
+ForceFeedback=Yes
+GameInformation=007-twine-prototype-2020
+Genre=Shooter FP
+Players=4
+ReleaseDate=2000/10/17
+
+[A92E0966-341C3912-C:45]
+Name=007 - The World is Not Enough (U) (Prototype)
+Developer=Eurocom
+ForceFeedback=Yes
+GameInformation=007-the-world-is-not-enough
+Genre=Shooter FP
+Players=4
+ReleaseDate=2000/10/17
+
+[F903C6A6-9B585E72-C:50]
+Name=007 - The World is Not Enough (E) (Prototype)
+Developer=Eurocom
+ForceFeedback=Yes
+GameInformation=007-the-world-is-not-enough
+Genre=Shooter FP
+Players=4
+ReleaseDate=2000/10/17
+
+[2D21C57B-8FE4C58C-C:50]
+Name=Worms - Armageddon (E) [!]
+Developer=Infogrames Lyon / Team17 Software
+ForceFeedback=Yes
+GameInformation=worms-armageddon
+Genre=Action
+Players=4
+ReleaseDate=2000/03/16
+
+[13E959A0-0E93CAB0-C:45]
+Name=Worms - Armageddon (U) [!]
+Developer=Infogrames Lyon / Team17 Software
+ForceFeedback=Yes
+GameInformation=worms-armageddon
+Genre=Action
+Players=4
+ReleaseDate=2000/03/16
+
+[C71353BE-AA09A6EE-C:50]
+Name=WWF WrestleMania 2000 (E) [!]
+Developer=Asmik Ace Enterainment / Aki Corporation
+ForceFeedback=Yes
+GameInformation=wwf-wrestlemania-2000
+Genre=Wrestling
+Players=4
+ReleaseDate=1999/11/16
+
+[12737DA5-23969159-C:4A]
+Name=WWF Wrestlemania 2000 (J) [!]
+Developer=Asmik Ace Enterainment / Aki Corporation
+ForceFeedback=Yes
+GameInformation=wwf-wrestlemania-2000
+Genre=Wrestling
+Players=4
+ReleaseDate=1999/11/16
+
+[90A59003-31089864-C:45]
+Name=WWF WrestleMania 2000 (U) [!]
+Developer=Asmik Ace Enterainment / Aki Corporation
+ForceFeedback=Yes
+GameInformation=wwf-wrestlemania-2000
+Genre=Wrestling
+Players=4
+ReleaseDate=1999/11/16
+
+[33A275A4-B8504459-C:50]
+Name=WWF - War Zone (E) [!]
+Developer=Iguana West
+ForceFeedback=Yes
+GameInformation=wwf-war-zone
+Genre=Wrestling
+Players=4
+ReleaseDate=1998/08/11
+
+[CD5BEC0F-86FD1008-C:45]
+Name=WWF - War Zone (U) [!]
+Developer=Iguana West
+ForceFeedback=Yes
+GameInformation=wwf-war-zone
+Genre=Wrestling
+Players=4
+ReleaseDate=1998/08/11
+
+[5BF45B7B-596BEEE8-C:50]
+Name=WWF Attitude (E) [!]
+Developer=Iguana West
+ForceFeedback=Yes
+GameInformation=wwf-attitude
+Genre=Wrestling
+Players=4
+ReleaseDate=1999/08/31
+
+[8F3151C8-4F3AF545-C:44]
+Name=WWF Attitude (G) [!]
+Developer=Iguana West
+ForceFeedback=Yes
+GameInformation=wwf-attitude
+Genre=Wrestling
+Players=4
+ReleaseDate=1999/08/31
+
+[D2BE2F14-38453788-C:45]
+Name=WWF Attitude (U) [!]
+Developer=Iguana West
+ForceFeedback=Yes
+GameInformation=wwf-attitude
+Genre=Wrestling
+Players=4
+ReleaseDate=1999/08/31
+
+[6D8DF08E-D008C3CF-C:50]
+Name=WWF No Mercy (E) (V1.0) [!]
+Developer=Asmik Ace Enterainment / Aki Corporation
+ForceFeedback=Yes
+GameInformation=wwf-no-mercy
+Genre=Wrestling
+Players=4
+ReleaseDate=2000/11/14
+
+[8CDB94C2-CB46C6F0-C:50]
+Name=WWF No Mercy (E) (V1.1) [!]
+Developer=Asmik Ace Enterainment / Aki Corporation
+ForceFeedback=Yes
+GameInformation=wwf-no-mercy
+Genre=Wrestling
+Players=4
+ReleaseDate=2001/??/??
+
+[4E4B0640-1B49BCFB-C:45]
+Name=WWF No Mercy (U) [!]
+Developer=Asmik Ace Enterainment / Aki Corporation
+ForceFeedback=Yes
+GameInformation=wwf-no-mercy
+Genre=Wrestling
+Players=4
+ReleaseDate=2000/11/14
+
+//-------------------------  X  --------------------------
+
+[0A1667C7-293346A6-C:50]
+Name=Xena Warrior Princess - Talisman of Fate (E) [!]
+Developer=Saffire
+ForceFeedback=Yes
+GameInformation=xena-warrior-princess-the-talisman-of-fate
+Genre=Fighting
+Players=4
+ReleaseDate=1999/12/14
+
+[0553AE9D-EAD8E0C1-C:45]
+Name=Xena Warrior Princess - Talisman of Fate (U) [!]
+Developer=Saffire
+ForceFeedback=Yes
+GameInformation=xena-warrior-princess-the-talisman-of-fate
+Genre=Fighting
+Players=4
+ReleaseDate=1999/12/14
+
+[470112E9-53C66CB4-C:41]
+Name=XENO CRISIS 64 (JU)
+Developer=Bitmap Bureau
+ForceFeedback=Yes
+GameInformation=xeno-crisis-64
+Genre=Fighting
+Players=4
+ReleaseDate=2023/04/??
+
+[470112E9-53C66CB4-C:50]
+Name=XENO CRISIS 64 (E)
+Developer=Bitmap Bureau
+ForceFeedback=Yes
+GameInformation=xeno-crisis-64
+Genre=Fighting
+Players=4
+ReleaseDate=2023/04/??
+
+//-------------------------  Y  --------------------------
+
+[9F8B96C3-A01194DC-C:4A]
+Name=Yakouchuu II - Satsujun Kouru (J) [!]
+Developer=Athena
+ForceFeedback=No
+GameInformation=yakouchuu-ii-satsujin-kouru
+Genre=Adventure
+Players=1
+ReleaseDate=1999/10/22
+
+[D3F97D49-6924135B-C:50]
+Name=Yoshi's Story (E) [!]
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=yoshis-story
+Genre=Platform
+Players=1
+ReleaseDate=1997/12/21
+
+[2DCFCA60-8354B147-C:4A]
+Name=Yoshi's Story (J) [!]
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=yoshis-story
+Genre=Platform
+Players=1
+ReleaseDate=1998/03/10
+
+[2337D8E8-6B8E7CEC-C:45]
+Name=Yoshi's Story (U) [!]
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=yoshis-story
+Genre=Platform
+Players=1
+ReleaseDate=1998/03/10
+
+[CED13EDF-A3C5182C-C:00]
+Name=Yoshi's Story (CHN) (iQue)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=yoshis-story
+Genre=Platform
+Players=1
+ReleaseDate=2004/03/25
+
+[8C04964A-80112706-C:43]
+Name=Yoshi's Story (CHN) [f1]
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=yoshis-story
+Genre=Platform
+Players=1
+ReleaseDate=2004/03/25
+
+[9FE6162D-E97E4037-C:4A]
+Name=Yuke Yuke!! Trouble Makers (J) [!]
+Developer=Enix
+ForceFeedback=No
+GameInformation=mischief-makers-yuke-yuke-trouble-makers
+Genre=Platform
+Players=1
+ReleaseDate=1997/06/27
+
+//-------------------------  Z  --------------------------
+
+[EC417312-EB31DE5F-C:4A]
+Name=Zelda no Densetsu - Mujura no Kamen (J) (V1.0)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
+Genre=Action-Adventure
+Players=1
+ReleaseDate=2003/04/27
+
+[69AE0438-2C63F3F3-C:4A]
+Name=Zelda no Densetsu - Mujura no Kamen (J) (V1.1)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
+Genre=Action-Adventure
+Players=1
+ReleaseDate=2001/??/??
+
+[8473D0C1-23120666-C:4A]
+Name=Zelda no Densetsu - Mujura no Kamen - Zelda Collection Version (J) (GC Version)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=legend-of-zelda-majoras-mask-zelda-no-densetsu-mujura-no-kamen
+Genre=Action-Adventure
+Players=1
+ReleaseDate=2003/04/27
+
+[EC7011B7-7616D72B-C:4A]
+Name=Zelda no Densetsu - Toki no Ocarina (J) (V1.0)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=the-legend-of-zelda-ocarina-of-time-zelda-no-densetsu-toki-no-ocarina
+Genre=Action-Adventure
+Players=1
+ReleaseDate=1998/11/21
+
+[D43DA81F-021E1E19-C:4A]
+Name=Zelda no Densetsu - Toki no Ocarina (J)(V1.1)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=the-legend-of-zelda-ocarina-of-time-zelda-no-densetsu-toki-no-ocarina
+Genre=Action-Adventure
+Players=1
+ReleaseDate=1998/11/21
+
+[693BA2AE-B7F14E9F-C:4A]
+Name=Zelda no Densetsu - Toki no Ocarina (J)(V1.2)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=the-legend-of-zelda-ocarina-of-time-zelda-no-densetsu-toki-no-ocarina
+Genre=Action-Adventure
+Players=1
+ReleaseDate=1998/11/21
+
+[F7F52DB8-2195E636-C:4A]
+Name=Zelda no Densetsu - Toki no Ocarina - Zelda Collection Version (J) (GC Version)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=the-legend-of-zelda-ocarina-of-time-zelda-no-densetsu-toki-no-ocarina
+Genre=Action-Adventure
+Players=1
+ReleaseDate=2003/04/27
+
+[F43B45BA-2F0E9B6F-C:4A]
+Name=Zelda no Densetsu - Toki no Ocarina GC Ura (J) (GC Version)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=legend-of-zelda-ocarina-of-time-master-quest-zelda-no-densetsu-toki-no-ocarina-gc-ura
+Genre=Action-Adventure
+Players=1
+ReleaseDate=2003/04/27
+
+[F611F4BA-C584135C-C:4A]
+Name=Zelda no Densetsu - Toki no Ocarina GC (J) (GC Version)
+Developer=Nintendo
+ForceFeedback=Yes
+GameInformation=legend-of-zelda-ocarina-of-time-master-quest-zelda-no-densetsu-toki-no-ocarina-gc-ura
+Genre=Action-Adventure
+Players=1
+ReleaseDate=2003/04/27
+
+[1C010CCD-22D3B7FA-C:4A]
+Name=Zool - Majou Tsukai Densetsu (J) [!]
+Developer=Imagineer
+ForceFeedback=No
+Genre=RPG
+Players=1
+ReleaseDate=1999/06/11
+GameInformation=zool-majou-tsukai-densetsu
+
+//-------------------------  EOF  --------------------------//
