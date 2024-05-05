@@ -25,15 +25,15 @@
  *
  */
 
-/*#include <windows.h>
-#include <stdio.h>
+#include <windows.h>
+/*#include <stdio.h>
 #include "opcode.h"
 #include "RSP.h"
-#include "CPU.h"
-#include "RSP Registers.h"
-#include "RSP Command.h"*/
+#include "CPU.h"*/
+#include "rsp_registers.h"
+#include "RSP Command.h"
 #include "rsp_config.h"
-/*#include "memory.h"
+/*#include "rsp_memory.h"
 #include "breakpoint.h"
 
 #define RSP_MaxCommandLines		30
@@ -45,9 +45,9 @@
 #define IDC_ADDRESS					1001
 #define IDC_FUNCTION_COMBO			1002
 #define IDC_GO_BUTTON				1003
-#define IDC_BREAK_BUTTON			1004
+#define IDC_BREAK_BUTTON			1004*/
 #define IDC_STEP_BUTTON				1005
-#define IDC_SKIP_BUTTON				1006
+/*#define IDC_SKIP_BUTTON				1006
 #define IDC_BP_BUTTON				1007
 #define IDC_R4300I_REGISTERS_BUTTON	1008
 #define IDC_R4300I_DEBUGGER_BUTTON	1009
@@ -66,10 +66,10 @@ typedef struct {
     DWORD status;
 } RSPCOMMANDLINE;
 
-RSPCOMMANDLINE RSPCommandLine[30];
-HWND RSPCommandshWnd, hList, hAddress, hFunctionlist, hGoButton, hBreakButton,
+RSPCOMMANDLINE RSPCommandLine[30];*/
+static HWND RSPCommandshWnd, hList, hAddress/*, hFunctionlist*/, hGoButton/*, hBreakButton*/,
 	hStepButton, hSkipButton, hBPButton, hR4300iRegisters, hR4300iDebugger, hRSPRegisters,
-	hMemory, hScrlBar;*/
+	hMemory, hScrlBar;
 BOOL InRSPCommandsWindow = FALSE;
 /*char CommandName[100];*/
 DWORD Stepping_RspCommands = FALSE;
@@ -298,7 +298,7 @@ void DrawRSPCommand ( LPARAM lParam ) {
 
 
 void Enable_RSP_Commands_Window ( void ) {
-	/*SCROLLINFO si;
+	SCROLLINFO si;
 
 	if (!InRSPCommandsWindow) { return; }
 	EnableWindow(hList,            TRUE);
@@ -315,19 +315,18 @@ void Enable_RSP_Commands_Window ( void ) {
 	SendMessage(hStepButton, BM_SETSTYLE, BS_DEFPUSHBUTTON,TRUE);
 	SendMessage(RSPCommandshWnd, DM_SETDEFID,IDC_STEP_BUTTON,0);
 	
-	if (Stepping_Commands) {
+	if (Stepping_RspCommands) {
 		si.cbSize = sizeof(si);
 		si.fMask  = SIF_RANGE | SIF_POS | SIF_PAGE;
 		si.nMin   = 0;
 		si.nMax   = (0x1000 >> 2) -1;
-		si.nPos   = (*PrgCount >> 2);
+		si.nPos   = (SP_PC_REG >> 2);
 		si.nPage  = 30;
 		SetScrollInfo(hScrlBar,SB_CTL,&si,TRUE);		
 	
-		SetRSPCommandViewto( *PrgCount );
+		SetRSPCommandViewto( SP_PC_REG );
 		SetForegroundWindow(RSPCommandshWnd);
-	}*/
-	LogMessage("TODO: Enable_RDP_Commands_Window()");
+	}
 }
 
 void __cdecl Enter_RSP_Commands_Window ( void ) {
