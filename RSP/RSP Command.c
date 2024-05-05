@@ -1176,10 +1176,10 @@ char * RSPSc2Name ( DWORD OpCode, DWORD PC ) {
 			command.Ascii[3],command.Ascii[2],command.Ascii[1],command.Ascii[0]);
 	}
 	return CommandName;
-}
+}*/
 
 char * RSPOpcodeName ( DWORD OpCode, DWORD PC ) {
-	OPCODE command;
+	/*OPCODE command;
 	command.Hex = OpCode;
 		
 	switch (command.op) {
@@ -1295,10 +1295,12 @@ char * RSPOpcodeName ( DWORD OpCode, DWORD PC ) {
 		sprintf(CommandName,"RSP: Unknown\t%02X %02X %02X %02X",
 			command.Ascii[3],command.Ascii[2],command.Ascii[1],command.Ascii[0]);
 	}
-	return CommandName;
+	return CommandName;*/
+	LogMessage("TODO: RSPOpcodeName");
+	return "";
 }
 
-void SetRSPCommandToRunning ( void ) { 	
+/*void SetRSPCommandToRunning ( void ) { 	
 	Stepping_Commands = FALSE;
 	if (InRSPCommandsWindow == FALSE) { return; }
 	EnableWindow(hGoButton,    FALSE);

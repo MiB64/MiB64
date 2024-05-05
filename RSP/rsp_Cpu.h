@@ -43,4 +43,4 @@ extern DWORD RSP_Running;
 extern OPCODE RSPOpC;
 
 void SetRspCPU(DWORD core);
-/*void Build_RSP (void);*/
+void Build_RSP (void);

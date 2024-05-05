@@ -70,11 +70,11 @@ void SetRspCPU(DWORD core) {
 	ReleaseMutex(hRspConfigMutex);
 }
 
-/*void Build_RSP ( void ) {
-	int i;
+void Build_RSP ( void ) {
+	/*int i;*/
 
-	SetCPU(CPUCore);
-	ResetTimerList();
+	SetRspCPU(RspCPUCore);
+	/*ResetTimerList();
 
 	EleSpec[ 0].DW = 0;
 	EleSpec[ 1].DW = 0;
@@ -157,7 +157,5 @@ void SetRspCPU(DWORD core) {
 			Indx[i].B[count] = Indx[i].B[7 - count]; 
 			Indx[i].B[7 - count] = Temp;
 		}
-	}
-
-	PrgCount = RSPInfo.SP_PC_REG;
-}*/
+	}*/
+}

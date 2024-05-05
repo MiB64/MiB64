@@ -27,9 +27,9 @@
 
 #pragma once
 
-/*char * RSPOpcodeName ( DWORD OpCode, DWORD PC );
+char * RSPOpcodeName ( DWORD OpCode, DWORD PC );
 
-void DumpRSPCode (void);
+/*void DumpRSPCode (void);
 void DumpRSPData (void);
 void Disable_RSP_Commands_Window ( void );*/
 void Enable_RSP_Commands_Window ( void );

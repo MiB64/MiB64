@@ -132,11 +132,11 @@ void InitiateInternalRSP() {
 	LoadRspSettings();
 
 	/*AllocateMemory();
-	InitilizeRSPRegisters();
+	InitilizeRSPRegisters();*/
 	Build_RSP();
 #ifdef GenerateLog
 	Start_Log();
-#endif*/
+#endif
 }
 
 void __cdecl ProcessMenuItem(int ID) {
