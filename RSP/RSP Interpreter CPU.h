@@ -27,11 +27,11 @@
 
 #pragma once
 
-/*#define NORMAL			0
+#define NORMAL			0
 #define DELAY_SLOT 		1
 #define JUMP	 		2
 
-extern DWORD RSP_NextInstruction, RSP_JumpTo;
+/*extern DWORD RSP_NextInstruction, RSP_JumpTo;
 
 void BuildInterpreterCPU(void);*/
 DWORD RunInterpreterRspCPU(DWORD Cycles);

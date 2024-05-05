@@ -218,7 +218,7 @@ void RefreshTLBWindow (void) {
 					FastTlb[count].PHYSSTART, FastTlb[count].VEND - FastTlb[count].VSTART + FastTlb[count].PHYSSTART);
 			}
 			else {
-				static const QWORD vpnMask = 0xC00000FFFFFFE000LL;
+				static const QWORD vpnMask = 0xC00000FFFFFFE000ULL;
 				QWORD vstart = ((tlb[count / 2].EntryHi.Value & vpnMask) & (~((QWORD)tlb[count/2].PageMask.BreakDownPageMask.Mask) << 13));
 				QWORD vend = vstart + (tlb[count/2].PageMask.BreakDownPageMask.Mask << 12) + 0xFFF;
 				DWORD pageLength = (DWORD)(vend - vstart);
@@ -306,7 +306,9 @@ void SetupTLBWindow (HWND hDlg) {
 	}
 }
 
-LRESULT CALLBACK TLB_Proc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {	
+LRESULT CALLBACK TLB_Proc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	UNREFERENCED_PARAMETER(lParam);
+
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		TlbDlg = hDlg;

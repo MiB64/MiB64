@@ -83,3 +83,45 @@
 #define SP_STATUS_SIG7	       0x4000		/* Bit 14: signal 7 set */
 
 extern DWORD* RegSP;
+
+/*extern char* x86_Strings[8];
+extern char* GPR_Strings[32];
+
+#define x86_Name(Reg) (x86_Strings[(Reg)])
+#define GPR_Name(Reg) (GPR_Strings[(Reg)])
+
+#define COP0_Name(Reg)\
+	(Reg) == 0  ? "SP memory address" :\
+	(Reg) == 1  ? "SP DRAM DMA address" :\
+	(Reg) == 2  ? "SP read DMA length" :\
+	(Reg) == 3  ? "SP write DMA length" :\
+	(Reg) == 4  ? "SP status" :\
+	(Reg) == 5  ? "SP DMA full" :\
+	(Reg) == 6  ? "SP DMA busy" :\
+	(Reg) == 7  ? "SP semaphore" :\
+	(Reg) == 8  ? "DP CMD DMA start" :\
+	(Reg) == 9  ? "DP CMD DMA end" :\
+	(Reg) == 10 ? "DP CMD DMA current" :\
+	(Reg) == 11 ? "DP CMD status" :\
+	(Reg) == 12 ? "DP clock counter" :\
+	(Reg) == 13 ? "DP buffer busy counter" :\
+	(Reg) == 14 ? "DP pipe busy counter" :\
+	(Reg) == 15 ? "DP TMEM load counter" :\
+	"Unknown Register"
+
+#define ElementSpecifier(Elem)\
+	(Elem) == 0  ? "" : (Elem) == 1  ? "" : (Elem) == 2  ? " [0q]" :\
+	(Elem) == 3  ? " [1q]" : (Elem) == 4  ? " [0h]" : (Elem) == 5  ? " [1h]" :\
+    (Elem) == 6  ? " [2h]" : (Elem) == 7  ? " [3h]" : (Elem) == 8  ? " [0]" :\
+	(Elem) == 9  ? " [1]" : (Elem) == 10 ? " [2]" : (Elem) == 11 ? " [3]" :\
+	(Elem) == 12 ? " [4]" : (Elem) == 13 ? " [5]" : (Elem) == 14 ? " [6]" :\
+	(Elem) == 15 ? " [7]" : "Unknown Element"
+
+void Enter_RSP_Register_Window(void);
+void InitilizeRSPRegisters(void);*/
+void UpdateRSPRegistersScreen(void);
+
+/*** RSP Registers ***/
+/*extern U_WORD   RSP_GPR[32], RSP_Flags[4];
+extern UDWORD  RSP_ACCUM[8];
+extern VECTOR  RSP_Vect[32];*/

@@ -37,7 +37,7 @@ extern "C" {
 	extern DWORD PrevCRC1, PrevCRC2;
 
 	void CloseMappedRomFile(void);
-	void AddRecentFile(HWND hWnd, char* addition);
+	void AddRecentFile(char* addition);
 	BOOL LoadDataFromRomFile(char* FileName, BYTE* Data, int DataLen, int* RomSize);
 	BOOL LoadRomHeader(void);
 	void CreateRecentFileList(HMENU hMenu);

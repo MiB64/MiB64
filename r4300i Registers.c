@@ -894,6 +894,9 @@ LRESULT CALLBACK R4300i_Registers_Proc (HWND hDlg, UINT uMsg, WPARAM wParam, LPA
 }
 
 LRESULT CALLBACK RefreshR4300iRegProc ( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(wParam);
+
 	int nSel;
 	TC_ITEM item;
 

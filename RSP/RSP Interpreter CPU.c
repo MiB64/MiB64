@@ -27,22 +27,25 @@
 
 #include <windows.h>
 /*#include <stdio.h>
-#include <float.h>
-#include "breakpoint.h"
-#include "RSP.h"
-#include "Cpu.h"
-#include "Interpreter Ops.h"
-#include "Interpreter CPU.h"
-#include "RSP registers.h"
-#include "RSP Command.h"*/
+#include <float.h>*/
+#include "RSP_breakpoint.h"
+/*#include "RSP.h"*/
+#include "rsp_Cpu.h"
+/*#include "Interpreter Ops.h"*/
+#include "RSP Interpreter CPU.h"
+#include "rsp_registers.h"
+#include "RSP Command.h"
 #include "rsp_config.h"
-/*#include "memory.h"
-#include "opcode.h"
-#include "log.h"
+#include "rsp_registers.h"
+#include "rsp_memory.h"
+#include "RSP_OpCode.h"
+/*#include "log.h"*/
+#include "../Main.h"
 
-DWORD RSP_NextInstruction, RSP_JumpTo;*/
+DWORD RSP_NextInstruction, RSP_JumpTo;
 
 void BuildInterpreterRspCPU(void) {
+	LogMessage("TODO: should fill RSP_Opcode");
 //	RSP_Opcode[ 0] = /*RSP_Opcode_SPECIAL*/rsp_UnknownOpcode;
 //	RSP_Opcode[ 1] = /*RSP_Opcode_REGIMM*/rsp_UnknownOpcode;
 //	RSP_Opcode[ 2] = /*RSP_Opcode_J*/rsp_UnknownOpcode;
@@ -402,26 +405,24 @@ void BuildInterpreterRspCPU(void) {
 	RSP_Sc2[29] = rsp_UnknownOpcode;
 	RSP_Sc2[30] = rsp_UnknownOpcode;
 	RSP_Sc2[31] = rsp_UnknownOpcode;*/
+
+	RSP_NextInstruction = NORMAL;
 }
 
 DWORD RunInterpreterRspCPU(DWORD Cycles) {
-	LogMessage("TODO: RunInterpreterRspCPU");
-	return Cycles;
-	/*DWORD CycleCount;
 	RSP_Running = TRUE;
 	Enable_RSP_Commands_Window();
-	CycleCount = 0;
 
 	while (RSP_Running) {
-		if (NoOfBpoints != 0) {
-			if (CheckForRSPBPoint(*PrgCount)) {
+		if (NoOfRspBpoints != 0) {
+			if (CheckForRSPBPoint(SP_PC_REG)) {
 				if (InRSPCommandsWindow) {
 					Enter_RSP_Commands_Window();
-					if (Stepping_Commands) {
-						DisplayError ( "Encounted a R4300i Breakpoint" );
+					if (Stepping_RspCommands) {
+						DisplayError ( "Encounted a RSP Breakpoint" );
 					} else {
-						DisplayError ( "Encounted a R4300i Breakpoint\n\nNow Stepping" );
-						SetRSPCommandViewto( *PrgCount );
+						DisplayError ( "Encounted a RSP Breakpoint\n\nNow Stepping" );
+						SetRSPCommandViewto( SP_PC_REG );
 						SetRSPCommandToStepping();
 					}
 				} else {
@@ -431,37 +432,37 @@ DWORD RunInterpreterRspCPU(DWORD Cycles) {
 			}
 		}
 		
-		if (Stepping_Commands) {
-			WaitingForStep = TRUE;
-			SetRSPCommandViewto( *PrgCount );
+		if (Stepping_RspCommands) {
+			WaitingForRspStep = TRUE;
+			SetRSPCommandViewto( SP_PC_REG );
 			UpdateRSPRegistersScreen();
-			while ( WaitingForStep == TRUE ){ 
+			while ( WaitingForRspStep == TRUE ){ 
 				Sleep(20);						
-				if (!Stepping_Commands) {
-					WaitingForStep = FALSE;
+				if (!Stepping_RspCommands) {
+					WaitingForRspStep = FALSE;
 				}
 			}
 		}
 
-		RSP_LW_IMEM(*PrgCount, &RSPOpC.Hex);
-		((void (*)()) RSP_Opcode[ RSPOpC.op ])();
+		RSP_LW_IMEM(SP_PC_REG, &RSPOpC.OP.Hex);
+		((void (*)()) RSP_Opcode[ RSPOpC.OP.I.op ])();
 
 		switch (RSP_NextInstruction) {
 		case NORMAL: 
-			*PrgCount = (*PrgCount + 4) & 0xFFC; 
+			SP_PC_REG = (SP_PC_REG + 4) & 0xFFC; 
 			break;
 		case DELAY_SLOT:
 			RSP_NextInstruction = JUMP;
-			*PrgCount = (*PrgCount + 4) & 0xFFC; 
+			SP_PC_REG = (SP_PC_REG + 4) & 0xFFC; 
 			break;
 		case JUMP:
 			RSP_NextInstruction = NORMAL;
-			*PrgCount  = RSP_JumpTo;
+			SP_PC_REG = RSP_JumpTo;
 			break;
 		}
 	}
-	*PrgCount -= 4;
+	SP_PC_REG -= 4;
 
-	return Cycles;*/
+	return Cycles;
 }
 

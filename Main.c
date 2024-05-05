@@ -379,7 +379,6 @@ void ChangeWinSize(HWND hWnd, long width, long height, HWND hStatusBar) {
 	WINDOWPLACEMENT wndpl;
 	RECT rc1, swrect;
 	RECT WinRect;
-	char String[200], Value[20];
 	LONG X, Y;
 
 	GetWindowRect(hWnd, &WinRect);
@@ -1522,42 +1521,42 @@ LRESULT CALLBACK Main_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 				case ID_OPTIONS_CONFIG_GFX:
 					if (inFullScreen)
-						SendMessage(hWnd, WM_USER + 10, TRUE, NULL);
+						SendMessage(hWnd, WM_USER + 10, TRUE, 0);
 					GFXDllConfig(hWnd);
 					if (inFullScreen)
-						SendMessage(hWnd, WM_USER + 10, FALSE, NULL);
+						SendMessage(hWnd, WM_USER + 10, FALSE, 0);
 					break;
 
 				case ID_OPTIONS_CONFIG_AUDIO:
 					if (inFullScreen)
-						SendMessage(hWnd, WM_USER + 10, TRUE, NULL);
+						SendMessage(hWnd, WM_USER + 10, TRUE, 0);
 					AiDllConfig(hWnd);
 					if (inFullScreen)
-						SendMessage(hWnd, WM_USER + 10, FALSE, NULL);
+						SendMessage(hWnd, WM_USER + 10, FALSE, 0);
 					break;
 
 				case ID_OPTIONS_CONFIG_RSP:
 					if (inFullScreen)
-						SendMessage(hWnd, WM_USER + 10, TRUE, NULL);
+						SendMessage(hWnd, WM_USER + 10, TRUE, 0);
 					RSPDllConfig(hWnd);
 					if (inFullScreen)
-						SendMessage(hWnd, WM_USER + 10, FALSE, NULL);
+						SendMessage(hWnd, WM_USER + 10, FALSE, 0);
 					break;
 
 				case ID_OPTIONS_CONFIG_CONTROL:
 					if (inFullScreen)
-						SendMessage(hWnd, WM_USER + 10, TRUE, NULL);
+						SendMessage(hWnd, WM_USER + 10, TRUE, 0);
 					ContConfig(hWnd);
 					if (inFullScreen)
-						SendMessage(hWnd, WM_USER + 10, FALSE, NULL);
+						SendMessage(hWnd, WM_USER + 10, FALSE, 0);
 					break;
 
 				case ID_OPTIONS_SETTINGS:
 					if (inFullScreen)
-						SendMessage(hWnd, WM_USER + 10, TRUE, NULL);
+						SendMessage(hWnd, WM_USER + 10, TRUE, 0);
 					ChangeSettings(hWnd);
 					if (inFullScreen)
-						SendMessage(hWnd, WM_USER + 10, FALSE, NULL);
+						SendMessage(hWnd, WM_USER + 10, FALSE, 0);
 					break;
 
 				case ID_OPTIONS_CHEATS:

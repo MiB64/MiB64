@@ -166,7 +166,7 @@ void ChangeSettings(HWND hwndOwner) {
 		SetupMenu(hMainWindow);
 	else
 	{
-		HMENU hMenu = GetMenu(hMainWindow), hSubMenu;
+		HMENU hMenu = GetMenu(hMainWindow);
 		ShowCursor(FALSE);
 		DestroyMenu(hMenu);
 	}
@@ -181,6 +181,8 @@ void SetFlagControl(HWND hDlg, BOOL* Flag, WORD CtrlID, int StringID) {
 }
 
 BOOL CALLBACK GeneralOptionsProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	UNREFERENCED_PARAMETER(wParam);
+
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		SetFlagControl(hDlg, &AutoSleep, IDC_AUTOSLEEP, OPTION_AUTO_SLEEP);
@@ -254,8 +256,8 @@ BOOL CALLBACK DefaultOptionsProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
 		AddDropDownItem(hDlg, IDC_SELFMOD, SMCM_CHANGE_MEM, ModCode_ChangeMemory, &SystemSelfModCheck);
 		AddDropDownItem(hDlg, IDC_SELFMOD, SMCM_CHECK_ADV, ModCode_CheckMemory2, &SystemSelfModCheck);
 
-		AddDropDownItem(hDlg, IDC_RDRAM_SIZE, RDRAM_4MB, 0x400000, &SystemRdramSize);
-		AddDropDownItem(hDlg, IDC_RDRAM_SIZE, RDRAM_8MB, 0x800000, &SystemRdramSize);
+		AddDropDownItem(hDlg, IDC_RDRAM_SIZE, RDRAM_4MB, 0x400000, (int*)&SystemRdramSize);
+		AddDropDownItem(hDlg, IDC_RDRAM_SIZE, RDRAM_8MB, 0x800000, (int*)&SystemRdramSize);
 
 		AddDropDownItem(hDlg, IDC_ABL, ABL_ON, TRUE, &SystemABL);
 		AddDropDownItem(hDlg, IDC_ABL, ABL_OFF, FALSE, &SystemABL);
@@ -319,6 +321,8 @@ BOOL CALLBACK DefaultOptionsProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
 // This behavior is not apparent in XP or Vista and it is suggested to use the new FolderBrowserDialog
 static BOOL CALLBACK EnumCallback(HWND hWndChild, LPARAM lParam)
 {
+	UNREFERENCED_PARAMETER(lParam);
+
 	char szClass[MAX_PATH];
 	HTREEITEM hNode;
 	if (GetClassName(hWndChild, szClass, sizeof(szClass)) && strcmp(szClass, "SysTreeView32") == 0) {
@@ -332,6 +336,8 @@ static BOOL CALLBACK EnumCallback(HWND hWndChild, LPARAM lParam)
 // This is sort of a hack, it's designed to force SHBrowseForFolder to scroll down to the selected folder
 // It seems to not have worked until BFFM_SELCHANGED was included
 int CALLBACK SelectDirCallBack(HWND hwnd, DWORD uMsg, DWORD lp, DWORD lpData) {
+	UNREFERENCED_PARAMETER(lp);
+
 	switch (uMsg)
 	{
 	case BFFM_INITIALIZED:
@@ -342,7 +348,7 @@ int CALLBACK SelectDirCallBack(HWND hwnd, DWORD uMsg, DWORD lp, DWORD lpData) {
 		break;
 
 	case BFFM_SELCHANGED:
-		EnumChildWindows(hwnd, EnumCallback, NULL);
+		EnumChildWindows(hwnd, EnumCallback, 0);
 		break;
 	}
 	return 0;
@@ -632,7 +638,6 @@ BOOL CALLBACK PluginSelectProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 		break;
 	case WM_NOTIFY:
 		if (((NMHDR FAR*) lParam)->code == PSN_APPLY) {
-			int index;
 			char String[200];
 
 			if (PluginsChanged(hDlg) == FALSE) { FreePluginList(); break; }
@@ -857,11 +862,13 @@ BOOL CALLBACK RomBrowserProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 BOOL CALLBACK RomNotesProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	UNREFERENCED_PARAMETER(wParam);
+
 	switch (uMsg) {
 	case WM_INITDIALOG:
 	{
 		char Identifier[100], RomStatus[100], Notes[800], * read, * token;
-		int i, index;
+		int index;
 		BOOLEAN cb_selected = FALSE;
 
 		SetDlgItemText(hDlg, IDC_STATUS_TEXT, GS(NOTE_STATUS));
@@ -945,85 +952,87 @@ BOOL CALLBACK RomSettingsProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 	switch (uMsg) {
 	case WM_INITDIALOG:
-		ReadRomOptions();
-		char junk[20];
+		{
+			ReadRomOptions();
+			char junk[20];
 
-		SetDlgItemText(hDlg, IDC_CPU_TYPE_TEXT, GS(ROM_CPU_STYLE));
-		SetDlgItemText(hDlg, IDC_SELFMOD_TEXT, GS(ROM_SMCM));
-		SetDlgItemText(hDlg, IDC_MEMORY_SIZE_TEXT, GS(ROM_MEM_SIZE));
-		SetDlgItemText(hDlg, IDC_BLOCK_LINKING_TEXT, GS(ROM_ABL));
-		SetDlgItemText(hDlg, IDC_SAVE_TYPE_TEXT, GS(ROM_SAVE_TYPE));
-		SetDlgItemText(hDlg, IDC_COUNTFACT_TEXT, GS(ROM_COUNTER_FACTOR));
+			SetDlgItemText(hDlg, IDC_CPU_TYPE_TEXT, GS(ROM_CPU_STYLE));
+			SetDlgItemText(hDlg, IDC_SELFMOD_TEXT, GS(ROM_SMCM));
+			SetDlgItemText(hDlg, IDC_MEMORY_SIZE_TEXT, GS(ROM_MEM_SIZE));
+			SetDlgItemText(hDlg, IDC_BLOCK_LINKING_TEXT, GS(ROM_ABL));
+			SetDlgItemText(hDlg, IDC_SAVE_TYPE_TEXT, GS(ROM_SAVE_TYPE));
+			SetDlgItemText(hDlg, IDC_COUNTFACT_TEXT, GS(ROM_COUNTER_FACTOR));
 
-		sprintf(junk, "%d", RomModVIS);
-		SetDlgItemText(hDlg, IDC_VIS, junk);
+			sprintf(junk, "%d", RomModVIS);
+			SetDlgItemText(hDlg, IDC_VIS, junk);
 
-		AddDropDownItem(hDlg, IDC_CPU_TYPE, ROM_DEFAULT, CPU_Default, &RomCPUType);
-		AddDropDownItem(hDlg, IDC_CPU_TYPE, CORE_INTERPTER, CPU_Interpreter, &RomCPUType);
-		AddDropDownItem(hDlg, IDC_CPU_TYPE, CORE_RECOMPILER, CPU_Recompiler, &RomCPUType);
-		AddDropDownItem(hDlg, IDC_CPU_TYPE, CORE_SYNC, CPU_SyncCores, &RomCPUType);
+			AddDropDownItem(hDlg, IDC_CPU_TYPE, ROM_DEFAULT, CPU_Default, &RomCPUType);
+			AddDropDownItem(hDlg, IDC_CPU_TYPE, CORE_INTERPTER, CPU_Interpreter, &RomCPUType);
+			AddDropDownItem(hDlg, IDC_CPU_TYPE, CORE_RECOMPILER, CPU_Recompiler, &RomCPUType);
+			AddDropDownItem(hDlg, IDC_CPU_TYPE, CORE_SYNC, CPU_SyncCores, &RomCPUType);
+			
+			AddDropDownItem(hDlg, IDC_SELFMOD, ROM_DEFAULT, ModCode_Default, &RomSelfMod);
+			AddDropDownItem(hDlg, IDC_SELFMOD, SMCM_NONE, ModCode_None, &RomSelfMod);
+			AddDropDownItem(hDlg, IDC_SELFMOD, SMCM_CACHE, ModCode_Cache, &RomSelfMod);
+			AddDropDownItem(hDlg, IDC_SELFMOD, SMCM_PROECTED, ModCode_ProtectedMemory, &RomSelfMod);
+			AddDropDownItem(hDlg, IDC_SELFMOD, SMCM_CHECK_MEM, ModCode_CheckMemoryCache, &RomSelfMod);
+			AddDropDownItem(hDlg, IDC_SELFMOD, SMCM_CHANGE_MEM, ModCode_ChangeMemory, &RomSelfMod);
+			AddDropDownItem(hDlg, IDC_SELFMOD, SMCM_CHECK_ADV, ModCode_CheckMemory2, &RomSelfMod);
 
-		AddDropDownItem(hDlg, IDC_SELFMOD, ROM_DEFAULT, ModCode_Default, &RomSelfMod);
-		AddDropDownItem(hDlg, IDC_SELFMOD, SMCM_NONE, ModCode_None, &RomSelfMod);
-		AddDropDownItem(hDlg, IDC_SELFMOD, SMCM_CACHE, ModCode_Cache, &RomSelfMod);
-		AddDropDownItem(hDlg, IDC_SELFMOD, SMCM_PROECTED, ModCode_ProtectedMemory, &RomSelfMod);
-		AddDropDownItem(hDlg, IDC_SELFMOD, SMCM_CHECK_MEM, ModCode_CheckMemoryCache, &RomSelfMod);
-		AddDropDownItem(hDlg, IDC_SELFMOD, SMCM_CHANGE_MEM, ModCode_ChangeMemory, &RomSelfMod);
-		AddDropDownItem(hDlg, IDC_SELFMOD, SMCM_CHECK_ADV, ModCode_CheckMemory2, &RomSelfMod);
+			AddDropDownItem(hDlg, IDC_RDRAM_SIZE, RDRAM_4MB, 0x400000, &RomRamSize);
+			AddDropDownItem(hDlg, IDC_RDRAM_SIZE, RDRAM_8MB, 0x800000, &RomRamSize);
 
-		AddDropDownItem(hDlg, IDC_RDRAM_SIZE, RDRAM_4MB, 0x400000, &RomRamSize);
-		AddDropDownItem(hDlg, IDC_RDRAM_SIZE, RDRAM_8MB, 0x800000, &RomRamSize);
+			AddDropDownItem(hDlg, IDC_BLOCK_LINKING, ROM_DEFAULT, -1, &RomUseLinking);
+			AddDropDownItem(hDlg, IDC_BLOCK_LINKING, ABL_ON, 0, &RomUseLinking);
+			AddDropDownItem(hDlg, IDC_BLOCK_LINKING, ABL_OFF, 1, &RomUseLinking);
 
-		AddDropDownItem(hDlg, IDC_BLOCK_LINKING, ROM_DEFAULT, -1, &RomUseLinking);
-		AddDropDownItem(hDlg, IDC_BLOCK_LINKING, ABL_ON, 0, &RomUseLinking);
-		AddDropDownItem(hDlg, IDC_BLOCK_LINKING, ABL_OFF, 1, &RomUseLinking);
+			AddDropDownItem(hDlg, IDC_SAVE_TYPE, SAVE_FIRST_USED, Auto, &RomSaveUsing);
+			AddDropDownItem(hDlg, IDC_SAVE_TYPE, SAVE_4K_EEPROM, Eeprom_4K, &RomSaveUsing);
+			AddDropDownItem(hDlg, IDC_SAVE_TYPE, SAVE_16K_EEPROM, Eeprom_16K, &RomSaveUsing);
+			AddDropDownItem(hDlg, IDC_SAVE_TYPE, SAVE_SRAM, Sram, &RomSaveUsing);
+			AddDropDownItem(hDlg, IDC_SAVE_TYPE, SAVE_FLASHRAM, FlashRam, &RomSaveUsing);
 
-		AddDropDownItem(hDlg, IDC_SAVE_TYPE, SAVE_FIRST_USED, Auto, &RomSaveUsing);
-		AddDropDownItem(hDlg, IDC_SAVE_TYPE, SAVE_4K_EEPROM, Eeprom_4K, &RomSaveUsing);
-		AddDropDownItem(hDlg, IDC_SAVE_TYPE, SAVE_16K_EEPROM, Eeprom_16K, &RomSaveUsing);
-		AddDropDownItem(hDlg, IDC_SAVE_TYPE, SAVE_SRAM, Sram, &RomSaveUsing);
-		AddDropDownItem(hDlg, IDC_SAVE_TYPE, SAVE_FLASHRAM, FlashRam, &RomSaveUsing);
+			AddDropDownItem(hDlg, IDC_COUNTFACT, ROM_DEFAULT, -1, &RomCF);
+			AddDropDownItem(hDlg, IDC_COUNTFACT, NUMBER_1, 1, &RomCF);
+			AddDropDownItem(hDlg, IDC_COUNTFACT, NUMBER_2, 2, &RomCF);
+			AddDropDownItem(hDlg, IDC_COUNTFACT, NUMBER_3, 3, &RomCF);
+			AddDropDownItem(hDlg, IDC_COUNTFACT, NUMBER_4, 4, &RomCF);
+			AddDropDownItem(hDlg, IDC_COUNTFACT, NUMBER_5, 5, &RomCF);
+			AddDropDownItem(hDlg, IDC_COUNTFACT, NUMBER_6, 6, &RomCF);
 
-		AddDropDownItem(hDlg, IDC_COUNTFACT, ROM_DEFAULT, -1, &RomCF);
-		AddDropDownItem(hDlg, IDC_COUNTFACT, NUMBER_1, 1, &RomCF);
-		AddDropDownItem(hDlg, IDC_COUNTFACT, NUMBER_2, 2, &RomCF);
-		AddDropDownItem(hDlg, IDC_COUNTFACT, NUMBER_3, 3, &RomCF);
-		AddDropDownItem(hDlg, IDC_COUNTFACT, NUMBER_4, 4, &RomCF);
-		AddDropDownItem(hDlg, IDC_COUNTFACT, NUMBER_5, 5, &RomCF);
-		AddDropDownItem(hDlg, IDC_COUNTFACT, NUMBER_6, 6, &RomCF);
+			SetFlagControl(hDlg, &RomUseLargeBuffer, IDC_LARGE_COMPILE_BUFFER, ROM_LARGE_BUFFER);
+			SetFlagControl(hDlg, &RomUseTlb, IDC_USE_TLB, ROM_USE_TLB);
+			SetFlagControl(hDlg, &RomUseCache, IDC_ROM_REGCACHE, ROM_REG_CACHE);
+			SetFlagControl(hDlg, &RomDelaySI, IDC_DELAY_SI, ROM_DELAY_SI);
+			SetFlagControl(hDlg, &RomEmulateAI, IDC_EMULATE_AI, ROM_EMULATE_AI);
+			SetFlagControl(hDlg, &RomAudioSignal, IDC_AUDIO_SIGNAL, ROM_AUDIO_SIGNAL);
+			SetFlagControl(hDlg, &RomSPHack, IDC_ROM_SPHACK, ROM_SP_HACK);
 
-		SetFlagControl(hDlg, &RomUseLargeBuffer, IDC_LARGE_COMPILE_BUFFER, ROM_LARGE_BUFFER);
-		SetFlagControl(hDlg, &RomUseTlb, IDC_USE_TLB, ROM_USE_TLB);
-		SetFlagControl(hDlg, &RomUseCache, IDC_ROM_REGCACHE, ROM_REG_CACHE);
-		SetFlagControl(hDlg, &RomDelaySI, IDC_DELAY_SI, ROM_DELAY_SI);
-		SetFlagControl(hDlg, &RomEmulateAI, IDC_EMULATE_AI, ROM_EMULATE_AI);
-		SetFlagControl(hDlg, &RomAudioSignal, IDC_AUDIO_SIGNAL, ROM_AUDIO_SIGNAL);
-		SetFlagControl(hDlg, &RomSPHack, IDC_ROM_SPHACK, ROM_SP_HACK);
-
-		if (strlen(RomFullName) == 0) {
-			EnableWindow(GetDlgItem(hDlg, IDC_MEMORY_SIZE_TEXT), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_RDRAM_SIZE), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_SAVE_TYPE_TEXT), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_SAVE_TYPE), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_COUNTFACT_TEXT), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_COUNTFACT), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_CPU_TYPE_TEXT), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_CPU_TYPE), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_SELFMOD_TEXT), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_SELFMOD), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_USE_TLB), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_DELAY_SI), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_EMULATE_AI), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_ROM_SPHACK), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_ROM_REGCACHE), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_BLOCK_LINKING_TEXT), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_BLOCK_LINKING), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_AUDIO_SIGNAL), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_LARGE_COMPILE_BUFFER), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_NOTES), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_VIS), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_VIS_TEXT), FALSE);
-			EnableWindow(GetDlgItem(hDlg, IDC_VIS_RESET), FALSE);
+			if (strlen(RomFullName) == 0) {
+				EnableWindow(GetDlgItem(hDlg, IDC_MEMORY_SIZE_TEXT), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_RDRAM_SIZE), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_SAVE_TYPE_TEXT), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_SAVE_TYPE), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_COUNTFACT_TEXT), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_COUNTFACT), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_CPU_TYPE_TEXT), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_CPU_TYPE), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_SELFMOD_TEXT), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_SELFMOD), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_USE_TLB), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_DELAY_SI), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_EMULATE_AI), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_ROM_SPHACK), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_ROM_REGCACHE), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_BLOCK_LINKING_TEXT), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_BLOCK_LINKING), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_AUDIO_SIGNAL), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_LARGE_COMPILE_BUFFER), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_NOTES), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_VIS), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_VIS_TEXT), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_VIS_RESET), FALSE);
+			}
 		}
 		break;
 	case WM_NOTIFY:
@@ -1034,7 +1043,7 @@ BOOL CALLBACK RomSettingsProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 			if (strlen(RomFullName) == 0) { break; }
 
-			LoadRomRecalcCRCs(CurrentFileName, (DWORD*)&RomHeader[0x10], (DWORD*)&RomHeader[0x14]);
+			LoadRomRecalcCRCs(CurrentFileName, &RomHeader[0x10], &RomHeader[0x14]);
 
 			RomID(Identifier, RomHeader);
 
@@ -1093,6 +1102,8 @@ BOOL CALLBACK RomSettingsProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
 }
 
 BOOL CALLBACK ShellIntegrationProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	UNREFERENCED_PARAMETER(wParam);
+
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		SetDlgItemText(hDlg, IDC_SHELL_INT_TEXT, GS(SHELL_TEXT));

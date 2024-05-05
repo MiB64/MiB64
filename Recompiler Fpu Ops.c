@@ -32,7 +32,7 @@
 #include "debugger.h"
 
 WORD FPU_RoundingMode = 0x0000;//_RC_NEAR
-char Name[50];
+static char Name[50];
 
 void ChangeDefaultRoundingModel (void) {
 	switch((FPCR[31] & 3)) {
@@ -53,7 +53,6 @@ void CompileCop1Test (BLOCK_SECTION * Section) {
 /********************** Load/store functions ************************/
 void Compile_R4300i_LWC1 (BLOCK_SECTION * Section) {
 	DWORD TempReg1, TempReg2, TempReg3;
-	char Name[50];
 	MIPS_DWORD CompilePC;
 	CompilePC.DW = (int)Section->CompilePC;
 
@@ -514,7 +513,7 @@ void Compile_R4300i_COP1_CT(BLOCK_SECTION * Section) {
 		MoveX86regToVariable(Map_TempReg(Section,x86_Any,Opcode.BRANCH.rt,FALSE),&FPCR[Opcode.FP.fs],FPR_Ctrl_Name[Opcode.FP.fs]);		
 	}
 	Pushad();
-	Call_Direct(ChangeDefaultRoundingModel, "ChangeDefaultRoundingModel");
+	Call_Direct((void*)ChangeDefaultRoundingModel, "ChangeDefaultRoundingModel");
 	Popad();
 	CurrentRoundingModel = RoundUnknown;
 }

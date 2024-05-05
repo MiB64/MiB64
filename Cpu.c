@@ -619,7 +619,7 @@ void Reset_CPU(void) {
 	memset(N64MEM, 0, RdramSize);
 
 	InitilizeTLB();
-	InitalizeR4300iRegisters(LoadPifRom(*(ROM + 0x3D)), *(ROM + 0x3D), GetCicChipID(ROM));
+	InitalizeR4300iRegisters(LoadPifRom(*(ROM + 0x3D)), GetCicChipID(ROM));
 
 	BuildInterpreter();
 	UpdateCPUMode();
@@ -1356,7 +1356,7 @@ void RunRsp (void) {
 		DWORD Task = *( DWORD *)(DMEM + 0xFC0);
 
 		if (RSPisRunning) {
-			int temp = DoRspCycles(NUMCYCLES);
+			DoRspCycles(NUMCYCLES);
 			if ((SP_STATUS_REG & SP_STATUS_HALT) != 0)
 			{
 				RSPisRunning = 0;
@@ -1489,7 +1489,7 @@ void StartEmulation ( void ) {
 		memset(N64MEM, 0, RdramSize);
 
 	InitilizeTLB();
-	InitalizeR4300iRegisters(LoadPifRom(*(ROM + 0x3D)),*(ROM + 0x3D),GetCicChipID(ROM));
+	InitalizeR4300iRegisters(LoadPifRom(*(ROM + 0x3D)),GetCicChipID(ROM));
 
 	BuildInterpreter();
 	

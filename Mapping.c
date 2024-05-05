@@ -244,7 +244,7 @@ int ProcessCODFile(BYTE * File, DWORD FileLen) {
 	int Length;
 
 	while ( CurrentPos < File + FileLen ) {
-		int FirstFieldLength = strchr(CurrentPos, ',') - CurrentPos;
+		int FirstFieldLength = strchr((char*)CurrentPos, ',') - (char*)CurrentPos;
 
 		if (FirstFieldLength == 10 || FirstFieldLength == 18) {
 			if (*CurrentPos != '0') { return FALSE; }
@@ -254,23 +254,23 @@ int ProcessCODFile(BYTE * File, DWORD FileLen) {
 		}
 		
 		if (FirstFieldLength == 8 || FirstFieldLength == 10) {
-			Address.DW = (int)AsciiToHex(CurrentPos);
+			Address.DW = (int)AsciiToHex((char*)CurrentPos);
 			CurrentPos += 9;
 		}
 		else if (FirstFieldLength == 16 || FirstFieldLength == 18) {
-			Address.UDW = AsciiToHex64(CurrentPos);
+			Address.UDW = AsciiToHex64((char*)CurrentPos);
 			CurrentPos += 17;
 		}
 		else {
 			return FALSE;
 		}
 
-		if (strchr(CurrentPos,'\r') == NULL) {
-			Length = strchr(CurrentPos,'\n') - CurrentPos;
+		if (strchr((char*)CurrentPos,'\r') == NULL) {
+			Length = strchr((char*)CurrentPos,'\n') - (char*)CurrentPos;
 		} else {
-			Length = strchr(CurrentPos,'\r') - CurrentPos;
-			if (Length > (strchr(CurrentPos,'\n') - CurrentPos)) {
-				Length = strchr(CurrentPos,'\n') - CurrentPos;
+			Length = strchr((char*)CurrentPos,'\r') - (char*)CurrentPos;
+			if (Length > (strchr((char*)CurrentPos,'\n') - (char*)CurrentPos)) {
+				Length = strchr((char*)CurrentPos,'\n') - (char*)CurrentPos;
 			}
 		}
 
@@ -279,7 +279,7 @@ int ProcessCODFile(BYTE * File, DWORD FileLen) {
 		Label[Length] = '\0';
 
 		AddMapEntry (Address, Label);
-		CurrentPos = strchr(CurrentPos,'\n') + 1;
+		CurrentPos = (BYTE*)strchr((char*)CurrentPos,'\n') + 1;
 	}
 	return TRUE;
 }

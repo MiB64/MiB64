@@ -71,7 +71,7 @@ int Allocate_Memory ( void ) {
 		return FALSE;
 	}
 
-	(BYTE *)JumpTable = (BYTE *) VirtualAlloc( NULL, 0x10000000, MEM_RESERVE | MEM_TOP_DOWN, PAGE_READWRITE );
+	JumpTable = VirtualAlloc( NULL, 0x10000000, MEM_RESERVE | MEM_TOP_DOWN, PAGE_READWRITE );
 	if( JumpTable == NULL ) {  
 		DisplayError(GS(MSG_MEM_ALLOC_ERROR));
 		return FALSE;
@@ -102,7 +102,7 @@ int Allocate_Memory ( void ) {
 	}
 	
 	/* Delay Slot Table */
-	(BYTE *)DelaySlotTable = (BYTE *) VirtualAlloc( NULL, (0x20000000 >> 0xA), MEM_RESERVE | MEM_TOP_DOWN, PAGE_READWRITE );
+	DelaySlotTable = VirtualAlloc( NULL, (0x20000000 >> 0xA), MEM_RESERVE | MEM_TOP_DOWN, PAGE_READWRITE );
 	if( DelaySlotTable == NULL ) {  
 		DisplayError(GS(MSG_MEM_ALLOC_ERROR));
 		return FALSE;
@@ -230,7 +230,7 @@ BOOL Compile_LH ( int Reg, DWORD Addr, BOOL SignExtend) {
 
 DWORD ReadRdramRegisterAddr;
 DWORD ReadRdramRegister() {
-	int deviceId = (ReadRdramRegisterAddr >> 10) & 0x1FE;
+	DWORD deviceId = (ReadRdramRegisterAddr >> 10) & 0x1FE;
 	deviceId = (((deviceId >> 0) & 0x3F) << 26) |
 		(((deviceId >> 6) & 1) << 23) |
 		(((deviceId >> 7) & 0xFF) << 8) |
@@ -238,7 +238,7 @@ DWORD ReadRdramRegister() {
 
 	int deviceIndex = -1;
 
-	for (int i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
+	for (DWORD i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
 		if (deviceId == (RDRAM_DEVICE_ID_REG(i) & 0xF880FF80)) {
 			deviceIndex = i;
 			break;
@@ -294,7 +294,7 @@ BOOL Compile_LW(int Reg, DWORD Addr) {
 	case 0x03F00000:
 		MoveConstToVariable(Addr & 0x1FFFFFFF, &ReadRdramRegisterAddr, "ReadRdramRegisterAddr");
 		Pushad();
-		Call_Direct(&ReadRdramRegister, "ReadRdramRegister");
+		Call_Direct((void*)&ReadRdramRegister, "ReadRdramRegister");
 		MoveX86regToVariable(x86_EAX, &TempValue, "TempValue");
 		Popad();
 		MoveVariableToX86reg(&TempValue, "TempValue", Reg);
@@ -351,7 +351,7 @@ BOOL Compile_LW(int Reg, DWORD Addr) {
 		switch (Addr) {
 		case 0x04400010:
 			Pushad();
-			Call_Direct(&UpdateCurrentHalfLine,"UpdateCurrentHalfLine");
+			Call_Direct((void*)&UpdateCurrentHalfLine,"UpdateCurrentHalfLine");
 			Popad();
 			MoveVariableToX86reg(&HalfLine,"HalfLine",Reg);
 			break;
@@ -366,7 +366,7 @@ BOOL Compile_LW(int Reg, DWORD Addr) {
 		case 0x04500004: 
 			if (AiReadLength != NULL) {
 				Pushad();
-				Call_Direct(AiReadLength,"AiReadLength");
+				Call_Direct((void*)AiReadLength,"AiReadLength");
 				MoveX86regToVariable(x86_EAX,&TempValue,"TempValue"); 
 				Popad();
 				MoveVariableToX86reg(&TempValue,"TempValue",Reg);
@@ -551,7 +551,7 @@ static DWORD AddrToWriteToRdramRegister;
 
 static void WriteValueToRdramRegister(void) {
 	if (!(AddrToWriteToRdramRegister & 0x80000)) {
-		int deviceId = (AddrToWriteToRdramRegister >> 10) & 0x1FE;
+		DWORD deviceId = (AddrToWriteToRdramRegister >> 10) & 0x1FE;
 		deviceId = (((deviceId >> 0) & 0x3F) << 26) |
 			(((deviceId >> 6) & 1) << 23) |
 			(((deviceId >> 7) & 0xFF) << 8) |
@@ -559,7 +559,7 @@ static void WriteValueToRdramRegister(void) {
 
 		int deviceIndex = -1;
 
-		for (int i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
+		for (DWORD i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
 			if (deviceId == (RDRAM_DEVICE_ID_REG(i) & 0xF880FF80)) {
 				deviceIndex = i;
 				break;
@@ -588,7 +588,7 @@ static void WriteValueToRdramRegister(void) {
 
 			default:
 				LogMessage("WriteValueToRdramRegister to %x", ValueToWriteToRdramRegister);
-				return FALSE;
+				return;
 			}
 		}
 		else {
@@ -598,29 +598,29 @@ static void WriteValueToRdramRegister(void) {
 	else { // broadcast
 		switch (AddrToWriteToRdramRegister & 0x3FF) {
 		case 0x004:
-			for (int i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
+			for (DWORD i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
 				RDRAM_DEVICE_ID_REG(i) = ValueToWriteToRdramRegister;
 			}
 			break;
 		case 0x008:
-			for (int i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
+			for (DWORD i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
 				RDRAM_DELAY_REG(i) = RDRAM_DELAY_FIXED_VALUE | (ValueToWriteToRdramRegister & ~RDRAM_DELAY_FIXED_VALUE_MASK);
 			}
 			break;
 		case 0x00C:
-			for (int i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
+			for (DWORD i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
 				RDRAM_MODE_REG(i) = ValueToWriteToRdramRegister ^ RDRAM_MODE_X2;
 			}
 			break;
 		case 0x014:
-			for (int i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
+			for (DWORD i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
 				RDRAM_REF_ROW_REG(i) = ValueToWriteToRdramRegister;
 			}
 			break;
 
 		default:
 			LogMessage("WriteValueToRdramRegister to %x", AddrToWriteToRdramRegister);
-			return FALSE;
+			return;
 		}
 	}
 	CheckRdramStatus();
@@ -650,7 +650,7 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 		MoveConstToVariable(Value, &ValueToWriteToRdramRegister, "ValueToWriteToRdramRegister");
 		MoveConstToVariable(Addr & 0x1FFFFFFF, &AddrToWriteToRdramRegister, "AddrToWriteToRdramRegister");
 		Pushad();
-		Call_Direct(&WriteValueToRdramRegister, "WriteValueToRdramRegister");
+		Call_Direct((void*)&WriteValueToRdramRegister, "WriteValueToRdramRegister");
 		Popad();
 		break;
 	case 0x04000000:
@@ -665,7 +665,7 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 		case 0x04040008:
 			MoveConstToVariable(Value,&SP_RD_LEN_REG,"SP_RD_LEN_REG");
 			Pushad();
-			Call_Direct(&SP_DMA_READ,"SP_DMA_READ");
+			Call_Direct((void*)&SP_DMA_READ,"SP_DMA_READ");
 			Popad();
 			break;
 		case 0x04040010: 
@@ -707,18 +707,18 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 				{ 
 					OrConstToVariable(MI_INTR_SP,&MI_INTR_REG,"MI_INTR_REG");
 					Pushad();
-					Call_Direct(CheckInterrupts,"CheckInterrupts");
+					Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
 					Popad();
 				}
 				if ( ( Value & SP_CLR_INTR ) != 0) { 
-					AndConstToVariable(~MI_INTR_SP,&MI_INTR_REG,"MI_INTR_REG");
+					AndConstToVariable((DWORD)~MI_INTR_SP,&MI_INTR_REG,"MI_INTR_REG");
 					Pushad();
-					Call_Direct(RunRsp,"RunRsp");
-					Call_Direct(CheckInterrupts,"CheckInterrupts");
+					Call_Direct((void*)RunRsp,"RunRsp");
+					Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
 					Popad();
 				} else {
 					Pushad();
-					Call_Direct(RunRsp,"RunRsp");
+					Call_Direct((void*)RunRsp,"RunRsp");
 					Popad();
 				}
 			}
@@ -750,7 +750,7 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 					OrConstToVariable(ModValue,&MI_MODE_REG,"MI_MODE_REG");
 				}
 				if ( ( Value & MI_CLR_DP_INTR ) != 0 ) { 
-					AndConstToVariable(~MI_INTR_DP,&MI_INTR_REG,"MI_INTR_REG");
+					AndConstToVariable((DWORD)~MI_INTR_DP,&MI_INTR_REG,"MI_INTR_REG");
 				}
 			}
 			break;
@@ -793,7 +793,7 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 				Jump = RecompPos - 1;
 				MoveConstToVariable(Value,&VI_STATUS_REG,"VI_STATUS_REG");
 				Pushad();
-				Call_Direct(ViStatusChanged,"ViStatusChanged");
+				Call_Direct((void*)ViStatusChanged,"ViStatusChanged");
 				Popad();
 				CPU_Message("");
 				CPU_Message("      Continue:");
@@ -808,7 +808,7 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 				Jump = RecompPos - 1;
 				MoveConstToVariable(Value,&VI_WIDTH_REG,"VI_WIDTH_REG");
 				Pushad();
-				Call_Direct(ViWidthChanged,"ViWidthChanged");
+				Call_Direct((void*)ViWidthChanged,"ViWidthChanged");
 				Popad();
 				CPU_Message("");
 				CPU_Message("      Continue:");
@@ -817,9 +817,9 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 			break;
 		case 0x0440000C: MoveConstToVariable(Value,&VI_INTR_REG,"VI_INTR_REG"); break;
 		case 0x04400010: 
-			AndConstToVariable(~MI_INTR_VI,&MI_INTR_REG,"MI_INTR_REG");
+			AndConstToVariable((DWORD)~MI_INTR_VI,&MI_INTR_REG,"MI_INTR_REG");
 			Pushad();
-			Call_Direct(CheckInterrupts,"CheckInterrupts");
+			Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
 			Popad();
 			break;
 		case 0x04400014: MoveConstToVariable(Value,&VI_BURST_REG,"VI_BURST_REG"); break;
@@ -841,16 +841,16 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 		case 0x04500004: 
 			MoveConstToVariable(Value,&AI_LEN_REG,"AI_LEN_REG");
 			Pushad();
-			Call_Direct(AiLenChanged,"AiLenChanged");
+			Call_Direct((void*)AiLenChanged,"AiLenChanged");
 			Popad();
 			break;
 		case 0x04500008: MoveConstToVariable((Value & 1),&AI_CONTROL_REG,"AI_CONTROL_REG"); break;
 		case 0x0450000C:
 			/* Clear Interrupt */; 
-			AndConstToVariable(~MI_INTR_AI,&MI_INTR_REG,"MI_INTR_REG");
-			AndConstToVariable(~MI_INTR_AI,&AudioIntrReg,"AudioIntrReg");
+			AndConstToVariable((DWORD)~MI_INTR_AI,&MI_INTR_REG,"MI_INTR_REG");
+			AndConstToVariable((DWORD)~MI_INTR_AI,&AudioIntrReg,"AudioIntrReg");
 			Pushad();
-			Call_Direct(CheckInterrupts,"CheckInterrupts");
+			Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
 			Popad();
 			break;
 		case 0x04500010: 
@@ -871,20 +871,20 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 		case 0x04600008: 
 			MoveConstToVariable(Value,&PI_RD_LEN_REG,"PI_RD_LEN_REG");
 			Pushad();
-			Call_Direct(&PI_DMA_READ,"PI_DMA_READ");
+			Call_Direct((void*)&PI_DMA_READ,"PI_DMA_READ");
 			Popad();
 			break;
 		case 0x0460000C:
 			MoveConstToVariable(Value,&PI_WR_LEN_REG,"PI_WR_LEN_REG");
 			Pushad();
-			Call_Direct(&PI_DMA_WRITE,"PI_DMA_WRITE");
+			Call_Direct((void*)&PI_DMA_WRITE,"PI_DMA_WRITE");
 			Popad();
 			break;
 		case 0x04600010: 
 			if ((Value & PI_CLR_INTR) != 0 ) {
-				AndConstToVariable(~MI_INTR_PI,&MI_INTR_REG,"MI_INTR_REG");
+				AndConstToVariable((DWORD)~MI_INTR_PI,&MI_INTR_REG,"MI_INTR_REG");
 				Pushad();
-				Call_Direct(CheckInterrupts,"CheckInterrupts");
+				Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
 				Popad();
 			}
 			break;
@@ -913,20 +913,20 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 		case 0x04800004: 			
 			MoveConstToVariable(Value,&SI_PIF_ADDR_RD64B_REG,"SI_PIF_ADDR_RD64B_REG");		
 			Pushad();
-			Call_Direct(&SI_DMA_READ,"SI_DMA_READ");
+			Call_Direct((void*)&SI_DMA_READ,"SI_DMA_READ");
 			Popad();
 			break;
 		case 0x04800010: 
 			MoveConstToVariable(Value,&SI_PIF_ADDR_WR64B_REG,"SI_PIF_ADDR_WR64B_REG");
 			Pushad();
-			Call_Direct(&SI_DMA_WRITE,"SI_DMA_WRITE");
+			Call_Direct((void*)&SI_DMA_WRITE,"SI_DMA_WRITE");
 			Popad();
 			break;
 		case 0x04800018: 
-			AndConstToVariable(~MI_INTR_SI,&MI_INTR_REG,"MI_INTR_REG");
-			AndConstToVariable(~SI_STATUS_INTERRUPT,&SI_STATUS_REG,"SI_STATUS_REG");
+			AndConstToVariable((DWORD)~MI_INTR_SI,&MI_INTR_REG,"MI_INTR_REG");
+			AndConstToVariable((DWORD)~SI_STATUS_INTERRUPT,&SI_STATUS_REG,"SI_STATUS_REG");
 			Pushad();
-			Call_Direct(CheckInterrupts,"CheckInterrupts");
+			Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
 			Popad();
 			break;
 		default:
@@ -964,7 +964,7 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 		MoveX86regToVariable(x86Reg, &ValueToWriteToRdramRegister, "ValueToWriteToRdramRegister");
 		MoveConstToVariable(Addr & 0x1FFFFFFF, &AddrToWriteToRdramRegister, "AddrToWriteToRdramRegister");
 		Pushad();
-		Call_Direct(&WriteValueToRdramRegister, "WriteValueToRdramRegister");
+		Call_Direct((void*)&WriteValueToRdramRegister, "WriteValueToRdramRegister");
 		Popad();
 		break;
 	case 0x04000000: 
@@ -974,19 +974,19 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 		case 0x04040008: 
 			MoveX86regToVariable(x86Reg,&SP_RD_LEN_REG,"SP_RD_LEN_REG");
 			Pushad();
-			Call_Direct(&SP_DMA_READ,"SP_DMA_READ");
+			Call_Direct((void*)&SP_DMA_READ,"SP_DMA_READ");
 			Popad();
 			break;
 		case 0x0404000C: 
 			MoveX86regToVariable(x86Reg,&SP_WR_LEN_REG,"SP_WR_LEN_REG");
 			Pushad();
-			Call_Direct(&SP_DMA_WRITE,"SP_DMA_WRITE");
+			Call_Direct((void*)&SP_DMA_WRITE,"SP_DMA_WRITE");
 			Popad();
 			break;
 		case 0x04040010: 
 			MoveX86regToVariable(x86Reg,&RegModValue,"RegModValue");
 			Pushad();
-			Call_Direct(ChangeSpStatus,"ChangeSpStatus");
+			Call_Direct((void*)ChangeSpStatus,"ChangeSpStatus");
 			Popad();
 			break;
 		case 0x0404001C: MoveConstToVariable(0,&SP_SEMAPHORE_REG,"SP_SEMAPHORE_REG"); break;
@@ -1009,7 +1009,7 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 		case 0x0410000C:
 			MoveX86regToVariable(x86Reg,&RegModValue,"RegModValue");
 			Pushad();
-			Call_Direct(ChangeDpcStatus,"ChangeDpcStatus");
+			Call_Direct((void*)ChangeDpcStatus,"ChangeDpcStatus");
 			Popad();
 			break;
 		default:
@@ -1025,13 +1025,13 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 		case 0x04300000: 
 			MoveX86regToVariable(x86Reg,&RegModValue,"RegModValue");
 			Pushad(); 
-			Call_Direct(ChangeMiModeReg,"ChangeMiModeReg");
+			Call_Direct((void*)ChangeMiModeReg,"ChangeMiModeReg");
 			Popad();
 			break;
 		case 0x0430000C: 
 			MoveX86regToVariable(x86Reg,&RegModValue,"RegModValue");
 			Pushad();
-			Call_Direct(ChangeMiIntrMask,"ChangeMiIntrMask");
+			Call_Direct((void*)ChangeMiIntrMask,"ChangeMiIntrMask");
 			Popad();
 			break;
 		default:
@@ -1048,7 +1048,7 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 				Jump = RecompPos - 1;
 				MoveX86regToVariable(x86Reg,&VI_STATUS_REG,"VI_STATUS_REG");
 				Pushad();
-				Call_Direct(ViStatusChanged,"ViStatusChanged");
+				Call_Direct((void*)ViStatusChanged,"ViStatusChanged");
 				Popad();
 				CPU_Message("");
 				CPU_Message("      Continue:");
@@ -1066,7 +1066,7 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 				Jump = RecompPos - 1;
 				MoveX86regToVariable(x86Reg,&VI_WIDTH_REG,"VI_WIDTH_REG");
 				Pushad();
-				Call_Direct(ViWidthChanged,"ViWidthChanged");
+				Call_Direct((void*)ViWidthChanged,"ViWidthChanged");
 				Popad();
 				CPU_Message("");
 				CPU_Message("      Continue:");
@@ -1075,9 +1075,9 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 			break;
 		case 0x0440000C: MoveX86regToVariable(x86Reg,&VI_INTR_REG,"VI_INTR_REG"); break;
 		case 0x04400010: 
-			AndConstToVariable(~MI_INTR_VI,&MI_INTR_REG,"MI_INTR_REG");
+			AndConstToVariable((DWORD)~MI_INTR_VI,&MI_INTR_REG,"MI_INTR_REG");
 			Pushad();
-			Call_Direct(CheckInterrupts,"CheckInterrupts");
+			Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
 			Popad();
 			break;
 		case 0x04400014: MoveX86regToVariable(x86Reg,&VI_BURST_REG,"VI_BURST_REG"); break;
@@ -1100,7 +1100,7 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 		case 0x04500004: 
 			MoveX86regToVariable(x86Reg,&AI_LEN_REG,"AI_LEN_REG");
 			Pushad();
-			Call_Direct(AiLenChanged,"AiLenChanged");
+			Call_Direct((void*)AiLenChanged,"AiLenChanged");
 			Popad();
 			break;
 		case 0x04500008: 
@@ -1108,10 +1108,10 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 			AndConstToVariable(1,&AI_CONTROL_REG,"AI_CONTROL_REG");
 		case 0x0450000C:
 			/* Clear Interrupt */; 
-			AndConstToVariable(~MI_INTR_AI,&MI_INTR_REG,"MI_INTR_REG");
-			AndConstToVariable(~MI_INTR_AI,&AudioIntrReg,"AudioIntrReg");
+			AndConstToVariable((DWORD)~MI_INTR_AI,&MI_INTR_REG,"MI_INTR_REG");
+			AndConstToVariable((DWORD)~MI_INTR_AI,&AudioIntrReg,"AudioIntrReg");
 			Pushad();
-			Call_Direct(CheckInterrupts,"CheckInterrupts");
+			Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
 			Popad();
 			break;
 		case 0x04500010: 
@@ -1131,20 +1131,20 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 		case 0x04600008:
 			MoveX86regToVariable(x86Reg,&PI_RD_LEN_REG,"PI_RD_LEN_REG");
 			Pushad();
-			Call_Direct(&PI_DMA_READ,"PI_DMA_READ");
+			Call_Direct((void*)&PI_DMA_READ,"PI_DMA_READ");
 			Popad();
 			break;
 		case 0x0460000C:
 			MoveX86regToVariable(x86Reg,&PI_WR_LEN_REG,"PI_WR_LEN_REG");
 			Pushad();
-			Call_Direct(&PI_DMA_WRITE,"PI_DMA_WRITE");
+			Call_Direct((void*)&PI_DMA_WRITE,"PI_DMA_WRITE");
 			Popad();
 			break;
 		case 0x04600010: 
 			if (ShowUnhandledMemory) { DisplayError("Compile_SW_Register\ntrying to store at %X?",Addr); }
-			AndConstToVariable(~MI_INTR_PI,&MI_INTR_REG,"MI_INTR_REG");
+			AndConstToVariable((DWORD)~MI_INTR_PI,&MI_INTR_REG,"MI_INTR_REG");
 			Pushad();
-			Call_Direct(CheckInterrupts,"CheckInterrupts");
+			Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
 			Popad();
 			break;
 		case 0x04600014: 
@@ -1197,20 +1197,20 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 		case 0x04800004: 
 			MoveX86regToVariable(x86Reg,&SI_PIF_ADDR_RD64B_REG,"SI_PIF_ADDR_RD64B_REG"); 
 			Pushad();
-			Call_Direct(&SI_DMA_READ,"SI_DMA_READ");
+			Call_Direct((void*)&SI_DMA_READ,"SI_DMA_READ");
 			Popad();
 			break;
 		case 0x04800010: 
 			MoveX86regToVariable(x86Reg,&SI_PIF_ADDR_WR64B_REG,"SI_PIF_ADDR_WR64B_REG"); 
 			Pushad();
-			Call_Direct(&SI_DMA_WRITE,"SI_DMA_WRITE");
+			Call_Direct((void*)&SI_DMA_WRITE,"SI_DMA_WRITE");
 			Popad();
 			break;
 		case 0x04800018: 
-			AndConstToVariable(~MI_INTR_SI,&MI_INTR_REG,"MI_INTR_REG");
-			AndConstToVariable(~SI_STATUS_INTERRUPT,&SI_STATUS_REG,"SI_STATUS_REG");
+			AndConstToVariable((DWORD)~MI_INTR_SI,&MI_INTR_REG,"MI_INTR_REG");
+			AndConstToVariable((DWORD)~SI_STATUS_INTERRUPT,&SI_STATUS_REG,"SI_STATUS_REG");
 			Pushad();
-			Call_Direct(CheckInterrupts,"CheckInterrupts");
+			Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
 			Popad();
 			break;
 		default:
@@ -1233,7 +1233,7 @@ int r4300i_CPU_MemoryFilter( DWORD dwExptCode, LPEXCEPTION_POINTERS lpEP) {
 	DWORD MemAddress = (char *)lpEP->ExceptionRecord->ExceptionInformation[1] - (char *)N64MEM;
     EXCEPTION_RECORD exRec;
 	BYTE * ReadPos, *TypePos;
-	void * Reg;
+	void * Reg = NULL;
 	
 	if (dwExptCode != EXCEPTION_ACCESS_VIOLATION) {
 		return EXCEPTION_CONTINUE_SEARCH;
@@ -1380,7 +1380,7 @@ int r4300i_CPU_MemoryFilter( DWORD dwExptCode, LPEXCEPTION_POINTERS lpEP) {
 			lpEP->ContextRecord->Eip = (DWORD)ReadPos;
 			return EXCEPTION_CONTINUE_EXECUTION;
 		case 0xB7:
-			if (!r4300i_LH_NonMemory(MemAddress, Reg, FALSE)) {
+			if (!r4300i_LH_NonMemory(MemAddress, Reg)) {
 				if (ShowUnhandledMemory) {
 					DisplayError("Failed to load half word\n\nEip: %X\nMIPS Address: %X", lpEP->ContextRecord->Eip, MemAddress);
 				}
@@ -1396,7 +1396,7 @@ int r4300i_CPU_MemoryFilter( DWORD dwExptCode, LPEXCEPTION_POINTERS lpEP) {
 			lpEP->ContextRecord->Eip = (DWORD)ReadPos;
 			return EXCEPTION_CONTINUE_EXECUTION;
 		case 0xBF:
-			if (!r4300i_LH_NonMemory(MemAddress, Reg, TRUE)) {
+			if (!r4300i_LH_NonMemory(MemAddress, Reg)) {
 				if (ShowUnhandledMemory) {
 					DisplayError("Failed to load half word\n\nEip: %X\nMIPS Address: %X", lpEP->ContextRecord->Eip, MemAddress);
 				}
@@ -1411,7 +1411,7 @@ int r4300i_CPU_MemoryFilter( DWORD dwExptCode, LPEXCEPTION_POINTERS lpEP) {
 	case 0x66:
 		switch(*(TypePos + 1)) {
 		case 0x8B:
-			if (!r4300i_LH_NonMemory(MemAddress,Reg,FALSE)) {
+			if (!r4300i_LH_NonMemory(MemAddress,Reg)) {
 				if (ShowUnhandledMemory) {
 					DisplayError("Failed to half word\n\nEip: %X\nMIPS Address: %X", lpEP->ContextRecord->Eip, MemAddress);
 				}
@@ -1499,10 +1499,11 @@ int r4300i_CPU_MemoryFilter( DWORD dwExptCode, LPEXCEPTION_POINTERS lpEP) {
 static void checkValueWrittenToRomDecay() {
 	if (WrittenToRom) {
 		DWORD diff = COUNT_REGISTER - WrittenToRomCount;
+		const DWORD DecayThreshold = 3 * 70 * CountPerOp;
 		if (COUNT_REGISTER < WrittenToRomCount) {
 			diff = COUNT_REGISTER + (0XFFFFFFFF - WrittenToRomCount) + 1;
 		}
-		if (diff > 3*70*CountPerOp) {
+		if (diff > DecayThreshold) {
 			WrittenToRom = FALSE;
 			PI_STATUS_REG &= ~PI_STATUS_IO_BUSY;
 		}
@@ -1522,7 +1523,7 @@ int r4300i_LB_NonMemory ( DWORD PAddr, DWORD * Value, BOOL SignExtend ) {
 		if ((PAddr & 2) == 0) { PAddr = (PAddr + 4) ^ 2; }
 		if ((PAddr - 0x10000000) < RomFileSize) {
 			if (SignExtend) {
-				(int)*Value = (char)ROM[PAddr - 0x10000000];
+				*Value = (char)ROM[PAddr - 0x10000000];
 			} else {
 				*Value = ROM[PAddr - 0x10000000];
 			}
@@ -1682,7 +1683,7 @@ BOOL r4300i_LD_VAddr ( MIPS_DWORD VAddr, unsigned _int64 * Value, DWORD* outPAdd
 	return TRUE;
 }
 
-int r4300i_LH_NonMemory ( DWORD PAddr, DWORD * Value, int SignExtend ) {
+int r4300i_LH_NonMemory ( DWORD PAddr, DWORD * Value) {
 	checkValueWrittenToRomDecay();
 
 	if (PAddr < 0x03F00000) {
@@ -1779,7 +1780,7 @@ BOOL r4300i_LH_VAddr ( MIPS_DWORD VAddr, WORD * Value ) {
 	}
 	else {
 		DWORD DValue = 0;
-		r4300i_LH_NonMemory(PAddr ^ 2, &DValue, FALSE);
+		r4300i_LH_NonMemory(PAddr ^ 2, &DValue);
 		*Value = (WORD)DValue;
 	}
 	return TRUE;
@@ -1817,7 +1818,7 @@ BOOL r4300i_LH_VAddr_NonCPU ( MIPS_DWORD VAddr, WORD * Value ) {
 	}
 	else {
 		DWORD DValue = 0;
-		if (!r4300i_LH_NonMemory(PAddr^2, &DValue, FALSE)) {
+		if (!r4300i_LH_NonMemory(PAddr^2, &DValue)) {
 			return FALSE;
 		}
 		*Value = (WORD)DValue;
@@ -1846,7 +1847,7 @@ int r4300i_LW_NonMemory ( DWORD PAddr, DWORD * Value ) {
 	
 	if (PAddr < 0x03F00000) {
 		if (PAddr < RdramSize) {
-			*Value = (DWORD*)(RDRAM + PAddr);
+			*Value = *(DWORD*)(RDRAM + PAddr);
 		}
 		else *Value = 0x0;
 		return TRUE;
@@ -1890,7 +1891,7 @@ int r4300i_LW_NonMemory ( DWORD PAddr, DWORD * Value ) {
 	switch (PAddr & 0xFFF00000) {
 	case 0x03F00000:
 		{
-			int deviceId = (PAddr >> 10) & 0x1FE;
+			DWORD deviceId = (PAddr >> 10) & 0x1FE;
 			deviceId = (((deviceId >> 0) & 0x3F) << 26) |
 				(((deviceId >> 6) & 1) << 23) |
 				(((deviceId >> 7) & 0xFF) << 8) |
@@ -1898,7 +1899,7 @@ int r4300i_LW_NonMemory ( DWORD PAddr, DWORD * Value ) {
 				
 			int deviceIndex = -1;
 
-			for (int i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
+			for (DWORD i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
 				if (deviceId == (RDRAM_DEVICE_ID_REG(i) & 0xF880FF80)) {
 					deviceIndex = i;
 					break;
@@ -2532,10 +2533,7 @@ BOOL r4300i_SH_VAddr_NonCPU ( MIPS_DWORD VAddr, WORD Value ) {
 		}
 	}
   else if (((PAddr & ~0x03E000) >= 0x04000000 && (PAddr & ~0x03E000) < 0x04004000)) {
-		if ((PAddr & 2) == 0)
-			*(WORD*)(N64MEM + ((PAddr & ~0x3E000) & ~0x2000)) = 0;
-		else
-			*(WORD*)(N64MEM + ((PAddr & ~0x3E000) & ~0x2000)) = (Value >> 16) & 0xFFFF;
+		*(WORD*)(N64MEM + ((PAddr & ~0x3E000) & ~0x2000)) = 0;
 		*(WORD*)(N64MEM + (((PAddr & ~0x3E000) & ~0x2000) ^ 2)) = Value & 0xFFFF;
 	}
 	else {
@@ -2593,7 +2591,7 @@ int r4300i_SW_NonMemory ( DWORD PAddr, DWORD Value ) {
 		break;
 	case 0x03F00000:
 		if (!(PAddr & 0x80000)) {
-			int deviceId = (PAddr >> 10) & 0x1FE;
+			DWORD deviceId = (PAddr >> 10) & 0x1FE;
 			deviceId = (((deviceId >> 0) & 0x3F) << 26) |
 				(((deviceId >> 6) & 1) << 23) |
 				(((deviceId >> 7) & 0xFF) << 8) |
@@ -2601,7 +2599,7 @@ int r4300i_SW_NonMemory ( DWORD PAddr, DWORD Value ) {
 
 			int deviceIndex = -1;
 
-			for (int i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
+			for (DWORD i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
 				if (deviceId == (RDRAM_DEVICE_ID_REG(i) & 0xF880FF80)) {
 					deviceIndex = i;
 					break;
@@ -2640,22 +2638,22 @@ int r4300i_SW_NonMemory ( DWORD PAddr, DWORD Value ) {
 		else { // broadcast
 			switch (PAddr & 0x3FF) {
 			case 0x004:
-				for (int i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
+				for (DWORD i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
 					RDRAM_DEVICE_ID_REG(i) = Value;
 				}
 				break;
 			case 0x008:
-				for (int i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
+				for (DWORD i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
 					RDRAM_DELAY_REG(i) = RDRAM_DELAY_FIXED_VALUE | (Value & ~RDRAM_DELAY_FIXED_VALUE_MASK);
 				}
 				break;
 			case 0x00C:
-				for (int i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
+				for (DWORD i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
 					RDRAM_MODE_REG(i) = Value ^ RDRAM_MODE_X2;
 				}
 				break;
 			case 0x014:
-				for (int i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
+				for (DWORD i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
 					RDRAM_REF_ROW_REG(i) = Value;
 				}
 				break;
@@ -3028,7 +3026,7 @@ int r4300i_SW_NonMemory ( DWORD PAddr, DWORD Value ) {
 		case 0x04700000:
 			RI_MODE_REG = Value;
 			if ((RI_MODE_REG & 3) == 0) { // reset mode
-				for (int i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
+				for (DWORD i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
 					RDRAM_MODE_REG(i) &= ~RDRAM_MODE_DE;
 				}
 			}
@@ -3067,7 +3065,7 @@ int r4300i_SW_NonMemory ( DWORD PAddr, DWORD Value ) {
 		break;
 	case 0x08000000:
 		if (SaveUsing == Sram) {
-			*(N64MEM + PAddr) = Value;
+			*((DWORD*)(N64MEM + PAddr)) = Value;
 			break;
 		}
 		if (PAddr != 0x08010000) { return FALSE; }
@@ -3227,7 +3225,7 @@ void ResetRecompCode (void) {
 	DWORD count, OldProtect;
 	RecompPos = RecompCode;
 	if (SelfModCheck == ModCode_ChangeMemory) {
-		DWORD count, PAddr, Value;
+		DWORD PAddr, Value;
 
 		for (count = 0; count < TargetIndex; count++) {
 			PAddr = OrigMem[(WORD)(count)].PAddr;
@@ -3342,7 +3340,7 @@ void CheckRdramStatus() {
 	if (CPU_Type != CPU_Interpreter) {
 		return;
 	}
-	for (int i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
+	for (DWORD i = 0; i < NUMBER_OF_RDRAM_MODULES; ++i) {
 		if ((RDRAM_MODE_REG(i) & RDRAM_MODE_DE) == 0) {
 			RdramFullyConfigured = FALSE;
 			return;
@@ -3359,7 +3357,7 @@ void CheckRdramStatus() {
 }
 
 BYTE* GetBaseRdramAddress(DWORD PAddr) {
-	int deviceId = (PAddr >> 21) & 3;
+	DWORD deviceId = (PAddr >> 21) & 3;
 	if ((RDRAM_MODE_REG(deviceId) & RDRAM_MODE_DE) == 0) {
 		return NULL;
 	}

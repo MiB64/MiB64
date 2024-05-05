@@ -228,4 +228,4 @@ extern TARGET_INFO * TargetInfo;
 extern WORD FPU_RoundingMode;
 
 #define SetJump32(Loc,JumpLoc) *(DWORD *)(Loc)= (DWORD)(((DWORD)(JumpLoc)) - (((DWORD)(Loc)) + 4));
-#define SetJump8(Loc,JumpLoc)  *(BYTE  *)(Loc)= (BYTE )(((BYTE )(JumpLoc)) - (((BYTE )(Loc)) + 1));
+#define SetJump8(Loc,JumpLoc)  *(BYTE  *)(Loc)= (BYTE )(((DWORD)(JumpLoc)) - (((DWORD)(Loc)) + 1));

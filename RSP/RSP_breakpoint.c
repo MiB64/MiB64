@@ -30,7 +30,6 @@
 #include "../Main.h"
 #include "../BreakPoints.h"
 #include "../resource.h"
-/*#include "rsp.h"*/
 #include "RSP_breakpoint.h"
 #include "rsp_registers.h"
 
@@ -78,16 +77,16 @@ int AddRSP_BPoint( DWORD Location, int Confirm ) {
 	return TRUE;
 }
 
-/*int CheckForRSPBPoint ( DWORD Location ) {
+int CheckForRSPBPoint ( DWORD Location ) {
 	int count;
 	
-	for (count = 0; count < NoOfBpoints; count ++){
-		if (BPoint[count].Location == Location) {
+	for (count = 0; count < NoOfRspBpoints; count ++){
+		if (RspBPoint[count].Location == Location) {
 			return TRUE;
 		}
 	}
 	return FALSE;
-}*/
+}
 
 void __cdecl CreateRspBPPanel ( HWND hDlg, RECT rcBox ) {
 	UNREFERENCED_PARAMETER(rcBox);

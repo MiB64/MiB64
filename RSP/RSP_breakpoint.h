@@ -46,6 +46,6 @@ void __cdecl RemoveRspBpoint ( HWND hList, int index );
 void __cdecl RemoveAllRspBpoint ( void );
 
 int  AddRSP_BPoint ( DWORD Location, int Confirm );
-/*int  CheckForRSPBPoint ( DWORD Location );*/
+int  CheckForRSPBPoint ( DWORD Location );
 void RemoveRSPBreakPoint (DWORD Location);
 

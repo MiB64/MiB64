@@ -28,6 +28,7 @@
 #include "rsp/rsp_registers.h"
 #include "mi_registers.h"
 #include "rdp_registers.h"
+#include "Pif.h"
 
 #define INDEX_REGISTER			CP0[0].UW[0]
 #define RANDOM_REGISTER			CP0[1].UW[0]
@@ -80,7 +81,7 @@
 #define RDRAM_ADDR_SELECT_REG(deviceId)		(*RegRDRAM)[deviceId][8]
 #define RDRAM_DEVICE_MANUF_REG(deviceId)	(*RegRDRAM)[deviceId][9]
 
-#define NUMBER_OF_RDRAM_MODULES (RdramSize == 0x400000 ? 2 : 4)
+#define NUMBER_OF_RDRAM_MODULES (RdramSize == 0x400000 ? 2U : 4U)
 
 #define VI_STATUS_REG			RegVI[0]
 #define VI_CONTROL_REG			RegVI[0]
@@ -142,13 +143,13 @@
 #define SI_PIF_ADDR_WR64B_REG	RegSI[2]
 #define SI_STATUS_REG			RegSI[3]
 
-#define RDRAM_DEVICE_TYPE_COLUMN_BITS	0xB
-#define RDRAM_DEVICE_TYPE_BN			1
-#define RDRAM_DEVICE_TYPE_EN			0
-#define RDRAM_DEVICE_TYPE_BANK_BITS		1
-#define RDRAM_DEVICE_TYPE_ROW_BITS		9
-#define RDRAM_DEVICE_TYPE_VERSION		1
-#define RDRAM_DEVICE_TYPE_TYPE			0
+#define RDRAM_DEVICE_TYPE_COLUMN_BITS	0xBU
+#define RDRAM_DEVICE_TYPE_BN			1U
+#define RDRAM_DEVICE_TYPE_EN			0U
+#define RDRAM_DEVICE_TYPE_BANK_BITS		1U
+#define RDRAM_DEVICE_TYPE_ROW_BITS		9U
+#define RDRAM_DEVICE_TYPE_VERSION		1U
+#define RDRAM_DEVICE_TYPE_TYPE			0U
 
 #define RDRAM_DELAY_ACKWINBITS	(3 << 24)
 #define RDRAM_DELAY_READBITS	(3 << 16)
@@ -279,7 +280,7 @@ void ChangeMiIntrMask         ( void );
 void ChangeMiModeReg          ( void );
 void ChangeSpStatus           ( void );
 void ChangeDpcStatus          ( void );
-void InitalizeR4300iRegisters ( int UsePif, int Country, enum CIC_CHIP CIC_Chip );
+void InitalizeR4300iRegisters ( int UsePif, enum CIC_CHIP CIC_Chip );
 BOOL Is8BitReg                ( int x86Reg);
 void Load_FPR_ToTop           ( BLOCK_SECTION * Section, int Reg, int RegToLoad, int Format);
 void Map_GPR_32bit            ( BLOCK_SECTION * Section, int Reg, BOOL SignValue, int MipsRegToLoad );

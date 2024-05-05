@@ -32,19 +32,19 @@
 /*#include "Cpu.h"
 #include "RSP registers.h"
 #include "RSP Command.h"
-#include "memory.h"
-#include "opcode.h"
-#include "log.h"
+#include "memory.h"*/
+#include "RSP_OpCode.h"
+/*#include "log.h"
 #include "Profiling.h"
 #include "breakpoint.h"
 #include "x86.h"
 
-UDWORD EleSpec[32], Indx[32];
-OPCODE RSPOpC;*/
-/*DWORD NextInstruction, RSP_Running*/;
+UDWORD EleSpec[32], Indx[32];*/
+OPCODE RSPOpC;
+DWORD /*NextInstruction,*/ RSP_Running;
 
-/*void * RSP_Opcode[64];
-void * RSP_RegImm[32];
+void * RSP_Opcode[64];
+/*void * RSP_RegImm[32];
 void * RSP_Special[64];
 void * RSP_Cop0[32];
 void * RSP_Cop2[32];

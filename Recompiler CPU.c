@@ -502,7 +502,7 @@ BYTE * CompileDelaySlot(void) {
 	MoveVariableToX86reg(&JumpToLocation,"JumpToLocation",x86Reg);
 	MoveX86regToVariable(x86Reg,&PROGRAM_COUNTER,"PROGRAM_COUNTER");
 	MoveConstToVariable(NORMAL,&NextInstruction,"NextInstruction");
-	if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+	if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 	Ret();
 	CPU_Message("====== End of recompiled code ======");
 	return Block;
@@ -549,7 +549,7 @@ void CompileExit (DWORD TargetPC, REG_INFO ExitRegSet, int reason, int CompileNo
 
 	switch (reason) {
 	case Normal: case Normal_NoSysCheck:
-		if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 		Section.RegWorking.RandomModifier = 0;
 		Section.RegWorking.CycleCount = 0;
 		if (reason == Normal) { CompileSystemCheck(0,(DWORD)-1,Section.RegWorking);	}
@@ -589,7 +589,7 @@ void CompileExit (DWORD TargetPC, REG_INFO ExitRegSet, int reason, int CompileNo
 		} else if (SelfModCheck == ModCode_CheckMemoryCache) {
 		} else if (SelfModCheck == ModCode_CheckMemory2) { // *** Add in Build 53
 		} else {
-			BYTE * Jump, * Jump2;
+			BYTE * Jump, * Jump2 = NULL;
 			if (TargetPC >= 0x80000000 && TargetPC < 0x90000000) {
 				DWORD pAddr = TargetPC & 0x1FFFFFFF;
 	
@@ -625,48 +625,48 @@ void CompileExit (DWORD TargetPC, REG_INFO ExitRegSet, int reason, int CompileNo
 #endif
 		break;
 	case DoCPU_Action:
-		if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
-		Call_Direct(DoSomething,"DoSomething");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
+		Call_Direct((void*)DoSomething,"DoSomething");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 		Ret();
 		break;
 	case DoSysCall:
 		MoveConstToX86reg(NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
-		Call_Direct(DoSysCallException, "DoSysCallException");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+		Call_Direct((void*)DoSysCallException, "DoSysCallException");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 		Ret();
 		break;
 	case DoIlleaglOp:
 		MoveConstToX86reg(NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
-		Call_Direct(DoIllegalInstructionException, "DoIllegalInstructionException");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+		Call_Direct((void*)DoIllegalInstructionException, "DoIllegalInstructionException");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 		Ret();
 		break;
 	case DoBreak:
 		MoveConstToX86reg(NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
-		Call_Direct(DoBreakException, "DoBreakException");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+		Call_Direct((void*)DoBreakException, "DoBreakException");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 		Ret();
 		break;
 	case DoTrap:
 		MoveConstToX86reg(NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
-		Call_Direct(DoTrapException, "DoTrapException");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+		Call_Direct((void*)DoTrapException, "DoTrapException");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 		Ret();
 		break;
 	case COP1_Unuseable:
 		MoveConstToX86reg(NextInstruction == JUMP || NextInstruction == DELAY_SLOT,x86_ECX);		
 		MoveConstToX86reg(1,x86_EDX);
-		Call_Direct(DoCopUnusableException,"DoCopUnusableException");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+		Call_Direct((void*)DoCopUnusableException,"DoCopUnusableException");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 		Ret();
 		break;
 	case ExitResetRecompCode:
 		if (NextInstruction == JUMP || NextInstruction == DELAY_SLOT) {
 			BreakPoint();
 		}
-		if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
-		Call_Direct(ResetRecompCode, "ResetRecompCode");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
+		Call_Direct((void*)ResetRecompCode, "ResetRecompCode");
 		Ret();
 		break;
 	case TLBReadMiss:
@@ -677,8 +677,8 @@ void CompileExit (DWORD TargetPC, REG_INFO ExitRegSet, int reason, int CompileNo
 		Push(x86_EDX);
 		MoveConstToX86reg(NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
 		MoveConstToX86reg(1, x86_EDX);
-		Call_Direct(DoTLBMiss, "DoTLBMiss");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+		Call_Direct((void*)DoTLBMiss, "DoTLBMiss");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 		Ret();
 		break;
 	case TLBWriteMiss:
@@ -689,8 +689,8 @@ void CompileExit (DWORD TargetPC, REG_INFO ExitRegSet, int reason, int CompileNo
 		Push(x86_EDX);
 		MoveConstToX86reg(NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
 		MoveConstToX86reg(0, x86_EDX);
-		Call_Direct(DoTLBMiss, "DoTLBMiss");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+		Call_Direct((void*)DoTLBMiss, "DoTLBMiss");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 		Ret();
 		break;
 	default:
@@ -716,16 +716,16 @@ void CompileSystemCheck (DWORD TimerModifier, DWORD TargetPC, REG_INFO RegSet) {
 	InitilzeSection (&Section, NULL, (DWORD)-1, 0);
 	memcpy(&Section.RegWorking, &RegSet, sizeof(REG_INFO));
 	WriteBackRegisters(&Section);
-	if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
-	Call_Direct(TimerDone,"TimerDone");
-	if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+	if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
+	Call_Direct((void*)TimerDone,"TimerDone");
+	if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 	Popad();
 
 	//Interrupt
 	CompConstToVariable(0,&CPU_Action.DoSomething,"CPU_Action.DoSomething");
 	JeLabel32("Continue_From_Interrupt_Test",0);
 	Jump2 = RecompPos - 4;
-	CompileExit(-1,Section.RegWorking,DoCPU_Action,TRUE,NULL);
+	CompileExit((DWORD)-1,Section.RegWorking,DoCPU_Action,TRUE,NULL);
 
 	CPU_Message("");
 	CPU_Message("      $Continue_From_Interrupt_Test:");
@@ -744,7 +744,7 @@ void CompileSystemCheck (DWORD TimerModifier, DWORD TargetPC, REG_INFO RegSet) {
 	InitilzeSection (&Section, NULL, (DWORD)-1, 0);
 	memcpy(&Section.RegWorking, &RegSet, sizeof(REG_INFO));
 	WriteBackRegisters(&Section);		
-	CompileExit(-1,Section.RegWorking,DoCPU_Action,TRUE,NULL);
+	CompileExit((DWORD)-1,Section.RegWorking,DoCPU_Action,TRUE,NULL);
 	CPU_Message("");
 	CPU_Message("      $Continue_From_Interrupt_Test:");
 	SetJump32(Jump,RecompPos);	
@@ -1537,7 +1537,6 @@ void _fastcall FillSectionInfo(BLOCK_SECTION * Section) {
 						int EffectDelaySlot;
 						OPCODE NewCommand;
 
-						MIPS_DWORD Address;
 						Address.DW = (long)(Section->CompilePC + 4);
 						if (!r4300i_LW_VAddr_NonCPU(Address, &NewCommand.Hex)) {
 							DisplayError(GS(MSG_FAIL_LOAD_WORD));
@@ -1813,10 +1812,6 @@ void FreeSection (BLOCK_SECTION * Section, BLOCK_SECTION * Parent) {
 	}
 }
 
-void GenerateBasicSectionLinkage (BLOCK_SECTION * Section) {
-	_asm int 3
-}
-
 void GenerateSectionLinkage (BLOCK_SECTION * Section) {
 	BLOCK_SECTION * TargetSection[2], *Parent;
 	JUMP_INFO * JumpInfo[2];
@@ -1830,7 +1825,7 @@ void GenerateSectionLinkage (BLOCK_SECTION * Section) {
 
 	for (count = 0; count < 2; count ++) {
 		if (JumpInfo[count]->LinkLocation == NULL && JumpInfo[count]->FallThrough == FALSE) {
-			JumpInfo[count]->TargetPC = -1;
+			JumpInfo[count]->TargetPC = (DWORD)-1;
 		}
 	}
 	if ((Section->CompilePC & 0xFFC) == 0xFFC) {
@@ -1879,7 +1874,7 @@ void GenerateSectionLinkage (BLOCK_SECTION * Section) {
 		}
 		if (BlockRandomModifier != 0) { SubConstFromVariable(BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
 		WriteBackRegisters(Section);
-		if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 		MoveConstToVariable(DELAY_SLOT,&NextInstruction,"NextInstruction");
 		Ret();
 		return;
@@ -1891,7 +1886,7 @@ void GenerateSectionLinkage (BLOCK_SECTION * Section) {
 			if (!DelaySlotEffectsJump(CompilePC)) {
 				WriteBackRegisters(Section); 
 				memcpy(&Section->Jump.RegSet,&Section->RegWorking, sizeof(REG_INFO));
-				Call_Direct(InPermLoop,"InPermLoop");
+				Call_Direct((void*)InPermLoop,"InPermLoop");
 			}
 		}
 	}
@@ -1970,8 +1965,8 @@ void GenerateSectionLinkage (BLOCK_SECTION * Section) {
 CPU_Message("PermLoop ***");
 				if (JumpInfo[count]->PermLoop) {
 					MoveConstToVariable(JumpInfo[count]->TargetPC,&PROGRAM_COUNTER,"PROGRAM_COUNTER");
-					Call_Direct(InPermLoop,"InPermLoop");
-					CompileSystemCheck(0,-1,JumpInfo[count]->RegSet);
+					Call_Direct((void*)InPermLoop,"InPermLoop");
+					CompileSystemCheck(0,(DWORD)-1,JumpInfo[count]->RegSet);
 				} else {
 					CompileSystemCheck(CycleCount,JumpInfo[count]->TargetPC,JumpInfo[count]->RegSet);
 				}
@@ -2080,8 +2075,8 @@ CPU_Message("PermLoop ***");
 CPU_Message("PermLoop ***");
 				if (JumpInfo[count]->PermLoop) {
 					MoveConstToVariable(JumpInfo[count]->TargetPC,&PROGRAM_COUNTER,"PROGRAM_COUNTER");
-					Call_Direct(InPermLoop,"InPermLoop");
-					CompileSystemCheck(0,-1,JumpInfo[count]->RegSet);
+					Call_Direct((void*)InPermLoop,"InPermLoop");
+					CompileSystemCheck(0,(DWORD)-1,JumpInfo[count]->RegSet);
 				} else {
 					CompileSystemCheck(CycleCount,JumpInfo[count]->TargetPC,JumpInfo[count]->RegSet);
 				}
@@ -2591,7 +2586,7 @@ void InitilizeRegSet(REG_INFO * RegSet) {
 
 	RegSet->Stack_TopPos = 0;
 	for (count = 0; count < 8; count ++ ) {
-		RegSet->x86fpu_MappedTo[count] = -1;
+		RegSet->x86fpu_MappedTo[count] = (DWORD)-1;
 		RegSet->x86fpu_State[count] = FPU_Unkown;
 		RegSet->x86fpu_RoundingModel[count] = RoundDefault;
 	}

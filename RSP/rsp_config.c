@@ -115,9 +115,7 @@ void __cdecl rspConfig(HWND hWnd) {
 }
 
 void InitiateInternalRSP() {
-	/*DWORD dwSize, lResult, Disposition;
-
-	memset(&Compiler, 0, sizeof(Compiler));
+	/*memset(&Compiler, 0, sizeof(Compiler));
 
 	Compiler.bAlignGPR = TRUE;
 	Compiler.bAlignVector = TRUE;
@@ -146,10 +144,10 @@ void __cdecl ProcessMenuItem(int ID) {
 	HKEY hKeyResults;
 	char String[200];
 	long lResult;
-	UINT uState;
+	UINT uState;*/
 
 	switch (ID) {
-	case ID_RSPCOMMANDS: Enter_RSP_Commands_Window(); break;
+	/*case ID_RSPCOMMANDS: Enter_RSP_Commands_Window(); break;
 	case ID_RSPREGISTERS: Enter_RSP_Register_Window(); break;
 	case ID_DUMP_RSPCODE: DumpRSPCode(); break;
 	case ID_DUMP_DMEM: DumpRSPData(); break;
@@ -231,8 +229,8 @@ void __cdecl ProcessMenuItem(int ID) {
 		break;
 	case ID_COMPILER:
 		DialogBox(hinstDLL, "RSPCOMPILER", HWND_DESKTOP, CompilerDlgProc);
-		break;
-	}*/
+		break;*/
+	}
 }
 
 void GetInternalRspDebugInfo(RSPDEBUG_INFO* DebugInfo) {

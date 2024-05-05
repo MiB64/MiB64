@@ -78,7 +78,7 @@ void DoIntegerOverflow(BOOL DelaySlot) {
 	}
 	STATUS_REGISTER |= STATUS_EXL;
 	UpdateCPUMode();
-	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180LL;
+	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180ULL;
 }
 
 void DoAddressError ( BOOL DelaySlot, QWORD BadVaddr, BOOL FromRead) {
@@ -115,7 +115,7 @@ void DoAddressError ( BOOL DelaySlot, QWORD BadVaddr, BOOL FromRead) {
 	}
 	STATUS_REGISTER |= STATUS_EXL;
 	UpdateCPUMode();
-	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180LL;
+	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180ULL;
 }
 
 void _fastcall DoFPException(BOOL DelaySlot) {
@@ -138,7 +138,7 @@ void _fastcall DoFPException(BOOL DelaySlot) {
 	}
 	STATUS_REGISTER |= STATUS_EXL;
 	UpdateCPUMode();
-	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180LL;
+	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180ULL;
 }
 
 void _fastcall DoBreakException ( BOOL DelaySlot) {
@@ -160,7 +160,7 @@ void _fastcall DoBreakException ( BOOL DelaySlot) {
 	}
 	STATUS_REGISTER |= STATUS_EXL;
 	UpdateCPUMode();
-	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180LL;
+	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180ULL;
 }
 
 void _fastcall DoCopUnusableException ( BOOL DelaySlot, int Coprocessor ) {
@@ -184,7 +184,7 @@ void _fastcall DoCopUnusableException ( BOOL DelaySlot, int Coprocessor ) {
 	}
 	STATUS_REGISTER |= STATUS_EXL;
 	UpdateCPUMode();
-	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180LL;
+	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180ULL;
 }
 
 void DoIntrException ( BOOL DelaySlot ) {
@@ -201,7 +201,7 @@ void DoIntrException ( BOOL DelaySlot ) {
 	}
 	STATUS_REGISTER |= STATUS_EXL;
 	UpdateCPUMode();
-	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180LL;
+	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180ULL;
 }
 
 void _fastcall DoTLBMiss ( BOOL DelaySlot, QWORD BadVaddr, BOOL FromRead ) {
@@ -216,7 +216,6 @@ void _fastcall DoTLBMiss ( BOOL DelaySlot, QWORD BadVaddr, BOOL FromRead ) {
 		}
 		else {
 			MIPS_DWORD Addr;
-			DWORD PAddr;
 			Addr.UDW = BadVaddr;
 			if(IsLastFailWriteProtectedPage()) {
 				CAUSE_REGISTER &= 0xFF00;
@@ -240,26 +239,26 @@ void _fastcall DoTLBMiss ( BOOL DelaySlot, QWORD BadVaddr, BOOL FromRead ) {
 			EPC_REGISTER = PROGRAM_COUNTER.UDW;
 		}
 		if (!Addressing64Bits) {
-			if (AddressDefined(BadVaddr)) {
-				PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180LL;
+			if (AddressDefined((DWORD)BadVaddr)) {
+				PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180ULL;
 			}
 			else {
-				PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000000LL;
+				PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000000ULL;
 			}
 		}
 		else {
 			if (!IsLastFailInvalidPage() && !IsLastFailWriteProtectedPage()) {
-				PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000080LL;
+				PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000080ULL;
 			}
 			else {
-				PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180LL;
+				PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180ULL;
 			}
 		}
 		STATUS_REGISTER |= STATUS_EXL;
 	} else {
 		if (ShowDebugMessages)
-			DisplayError("EXL Set\nAddress Defined: %s, %llx",AddressDefined(BadVaddr)?"TRUE":"FALSE", BadVaddr);
-		PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180LL;
+			DisplayError("EXL Set\nAddress Defined: %s, %llx",AddressDefined((DWORD)BadVaddr)?"TRUE":"FALSE", BadVaddr);
+		PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180ULL;
 	}
 	UpdateCPUMode();
 }
@@ -284,7 +283,7 @@ void _fastcall DoSysCallException(BOOL DelaySlot) {
 	}
 	STATUS_REGISTER |= STATUS_EXL;
 	UpdateCPUMode();
-	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180LL;
+	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180ULL;
 }
 
 void _fastcall DoIllegalInstructionException(BOOL DelaySlot) {
@@ -307,7 +306,7 @@ void _fastcall DoIllegalInstructionException(BOOL DelaySlot) {
 	}
 	STATUS_REGISTER |= STATUS_EXL;
 	UpdateCPUMode();
-	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180LL;
+	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180ULL;
 }
 
 void _fastcall DoTrapException(BOOL DelaySlot) {
@@ -330,5 +329,5 @@ void _fastcall DoTrapException(BOOL DelaySlot) {
 	}
 	STATUS_REGISTER |= STATUS_EXL;
 	UpdateCPUMode();
-	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180LL;
+	PROGRAM_COUNTER.UDW = 0xFFFFFFFF80000180ULL;
 }

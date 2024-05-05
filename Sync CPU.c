@@ -591,10 +591,10 @@ int Sync_MemoryFilter( DWORD dwExptCode, LPEXCEPTION_POINTERS lpEP) {
 	}
 	exRec = *lpEP->ExceptionRecord;
 
-    if ((int)((char *)lpEP->ExceptionRecord->ExceptionInformation[1] - N64MEM) < 0) {
+    if ((int)((BYTE *)lpEP->ExceptionRecord->ExceptionInformation[1] - N64MEM) < 0) {
 		return EXCEPTION_CONTINUE_SEARCH;
 	}
-    if ((int)((char *)lpEP->ExceptionRecord->ExceptionInformation[1] - N64MEM) > 0x1FFFFFFF) {
+    if ((int)((BYTE *)lpEP->ExceptionRecord->ExceptionInformation[1] - N64MEM) > 0x1FFFFFFF) {
 		return EXCEPTION_CONTINUE_SEARCH;
 	}
 	

@@ -64,6 +64,7 @@ extern const int FORCE_LOGGING;
 
 void EnterLogOptions ( HWND hwndOwner );
 void LoadLogOptions  ( LOG_OPTIONS * LogOptions, BOOL AlwaysFill );
+void SaveLogOptions	 ( LOG_OPTIONS* LogOptions );
 void Log_LW          ( MIPS_DWORD PC, DWORD VAddr );
 void __cdecl LogMessage      ( char * Message, ... );
 void Log_SW          ( MIPS_DWORD PC, DWORD VAddr, DWORD Value );

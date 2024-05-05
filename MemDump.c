@@ -64,6 +64,8 @@ void Show_MemDumpDlg (HWND hParent) {
 }
 
 BOOL CALLBACK MemDumpDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	UNREFERENCED_PARAMETER(lParam);
+
 	int Count;
 	char tmp[11];
 	DWORD startAddress, endAddress;

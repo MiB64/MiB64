@@ -135,7 +135,7 @@ void SetupTLB_Entry (int Entry) {
 }
 
 void TLB_Probe (void) {
-	static const QWORD vpnMask = 0xC00000FFFFFFE000LL;
+	static const QWORD vpnMask = 0xC00000FFFFFFE000ULL;
 	int Counter;
 	
 	if (HaveDebugger && LogOptions.GenerateLog) { 
@@ -255,7 +255,7 @@ void _fastcall WriteTLBEntry (int index) {
 
 static BOOL Translate64BitsVAddrToPAddrThroughTLB(MIPS_DWORD VAddr, DWORD* PAddr, BOOL ReadOnly) {
 	static int lastMatchingEntry = 0;
-	static const QWORD vpnMask = 0xC00000FFFFFFE000LL;
+	static const QWORD vpnMask = 0xC00000FFFFFFE000ULL;
 	int Counter, Entry = lastMatchingEntry;
 	LastFailWriteProtectedPage = FALSE;
 	LastFailInvalidPage = FALSE;

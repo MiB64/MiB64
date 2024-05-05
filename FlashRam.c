@@ -30,7 +30,7 @@
 #include "main.h"
 #include "CPU.h"
 
-typedef enum TFlashRam_Modes {
+enum TFlashRam_Modes {
 	FLASHRAM_MODE_NOPES = 0,
 	FLASHRAM_MODE_ERASE = 1,
 	FLASHRAM_MODE_WRITE,
@@ -173,7 +173,6 @@ void WriteToFlashCommand(DWORD FlashRAM_Command) {
 			}
 			{
 				BYTE FlipBuffer[128];
-				DWORD dwWritten;
 
 				memset(FlipBuffer, 0, sizeof(FlipBuffer));
 				_asm {

@@ -29,7 +29,6 @@ extern "C" {
 	void RomIDPreScanned(char* ID, DWORD* CRC1, DWORD* CRC2, BYTE* Country);
 
 	void RomHASH(char* ID, BYTE* FullRom, size_t rom_size);
-	void RomCRC32(char* ID, BYTE* FullRom, size_t rom_size);
 #ifdef __cplusplus
 };
 #endif

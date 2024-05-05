@@ -212,7 +212,7 @@ int WriteR4300iCommand(char *commands, MIPS_DWORD location) {
 	DWORD OpCode;
 	int res = 0;
 
-	for (int count = 0; count < NoOfMapEntries; count++) {
+	for (DWORD count = 0; count < NoOfMapEntries; count++) {
 		if (MapTable[count].VAddr.UDW == location.UDW) {
 			res = sprintf(commands, "%s:\r\n", MapTable[count].Label);
 			commands += res;
@@ -267,7 +267,7 @@ void R4300i_Copy_Commands(void) {
 	}
 	EmptyClipboard();
 
-	int lines = (selection_range[1].UDW - selection_range[0].UDW) / 4 + 1;
+	int lines = (int)((selection_range[1].UDW - selection_range[0].UDW) / 4 + 1);
 
 	// Assume each line is up to 150 bytes.
 	HGLOBAL hCommands = GlobalAlloc(GMEM_MOVEABLE, lines * 150);
@@ -306,7 +306,6 @@ void DrawR4300iCommand ( LPARAM lParam ) {
 	Instruction = strtok(NULL, "\t");
 	Arguments = strtok(NULL, "\t");
 
-	MIPS_DWORD Location = r4300iCommandLine[ditem->itemID].Location;
 	if (r4300iCommandLine[ditem->itemID].status & R4300i_Status_Selected) {
 		textColor = GetSysColor(COLOR_HIGHLIGHTTEXT);
 		bkColorIndex = COLOR_HIGHLIGHT;
@@ -315,7 +314,7 @@ void DrawR4300iCommand ( LPARAM lParam ) {
 		bkColorIndex = COLOR_WINDOW;
 	}
 
-	int mask = R4300i_Status_PC | R4300i_Status_BP;
+	DWORD mask = R4300i_Status_PC | R4300i_Status_BP;
 	if ((r4300iCommandLine[ditem->itemID].status & mask) == mask) {
 		textColor = TEXT_COLOR_PC_BP;
 	} else if (r4300iCommandLine[ditem->itemID].status & R4300i_Status_PC) {
@@ -538,7 +537,7 @@ LRESULT CALLBACK R4300i_Commands_Proc (HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
 
 					Selected = SendMessage(hFunctionlist, CB_GETCURSEL, 0, 0);
 					if ((int)Selected >= 0) {
-						QWORD* addr = SendMessage(hFunctionlist, CB_GETITEMDATA, (WPARAM)Selected, 0);
+						QWORD* addr = (QWORD*)SendMessage(hFunctionlist, CB_GETITEMDATA, (WPARAM)Selected, 0);
 						Location.UDW = *addr;
 						sprintf(Value, "%016llX", Location.UDW);
 						SetWindowText(hAddress, Value);
@@ -629,6 +628,9 @@ LRESULT CALLBACK R4300i_Commands_Proc (HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
 }
 
 LRESULT CALLBACK R4300i_Commands_ListViewScroll_Proc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
+	UNREFERENCED_PARAMETER(dwRefData);
+	UNREFERENCED_PARAMETER(uIdSubclass);
+
 	switch (uMsg) {
 	case WM_MOUSEWHEEL:
 		// Accumulate wheel deltas
@@ -647,6 +649,9 @@ LRESULT CALLBACK R4300i_Commands_ListViewScroll_Proc(HWND hDlg, UINT uMsg, WPARA
 }
 
 LRESULT CALLBACK R4300i_Commands_ListViewKeys_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
+	UNREFERENCED_PARAMETER(dwRefData);
+	UNREFERENCED_PARAMETER(uIdSubclass);
+
 	switch (uMsg) {
 	case WM_KEYDOWN: {
 		int page_size = R4300i_MaxCommandLines - 1;
@@ -901,6 +906,8 @@ char * R4300iRegImmName ( DWORD OpCode, MIPS_DWORD PC ) {
 }
 
 char * R4300iSpecialName ( DWORD OpCode, MIPS_DWORD PC ) {
+	UNREFERENCED_PARAMETER(PC);
+
 	OPCODE command;
 	command.Hex = OpCode;
 

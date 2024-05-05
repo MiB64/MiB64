@@ -260,7 +260,7 @@ int ApplyCheatEntry(GAMESHARK_CODE* Code, BOOL Execute) {
 					Memory = Code[(i / 6) + 2].Command >> 16;
 					break;
 				case 2:
-					Memory = Code[(i / 6) + 2].Command;
+					Memory = (WORD)Code[(i / 6) + 2].Command;
 					break;
 				default:
 					Memory = Code[(i / 6) + 2].Value;
@@ -275,7 +275,7 @@ int ApplyCheatEntry(GAMESHARK_CODE* Code, BOOL Execute) {
 					Memory = Code[(i / 6) + 2].Command >> 24;
 					break;
 				case 2:
-					Memory = Code[(i / 6) + 2].Command >> 8;
+					Memory = (WORD)(Code[(i / 6) + 2].Command >> 8);
 					break;
 				default:
 					Memory = Code[(i / 6) + 2].Value >> 8;
@@ -818,6 +818,8 @@ void ReadDialogInput(CHEAT* cheat, HWND hDlg) {
 
 ********************************************************************************************/
 LRESULT CALLBACK CheatAddProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	UNREFERENCED_PARAMETER(lParam);
+
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		SetWindowText(hDlg, GS(CHEAT_ADDCHEAT_FRAME));
@@ -1678,7 +1680,7 @@ void ManageCheats(HWND hParent) {
 		Y = (GetSystemMetrics(SM_CYSCREEN) - WindowHeight) / 2;
 	}
 	Style = WS_SYSMENU;
-	hManageWindow = CreateWindowEx(NULL, "PJ64.Cheats", GS(CHEAT_TITLE), Style, X, Y, WindowWidth, WindowHeight, hParent, NULL, hInst, NULL);
+	hManageWindow = CreateWindowEx(0, "PJ64.Cheats", GS(CHEAT_TITLE), Style, X, Y, WindowWidth, WindowHeight, hParent, NULL, hInst, NULL);
 	RefreshCheatManager();
 	ShowWindow(hManageWindow, SW_SHOW);
 	SetWindowPos(hManageWindow,       // handle to window
@@ -1795,6 +1797,8 @@ LRESULT CALLBACK Cheat_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 ********************************************************************************************/
 LRESULT CALLBACK ManageCheatsProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	UNREFERENCED_PARAMETER(lParam);
+
 	static int CurrentPanel = SelectCheat;
 	static RECT rcDisp;
 	RECT clientrect;

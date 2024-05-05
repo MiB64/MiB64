@@ -164,6 +164,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -258,24 +259,58 @@
     <ClCompile Include="CheatSearch_Input.c" />
     <ClCompile Include="CheatSearch_Search.c" />
     <ClCompile Include="Cheats_Preprocessor.c" />
-    <ClCompile Include="Compression\adler32.c" />
-    <ClCompile Include="Compression\compress.c" />
-    <ClCompile Include="Compression\crc32.c" />
-    <ClCompile Include="Compression\deflate.c" />
-    <ClCompile Include="Compression\gzclose.c" />
-    <ClCompile Include="Compression\gzlib.c" />
-    <ClCompile Include="Compression\gzread.c" />
-    <ClCompile Include="Compression\gzwrite.c" />
-    <ClCompile Include="Compression\infback.c" />
-    <ClCompile Include="Compression\inffast.c" />
-    <ClCompile Include="Compression\inflate.c" />
-    <ClCompile Include="Compression\inftrees.c" />
-    <ClCompile Include="Compression\ioapi.c" />
-    <ClCompile Include="Compression\trees.c" />
-    <ClCompile Include="Compression\uncompr.c" />
-    <ClCompile Include="Compression\unzip.c" />
+    <ClCompile Include="Compression\adler32.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\compress.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\crc32.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\deflate.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\gzclose.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\gzlib.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\gzread.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\gzwrite.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\infback.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\inffast.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\inflate.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\inftrees.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\ioapi.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\trees.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\uncompr.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="Compression\unzip.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+    </ClCompile>
     <ClCompile Include="Compression\zip.c" />
-    <ClCompile Include="Compression\zutil.c" />
+    <ClCompile Include="Compression\zutil.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+    </ClCompile>
     <ClCompile Include="CPU Log.c" />
     <ClCompile Include="EmulateAI.c" />
     <ClCompile Include="Logging.c" />
@@ -291,10 +326,12 @@
     <ClCompile Include="RSP\RSP Command.c" />
     <ClCompile Include="RSP\RSP Interpreter CPU.c" />
     <ClCompile Include="RSP\RSP Recompiler CPU.c" />
+    <ClCompile Include="RSP\RSP Register.c" />
     <ClCompile Include="RSP\RSP_breakpoint.c" />
     <ClCompile Include="RSP\rsp_Cpu.c" />
     <ClCompile Include="RSP\rsp_config.c" />
     <ClCompile Include="RSP\rsp_main.c" />
+    <ClCompile Include="RSP\rsp_memory.c" />
     <ClCompile Include="RSP\RSP_Profiling.c" />
     <ClCompile Include="Sessions.cpp" />
     <ClCompile Include="Settings Api.c" />
@@ -378,6 +415,7 @@
     <ClInclude Include="RSP\rsp_config.h" />
     <ClInclude Include="RSP\rsp_main.h" />
     <ClInclude Include="RSP\rsp_memory.h" />
+    <ClInclude Include="RSP\RSP_OpCode.h" />
     <ClInclude Include="RSP\RSP_Profiling.h" />
     <ClInclude Include="RSP\rsp_registers.h" />
     <ClInclude Include="SessionMemBookmarks.h" />

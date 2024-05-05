@@ -131,9 +131,9 @@ LRESULT CALLBACK AboutBoxProc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 			HDC dc, compatdc;
 			HBITMAP compatbm;
 			HBRUSH hBrush;
-			int i, width;
+			int i, width = 0;
 			RECT rect;
-			HFONT font;
+			HFONT font = NULL;
 
 			hWnd = GetDlgItem(hDlg, IDC_ABOUT_VER);
 			dc = BeginPaint(hWnd, &paint);
@@ -190,7 +190,7 @@ LRESULT CALLBACK AboutBoxProc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 	case WM_LBUTTONDOWN:
 		{
 			POINT mouse_click = {LOWORD(lParam), HIWORD(lParam)};
-			RECT dialog, image;
+			RECT dialog;
 
 			GetClientRect(hDlg, &dialog);				// The about window's size
 			ClientToScreen(hDlg, (LPPOINT)&dialog);		// Offset the top and left to be relative to the screen

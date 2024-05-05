@@ -69,12 +69,14 @@ typedef struct {
 RSPCOMMANDLINE RSPCommandLine[30];
 HWND RSPCommandshWnd, hList, hAddress, hFunctionlist, hGoButton, hBreakButton,
 	hStepButton, hSkipButton, hBPButton, hR4300iRegisters, hR4300iDebugger, hRSPRegisters,
-	hMemory, hScrlBar;
-BOOL InRSPCommandsWindow;
-char CommandName[100];
+	hMemory, hScrlBar;*/
+BOOL InRSPCommandsWindow = FALSE;
+/*char CommandName[100];*/
+DWORD Stepping_RspCommands = FALSE;
+DWORD WaitingForRspStep = FALSE;
 
 
-void Create_RSP_Commands_Window ( int Child ) {
+/*void Create_RSP_Commands_Window ( int Child ) {
 	DWORD ThreadID;
 
 	if ( Child ) {
@@ -292,11 +294,11 @@ void DrawRSPCommand ( LPARAM lParam ) {
 		SetTextColor( ditem->hDC, oldColor );
 	}
 
-}
+}*/
 
 
 void Enable_RSP_Commands_Window ( void ) {
-	SCROLLINFO si;
+	/*SCROLLINFO si;
 
 	if (!InRSPCommandsWindow) { return; }
 	EnableWindow(hList,            TRUE);
@@ -324,8 +326,9 @@ void Enable_RSP_Commands_Window ( void ) {
 	
 		SetRSPCommandViewto( *PrgCount );
 		SetForegroundWindow(RSPCommandshWnd);
-	}
-}*/
+	}*/
+	LogMessage("TODO: Enable_RDP_Commands_Window()");
+}
 
 void __cdecl Enter_RSP_Commands_Window ( void ) {
     //Create_RSP_Commands_Window ( FALSE );
@@ -1306,10 +1309,10 @@ void SetRSPCommandToRunning ( void ) {
 	SendMessage(hGoButton, BM_SETSTYLE,BS_PUSHBUTTON,TRUE);
 	SendMessage(hBreakButton, BM_SETSTYLE,BS_DEFPUSHBUTTON,TRUE);
 	SetFocus(hBreakButton);
-}
+}*/
 
 void SetRSPCommandToStepping ( void ) { 	
-	if (InRSPCommandsWindow == FALSE) { return; }
+	/*if (InRSPCommandsWindow == FALSE) { return; }
 	EnableWindow(hGoButton,    TRUE);
 	EnableWindow(hBreakButton, FALSE);
 	EnableWindow(hStepButton,  TRUE);
@@ -1318,11 +1321,12 @@ void SetRSPCommandToStepping ( void ) {
 	SendMessage(hStepButton, BM_SETSTYLE, BS_DEFPUSHBUTTON,TRUE);
 	SendMessage(RSPCommandshWnd, DM_SETDEFID,IDC_STEP_BUTTON,0);
 	SetFocus(hStepButton);
-	Stepping_Commands = TRUE;
+	Stepping_Commands = TRUE;*/
+	LogMessage("TODO: SetRSPCommandToStepping()");
 }
 
 void SetRSPCommandViewto ( UINT NewLocation ) {
-	unsigned int location;
+	/*unsigned int location;
 	char Value[20];
 
 	if (InRSPCommandsWindow == FALSE) { return; }
@@ -1335,5 +1339,6 @@ void SetRSPCommandViewto ( UINT NewLocation ) {
 		SetWindowText(hAddress,Value);
 	} else {
 		RefreshRSPCommands();
-	}
-}*/
+	}*/
+	LogMessage("TODO: SetRSPCommandViewto");
+}

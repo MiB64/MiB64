@@ -665,7 +665,7 @@ bool RomList_Compare(const ROM_INFO& a, const ROM_INFO& b) {
 			return false;
 		} else if (compare == 0) {
 			// Same, continue the compare by using the other sort keys
-			break;
+			continue;
 		} else {
 			// a < b (compare is returning -1, so a is less than b)
 			return true;

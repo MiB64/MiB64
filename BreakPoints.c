@@ -368,6 +368,9 @@ void __cdecl RefreshBreakPoints (void) {
 }
 
 LRESULT CALLBACK RefreshBPProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(wParam);
+
 	PAINTSTRUCT ps;
 	RECT rcBox;
 	HFONT hOldFont;

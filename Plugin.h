@@ -341,7 +341,7 @@ typedef union {
 		signed   Y_AXIS       : 8;
 
 		signed   X_AXIS       : 8;
-	};
+	} Buttons;
 } BUTTONS;
 
 /*** Conteroller plugin's ****/

@@ -245,7 +245,3 @@ void RomHASH(char* ID, BYTE* FullRom, size_t rom_size) {
 	uint64_t hash = XXHash64::hash(FullRom, rom_size, 64);
 	sprintf(ID, "%llu", hash);
 }
-
-void RomCRC32(char* ID, BYTE* FullRom, size_t rom_size) {
-
-}

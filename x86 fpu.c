@@ -584,7 +584,7 @@ void fpuStoreDword(int * StackPos,void *Variable, char *VariableName, BOOL pop) 
 }
 
 void fpuStoreDwordFromX86Reg(int * StackPos,int x86Reg, BOOL pop) {
-	BYTE Command;
+	BYTE Command = 0;
 
 	CPU_Message("      fst%s dword ptr [%s]", fpupop[pop], x86_Name(x86Reg));
 	if (pop) { *StackPos = (*StackPos + 1) & 7; }
@@ -631,7 +631,7 @@ void fpuStoreIntegerDword(int * StackPos,void *Variable, char *VariableName, BOO
 }
 
 void fpuStoreIntegerDwordFromX86Reg(int * StackPos,int x86Reg, BOOL pop) {
-	BYTE Command;
+	BYTE Command = 0;
 
 	CPU_Message("      fist%s dword ptr [%s]", fpupop[pop], x86_Name(x86Reg));
 	if (pop) { *StackPos = (*StackPos + 1) & 7; }
@@ -659,7 +659,7 @@ void fpuStoreIntegerQword(int * StackPos,void *Variable, char *VariableName, BOO
 }
 
 void fpuStoreIntegerQwordFromX86Reg(int * StackPos, int x86Reg, BOOL pop) {
-	BYTE Command;
+	BYTE Command = 0;
 
 	CPU_Message("      fist%s qword ptr [%s]", fpupop[pop], x86_Name(x86Reg));
 	if (pop) { *StackPos = (*StackPos + 1) & 7; }
@@ -679,7 +679,7 @@ void fpuStoreIntegerQwordFromX86Reg(int * StackPos, int x86Reg, BOOL pop) {
 }
 
 void fpuStoreQwordFromX86Reg(int * StackPos, int x86Reg, BOOL pop) {
-	BYTE Command;
+	BYTE Command = 0;
 
 	CPU_Message("      fst%s qword ptr [%s]", fpupop[pop], x86_Name(x86Reg));
 	if (pop) { *StackPos = (*StackPos + 1) & 7; }

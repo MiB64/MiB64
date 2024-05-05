@@ -712,6 +712,9 @@ LRESULT CALLBACK Memory_Window_Proc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM 
 }
 
 LRESULT CALLBACK Memory_ListViewScroll_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
+	UNREFERENCED_PARAMETER(dwRefData);
+	UNREFERENCED_PARAMETER(uIdSubclass);
+
 	switch (uMsg) {
 	case WM_MOUSEWHEEL:
 		// Accumulate wheel deltas
@@ -730,6 +733,9 @@ LRESULT CALLBACK Memory_ListViewScroll_Proc(HWND hWnd, UINT uMsg, WPARAM wParam,
 }
 
 LRESULT CALLBACK Memory_ListViewKeys_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
+	UNREFERENCED_PARAMETER(dwRefData);
+	UNREFERENCED_PARAMETER(uIdSubclass);
+
 	switch (uMsg) {
 	case WM_KEYDOWN:
 		switch (wParam) {
@@ -762,6 +768,9 @@ LRESULT CALLBACK Memory_ListViewKeys_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 }
 
 LRESULT CALLBACK Memory_ListViewDrag_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
+	UNREFERENCED_PARAMETER(dwRefData);
+	UNREFERENCED_PARAMETER(uIdSubclass);
+
 	switch (uMsg) {
 	case WM_LBUTTONDOWN: {
 		SetFocus(hWnd);

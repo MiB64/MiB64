@@ -57,7 +57,7 @@ HANDLE hRomMapping = NULL;
 
 BOOL IsValidRomImage(BYTE Test[4]);
 
-void AddRecentDir(HWND hWnd, char* addition) {
+void AddRecentDir(char* addition) {
 	int count;
 
 	if (addition != NULL && RomDirsToRemember > 0) {
@@ -81,7 +81,7 @@ void AddRecentDir(HWND hWnd, char* addition) {
 	SetupMenu(hMainWindow);
 }
 
-void AddRecentFile(HWND hWnd, char* addition) {
+void AddRecentFile(char* addition) {
 	int count;
 
 	if (addition != NULL && RomsToRemember > 0) {
@@ -595,7 +595,7 @@ BOOL LoadRomHeader(void) {
 
 void LoadRomOptions(void) {
 	DWORD NewRamSize;
-	byte Country[2] = { 0,0 };
+	byte Country;
 
 	ReadRomOptions();
 
@@ -668,7 +668,7 @@ void LoadRomOptions(void) {
 	case NTSC_Region:
 	default:
 		GetRomCountry(&Country, ROM);
-		if (Country != "J")
+		if (Country != 'J')
 		{
 			CPOAdjust = -1;
 		}
@@ -723,7 +723,7 @@ void ReadRomOptions(void) {
 	if (strlen(RomFullName) != 0) {
 		char Identifier[100], * String = NULL;
 
-		LoadRomRecalcCRCs(CurrentFileName, (DWORD*)&RomHeader[0x10], (DWORD*)&RomHeader[0x14]);
+		LoadRomRecalcCRCs(CurrentFileName, &RomHeader[0x10], &RomHeader[0x14]);
 
 		RomID(Identifier, RomHeader);
 
@@ -818,9 +818,10 @@ void SetNewFileDirectory(void) {
 }
 
 DWORD WINAPI OpenChosenFile(LPVOID lpArgs) {
+	UNREFERENCED_PARAMETER(lpArgs);
+
 	char drive[_MAX_DRIVE], FileName[_MAX_DIR], dir[_MAX_DIR], ext[_MAX_EXT];
 	char WinTitle[300], MapFile[_MAX_PATH];
-	char Message[100];
 	BYTE Test[4];
 	int count;
 
@@ -932,7 +933,7 @@ DWORD WINAPI OpenChosenFile(LPVOID lpArgs) {
 					ShowRomList(hMainWindow);
 					return 0;
 				}
-				AddRecentFile(hMainWindow, CurrentFileName);
+				AddRecentFile(CurrentFileName);
 				_splitpath(CurrentFileName, drive, dir, FileName, ext);
 				unzClose(file);
 			}
@@ -1001,7 +1002,7 @@ DWORD WINAPI OpenChosenFile(LPVOID lpArgs) {
 			return 0;
 		}
 		CloseHandle(hFile);
-		AddRecentFile(hMainWindow, CurrentFileName);
+		AddRecentFile(CurrentFileName);
 		_splitpath(CurrentFileName, drive, dir, FileName, ext);
 	}
 	ByteSwapRom(ROM, RomFileSize);
@@ -1226,11 +1227,11 @@ void SetRecentRomDir(DWORD Index) {
 
 void SetRomDirectory(char* Directory) {
 	Settings_Write(APPS_NAME, "Directories", "Rom", Directory);
-	AddRecentDir(hMainWindow, Directory);
+	AddRecentDir(Directory);
 }
 
 void RecalculateCRCs(BYTE* data, DWORD data_size) {
-	int i;
+	DWORD i;
 	unsigned int seed, crc[2];
 	unsigned int t1, t2, t3, t4, t5, t6, r, d, j;
 	enum CIC_CHIP chip;
@@ -1456,7 +1457,7 @@ BOOL LoadDataForRomBrowser(char* FileName, BYTE* Data, int DataLen, int* RomSize
 	char hash[100];
 
 	if (_strnicmp(&FileName[strlen(FileName) - 4], ".ZIP", 4) == 0) {
-		int len, port = 0, FoundRom;
+		int port = 0, FoundRom;
 		unz_file_info info;
 		char zname[132];
 		unzFile file;
@@ -1516,7 +1517,7 @@ BOOL LoadDataForRomBrowser(char* FileName, BYTE* Data, int DataLen, int* RomSize
 		}
 	}
 	else {
-		DWORD dwRead, dwToRead, TotalRead;
+		DWORD dwRead;
 		HANDLE hFile;
 		BYTE Test[4];
 

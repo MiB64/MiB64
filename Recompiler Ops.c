@@ -61,8 +61,6 @@ void Compile_R4300i_Branch (BLOCK_SECTION * Section, void (*CompareFunc)(BLOCK_S
 		CPU_Message("  %X %s",Section->CompilePC,R4300iOpcodeName(Opcode.Hex,CompilePC));
 		
 		if ((Section->CompilePC & 0xFFC) != 0xFFC) {
-			MIPS_DWORD CompilePC;
-			CompilePC.DW = (int)Section->CompilePC;
 			switch (BranchType) {
 			case BranchTypeRs: EffectDelaySlot = DelaySlotEffectsCompare(CompilePC,Opcode.BRANCH.rs,0); break;
 			case BranchTypeRsRt: EffectDelaySlot = DelaySlotEffectsCompare(CompilePC,Opcode.BRANCH.rs,Opcode.BRANCH.rt); break;
@@ -215,8 +213,6 @@ void Compile_R4300i_Branch (BLOCK_SECTION * Section, void (*CompareFunc)(BLOCK_S
 				}
 			}
 		} else {
-			int count;
-
 			CompareFunc(Section); 
 			for (count = 1; count < 10; count ++) { x86Protected(count) = FALSE; }
 			memcpy(&Section->Cont.RegSet,&Section->RegWorking,sizeof(REG_INFO));
@@ -1131,7 +1127,7 @@ void Compile_R4300i_JAL (BLOCK_SECTION * Section) {
 			}
 			if (BlockRandomModifier != 0) { SubConstFromVariable(BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
 			WriteBackRegisters(Section);
-			if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+			if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 			MoveConstToVariable(DELAY_SLOT,&NextInstruction,"NextInstruction");
 			Ret();
 			NextInstruction = END_BLOCK;
@@ -1506,7 +1502,7 @@ void Compile_R4300i_DADDI (BLOCK_SECTION * Section) {
 	UnMap_GPR(Section,Opcode.BRANCH.rt,TRUE);
 	Pushad();
 	MoveConstToVariable(Opcode.Hex, &Opcode.Hex, "Opcode.Hex" );
-	Call_Direct(r4300i_DADDI, "r4300i_DADDI");
+	Call_Direct((void*)r4300i_DADDI, "r4300i_DADDI");
 	Popad();
 }
 
@@ -1521,7 +1517,7 @@ void Compile_R4300i_DADDIU (BLOCK_SECTION * Section) {
 	UnMap_GPR(Section,Opcode.BRANCH.rt,TRUE);
 	Pushad();
 	MoveConstToVariable(Opcode.Hex, &Opcode.Hex, "Opcode.Hex" );
-	Call_Direct(r4300i_DADDIU, "r4300i_DADDIU");
+	Call_Direct((void*)r4300i_DADDIU, "r4300i_DADDIU");
 	Popad();
 }
 
@@ -1536,7 +1532,7 @@ void Compile_R4300i_LDL (BLOCK_SECTION * Section) {
 	UnMap_GPR(Section,Opcode.BRANCH.rt,TRUE);
 	Pushad();
 	MoveConstToVariable(Opcode.Hex, &Opcode.Hex, "Opcode.Hex" );
-	Call_Direct(r4300i_LDL, "r4300i_LDL");
+	Call_Direct((void*)r4300i_LDL, "r4300i_LDL");
 	Popad();
 
 }
@@ -1552,7 +1548,7 @@ void Compile_R4300i_LDR (BLOCK_SECTION * Section) {
 	UnMap_GPR(Section,Opcode.BRANCH.rt,TRUE);
 	Pushad();
 	MoveConstToVariable(Opcode.Hex, &Opcode.Hex, "Opcode.Hex" );
-	Call_Direct(r4300i_LDR, "r4300i_LDR");
+	Call_Direct((void*)r4300i_LDR, "r4300i_LDR");
 	Popad();
 }
 
@@ -2546,7 +2542,7 @@ void Compile_R4300i_SDL (BLOCK_SECTION * Section) {
 	if (Opcode.BRANCH.rt != 0) { UnMap_GPR(Section,Opcode.BRANCH.rt,TRUE); }
 	Pushad();
 	MoveConstToVariable(Opcode.Hex, &Opcode.Hex, "Opcode.Hex" );
-	Call_Direct(r4300i_SDL, "r4300i_SDL");
+	Call_Direct((void*)r4300i_SDL, "r4300i_SDL");
 	Popad();
 
 }
@@ -2560,7 +2556,7 @@ void Compile_R4300i_SDR (BLOCK_SECTION * Section) {
 	if (Opcode.BRANCH.rt != 0) { UnMap_GPR(Section,Opcode.BRANCH.rt,TRUE); }
 	Pushad();
 	MoveConstToVariable(Opcode.Hex, &Opcode.Hex, "Opcode.Hex" );
-	Call_Direct(r4300i_SDR, "r4300i_SDR");
+	Call_Direct((void*)r4300i_SDR, "r4300i_SDR");
 	Popad();
 
 }
@@ -2610,7 +2606,7 @@ void Compile_R4300i_CACHE (BLOCK_SECTION * Section){
 			MoveVariableToX86reg(&GPR[Opcode.IMM.base].UW[0],GPR_NameLo[Opcode.IMM.base],x86_ECX);
 			AddConstToX86Reg(x86_ECX,(short)Opcode.BRANCH.offset);
 		}
-		Call_Direct(ClearRecomplierCache, "ClearRecomplierCache");
+		Call_Direct((void*)ClearRecomplierCache, "ClearRecomplierCache");
 		Popad();
 		break;
 	case 1:
@@ -3136,10 +3132,10 @@ void Compile_R4300i_SPECIAL_SRAV (BLOCK_SECTION * Section) {
 		}
 		if (Is32Bit(Opcode.BRANCH.rt)) {
 			Map_GPR_32bit(Section, Opcode.REG.rd, TRUE, Opcode.BRANCH.rt);
-			ShiftRightSignImmed(MipsRegLo(Opcode.REG.rd), Shift);
+			ShiftRightSignImmed(MipsRegLo(Opcode.REG.rd), (BYTE)Shift);
 		} else {
 			Map_GPR_64bit(Section, Opcode.REG.rd, Opcode.BRANCH.rt);
-			ShiftRightDoubleImmed(MipsRegLo(Opcode.REG.rd), MipsRegHi(Opcode.REG.rd), Shift);
+			ShiftRightDoubleImmed(MipsRegLo(Opcode.REG.rd), MipsRegHi(Opcode.REG.rd), (BYTE)Shift);
 			MoveX86RegToX86Reg(MipsRegLo(Opcode.REG.rd), MipsRegHi(Opcode.REG.rd));
 			ShiftRightSignImmed(MipsRegHi(Opcode.REG.rd), 31);
 		}
@@ -3194,13 +3190,12 @@ void Compile_R4300i_SPECIAL_JR (BLOCK_SECTION * Section) {
 			}
 			if (BlockRandomModifier != 0) { SubConstFromVariable(BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
 			WriteBackRegisters(Section);
-			if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+			if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 			MoveConstToVariable(DELAY_SLOT,&NextInstruction,"NextInstruction");
 			Ret();
 			NextInstruction = END_BLOCK;
 			return;
 		}
-		MIPS_DWORD CompilePC;
 		CompilePC.DW = (int)Section->CompilePC;
 		if (DelaySlotEffectsCompare(CompilePC,Opcode.BRANCH.rs,0)) {
 			if (IsConst(Opcode.BRANCH.rs)) { 
@@ -3213,7 +3208,6 @@ void Compile_R4300i_SPECIAL_JR (BLOCK_SECTION * Section) {
 		}
 		NextInstruction = DO_DELAY_SLOT;
 	} else if (NextInstruction == DELAY_SLOT_DONE ) {
-		MIPS_DWORD CompilePC;
 		CompilePC.DW = (int)Section->CompilePC;
 		if (DelaySlotEffectsCompare(CompilePC,Opcode.BRANCH.rs,0)) {
 			CompileExit((DWORD)-1,Section->RegWorking,Normal,TRUE,NULL);
@@ -3243,9 +3237,7 @@ void Compile_R4300i_SPECIAL_JALR (BLOCK_SECTION * Section) {
 	CompilePC.DW = (int)Section->CompilePC;
 	
 	if ( NextInstruction == NORMAL ) {
-		CPU_Message("  %X %s",Section->CompilePC,R4300iOpcodeName(Opcode.Hex,CompilePC));
-		MIPS_DWORD CompilePC;
-		CompilePC.DW = (int)Section->CompilePC;
+		CPU_Message("  %X %s",Section->CompilePC,R4300iOpcodeName(Opcode.Hex,CompilePC));;
 		if (DelaySlotEffectsCompare(CompilePC,Opcode.BRANCH.rs,0)) {
 			Compile_R4300i_UnknownOpcode(Section);
 		}
@@ -3265,7 +3257,7 @@ void Compile_R4300i_SPECIAL_JALR (BLOCK_SECTION * Section) {
 			}
 			if (BlockRandomModifier != 0) { SubConstFromVariable(BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
 			WriteBackRegisters(Section);
-			if (CPU_Type == CPU_SyncCores) { Call_Direct(SyncToPC, "SyncToPC"); }
+			if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
 			MoveConstToVariable(DELAY_SLOT,&NextInstruction,"NextInstruction");
 			Ret();
 			NextInstruction = END_BLOCK;
@@ -3372,7 +3364,7 @@ void Compile_R4300i_SPECIAL_TEQ(BLOCK_SECTION* Section) {
 
 	CompileExit(Section->CompilePC, Section->RegWorking, DoTrap, TRUE, NULL);
 	b3 = (int)RecompPos - b2;
-	*(byte*)b1 = b3;
+	*(byte*)b1 = (byte)b3;
 
 	if (IsMapped(Opcode.BRANCH.rt)) UnMap_GPR(Section, Opcode.BRANCH.rt, FALSE);
 	if (IsMapped(Opcode.BRANCH.rs)) UnMap_GPR(Section, Opcode.BRANCH.rs, FALSE);
@@ -3535,6 +3527,7 @@ void Compile_R4300i_SPECIAL_TLTU(BLOCK_SECTION* Section) {
 }
 
 void Compile_R4300i_SPECIAL_TNE(BLOCK_SECTION* Section) {
+	UNREFERENCED_PARAMETER(Section);
 	//CompileExit(Section->CompilePC, Section->RegWorking, DoTrap, TRUE, NULL);
 }
 
@@ -3825,17 +3818,17 @@ void Compile_R4300i_SPECIAL_DIV (BLOCK_SECTION * Section) {
 	} else {
 		// Check for overflow
 		if (IsMapped(Opcode.BRANCH.rs)) {
-			CompConstToX86reg(MipsRegLo(Opcode.BRANCH.rs), INT_MIN);
+			CompConstToX86reg(MipsRegLo(Opcode.BRANCH.rs), (DWORD)INT_MIN);
 		} else {
-			CompConstToVariable(INT_MIN, &GPR[Opcode.BRANCH.rs].W[0], GPR_NameLo[Opcode.BRANCH.rs]);
+			CompConstToVariable((DWORD)INT_MIN, &GPR[Opcode.BRANCH.rs].W[0], GPR_NameLo[Opcode.BRANCH.rs]);
 		}
 		JneLabel8("NoOverflow", 0);
 		Jump[0] = RecompPos - 1;
 
 		if (IsMapped(Opcode.BRANCH.rt)) {
-			CompConstToX86reg(MipsRegLo(Opcode.BRANCH.rt), -1);
+			CompConstToX86reg(MipsRegLo(Opcode.BRANCH.rt), (DWORD)-1);
 		} else {
-			CompConstToVariable(-1, &GPR[Opcode.BRANCH.rt].W[0], GPR_NameLo[Opcode.BRANCH.rt]);
+			CompConstToVariable((DWORD)-1, &GPR[Opcode.BRANCH.rt].W[0], GPR_NameLo[Opcode.BRANCH.rt]);
 		}
 		JneLabel8("NoOverflow", 0);
 		Jump[1] = RecompPos - 1;
@@ -3977,7 +3970,7 @@ void Compile_R4300i_SPECIAL_DMULT (BLOCK_SECTION * Section) {
 	if (Opcode.BRANCH.rt != 0) { UnMap_GPR(Section,Opcode.BRANCH.rt,TRUE); }
 	Pushad();
 	MoveConstToVariable(Opcode.Hex, &Opcode.Hex, "Opcode.Hex" );
-	Call_Direct(r4300i_SPECIAL_DMULT, "r4300i_SPECIAL_DMULT");
+	Call_Direct((void*)r4300i_SPECIAL_DMULT, "r4300i_SPECIAL_DMULT");
 	Popad();
 }
 
@@ -4064,7 +4057,7 @@ void Compile_R4300i_SPECIAL_DDIV (BLOCK_SECTION * Section) {
 	UnMap_GPR(Section, Opcode.BRANCH.rt, TRUE);
 	Pushad();
 	MoveConstToVariable(Opcode.Hex, &Opcode.Hex, "Opcode.Hex" );
-	Call_Direct(r4300i_SPECIAL_DDIV, "r4300i_SPECIAL_DDIV");
+	Call_Direct((void*)r4300i_SPECIAL_DDIV, "r4300i_SPECIAL_DDIV");
 	Popad();
 }
 
@@ -4079,7 +4072,7 @@ void Compile_R4300i_SPECIAL_DDIVU (BLOCK_SECTION * Section) {
 	UnMap_GPR(Section, Opcode.BRANCH.rt, TRUE);
 	Pushad();
 	MoveConstToVariable(Opcode.Hex, &Opcode.Hex, "Opcode.Hex" );
-	Call_Direct(r4300i_SPECIAL_DDIVU, "r4300i_SPECIAL_DDIVU");
+	Call_Direct((void*)r4300i_SPECIAL_DDIVU, "r4300i_SPECIAL_DDIVU");
 	Popad();
 }
 
@@ -5464,7 +5457,7 @@ void Compile_R4300i_COP0_MT (BLOCK_SECTION * Section) {
 		case 9: //Count
 			BlockCycleCount = 0;
 			Pushad();
-			Call_Direct(ChangeCompareTimer,"ChangeCompareTimer");
+			Call_Direct((void*)ChangeCompareTimer,"ChangeCompareTimer");
 			Popad();
 			break;
 		case 11: //Compare
@@ -5473,7 +5466,7 @@ void Compile_R4300i_COP0_MT (BLOCK_SECTION * Section) {
 			BlockCycleCount = 0;
 			AndConstToVariable((DWORD)~CAUSE_IP7,&CAUSE_REGISTER,"CAUSE_REGISTER");
 			Pushad();
-			Call_Direct(ChangeCompareTimer,"ChangeCompareTimer");
+			Call_Direct((void*)ChangeCompareTimer,"ChangeCompareTimer");
 			Popad();
 		}
 		break;
@@ -5493,21 +5486,21 @@ void Compile_R4300i_COP0_MT (BLOCK_SECTION * Section) {
 		JeLabel8("FpuFlagFine",0);
 		Jump = RecompPos - 1;
 		Pushad();
-		Call_Direct(SetFpuLocations,"SetFpuLocations");
+		Call_Direct((void*)SetFpuLocations,"SetFpuLocations");
 		Popad();
-		*(BYTE *)(Jump)= (BYTE )(((BYTE )(RecompPos)) - (((BYTE )(Jump)) + 1));
+		*(BYTE *)(Jump)= (BYTE )(((DWORD)(RecompPos)) - (((DWORD)(Jump)) + 1));
 				
 		//TestConstToX86Reg(STATUS_FR,OldStatusReg);
 		//CompileExit(Section->CompilePC+4,Section->RegWorking,ExitResetRecompCode,FALSE,JneLabel32);
 		Pushad();
-		Call_Direct(CheckInterrupts,"CheckInterrupts");
+		Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
 		Popad();
 		break;
 	case 6: //Wired
 		Pushad();
 		if (BlockRandomModifier != 0) { SubConstFromVariable(BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
 		BlockRandomModifier = 0;
-		Call_Direct(FixRandomReg,"FixRandomReg");
+		Call_Direct((void*)FixRandomReg,"FixRandomReg");
 		Popad();
 		if (IsConst(Opcode.BRANCH.rt)) {
 			MoveConstToVariable(MipsRegLo(Opcode.BRANCH.rt), &CP0[Opcode.REG.rd], Cop0_Name[Opcode.REG.rd]);
@@ -5528,7 +5521,7 @@ void Compile_R4300i_COP0_MT (BLOCK_SECTION * Section) {
 			Compile_R4300i_UnknownOpcode(Section);
 		}*/
 		Pushad();
-		Call_Direct(CheckInterrupts,"CheckInterrupts");
+		Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
 		Popad();
 		break;
 	default:
@@ -5574,7 +5567,7 @@ void Compile_R4300i_COP0_DMT(BLOCK_SECTION * Section) {
 		case 9: //Count
 			BlockCycleCount = 0;
 			Pushad();
-			Call_Direct(ChangeCompareTimer,"ChangeCompareTimer");
+			Call_Direct((void*)ChangeCompareTimer,"ChangeCompareTimer");
 			Popad();
 			break;
 		case 11: //Compare
@@ -5583,7 +5576,7 @@ void Compile_R4300i_COP0_DMT(BLOCK_SECTION * Section) {
 			BlockCycleCount = 0;
 			AndConstToVariable((DWORD)~CAUSE_IP7,&CAUSE_REGISTER,"CAUSE_REGISTER");
 			Pushad();
-			Call_Direct(ChangeCompareTimer,"ChangeCompareTimer");
+			Call_Direct((void*)ChangeCompareTimer,"ChangeCompareTimer");
 			Popad();
 		}
 		break;
@@ -5603,21 +5596,21 @@ void Compile_R4300i_COP0_DMT(BLOCK_SECTION * Section) {
 		JeLabel8("FpuFlagFine",0);
 		Jump = RecompPos - 1;
 		Pushad();
-		Call_Direct(SetFpuLocations,"SetFpuLocations");
+		Call_Direct((void*)SetFpuLocations,"SetFpuLocations");
 		Popad();
-		*(BYTE *)(Jump)= (BYTE )(((BYTE )(RecompPos)) - (((BYTE )(Jump)) + 1));
+		*(BYTE *)(Jump)= (BYTE )(((DWORD)(RecompPos)) - (((DWORD)(Jump)) + 1));
 
 		//TestConstToX86Reg(STATUS_FR,OldStatusReg);
 		//CompileExit(Section->CompilePC+4,Section->RegWorking,ExitResetRecompCode,FALSE,JneLabel32);
 		Pushad();
-		Call_Direct(CheckInterrupts,"CheckInterrupts");
+		Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
 		Popad();
 		break;
 	case 6: //Wired
 		Pushad();
 		if (BlockRandomModifier != 0) { SubConstFromVariable(BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
 		BlockRandomModifier = 0;
-		Call_Direct(FixRandomReg,"FixRandomReg");
+		Call_Direct((void*)FixRandomReg,"FixRandomReg");
 		Popad();
 		if (IsConst(Opcode.BRANCH.rt)) {
 			MoveConstToVariable(MipsRegLo(Opcode.BRANCH.rt), &CP0[Opcode.REG.rd], Cop0_Name[Opcode.REG.rd]);
@@ -5638,7 +5631,7 @@ void Compile_R4300i_COP0_DMT(BLOCK_SECTION * Section) {
 			Compile_R4300i_UnknownOpcode(Section);
 		}*/
 		Pushad();
-		Call_Direct(CheckInterrupts,"CheckInterrupts");
+		Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
 		Popad();
 		break;
 	default:
@@ -5654,7 +5647,7 @@ void Compile_R4300i_COP0_CO_TLBR( BLOCK_SECTION * Section) {
 	CPU_Message("  %X %s",Section->CompilePC,R4300iOpcodeName(Opcode.Hex,CompilePC));
 	if (!UseTlb) {	return; }
 	Pushad();
-	Call_Direct(TLB_Read,"TLB_Read");
+	Call_Direct((void*)TLB_Read,"TLB_Read");
 	Popad();
 }
 
@@ -5667,7 +5660,7 @@ void Compile_R4300i_COP0_CO_TLBWI( BLOCK_SECTION * Section) {
 	Pushad();
 	MoveVariableToX86reg(&INDEX_REGISTER,"INDEX_REGISTER",x86_ECX);
 	AndConstToX86Reg(x86_ECX,0x1F);
-	Call_Direct(WriteTLBEntry,"WriteTLBEntry");
+	Call_Direct((void*)WriteTLBEntry,"WriteTLBEntry");
 	Popad();
 }
 
@@ -5680,10 +5673,10 @@ void Compile_R4300i_COP0_CO_TLBWR( BLOCK_SECTION * Section) {
 	if (BlockRandomModifier != 0) { SubConstFromVariable(BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
 	BlockRandomModifier = 0;
 	Pushad();
-	Call_Direct(FixRandomReg,"FixRandomReg");
+	Call_Direct((void*)FixRandomReg,"FixRandomReg");
 	MoveVariableToX86reg(&RANDOM_REGISTER,"RANDOM_REGISTER",x86_ECX);
 	AndConstToX86Reg(x86_ECX,0x1F);
-	Call_Direct(WriteTLBEntry,"WriteTLBEntry");
+	Call_Direct((void*)WriteTLBEntry,"WriteTLBEntry");
 	Popad();
 }
 
@@ -5695,7 +5688,7 @@ void Compile_R4300i_COP0_CO_TLBP( BLOCK_SECTION * Section) {
 	
 	if (!UseTlb) {	return; }
 	Pushad();
-	Call_Direct(TLB_Probe,"TLB_Probe");
+	Call_Direct((void*)TLB_Probe,"TLB_Probe");
 	Popad();
 }
 
@@ -5718,7 +5711,7 @@ void Compile_R4300i_COP0_CO_ERET( BLOCK_SECTION * Section) {
 	CPU_Message("  %X %s",Section->CompilePC,R4300iOpcodeName(Opcode.Hex,CompilePC));
 
 	WriteBackRegisters(Section);
-	Call_Direct(compiler_COP0_CO_ERET,"compiler_COP0_CO_ERET");
+	Call_Direct((void*)compiler_COP0_CO_ERET,"compiler_COP0_CO_ERET");
 	CompileExit((DWORD)-1,Section->RegWorking,Normal,TRUE,NULL);
 	NextInstruction = END_BLOCK;
 }

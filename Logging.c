@@ -36,9 +36,9 @@
 void LoadLogSetting (HKEY hKey,char * String, BOOL * Value);
 void SaveLogOptions (LOG_OPTIONS* LogOptions);
 
-LRESULT CALLBACK LogGeneralProc ( HWND, UINT, WPARAM, LPARAM );
-LRESULT CALLBACK LogPifProc     ( HWND, UINT, WPARAM, LPARAM );
-LRESULT CALLBACK LogRegProc     ( HWND, UINT, WPARAM, LPARAM );
+INT_PTR CALLBACK LogGeneralProc ( HWND, UINT, WPARAM, LPARAM );
+INT_PTR CALLBACK LogPifProc     ( HWND, UINT, WPARAM, LPARAM );
+INT_PTR CALLBACK LogRegProc     ( HWND, UINT, WPARAM, LPARAM );
 
 LOG_OPTIONS LogOptions,TempOptions;
 HANDLE hLogFile = NULL;
@@ -95,10 +95,9 @@ void EnterLogOptions(HWND hwndOwner) {
 	return;
 }
 
-void LoadLogOptions (LOG_OPTIONS * LogOptions, BOOL AlwaysFill) {
+void LoadLogOptions (LOG_OPTIONS * options, BOOL AlwaysFill) {
 	long lResult;
 	HKEY hKeyResults = 0;
-	DWORD Disposition = 0;
 	char String[200];
 
 	sprintf(String,"Software\\N64 Emulation\\%s\\Logging",AppName);
@@ -106,65 +105,65 @@ void LoadLogOptions (LOG_OPTIONS * LogOptions, BOOL AlwaysFill) {
 		&hKeyResults);
 	
 	if (lResult == ERROR_SUCCESS && (HaveDebugger || FORCE_LOGGING)) {	
-		LoadLogSetting(hKeyResults,"Generate Log File",&LogOptions->GenerateLog);
-		if (LogOptions->GenerateLog || AlwaysFill) {
-			LoadLogSetting(hKeyResults,"Log RDRAM",&LogOptions->LogRDRamRegisters);
-			LoadLogSetting(hKeyResults,"Log SP",&LogOptions->LogSPRegisters);
-			LoadLogSetting(hKeyResults,"Log DP Command",&LogOptions->LogDPCRegisters);
-			LoadLogSetting(hKeyResults,"Log DP Span",&LogOptions->LogDPSRegisters);
-			LoadLogSetting(hKeyResults,"Log MIPS Interface (MI)",&LogOptions->LogMIPSInterface);
-			LoadLogSetting(hKeyResults,"Log Video Interface (VI)",&LogOptions->LogVideoInterface);
-			LoadLogSetting(hKeyResults,"Log Audio Interface (AI)",&LogOptions->LogAudioInterface);
-			LoadLogSetting(hKeyResults,"Log Peripheral Interface (PI)",&LogOptions->LogPerInterface);
-			LoadLogSetting(hKeyResults,"Log RDRAM Interface (RI)",&LogOptions->LogRDRAMInterface);
-			LoadLogSetting(hKeyResults,"Log Serial Interface (SI)",&LogOptions->LogSerialInterface);
-			LoadLogSetting(hKeyResults,"Log PifRam DMA Operations",&LogOptions->LogPRDMAOperations);
-			LoadLogSetting(hKeyResults,"Log PifRam Direct Memory Loads",&LogOptions->LogPRDirectMemLoads);
-			LoadLogSetting(hKeyResults,"Log PifRam DMA Memory Loads",&LogOptions->LogPRDMAMemLoads);
-			LoadLogSetting(hKeyResults,"Log PifRam Direct Memory Stores",&LogOptions->LogPRDirectMemStores);
-			LoadLogSetting(hKeyResults,"Log PifRam DMA Memory Stores",&LogOptions->LogPRDMAMemStores);
-			LoadLogSetting(hKeyResults,"Log Controller Pak",&LogOptions->LogControllerPak);
-			LoadLogSetting(hKeyResults,"Log CP0 changes",&LogOptions->LogCP0changes);
-			LoadLogSetting(hKeyResults,"Log CP0 reads",&LogOptions->LogCP0reads);
-			LoadLogSetting(hKeyResults,"Log Exceptions",&LogOptions->LogExceptions);
-			LoadLogSetting(hKeyResults,"No Interrupts",&LogOptions->NoInterrupts);
-			LoadLogSetting(hKeyResults,"Log TLB",&LogOptions->LogTLB);
-			LoadLogSetting(hKeyResults,"Log Cache Operations",&LogOptions->LogCache);
-			LoadLogSetting(hKeyResults,"Log Rom Header",&LogOptions->LogRomHeader);
-			LoadLogSetting(hKeyResults,"Log Unknown access",&LogOptions->LogUnknown);
-			LoadLogSetting(hKeyResults,"Log IS-Viewer",&LogOptions->LogISViewer);
+		LoadLogSetting(hKeyResults,"Generate Log File",&options->GenerateLog);
+		if (options->GenerateLog || AlwaysFill) {
+			LoadLogSetting(hKeyResults,"Log RDRAM",&options->LogRDRamRegisters);
+			LoadLogSetting(hKeyResults,"Log SP",&options->LogSPRegisters);
+			LoadLogSetting(hKeyResults,"Log DP Command",&options->LogDPCRegisters);
+			LoadLogSetting(hKeyResults,"Log DP Span",&options->LogDPSRegisters);
+			LoadLogSetting(hKeyResults,"Log MIPS Interface (MI)",&options->LogMIPSInterface);
+			LoadLogSetting(hKeyResults,"Log Video Interface (VI)",&options->LogVideoInterface);
+			LoadLogSetting(hKeyResults,"Log Audio Interface (AI)",&options->LogAudioInterface);
+			LoadLogSetting(hKeyResults,"Log Peripheral Interface (PI)",&options->LogPerInterface);
+			LoadLogSetting(hKeyResults,"Log RDRAM Interface (RI)",&options->LogRDRAMInterface);
+			LoadLogSetting(hKeyResults,"Log Serial Interface (SI)",&options->LogSerialInterface);
+			LoadLogSetting(hKeyResults,"Log PifRam DMA Operations",&options->LogPRDMAOperations);
+			LoadLogSetting(hKeyResults,"Log PifRam Direct Memory Loads",&options->LogPRDirectMemLoads);
+			LoadLogSetting(hKeyResults,"Log PifRam DMA Memory Loads",&options->LogPRDMAMemLoads);
+			LoadLogSetting(hKeyResults,"Log PifRam Direct Memory Stores",&options->LogPRDirectMemStores);
+			LoadLogSetting(hKeyResults,"Log PifRam DMA Memory Stores",&options->LogPRDMAMemStores);
+			LoadLogSetting(hKeyResults,"Log Controller Pak",&options->LogControllerPak);
+			LoadLogSetting(hKeyResults,"Log CP0 changes",&options->LogCP0changes);
+			LoadLogSetting(hKeyResults,"Log CP0 reads",&options->LogCP0reads);
+			LoadLogSetting(hKeyResults,"Log Exceptions",&options->LogExceptions);
+			LoadLogSetting(hKeyResults,"No Interrupts",&options->NoInterrupts);
+			LoadLogSetting(hKeyResults,"Log TLB",&options->LogTLB);
+			LoadLogSetting(hKeyResults,"Log Cache Operations",&options->LogCache);
+			LoadLogSetting(hKeyResults,"Log Rom Header",&options->LogRomHeader);
+			LoadLogSetting(hKeyResults,"Log Unknown access",&options->LogUnknown);
+			LoadLogSetting(hKeyResults,"Log IS-Viewer",&options->LogISViewer);
 			return;
 		}
 	}
 
-	LogOptions->GenerateLog          = FALSE;
-	LogOptions->LogRDRamRegisters    = FALSE;
-	LogOptions->LogSPRegisters       = FALSE;
-	LogOptions->LogDPCRegisters      = FALSE;
-	LogOptions->LogDPSRegisters      = FALSE;
-	LogOptions->LogMIPSInterface     = FALSE;
-	LogOptions->LogVideoInterface    = FALSE;
-	LogOptions->LogAudioInterface    = FALSE;
-	LogOptions->LogPerInterface      = FALSE;
-	LogOptions->LogRDRAMInterface    = FALSE;
-	LogOptions->LogSerialInterface   = FALSE;
+	options->GenerateLog          = FALSE;
+	options->LogRDRamRegisters    = FALSE;
+	options->LogSPRegisters       = FALSE;
+	options->LogDPCRegisters      = FALSE;
+	options->LogDPSRegisters      = FALSE;
+	options->LogMIPSInterface     = FALSE;
+	options->LogVideoInterface    = FALSE;
+	options->LogAudioInterface    = FALSE;
+	options->LogPerInterface      = FALSE;
+	options->LogRDRAMInterface    = FALSE;
+	options->LogSerialInterface   = FALSE;
 	
-	LogOptions->LogPRDMAOperations   = FALSE;
-	LogOptions->LogPRDirectMemLoads  = FALSE;
-	LogOptions->LogPRDMAMemLoads     = FALSE;
-	LogOptions->LogPRDirectMemStores = FALSE;
-	LogOptions->LogPRDMAMemStores    = FALSE;
-	LogOptions->LogControllerPak     = FALSE;
+	options->LogPRDMAOperations   = FALSE;
+	options->LogPRDirectMemLoads  = FALSE;
+	options->LogPRDMAMemLoads     = FALSE;
+	options->LogPRDirectMemStores = FALSE;
+	options->LogPRDMAMemStores    = FALSE;
+	options->LogControllerPak     = FALSE;
 		
-	LogOptions->LogCP0changes        = FALSE;
-	LogOptions->LogCP0reads          = FALSE;
-	LogOptions->LogCache             = FALSE;
-	LogOptions->LogExceptions        = FALSE;
-	LogOptions->NoInterrupts         = FALSE;
-	LogOptions->LogTLB               = FALSE;
-	LogOptions->LogRomHeader         = FALSE;
-	LogOptions->LogUnknown           = FALSE;
-	LogOptions->LogISViewer          = FALSE;
+	options->LogCP0changes        = FALSE;
+	options->LogCP0reads          = FALSE;
+	options->LogCache             = FALSE;
+	options->LogExceptions        = FALSE;
+	options->NoInterrupts         = FALSE;
+	options->LogTLB               = FALSE;
+	options->LogRomHeader         = FALSE;
+	options->LogUnknown           = FALSE;
+	options->LogISViewer          = FALSE;
 }
 
 void LoadLogSetting (HKEY hKey,char * String, BOOL * Value) {
@@ -179,7 +178,9 @@ void LoadLogSetting (HKEY hKey,char * String, BOOL * Value) {
 	}
 }
 
-LRESULT CALLBACK LogGeneralProc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+INT_PTR CALLBACK LogGeneralProc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	UNREFERENCED_PARAMETER(wParam);
+
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		if (TempOptions.LogCP0changes) { CheckDlgButton(hDlg,IDC_CP0_WRITE,BST_CHECKED); }
@@ -624,7 +625,9 @@ void Log_SW (MIPS_DWORD PC, DWORD VAddr, DWORD Value) {
 	LogMessage("%08X: Writing 0x%08X to %08X ????",PC, Value, VAddr );
 }
 
-LRESULT CALLBACK LogPifProc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+INT_PTR CALLBACK LogPifProc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	UNREFERENCED_PARAMETER(wParam);
+
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		if (TempOptions.LogPRDMAOperations)   { CheckDlgButton(hDlg,IDC_SI_DMA,BST_CHECKED); }
@@ -649,7 +652,9 @@ LRESULT CALLBACK LogPifProc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return TRUE;
 }
 
-LRESULT CALLBACK LogRegProc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+INT_PTR CALLBACK LogRegProc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	UNREFERENCED_PARAMETER(wParam);
+
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		if (TempOptions.LogRDRamRegisters)  { CheckDlgButton(hDlg,IDC_RDRAM,BST_CHECKED); }
@@ -687,7 +692,7 @@ void SaveLogSetting (HKEY hKey,char * String, BOOL Value) {
 	RegSetValueEx(hKey,String,0,REG_DWORD,(CONST BYTE *)&StoreValue,sizeof(DWORD));
 }
 
-void SaveLogOptions (LOG_OPTIONS* LogOptions) {
+void SaveLogOptions (LOG_OPTIONS* options) {
 	long lResult;
 	HKEY hKeyResults = 0;
 	DWORD Disposition = 0;
@@ -697,32 +702,32 @@ void SaveLogOptions (LOG_OPTIONS* LogOptions) {
 	lResult = RegCreateKeyEx( HKEY_CURRENT_USER,String,0,"", REG_OPTION_NON_VOLATILE,
 		KEY_ALL_ACCESS,NULL,&hKeyResults,&Disposition);
 	
-	SaveLogSetting(hKeyResults,"Generate Log File",LogOptions->GenerateLog);
-	SaveLogSetting(hKeyResults,"Log RDRAM",LogOptions->LogRDRamRegisters);
-	SaveLogSetting(hKeyResults,"Log SP",LogOptions->LogSPRegisters);
-	SaveLogSetting(hKeyResults,"Log DP Command",LogOptions->LogDPCRegisters);
-	SaveLogSetting(hKeyResults,"Log DP Span",LogOptions->LogDPSRegisters);
-	SaveLogSetting(hKeyResults,"Log MIPS Interface (MI)",LogOptions->LogMIPSInterface);
-	SaveLogSetting(hKeyResults,"Log Video Interface (VI)", LogOptions->LogVideoInterface);
-	SaveLogSetting(hKeyResults,"Log Audio Interface (AI)", LogOptions->LogAudioInterface);
-	SaveLogSetting(hKeyResults,"Log Peripheral Interface (PI)", LogOptions->LogPerInterface);
-	SaveLogSetting(hKeyResults,"Log RDRAM Interface (RI)", LogOptions->LogRDRAMInterface);
-	SaveLogSetting(hKeyResults,"Log Serial Interface (SI)", LogOptions->LogSerialInterface);
-	SaveLogSetting(hKeyResults,"Log PifRam DMA Operations", LogOptions->LogPRDMAOperations);
-	SaveLogSetting(hKeyResults,"Log PifRam Direct Memory Loads", LogOptions->LogPRDirectMemLoads);
-	SaveLogSetting(hKeyResults,"Log PifRam DMA Memory Loads", LogOptions->LogPRDMAMemLoads);
-	SaveLogSetting(hKeyResults,"Log PifRam Direct Memory Stores", LogOptions->LogPRDirectMemStores);
-	SaveLogSetting(hKeyResults,"Log PifRam DMA Memory Stores", LogOptions->LogPRDMAMemStores);
-	SaveLogSetting(hKeyResults,"Log Controller Pak", LogOptions->LogControllerPak);
-	SaveLogSetting(hKeyResults,"Log CP0 changes", LogOptions->LogCP0changes);
-	SaveLogSetting(hKeyResults,"Log CP0 reads", LogOptions->LogCP0reads);
-	SaveLogSetting(hKeyResults,"Log Exceptions", LogOptions->LogExceptions);
-	SaveLogSetting(hKeyResults,"No Interrupts", LogOptions->NoInterrupts);
-	SaveLogSetting(hKeyResults,"Log TLB", LogOptions->LogTLB);
-	SaveLogSetting(hKeyResults,"Log Cache Operations", LogOptions->LogCache);
-	SaveLogSetting(hKeyResults,"Log Rom Header", LogOptions->LogRomHeader);
-	SaveLogSetting(hKeyResults,"Log Unknown access", LogOptions->LogUnknown);
-	SaveLogSetting(hKeyResults,"Log IS-Viewer", LogOptions->LogISViewer);
+	SaveLogSetting(hKeyResults,"Generate Log File",options->GenerateLog);
+	SaveLogSetting(hKeyResults,"Log RDRAM",options->LogRDRamRegisters);
+	SaveLogSetting(hKeyResults,"Log SP",options->LogSPRegisters);
+	SaveLogSetting(hKeyResults,"Log DP Command",options->LogDPCRegisters);
+	SaveLogSetting(hKeyResults,"Log DP Span",options->LogDPSRegisters);
+	SaveLogSetting(hKeyResults,"Log MIPS Interface (MI)",options->LogMIPSInterface);
+	SaveLogSetting(hKeyResults,"Log Video Interface (VI)", options->LogVideoInterface);
+	SaveLogSetting(hKeyResults,"Log Audio Interface (AI)", options->LogAudioInterface);
+	SaveLogSetting(hKeyResults,"Log Peripheral Interface (PI)", options->LogPerInterface);
+	SaveLogSetting(hKeyResults,"Log RDRAM Interface (RI)", options->LogRDRAMInterface);
+	SaveLogSetting(hKeyResults,"Log Serial Interface (SI)", options->LogSerialInterface);
+	SaveLogSetting(hKeyResults,"Log PifRam DMA Operations", options->LogPRDMAOperations);
+	SaveLogSetting(hKeyResults,"Log PifRam Direct Memory Loads", options->LogPRDirectMemLoads);
+	SaveLogSetting(hKeyResults,"Log PifRam DMA Memory Loads", options->LogPRDMAMemLoads);
+	SaveLogSetting(hKeyResults,"Log PifRam Direct Memory Stores", options->LogPRDirectMemStores);
+	SaveLogSetting(hKeyResults,"Log PifRam DMA Memory Stores", options->LogPRDMAMemStores);
+	SaveLogSetting(hKeyResults,"Log Controller Pak", options->LogControllerPak);
+	SaveLogSetting(hKeyResults,"Log CP0 changes", options->LogCP0changes);
+	SaveLogSetting(hKeyResults,"Log CP0 reads", options->LogCP0reads);
+	SaveLogSetting(hKeyResults,"Log Exceptions", options->LogExceptions);
+	SaveLogSetting(hKeyResults,"No Interrupts", options->NoInterrupts);
+	SaveLogSetting(hKeyResults,"Log TLB", options->LogTLB);
+	SaveLogSetting(hKeyResults,"Log Cache Operations", options->LogCache);
+	SaveLogSetting(hKeyResults,"Log Rom Header", options->LogRomHeader);
+	SaveLogSetting(hKeyResults,"Log Unknown access", options->LogUnknown);
+	SaveLogSetting(hKeyResults,"Log IS-Viewer", options->LogISViewer);
 	
 	RegCloseKey(hKeyResults);
 }

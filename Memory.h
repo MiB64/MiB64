@@ -49,7 +49,7 @@ int  r4300i_LB_NonMemory         ( DWORD PAddr, DWORD * Value, BOOL SignExtend )
 BOOL r4300i_LB_VAddr             ( MIPS_DWORD VAddr, BYTE * Value );
 BOOL r4300i_LB_VAddr_NonCPU      ( MIPS_DWORD VAddr, BYTE * Value );
 BOOL r4300i_LD_VAddr             ( MIPS_DWORD VAddr, unsigned _int64 * Value, DWORD* outPAddr );
-int  r4300i_LH_NonMemory         ( DWORD PAddr, DWORD * Value, int SignExtend );
+int  r4300i_LH_NonMemory         ( DWORD PAddr, DWORD * Value );
 BOOL r4300i_LH_VAddr             ( MIPS_DWORD VAddr, WORD * Value );
 BOOL r4300i_LH_VAddr_NonCPU      ( MIPS_DWORD VAddr, WORD * Value );
 int  r4300i_LW_NonMemory         ( DWORD PAddr, DWORD * Value );
@@ -68,6 +68,7 @@ BOOL r4300i_SW_VAddr_NonCPU      ( MIPS_DWORD VAddr, DWORD Value );
 BOOL IsValidAddress              ( MIPS_DWORD address );
 void CheckRdramStatus            ( void );
 BYTE* GetBaseRdramAddress        ( DWORD PAddr );
+void UpdateCPUMode				 ( void );
 
 /* Recompiler Memory Functions */
 BOOL Compile_LB                  ( int Reg, DWORD Addr, BOOL SignExtend );
