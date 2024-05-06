@@ -26,10 +26,9 @@
  */
 
 #include <windows.h>
-/*#include <stdio.h>
-#include "opcode.h"
-#include "RSP.h"
-#include "CPU.h"*/
+#include <stdio.h>
+#include "RSP_OpCode.h"
+/*#include "CPU.h"*/
 #include "rsp_registers.h"
 #include "RSP Command.h"
 #include "rsp_config.h"
@@ -71,7 +70,7 @@ static HWND RSPCommandshWnd, hList, hAddress/*, hFunctionlist*/, hGoButton/*, hB
 	hStepButton, hSkipButton, hBPButton, hR4300iRegisters, hR4300iDebugger, hRSPRegisters,
 	hMemory, hScrlBar;
 BOOL InRSPCommandsWindow = FALSE;
-/*char CommandName[100];*/
+static char CommandName[100];
 DWORD Stepping_RspCommands = FALSE;
 DWORD WaitingForRspStep = FALSE;
 
@@ -706,10 +705,10 @@ void RSP_Commands_Setup ( HWND hDlg ) {
 	SetWindowPos(hDlg,NULL,X,Y,WindowWidth,WindowHeight, SWP_NOZORDER | 
 		SWP_SHOWWINDOW);
 
-}
+}*/
 
 char * RSPSpecialName ( DWORD OpCode, DWORD PC ) {
-	OPCODE command;
+	/*OPCODE command;
 	command.Hex = OpCode;
 		
 	switch (command.funct) {
@@ -794,11 +793,13 @@ char * RSPSpecialName ( DWORD OpCode, DWORD PC ) {
 		sprintf(CommandName,"RSP: Unknown\t%02X %02X %02X %02X",
 			command.Ascii[3],command.Ascii[2],command.Ascii[1],command.Ascii[0]);
 	}
-	return CommandName;
+	return CommandName;*/
+	LogMessage("TODO: RSP_SPECIAL");
+	return "";
 }
 
 char * RSPRegimmName ( DWORD OpCode, DWORD PC ) {
-	OPCODE command;
+	/*OPCODE command;
 	command.Hex = OpCode;
 		
 	switch (command.rt) {
@@ -826,11 +827,13 @@ char * RSPRegimmName ( DWORD OpCode, DWORD PC ) {
 		sprintf(CommandName,"RSP: Unknown\t%02X %02X %02X %02X",
 			command.Ascii[3],command.Ascii[2],command.Ascii[1],command.Ascii[0]);
 	}
-	return CommandName;
+	return CommandName;*/
+	LogMessage("TODO: RSPRegimmName");
+	return "";
 }
 
 char * RSPCop0Name ( DWORD OpCode, DWORD PC ) {
-	OPCODE command;
+	/*OPCODE command;
 	command.Hex = OpCode;
 	switch (command.rs) {
 	case RSP_COP0_MF:
@@ -843,11 +846,13 @@ char * RSPCop0Name ( DWORD OpCode, DWORD PC ) {
 		sprintf(CommandName,"RSP: Unknown\t%02X %02X %02X %02X",
 			command.Ascii[3],command.Ascii[2],command.Ascii[1],command.Ascii[0]);
 	}
-	return CommandName;
+	return CommandName;*/
+	LogMessage("TODO: RSPCop0Name");
+	return "";
 }
 
 char * RSPCop2Name ( DWORD OpCode, DWORD PC ) {
-	OPCODE command;
+	/*OPCODE command;
 	command.Hex = OpCode;
 		
 	if ( ( command.rs & 0x10 ) == 0 ) {
@@ -1054,11 +1059,13 @@ char * RSPCop2Name ( DWORD OpCode, DWORD PC ) {
 				command.Ascii[3],command.Ascii[2],command.Ascii[1],command.Ascii[0]);
 		}
 	}
-	return CommandName;
+	return CommandName;*/
+	LogMessage("TODO: RSPCop2Name");
+	return "";
 }
 
 char * RSPLc2Name ( DWORD OpCode, DWORD PC ) {
-	OPCODE command;
+	/*OPCODE command;
 	command.Hex = OpCode;
 
 	switch (command.rd) {
@@ -1114,11 +1121,13 @@ char * RSPLc2Name ( DWORD OpCode, DWORD PC ) {
 		sprintf(CommandName,"RSP: Unknown\t%02X %02X %02X %02X",
 			command.Ascii[3],command.Ascii[2],command.Ascii[1],command.Ascii[0]);
 	}
-	return CommandName;
+	return CommandName;*/
+	LogMessage("TODO: RSPLc2Name");
+	return "";
 }
 
 char * RSPSc2Name ( DWORD OpCode, DWORD PC ) {
-	OPCODE command;
+	/*OPCODE command;
 	command.Hex = OpCode;
 
 	switch (command.rd) {
@@ -1174,129 +1183,123 @@ char * RSPSc2Name ( DWORD OpCode, DWORD PC ) {
 		sprintf(CommandName,"RSP: Unknown\t%02X %02X %02X %02X",
 			command.Ascii[3],command.Ascii[2],command.Ascii[1],command.Ascii[0]);
 	}
-	return CommandName;
-}*/
+	return CommandName;*/
+	LogMessage("TODO: RSPSc2Name");
+	return "";
+}
 
 char * RSPOpcodeName ( DWORD OpCode, DWORD PC ) {
-	/*OPCODE command;
-	command.Hex = OpCode;
+	OPCODE command;
+	command.OP.Hex = OpCode;
 		
-	switch (command.op) {
+	switch (command.OP.I.op) {
 	case RSP_SPECIAL:
 		return RSPSpecialName(OpCode,PC);
-		break;
 	case RSP_REGIMM:
 		return RSPRegimmName(OpCode,PC);
-		break;
 	case RSP_J:
-		sprintf(CommandName,"J\t0x%03X",(command.target << 2) & 0xFFC);
+		sprintf(CommandName,"J\t0x%03X",(command.OP.J.target << 2) & 0xFFC);
 		break;
 	case RSP_JAL:
-		sprintf(CommandName,"JAL\t0x%03X",(command.target << 2) & 0xFFC);
+		sprintf(CommandName,"JAL\t0x%03X",(command.OP.J.target << 2) & 0xFFC);
 		break;
 	case RSP_BEQ:
-		if (command.rs == 0 && command.rt == 0) {
-			sprintf(CommandName,"B\t0x%03X",(PC + ((short)command.offset << 2) + 4) & 0xFFC);
-		} else if (command.rs == 0 || command.rt == 0){
-			sprintf(CommandName,"BEQZ\t%s, 0x%03X",GPR_Name(command.rs == 0 ? command.rt : command.rs),
-				(PC + ((short)command.offset << 2) + 4) & 0xFFC);
+		if (command.OP.I.rs == 0 && command.OP.I.rt == 0) {
+			sprintf(CommandName,"B\t0x%03X",(PC + ((short)command.OP.B.offset << 2) + 4) & 0xFFC);
+		} else if (command.OP.B.rs == 0 || command.OP.B.rt == 0){
+			sprintf(CommandName,"BEQZ\t%s, 0x%03X",RspGPR_Name(command.OP.B.rs == 0 ? command.OP.B.rt : command.OP.B.rs),
+				(PC + ((short)command.OP.B.offset << 2) + 4) & 0xFFC);
 		} else {
-			sprintf(CommandName,"BEQ\t%s, %s, 0x%03X",GPR_Name(command.rs),GPR_Name(command.rt),
-				(PC + ((short)command.offset << 2) + 4) & 0xFFC);
+			sprintf(CommandName,"BEQ\t%s, %s, 0x%03X",RspGPR_Name(command.OP.B.rs),RspGPR_Name(command.OP.B.rt),
+				(PC + ((short)command.OP.B.offset << 2) + 4) & 0xFFC);
 		}
 		break;
 	case RSP_BNE:
-		sprintf(CommandName,"BNE\t%s, %s, 0x%03X",GPR_Name(command.rs),GPR_Name(command.rt),
-			(PC + ((short)command.offset << 2) + 4) & 0xFFC);
+		sprintf(CommandName,"BNE\t%s, %s, 0x%03X",RspGPR_Name(command.OP.B.rs),RspGPR_Name(command.OP.B.rt),
+			(PC + ((short)command.OP.B.offset << 2) + 4) & 0xFFC);
 		break;
 	case RSP_BLEZ:
-		sprintf(CommandName,"BLEZ\t%s, 0x%03X",GPR_Name(command.rs),(PC + ((short)command.offset << 2) + 4) & 0xFFC);
+		sprintf(CommandName,"BLEZ\t%s, 0x%03X",RspGPR_Name(command.OP.B.rs),(PC + ((short)command.OP.B.offset << 2) + 4) & 0xFFC);
 		break;
 	case RSP_BGTZ:
-		sprintf(CommandName,"BGTZ\t%s, 0x%03X",GPR_Name(command.rs),(PC + ((short)command.offset << 2) + 4) & 0xFFC);
+		sprintf(CommandName,"BGTZ\t%s, 0x%03X",RspGPR_Name(command.OP.B.rs),(PC + ((short)command.OP.B.offset << 2) + 4) & 0xFFC);
 		break;
 	case RSP_ADDI:
-		sprintf(CommandName,"ADDI\t%s, %s, 0x%04X",GPR_Name(command.rt), GPR_Name(command.rs),
-			command.immediate);
+		sprintf(CommandName,"ADDI\t%s, %s, 0x%04X",RspGPR_Name(command.OP.I.rt), RspGPR_Name(command.OP.I.rs),
+			command.OP.I.immediate);
 		break;
 	case RSP_ADDIU:
-		sprintf(CommandName,"ADDIU\t%s, %s, 0x%04X",GPR_Name(command.rt), GPR_Name(command.rs),
-			command.immediate);
+		sprintf(CommandName,"ADDIU\t%s, %s, 0x%04X",RspGPR_Name(command.OP.I.rt), RspGPR_Name(command.OP.I.rs),
+			command.OP.I.immediate);
 		break;
 	case RSP_SLTI:
-		sprintf(CommandName,"SLTI\t%s, %s, 0x%04X",GPR_Name(command.rt), GPR_Name(command.rs),
-			command.immediate);
+		sprintf(CommandName,"SLTI\t%s, %s, 0x%04X",RspGPR_Name(command.OP.I.rt), RspGPR_Name(command.OP.I.rs),
+			command.OP.I.immediate);
 		break;
 	case RSP_SLTIU:
-		sprintf(CommandName,"SLTIU\t%s, %s, 0x%04X",GPR_Name(command.rt), GPR_Name(command.rs),
-			command.immediate);
+		sprintf(CommandName,"SLTIU\t%s, %s, 0x%04X",RspGPR_Name(command.OP.I.rt), RspGPR_Name(command.OP.I.rs),
+			command.OP.I.immediate);
 		break;
 	case RSP_ANDI:
-		sprintf(CommandName,"ANDI\t%s, %s, 0x%04X",GPR_Name(command.rt), GPR_Name(command.rs),
-			command.immediate);
+		sprintf(CommandName,"ANDI\t%s, %s, 0x%04X",RspGPR_Name(command.OP.I.rt), RspGPR_Name(command.OP.I.rs),
+			command.OP.I.immediate);
 		break;
 	case RSP_ORI:
-		sprintf(CommandName,"ORI\t%s, %s, 0x%04X",GPR_Name(command.rt), GPR_Name(command.rs),
-			command.immediate);
+		sprintf(CommandName,"ORI\t%s, %s, 0x%04X",RspGPR_Name(command.OP.I.rt), RspGPR_Name(command.OP.I.rs),
+			command.OP.I.immediate);
 		break;
 	case RSP_XORI:
-		sprintf(CommandName,"XORI\t%s, %s, 0x%04X",GPR_Name(command.rt), GPR_Name(command.rs),
-			command.immediate);
+		sprintf(CommandName,"XORI\t%s, %s, 0x%04X",RspGPR_Name(command.OP.I.rt), RspGPR_Name(command.OP.I.rs),
+			command.OP.I.immediate);
 		break;
 	case RSP_LUI:
-		sprintf(CommandName,"LUI\t%s, 0x%04X",GPR_Name(command.rt), command.immediate);
+		sprintf(CommandName,"LUI\t%s, 0x%04X",RspGPR_Name(command.OP.I.rt), command.OP.I.immediate);
 		break;
 	case RSP_CP0:
 		return RSPCop0Name(OpCode,PC);
-		break;
 	case RSP_CP2:
 		return RSPCop2Name(OpCode,PC);
-		break;
 	case RSP_LB:
-		sprintf(CommandName,"LB\t%s, 0x%04X(%s)",GPR_Name(command.rt), command.offset,
-			GPR_Name(command.base));
+		sprintf(CommandName,"LB\t%s, 0x%04X(%s)",RspGPR_Name(command.OP.LS.rt), command.OP.LS.offset,
+			RspGPR_Name(command.OP.LS.base));
 		break;
 	case RSP_LH:
-		sprintf(CommandName,"LH\t%s, 0x%04X(%s)",GPR_Name(command.rt), command.offset,
-			GPR_Name(command.base));
+		sprintf(CommandName,"LH\t%s, 0x%04X(%s)",RspGPR_Name(command.OP.LS.rt), command.OP.LS.offset,
+			RspGPR_Name(command.OP.LS.base));
 		break;
 	case RSP_LW:
-		sprintf(CommandName,"LW\t%s, 0x%04X(%s)",GPR_Name(command.rt), command.offset,
-			GPR_Name(command.base));
+		sprintf(CommandName,"LW\t%s, 0x%04X(%s)",RspGPR_Name(command.OP.LS.rt), command.OP.LS.offset,
+			RspGPR_Name(command.OP.LS.base));
 		break;
 	case RSP_LBU:
-		sprintf(CommandName,"LBU\t%s, 0x%04X(%s)",GPR_Name(command.rt), command.offset,
-			GPR_Name(command.base));
+		sprintf(CommandName,"LBU\t%s, 0x%04X(%s)",RspGPR_Name(command.OP.LS.rt), command.OP.LS.offset,
+			RspGPR_Name(command.OP.LS.base));
 		break;
 	case RSP_LHU:
-		sprintf(CommandName,"LHU\t%s, 0x%04X(%s)",GPR_Name(command.rt), command.offset,
-			GPR_Name(command.base));
+		sprintf(CommandName,"LHU\t%s, 0x%04X(%s)",RspGPR_Name(command.OP.LS.rt), command.OP.LS.offset,
+			RspGPR_Name(command.OP.LS.base));
 		break;
 	case RSP_SB:
-		sprintf(CommandName,"SB\t%s, 0x%04X(%s)",GPR_Name(command.rt), command.offset,
-			GPR_Name(command.base));
+		sprintf(CommandName,"SB\t%s, 0x%04X(%s)",RspGPR_Name(command.OP.LS.rt), command.OP.LS.offset,
+			RspGPR_Name(command.OP.LS.base));
 		break;
 	case RSP_SH:
-		sprintf(CommandName,"SH\t%s, 0x%04X(%s)",GPR_Name(command.rt), command.offset,
-			GPR_Name(command.base));
+		sprintf(CommandName,"SH\t%s, 0x%04X(%s)",RspGPR_Name(command.OP.LS.rt), command.OP.LS.offset,
+			RspGPR_Name(command.OP.LS.base));
 		break;
 	case RSP_SW:
-		sprintf(CommandName,"SW\t%s, 0x%04X(%s)",GPR_Name(command.rt), command.offset,
-			GPR_Name(command.base));
+		sprintf(CommandName,"SW\t%s, 0x%04X(%s)",RspGPR_Name(command.OP.LS.rt), command.OP.LS.offset,
+			RspGPR_Name(command.OP.LS.base));
 		break;
 	case RSP_LC2:
 		return RSPLc2Name(OpCode,PC);
-		break;
 	case RSP_SC2:
 		return RSPSc2Name(OpCode,PC);
-		break;
 	default:
 		sprintf(CommandName,"RSP: Unknown\t%02X %02X %02X %02X",
-			command.Ascii[3],command.Ascii[2],command.Ascii[1],command.Ascii[0]);
+			command.OP.Ascii[3],command.OP.Ascii[2],command.OP.Ascii[1],command.OP.Ascii[0]);
 	}
-	return CommandName;*/
-	LogMessage("TODO: RSPOpcodeName");
-	return "";
+	return CommandName;
 }
 
 /*void SetRSPCommandToRunning ( void ) { 	

@@ -1680,9 +1680,9 @@ void rsp_UnknownOpcode (void) {
 
 	if (InRSPCommandsWindow) {
 		SetRSPCommandViewto( SP_PC_REG );
-		DisplayError("Unhandled Opcode\n%s\n\nStoping Emulation!", RSPOpcodeName(RSPOpC.OP.Hex,SP_PC_REG));
+		DisplayError("Unhandled RSP Opcode\n%s\n\nStoping Emulation!", RSPOpcodeName(RSPOpC.OP.Hex,SP_PC_REG));
 	} else {
-		sprintf(Message,"Unhandled Opcode\n%s\n\nStoping Emulation!\n\nDo you wish to enter the debugger ?", 
+		sprintf(Message,"Unhandled RSP Opcode\n%s\n\nStoping Emulation!\n\nDo you wish to enter the debugger ?", 
 			RSPOpcodeName(RSPOpC.OP.Hex,SP_PC_REG));
 		response = MessageBox(NULL,Message,"Error", MB_YESNO | MB_ICONERROR );	
 		if (response == IDYES) {		

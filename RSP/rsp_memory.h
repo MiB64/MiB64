@@ -32,6 +32,7 @@ void FreeMemory     ( void );
 void SetJumpTable   ( void );*/
 
 extern BYTE* DMEM;
+extern BYTE* IMEM;
 
 /*extern BYTE * RecompCode, * RecompCodeSecondary, * RecompPos;
 extern void ** JumpTable;

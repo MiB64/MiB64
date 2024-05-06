@@ -29,9 +29,11 @@
 
 #include <windows.h>
 #include "rsp_config.h"
-/*#include "RSP Registers.h"
+#include "rsp_memory.h"
+/*#include "RSP Registers.h"*/
+#include "../Main.h"
 
-DWORD NoOfMaps, MapsCRC[MaxMaps], Table;
+/*DWORD NoOfMaps, MapsCRC[MaxMaps], Table;
 BYTE * RecompCode, * RecompCodeSecondary, * RecompPos, *JumpTables;
 void ** JumpTable;
 
@@ -274,11 +276,10 @@ void RSP_LW_DMEM ( DWORD Addr, DWORD * Value ) {
 }*/
 
 void RSP_LW_IMEM ( DWORD Addr, DWORD * Value ) {
-	/*if ((Addr & 0x3) != 0) {
+	if ((Addr & 0x3) != 0) {
 		DisplayError("Unaligned RSP_LW_IMEM");
 	}
-	* Value = *(DWORD *)(RSPInfo.IMEM + (Addr & 0xFFF));*/
-	LogMessage("TODO: RSP_LW_IMEM");
+	* Value = *(DWORD *)(IMEM + (Addr & 0xFFF));
 }
 
 /*void RSP_SB_DMEM ( DWORD Addr, BYTE Value ) {

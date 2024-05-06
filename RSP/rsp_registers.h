@@ -84,13 +84,13 @@
 
 extern DWORD* RegSP;
 
-/*extern char* x86_Strings[8];
-extern char* GPR_Strings[32];
+/*extern char* x86_Strings[8];*/
+extern char* RspGPR_Strings[32];
 
-#define x86_Name(Reg) (x86_Strings[(Reg)])
-#define GPR_Name(Reg) (GPR_Strings[(Reg)])
+/*#define x86_Name(Reg) (x86_Strings[(Reg)])*/
+#define RspGPR_Name(Reg) (RspGPR_Strings[(Reg)])
 
-#define COP0_Name(Reg)\
+/*#define COP0_Name(Reg)\
 	(Reg) == 0  ? "SP memory address" :\
 	(Reg) == 1  ? "SP DRAM DMA address" :\
 	(Reg) == 2  ? "SP read DMA length" :\
