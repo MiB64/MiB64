@@ -90,7 +90,7 @@ extern char* RspGPR_Strings[32];
 /*#define x86_Name(Reg) (x86_Strings[(Reg)])*/
 #define RspGPR_Name(Reg) (RspGPR_Strings[(Reg)])
 
-/*#define COP0_Name(Reg)\
+#define RspCOP0_Name(Reg)\
 	(Reg) == 0  ? "SP memory address" :\
 	(Reg) == 1  ? "SP DRAM DMA address" :\
 	(Reg) == 2  ? "SP read DMA length" :\
@@ -109,16 +109,16 @@ extern char* RspGPR_Strings[32];
 	(Reg) == 15 ? "DP TMEM load counter" :\
 	"Unknown Register"
 
-#define ElementSpecifier(Elem)\
+/*#define ElementSpecifier(Elem)\
 	(Elem) == 0  ? "" : (Elem) == 1  ? "" : (Elem) == 2  ? " [0q]" :\
 	(Elem) == 3  ? " [1q]" : (Elem) == 4  ? " [0h]" : (Elem) == 5  ? " [1h]" :\
     (Elem) == 6  ? " [2h]" : (Elem) == 7  ? " [3h]" : (Elem) == 8  ? " [0]" :\
 	(Elem) == 9  ? " [1]" : (Elem) == 10 ? " [2]" : (Elem) == 11 ? " [3]" :\
 	(Elem) == 12 ? " [4]" : (Elem) == 13 ? " [5]" : (Elem) == 14 ? " [6]" :\
-	(Elem) == 15 ? " [7]" : "Unknown Element"
+	(Elem) == 15 ? " [7]" : "Unknown Element"*/
 
 void Enter_RSP_Register_Window(void);
-void InitilizeRSPRegisters(void);*/
+/*void InitilizeRSPRegisters(void);*/
 void UpdateRSPRegistersScreen(void);
 
 /*** RSP Registers ***/

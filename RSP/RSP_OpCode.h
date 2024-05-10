@@ -62,16 +62,16 @@ typedef struct tagOPCODE {
 			unsigned : 6;
 		} J;
 		
-		/*struct {
+		struct {
 			unsigned funct : 6;
 			unsigned sa : 5;
 			unsigned rd : 5;
-			unsigned : 5;
-			unsigned : 5;
-			unsigned : 6;
-		};
+			unsigned rt : 5;
+			unsigned rs : 5;
+			unsigned op : 6;
+		} R;
 
-		struct {
+		/*struct {
 			signed   voffset : 7;
 			unsigned del    : 4;
 			unsigned : 5;
@@ -114,7 +114,7 @@ typedef struct tagOPCODE {
 #define RSP_SC2					58
 
 /* RSP Special opcodes */
-/*#define RSP_SPECIAL_SLL			 0
+#define RSP_SPECIAL_SLL			 0
 #define RSP_SPECIAL_SRL			 2
 #define RSP_SPECIAL_SRA			 3
 #define RSP_SPECIAL_SLLV		 4
@@ -132,7 +132,7 @@ typedef struct tagOPCODE {
 #define RSP_SPECIAL_XOR			38
 #define RSP_SPECIAL_NOR			39
 #define RSP_SPECIAL_SLT			42
-#define RSP_SPECIAL_SLTU		43*/
+#define RSP_SPECIAL_SLTU		43
 
 /* RSP RegImm opcodes */
 /*#define RSP_REGIMM_BLTZ			 0
@@ -141,8 +141,8 @@ typedef struct tagOPCODE {
 #define RSP_REGIMM_BGEZAL		17*/
 
 /* RSP COP0 opcodes */
-/*#define	RSP_COP0_MF				 0 
-#define	RSP_COP0_MT				 4*/
+#define	RSP_COP0_MF				 0 
+#define	RSP_COP0_MT				 4
 
 /* RSP COP2 opcodes */
 /*#define	RSP_COP2_MF				 0 

@@ -28,12 +28,18 @@
 #include <windows.h>
 #include <stdio.h>
 #include "RSP_OpCode.h"
-/*#include "CPU.h"*/
+#include "rsp_Cpu.h"
 #include "rsp_registers.h"
 #include "RSP Command.h"
 #include "rsp_config.h"
-/*#include "rsp_memory.h"
-#include "breakpoint.h"
+#include "rsp_memory.h"
+#include "RSP_breakpoint.h"
+#include "../Types.h"
+#include "../BreakPoints.h"
+#include "../r4300i Commands.h"
+#include "../r4300i Registers.h"
+#include "../r4300i Memory.h"
+#include "../Main.h"
 
 #define RSP_MaxCommandLines		30
 
@@ -44,9 +50,9 @@
 #define IDC_ADDRESS					1001
 #define IDC_FUNCTION_COMBO			1002
 #define IDC_GO_BUTTON				1003
-#define IDC_BREAK_BUTTON			1004*/
+#define IDC_BREAK_BUTTON			1004
 #define IDC_STEP_BUTTON				1005
-/*#define IDC_SKIP_BUTTON				1006
+#define IDC_SKIP_BUTTON				1006
 #define IDC_BP_BUTTON				1007
 #define IDC_R4300I_REGISTERS_BUTTON	1008
 #define IDC_R4300I_DEBUGGER_BUTTON	1009
@@ -54,9 +60,9 @@
 #define IDC_MEMORY_BUTTON			1011
 #define IDC_SCRL_BAR				1012
 
-void Paint_RSP_Commands (HWND hDlg);
-void RSP_Commands_Setup ( HWND hDlg );
-LRESULT CALLBACK RSP_Commands_Proc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static void Paint_RSP_Commands (HWND hDlg);
+static void RSP_Commands_Setup ( HWND hDlg );
+static LRESULT CALLBACK RSP_Commands_Proc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 typedef struct {
 	DWORD Location;
@@ -65,8 +71,8 @@ typedef struct {
     DWORD status;
 } RSPCOMMANDLINE;
 
-RSPCOMMANDLINE RSPCommandLine[30];*/
-static HWND RSPCommandshWnd, hList, hAddress/*, hFunctionlist*/, hGoButton/*, hBreakButton*/,
+RSPCOMMANDLINE RSPCommandLine[30];
+static HWND RSPCommandshWnd, hList, hAddress, hFunctionlist, hGoButton, hBreakButton,
 	hStepButton, hSkipButton, hBPButton, hR4300iRegisters, hR4300iDebugger, hRSPRegisters,
 	hMemory, hScrlBar;
 BOOL InRSPCommandsWindow = FALSE;
@@ -75,19 +81,19 @@ DWORD Stepping_RspCommands = FALSE;
 DWORD WaitingForRspStep = FALSE;
 
 
-/*void Create_RSP_Commands_Window ( int Child ) {
+static void Create_RSP_Commands_Window ( int Child ) {
 	DWORD ThreadID;
 
 	if ( Child ) {
 		InRSPCommandsWindow = TRUE;
-		DialogBox( hinstDLL, "RSPCOMMAND", NULL,(DLGPROC)RSP_Commands_Proc );
+		DialogBox( hInst, "RSPCOMMAND", NULL,(DLGPROC)RSP_Commands_Proc );
 
 		InRSPCommandsWindow = FALSE;
 		memset(RSPCommandLine,0,sizeof(RSPCommandLine));
 		SetRSPCommandToRunning();
 	} else {
 		if (!InRSPCommandsWindow) {
-			Stepping_Commands = TRUE;
+			Stepping_RspCommands = TRUE;
 			CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)Create_RSP_Commands_Window,
 				(LPVOID)TRUE,0, &ThreadID);	
 		} else {
@@ -97,7 +103,7 @@ DWORD WaitingForRspStep = FALSE;
 }
 
 void Disable_RSP_Commands_Window ( void ) {
-	SCROLLINFO si;
+	/*SCROLLINFO si;
 
 	if (!InRSPCommandsWindow) { return; }
 	EnableWindow(hList,            FALSE);
@@ -117,7 +123,8 @@ void Disable_RSP_Commands_Window ( void ) {
 	si.nMax   = 0;
 	si.nPos   = 1;
 	si.nPage  = 1;
-	SetScrollInfo(hScrlBar,SB_CTL,&si,TRUE);
+	SetScrollInfo(hScrlBar,SB_CTL,&si,TRUE);*/
+	LogMessage("TODO: Disable_RSP_Commands_Window");
 }
 
 int DisplayRSPCommand (DWORD location, int InsertPos) {
@@ -127,7 +134,7 @@ int DisplayRSPCommand (DWORD location, int InsertPos) {
 	RSP_LW_IMEM(location, &OpCode);
 	
 	status = 0;
-	if (location == *PrgCount) {status = RSP_Status_PC; }
+	if (location == SP_PC_REG) {status = RSP_Status_PC; }
 	if (CheckForRSPBPoint(location)) { status |= RSP_Status_BP; }
 	if (RSPCommandLine[InsertPos].opcode != OpCode) { Redraw = TRUE; }
 	if (RSPCommandLine[InsertPos].Location != location) { Redraw = TRUE; }
@@ -149,7 +156,7 @@ int DisplayRSPCommand (DWORD location, int InsertPos) {
 	return LinesUsed;
 }
 
-void DumpRSPCode (void) {
+/*void DumpRSPCode (void) {
 	char string[100], LogFileName[255], *p ;
 	DWORD location, OpCode, dwWritten;
 	HANDLE hLogFile = NULL;
@@ -219,7 +226,7 @@ void DumpRSPData (void) {
 		WriteFile( hLogFile,string,strlen(string),&dwWritten,NULL );
 	}
 	CloseHandle(hLogFile);
-}
+}*/
 
 void DrawRSPCommand ( LPARAM lParam ) {	
 	char Command[150], Offset[30], Instruction[30], Arguments[40];
@@ -252,18 +259,19 @@ void DrawRSPCommand ( LPARAM lParam ) {
 		sprintf(Arguments,"\0");
 	}
 		
-	if (*PrgCount == RSPCommandLine[ditem->itemID].Location) {
+	if (SP_PC_REG == RSPCommandLine[ditem->itemID].Location) {
 		ResetColor = TRUE;
 		hBrush     = (HBRUSH)(COLOR_HIGHLIGHT + 1);
 		oldColor   = SetTextColor(ditem->hDC,RGB(255,255,255));
 	} else {
 		ResetColor = FALSE;
 		hBrush     = (HBRUSH)GetStockObject(WHITE_BRUSH);
+		oldColor   = GetTextColor(ditem->hDC);
 	}
 
 	if (CheckForRSPBPoint( RSPCommandLine[ditem->itemID].Location )) {
 		ResetColor = TRUE;
-		if (*PrgCount == RSPCommandLine[ditem->itemID].Location) {
+		if (SP_PC_REG == RSPCommandLine[ditem->itemID].Location) {
 			SetTextColor(ditem->hDC,RGB(255,0,0));
 		} else {
 			oldColor = SetTextColor(ditem->hDC,RGB(255,0,0));
@@ -292,8 +300,7 @@ void DrawRSPCommand ( LPARAM lParam ) {
 	if (ResetColor == TRUE) {
 		SetTextColor( ditem->hDC, oldColor );
 	}
-
-}*/
+}
 
 
 void Enable_RSP_Commands_Window ( void ) {
@@ -329,11 +336,10 @@ void Enable_RSP_Commands_Window ( void ) {
 }
 
 void __cdecl Enter_RSP_Commands_Window ( void ) {
-    //Create_RSP_Commands_Window ( FALSE );
-	LogMessage("TODO: Enter_RSP_Commands_Window(void)");
+    Create_RSP_Commands_Window ( FALSE );
 }
 
-/*void Paint_RSP_Commands (HWND hDlg) {
+void Paint_RSP_Commands (HWND hDlg) {
 	PAINTSTRUCT ps;
 	RECT rcBox;
 	HFONT hOldFont;
@@ -401,7 +407,7 @@ void RefreshRSPCommands ( void ) {
 	}
 }
 
-LRESULT CALLBACK RSP_Commands_Proc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {	
+LRESULT CALLBACK RSP_Commands_Proc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		RSPCommandshWnd = hDlg;
@@ -448,34 +454,26 @@ LRESULT CALLBACK RSP_Commands_Proc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM 
 			SetRSPCommandToStepping();
 			break;
 		case IDC_STEP_BUTTON:			
-			WaitingForStep = FALSE;
-			break;*/
+			WaitingForRspStep = FALSE;
+			break;
 		/*case IDC_SKIP_BUTTON:
 			SkipNextRSPOpCode = TRUE;
 			WaitingFor_RSPStep   = FALSE;
 			break;*/
-/*		case IDC_BP_BUTTON:	
-			if (DebugInfo.Enter_BPoint_Window != NULL) {
-				DebugInfo.Enter_BPoint_Window(); 
-			}
+		case IDC_BP_BUTTON:	
+			Enter_BPoint_Window(); 
 			break;
 		case IDC_RSP_REGISTERS_BUTTON:
 			Enter_RSP_Register_Window();
 			break;
 		case IDC_R4300I_DEBUGGER_BUTTON: 
-			if (DebugInfo.Enter_R4300i_Commands_Window != NULL) {
-				DebugInfo.Enter_R4300i_Commands_Window(); 
-			}
+			Enter_R4300i_Commands_Window(); 
 			break;
 		case IDC_R4300I_REGISTERS_BUTTON:
-			if (DebugInfo.Enter_R4300i_Register_Window != NULL) {
-				DebugInfo.Enter_R4300i_Register_Window(); 
-			}
+			Enter_R4300i_Register_Window(); 
 			break;
 		case IDC_MEMORY_BUTTON:
-			if (DebugInfo.Enter_Memory_Window != NULL) {
-				DebugInfo.Enter_Memory_Window(); 
-			}
+			Enter_Memory_Window(); 
 			break;
 		case IDCANCEL:			
 			EndDialog( hDlg, IDCANCEL );
@@ -578,22 +576,22 @@ LRESULT CALLBACK RSP_Commands_Proc (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM 
 }
 
 void RSP_Commands_Setup ( HWND hDlg ) {
-#define WindowWidth  457
-#define WindowHeight 494
+#define WindowWidth  477
+#define WindowHeight 514
 	char Location[10];
 	DWORD X, Y, WndPos;
 	
 	hList = CreateWindowEx(WS_EX_STATICEDGE, "LISTBOX","", WS_CHILD | WS_VISIBLE | 
 		LBS_OWNERDRAWFIXED | LBS_NOTIFY,14,30,303,445, hDlg, 
-		(HMENU)IDC_LIST, hinstDLL,NULL );
+		(HMENU)IDC_LIST, hInst,NULL );
 	if ( hList) {
 		SendMessage(hList,WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
 		SendMessage(hList,LB_SETITEMHEIGHT, (WPARAM)0,(LPARAM)MAKELPARAM(14, 0));
 	}
 
-	sprintf(Location,"%03X",*PrgCount);
+	sprintf(Location,"%03X",SP_PC_REG);
 	hAddress = CreateWindowEx(0,"EDIT",Location, WS_CHILD | ES_UPPERCASE | WS_VISIBLE | 
-		WS_BORDER | WS_TABSTOP,375,17,36,18, hDlg,(HMENU)IDC_ADDRESS,hinstDLL, NULL );
+		WS_BORDER | WS_TABSTOP,375,17,36,18, hDlg,(HMENU)IDC_ADDRESS,hInst, NULL );
 	if (hAddress) {
 		SendMessage(hAddress,WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
 		SendMessage(hAddress,EM_SETLIMITTEXT, (WPARAM)3,(LPARAM)0);
@@ -601,94 +599,82 @@ void RSP_Commands_Setup ( HWND hDlg ) {
 
 	hFunctionlist = CreateWindowEx(0,"COMBOBOX","", WS_CHILD | WS_VSCROLL |
 		CBS_DROPDOWNLIST | CBS_SORT | WS_TABSTOP,352,56,89,150,hDlg,
-		(HMENU)IDC_FUNCTION_COMBO,hinstDLL,NULL);		
+		(HMENU)IDC_FUNCTION_COMBO,hInst,NULL);		
 	if (hFunctionlist) {
 		SendMessage(hFunctionlist,WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
 	} 
 
 	hGoButton = CreateWindowEx(WS_EX_STATICEDGE, "BUTTON","&Go", WS_CHILD | 
 		BS_DEFPUSHBUTTON | WS_VISIBLE | WS_TABSTOP, 347,56,100,24, hDlg,(HMENU)IDC_GO_BUTTON,
-		hinstDLL,NULL );
+		hInst,NULL );
 	if (hGoButton) {
 		SendMessage(hGoButton,WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
 	} 
 	
 	hBreakButton = CreateWindowEx(WS_EX_STATICEDGE, "BUTTON","&Break", WS_DISABLED | 
 		WS_CHILD | BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP | BS_TEXT, 347,85,100,24,hDlg,
-		(HMENU)IDC_BREAK_BUTTON,hinstDLL,NULL );
+		(HMENU)IDC_BREAK_BUTTON,hInst,NULL );
 	if (hBreakButton) {
 		SendMessage(hBreakButton,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
 	}
 
 	hStepButton = CreateWindowEx(WS_EX_STATICEDGE, "BUTTON","&Step", WS_CHILD | 
 		BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP | BS_TEXT, 347,114,100,24,hDlg,
-		(HMENU)IDC_STEP_BUTTON,hinstDLL,NULL );
+		(HMENU)IDC_STEP_BUTTON,hInst,NULL );
 	if (hStepButton) {
 		SendMessage(hStepButton,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
 	}
 
 	hSkipButton = CreateWindowEx(WS_EX_STATICEDGE, "BUTTON","&Skip", WS_CHILD | 
 		BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP | BS_TEXT, 347,143,100,24,hDlg,
-		(HMENU)IDC_SKIP_BUTTON,hinstDLL,NULL );
+		(HMENU)IDC_SKIP_BUTTON,hInst,NULL );
 	if (hSkipButton) {
 		SendMessage(hSkipButton,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
 	}
 
 	WndPos = 324;
-	if (DebugInfo.Enter_BPoint_Window == NULL) { WndPos += 29;}
-	if (DebugInfo.Enter_R4300i_Commands_Window == NULL) { WndPos += 29;}
-	if (DebugInfo.Enter_R4300i_Register_Window == NULL) { WndPos += 29;}
-	if (DebugInfo.Enter_Memory_Window == NULL) { WndPos += 29;}
 
-	if (DebugInfo.Enter_BPoint_Window != NULL) {
-		hBPButton = CreateWindowEx(WS_EX_STATICEDGE, "BUTTON","&Break Points", WS_CHILD | 
-			BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP | BS_TEXT, 347,WndPos,100,24,hDlg,
-			(HMENU)IDC_BP_BUTTON,hinstDLL,NULL );
-		if (hBPButton) {
-			SendMessage(hBPButton,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
-		}
+	hBPButton = CreateWindowEx(WS_EX_STATICEDGE, "BUTTON","&Break Points", WS_CHILD | 
+		BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP | BS_TEXT, 347,WndPos,100,24,hDlg,
+		(HMENU)IDC_BP_BUTTON,hInst,NULL );
+	if (hBPButton) {
+		SendMessage(hBPButton,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
 	}
 
 	WndPos += 29;
 	hRSPRegisters = CreateWindowEx(WS_EX_STATICEDGE,"BUTTON", "RSP &Registers...",
 		WS_CHILD | BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP | BS_TEXT, 347,WndPos,100,24,hDlg,
-		(HMENU)IDC_RSP_REGISTERS_BUTTON,hinstDLL,NULL );
+		(HMENU)IDC_RSP_REGISTERS_BUTTON,hInst,NULL );
 	if (hRSPRegisters) {
 		SendMessage(hRSPRegisters,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
 	} 
 
 	WndPos += 29;
-	if (DebugInfo.Enter_R4300i_Commands_Window != NULL) {
-		hR4300iDebugger = CreateWindowEx(WS_EX_STATICEDGE,"BUTTON", "R4300i &Debugger...", 
-			WS_CHILD | BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP | BS_TEXT, 347,WndPos,100,24,hDlg,
-			(HMENU)IDC_R4300I_DEBUGGER_BUTTON,hinstDLL,NULL );
-		if (hR4300iDebugger) {
-			SendMessage(hR4300iDebugger,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
-		}
+	hR4300iDebugger = CreateWindowEx(WS_EX_STATICEDGE,"BUTTON", "R4300i &Debugger...", 
+		WS_CHILD | BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP | BS_TEXT, 347,WndPos,100,24,hDlg,
+		(HMENU)IDC_R4300I_DEBUGGER_BUTTON,hInst,NULL );
+	if (hR4300iDebugger) {
+		SendMessage(hR4300iDebugger,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
 	}
 
 	WndPos += 29;
-	if (DebugInfo.Enter_R4300i_Register_Window != NULL) {
-		hR4300iRegisters = CreateWindowEx(WS_EX_STATICEDGE,"BUTTON","R4300i R&egisters...",
-			WS_CHILD | BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP | BS_TEXT, 347,WndPos,100,24,hDlg,
-			(HMENU)IDC_R4300I_REGISTERS_BUTTON,hinstDLL,NULL );
-		if (hR4300iRegisters) {
-			SendMessage(hR4300iRegisters,WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
-		}
+	hR4300iRegisters = CreateWindowEx(WS_EX_STATICEDGE,"BUTTON","R4300i R&egisters...",
+		WS_CHILD | BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP | BS_TEXT, 347,WndPos,100,24,hDlg,
+		(HMENU)IDC_R4300I_REGISTERS_BUTTON,hInst,NULL );
+	if (hR4300iRegisters) {
+		SendMessage(hR4300iRegisters,WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
 	}
 
 	WndPos += 29;
-	if (DebugInfo.Enter_Memory_Window != NULL) {
-		hMemory = CreateWindowEx(WS_EX_STATICEDGE,"BUTTON", "&Memory...", WS_CHILD | 
-			BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP | BS_TEXT, 347,WndPos,100,24,hDlg,
-			(HMENU)IDC_MEMORY_BUTTON,hinstDLL,NULL );
-		if (hMemory) {
-			SendMessage(hMemory,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
-		}
+	hMemory = CreateWindowEx(WS_EX_STATICEDGE,"BUTTON", "&Memory...", WS_CHILD | 
+		BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP | BS_TEXT, 347,WndPos,100,24,hDlg,
+		(HMENU)IDC_MEMORY_BUTTON,hInst,NULL );
+	if (hMemory) {
+		SendMessage(hMemory,WM_SETFONT,(WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
 	}
 	
 	hScrlBar = CreateWindowEx(WS_EX_STATICEDGE, "SCROLLBAR","", WS_CHILD | WS_VISIBLE | 
-		WS_TABSTOP | SBS_VERT, 318,14,18,439, hDlg, (HMENU)IDC_SCRL_BAR, hinstDLL, NULL );
+		WS_TABSTOP | SBS_VERT, 318,14,18,439, hDlg, (HMENU)IDC_SCRL_BAR, hInst, NULL );
 
 	if ( RSP_Running ) {
 		Enable_RSP_Commands_Window();
@@ -704,98 +690,95 @@ void RSP_Commands_Setup ( HWND hDlg ) {
 
 	SetWindowPos(hDlg,NULL,X,Y,WindowWidth,WindowHeight, SWP_NOZORDER | 
 		SWP_SHOWWINDOW);
+}
 
-}*/
-
-char * RSPSpecialName ( DWORD OpCode, DWORD PC ) {
-	/*OPCODE command;
-	command.Hex = OpCode;
+char * RSPSpecialName ( DWORD OpCode ) {
+	OPCODE command;
+	command.OP.Hex = OpCode;
 		
-	switch (command.funct) {
+	switch (command.OP.R.funct) {
 	case RSP_SPECIAL_SLL:
-		if (command.rd != 0) {
-			sprintf(CommandName,"SLL\t%s, %s, 0x%X",GPR_Name(command.rd),
-				GPR_Name(command.rt), command.sa);
+		if (command.OP.R.rd != 0) {
+			sprintf(CommandName,"SLL\t%s, %s, 0x%X",RspGPR_Name(command.OP.R.rd),
+				RspGPR_Name(command.OP.R.rt), command.OP.R.sa);
 		} else {
 			sprintf(CommandName,"NOP");
 		}
 		break;
 	case RSP_SPECIAL_SRL:
-		sprintf(CommandName,"SRL\t%s, %s, 0x%X",GPR_Name(command.rd),
-			GPR_Name(command.rt), command.sa);
+		sprintf(CommandName,"SRL\t%s, %s, 0x%X",RspGPR_Name(command.OP.R.rd),
+			RspGPR_Name(command.OP.R.rt), command.OP.R.sa);
 		break;
 	case RSP_SPECIAL_SRA:
-		sprintf(CommandName,"SRA\t%s, %s, 0x%X",GPR_Name(command.rd),
-			GPR_Name(command.rt), command.sa);
+		sprintf(CommandName,"SRA\t%s, %s, 0x%X",RspGPR_Name(command.OP.R.rd),
+			RspGPR_Name(command.OP.R.rt), command.OP.R.sa);
 		break;
 	case RSP_SPECIAL_SLLV:
-		sprintf(CommandName,"SLLV\t%s, %s, %s",GPR_Name(command.rd),
-			GPR_Name(command.rt), GPR_Name(command.rs));
+		sprintf(CommandName,"SLLV\t%s, %s, %s",RspGPR_Name(command.OP.R.rd),
+			RspGPR_Name(command.OP.R.rt), RspGPR_Name(command.OP.R.rs));
 		break;
 	case RSP_SPECIAL_SRLV:
-		sprintf(CommandName,"SRLV\t%s, %s, %s",GPR_Name(command.rd),
-			GPR_Name(command.rt), GPR_Name(command.rs));
+		sprintf(CommandName,"SRLV\t%s, %s, %s",RspGPR_Name(command.OP.R.rd),
+			RspGPR_Name(command.OP.R.rt), RspGPR_Name(command.OP.R.rs));
 		break;
 	case RSP_SPECIAL_SRAV:
-		sprintf(CommandName,"SRAV\t%s, %s, %s",GPR_Name(command.rd),
-			GPR_Name(command.rt), GPR_Name(command.rs));
+		sprintf(CommandName,"SRAV\t%s, %s, %s",RspGPR_Name(command.OP.R.rd),
+			RspGPR_Name(command.OP.R.rt), RspGPR_Name(command.OP.R.rs));
 		break;
 	case RSP_SPECIAL_JR:
-		sprintf(CommandName,"JR\t%s",GPR_Name(command.rs));
+		sprintf(CommandName,"JR\t%s",RspGPR_Name(command.OP.R.rs));
 		break;
 	case RSP_SPECIAL_JALR:
-		sprintf(CommandName,"JALR\t%s, %s",GPR_Name(command.rd),GPR_Name(command.rs));
+		sprintf(CommandName,"JALR\t%s, %s",RspGPR_Name(command.OP.R.rd),RspGPR_Name(command.OP.R.rs));
 		break;
 	case RSP_SPECIAL_BREAK:
 		sprintf(CommandName,"BREAK");
 		break;
 	case RSP_SPECIAL_ADD:
-		sprintf(CommandName,"ADD\t%s, %s, %s",GPR_Name(command.rd),GPR_Name(command.rs),
-			GPR_Name(command.rt));
+		sprintf(CommandName,"ADD\t%s, %s, %s",RspGPR_Name(command.OP.R.rd),RspGPR_Name(command.OP.R.rs),
+			RspGPR_Name(command.OP.R.rt));
 		break;
 	case RSP_SPECIAL_ADDU:
-		sprintf(CommandName,"ADDU\t%s, %s, %s",GPR_Name(command.rd),GPR_Name(command.rs),
-			GPR_Name(command.rt));
+		sprintf(CommandName,"ADDU\t%s, %s, %s",RspGPR_Name(command.OP.R.rd),RspGPR_Name(command.OP.R.rs),
+			RspGPR_Name(command.OP.R.rt));
 		break;
 	case RSP_SPECIAL_SUB:
-		sprintf(CommandName,"SUB\t%s, %s, %s",GPR_Name(command.rd),GPR_Name(command.rs),
-			GPR_Name(command.rt));
+		sprintf(CommandName,"SUB\t%s, %s, %s",RspGPR_Name(command.OP.R.rd),RspGPR_Name(command.OP.R.rs),
+			RspGPR_Name(command.OP.R.rt));
 		break;
 	case RSP_SPECIAL_SUBU:
-		sprintf(CommandName,"SUBU\t%s, %s, %s",GPR_Name(command.rd),GPR_Name(command.rs),
-			GPR_Name(command.rt));
+		sprintf(CommandName,"SUBU\t%s, %s, %s",RspGPR_Name(command.OP.R.rd),RspGPR_Name(command.OP.R.rs),
+			RspGPR_Name(command.OP.R.rt));
 		break;
 	case RSP_SPECIAL_AND:
-		sprintf(CommandName,"AND\t%s, %s, %s",GPR_Name(command.rd),GPR_Name(command.rs),
-			GPR_Name(command.rt));
+		sprintf(CommandName,"AND\t%s, %s, %s",RspGPR_Name(command.OP.R.rd),RspGPR_Name(command.OP.R.rs),
+			RspGPR_Name(command.OP.R.rt));
 		break;
 	case RSP_SPECIAL_OR:
-		sprintf(CommandName,"OR\t%s, %s, %s",GPR_Name(command.rd),GPR_Name(command.rs),
-			GPR_Name(command.rt));
+		sprintf(CommandName,"OR\t%s, %s, %s",RspGPR_Name(command.OP.R.rd),RspGPR_Name(command.OP.R.rs),
+			RspGPR_Name(command.OP.R.rt));
 		break;
 	case RSP_SPECIAL_XOR:
-		sprintf(CommandName,"XOR\t%s, %s, %s",GPR_Name(command.rd),GPR_Name(command.rs),
-			GPR_Name(command.rt));
+		sprintf(CommandName,"XOR\t%s, %s, %s",RspGPR_Name(command.OP.R.rd),RspGPR_Name(command.OP.R.rs),
+			RspGPR_Name(command.OP.R.rt));
 		break;
 	case RSP_SPECIAL_NOR:
-		sprintf(CommandName,"NOR\t%s, %s, %s",GPR_Name(command.rd),GPR_Name(command.rs),
-			GPR_Name(command.rt));
+		sprintf(CommandName,"NOR\t%s, %s, %s",RspGPR_Name(command.OP.R.rd),RspGPR_Name(command.OP.R.rs),
+			RspGPR_Name(command.OP.R.rt));
 		break;
 	case RSP_SPECIAL_SLT:
-		sprintf(CommandName,"SLT\t%s, %s, %s",GPR_Name(command.rd),GPR_Name(command.rs),
-			GPR_Name(command.rt));
+		sprintf(CommandName,"SLT\t%s, %s, %s",RspGPR_Name(command.OP.R.rd),RspGPR_Name(command.OP.R.rs),
+			RspGPR_Name(command.OP.R.rt));
 		break;
 	case RSP_SPECIAL_SLTU:
-		sprintf(CommandName,"SLTU\t%s, %s, %s",GPR_Name(command.rd),GPR_Name(command.rs),
-			GPR_Name(command.rt));
+		sprintf(CommandName,"SLTU\t%s, %s, %s",RspGPR_Name(command.OP.R.rd),RspGPR_Name(command.OP.R.rs),
+			RspGPR_Name(command.OP.R.rt));
 		break;
 	default:
 		sprintf(CommandName,"RSP: Unknown\t%02X %02X %02X %02X",
-			command.Ascii[3],command.Ascii[2],command.Ascii[1],command.Ascii[0]);
+			command.OP.Ascii[3],command.OP.Ascii[2],command.OP.Ascii[1],command.OP.Ascii[0]);
 	}
-	return CommandName;*/
-	LogMessage("TODO: RSP_SPECIAL");
-	return "";
+	return CommandName;
 }
 
 char * RSPRegimmName ( DWORD OpCode, DWORD PC ) {
@@ -832,23 +815,21 @@ char * RSPRegimmName ( DWORD OpCode, DWORD PC ) {
 	return "";
 }
 
-char * RSPCop0Name ( DWORD OpCode, DWORD PC ) {
-	/*OPCODE command;
-	command.Hex = OpCode;
-	switch (command.rs) {
+char * RSPCop0Name ( DWORD OpCode ) {
+	OPCODE command;
+	command.OP.Hex = OpCode;
+	switch (command.OP.R.rs) {
 	case RSP_COP0_MF:
-		sprintf(CommandName,"MFC0\t%s, %s",GPR_Name(command.rt),COP0_Name(command.rd));
+		sprintf(CommandName,"MFC0\t%s, %s",RspGPR_Name(command.OP.R.rt),RspCOP0_Name(command.OP.R.rd));
 		break;
 	case RSP_COP0_MT:
-		sprintf(CommandName,"MTC0\t%s, %s",GPR_Name(command.rt),COP0_Name(command.rd));
+		sprintf(CommandName,"MTC0\t%s, %s",RspGPR_Name(command.OP.R.rt),RspCOP0_Name(command.OP.R.rd));
 		break;
 	default:
 		sprintf(CommandName,"RSP: Unknown\t%02X %02X %02X %02X",
-			command.Ascii[3],command.Ascii[2],command.Ascii[1],command.Ascii[0]);
+			command.OP.Ascii[3],command.OP.Ascii[2],command.OP.Ascii[1],command.OP.Ascii[0]);
 	}
-	return CommandName;*/
-	LogMessage("TODO: RSPCop0Name");
-	return "";
+	return CommandName;
 }
 
 char * RSPCop2Name ( DWORD OpCode, DWORD PC ) {
@@ -1194,7 +1175,7 @@ char * RSPOpcodeName ( DWORD OpCode, DWORD PC ) {
 		
 	switch (command.OP.I.op) {
 	case RSP_SPECIAL:
-		return RSPSpecialName(OpCode,PC);
+		return RSPSpecialName(OpCode);
 	case RSP_REGIMM:
 		return RSPRegimmName(OpCode,PC);
 	case RSP_J:
@@ -1256,7 +1237,7 @@ char * RSPOpcodeName ( DWORD OpCode, DWORD PC ) {
 		sprintf(CommandName,"LUI\t%s, 0x%04X",RspGPR_Name(command.OP.I.rt), command.OP.I.immediate);
 		break;
 	case RSP_CP0:
-		return RSPCop0Name(OpCode,PC);
+		return RSPCop0Name(OpCode);
 	case RSP_CP2:
 		return RSPCop2Name(OpCode,PC);
 	case RSP_LB:
@@ -1302,8 +1283,8 @@ char * RSPOpcodeName ( DWORD OpCode, DWORD PC ) {
 	return CommandName;
 }
 
-/*void SetRSPCommandToRunning ( void ) { 	
-	Stepping_Commands = FALSE;
+void SetRSPCommandToRunning ( void ) { 	
+	/*Stepping_Commands = FALSE;
 	if (InRSPCommandsWindow == FALSE) { return; }
 	EnableWindow(hGoButton,    FALSE);
 	EnableWindow(hBreakButton, TRUE);
@@ -1312,8 +1293,9 @@ char * RSPOpcodeName ( DWORD OpCode, DWORD PC ) {
 	SendMessage(RSPCommandshWnd, DM_SETDEFID,IDC_BREAK_BUTTON,0);
 	SendMessage(hGoButton, BM_SETSTYLE,BS_PUSHBUTTON,TRUE);
 	SendMessage(hBreakButton, BM_SETSTYLE,BS_DEFPUSHBUTTON,TRUE);
-	SetFocus(hBreakButton);
-}*/
+	SetFocus(hBreakButton);*/
+	LogMessage("TODO: SetRSPCommandToRunning");
+}
 
 void SetRSPCommandToStepping ( void ) { 	
 	/*if (InRSPCommandsWindow == FALSE) { return; }
@@ -1330,7 +1312,7 @@ void SetRSPCommandToStepping ( void ) {
 }
 
 void SetRSPCommandViewto ( UINT NewLocation ) {
-	/*unsigned int location;
+	unsigned int location;
 	char Value[20];
 
 	if (InRSPCommandsWindow == FALSE) { return; }
@@ -1343,6 +1325,5 @@ void SetRSPCommandViewto ( UINT NewLocation ) {
 		SetWindowText(hAddress,Value);
 	} else {
 		RefreshRSPCommands();
-	}*/
-	LogMessage("TODO: SetRSPCommandViewto");
+	}
 }

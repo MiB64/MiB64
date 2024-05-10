@@ -34,8 +34,8 @@ void DumpRSPData (void);
 void Disable_RSP_Commands_Window ( void );*/
 void Enable_RSP_Commands_Window ( void );
 void __cdecl Enter_RSP_Commands_Window ( void );
-/*void RefreshRSPCommands ( void );
-void SetRSPCommandToRunning ( void );*/
+void RefreshRSPCommands ( void );
+void SetRSPCommandToRunning ( void );
 void SetRSPCommandToStepping ( void );
 void SetRSPCommandViewto ( UINT NewLocation );
 

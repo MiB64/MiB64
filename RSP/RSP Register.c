@@ -91,13 +91,14 @@ char * RspGPR_Strings[32] = {
 			SetForegroundWindow(RSP_Registers_hDlg);
 		}	
 	}
-}
+}*/
 
 void Enter_RSP_Register_Window ( void ) {
-    Create_RSP_Register_Window ( FALSE );
+    /*Create_RSP_Register_Window ( FALSE );*/
+	LogMessage("TODO: Enter_RSP_RegisterWindow");
 }
 
-void HideRSP_RegisterPanel ( int Panel) {
+/*void HideRSP_RegisterPanel ( int Panel) {
 	int count;
 
 	switch( Panel ) {
