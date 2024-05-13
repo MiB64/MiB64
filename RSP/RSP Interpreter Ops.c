@@ -30,6 +30,7 @@
 #include "rsp_Cpu.h"
 #include "RSP Command.h"
 #include "rsp_registers.h"
+#include "rsp_config.h"
 /*#include "Interpreter CPU.h"
 #include "memory.h"
 #include "dma.h"
@@ -129,15 +130,16 @@ void RSP_Opcode_ANDI ( void ) {
 	if (RSPOpC.rt != 0) {
 		RSP_GPR[RSPOpC.rt].W = RSP_GPR[RSPOpC.rs].W & RSPOpC.immediate;
 	}
-}
+}*/
 
 void RSP_Opcode_ORI ( void ) {
-	if (RSPOpC.rt != 0) {
+	/*if (RSPOpC.rt != 0) {
 		RSP_GPR[RSPOpC.rt].W = RSP_GPR[RSPOpC.rs].W | RSPOpC.immediate;
-	}
+	}*/
+	LogMessage("TODO: RDP_Opcode_ORI");
 }
 
-void RSP_Opcode_XORI ( void ) {
+/*void RSP_Opcode_XORI ( void ) {
 	if (RSPOpC.rt != 0) {
 		RSP_GPR[RSPOpC.rt].W = RSP_GPR[RSPOpC.rs].W ^ RSPOpC.immediate;
 	}

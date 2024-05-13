@@ -40,9 +40,9 @@ void RSP_Opcode_ADDI    ( void );
 void RSP_Opcode_ADDIU   ( void );
 void RSP_Opcode_SLTI    ( void );
 void RSP_Opcode_SLTIU   ( void );
-void RSP_Opcode_ANDI    ( void );
+void RSP_Opcode_ANDI    ( void );*/
 void RSP_Opcode_ORI     ( void );
-void RSP_Opcode_XORI    ( void );
+/*void RSP_Opcode_XORI    ( void );
 void RSP_Opcode_LUI     ( void );
 void RSP_Opcode_COP0    ( void );
 void RSP_Opcode_COP2    ( void );

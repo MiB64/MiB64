@@ -118,11 +118,10 @@ void SetupTLB_Entry (int Entry) {
 		if (FastTlb[FastIndx].PHYSSTART > 0x1FFFFFFF) {
 			continue;				
 		}
-	
-		//if (FastTlb[FastIndx].GLOBAL == 0) { 
-		//	DisplayError("Non Global TLB Entry ???");
-		//	continue;
-		//}
+
+		if (FastTlb[FastIndx].GLOBAL == 0 && tlb[Entry].EntryHi.BreakDownEntryHi.ASID != (ENTRYHI_REGISTER & 0xFF)) { 
+			continue;
+		}
 		
 		//test if overlap
 		FastTlb[FastIndx].ValidEntry = TRUE;
@@ -173,7 +172,13 @@ void TLB_Read (void) {
 	}
 
 	PAGE_MASK_REGISTER = tlb[index].PageMask.Value ;
+
+	int previousASID = ENTRYHI_REGISTER & 0xFF;
 	ENTRYHI_REGISTER = (tlb[index].EntryHi.Value & ~((unsigned long long)tlb[index].PageMask.Value));
+	if (previousASID != (ENTRYHI_REGISTER & 0xFF)) {
+		SetupTLB();
+	}
+	
 	ENTRYLO0_REGISTER = tlb[index].EntryLo0.Value;
 	ENTRYLO1_REGISTER = tlb[index].EntryLo1.Value;		
 }

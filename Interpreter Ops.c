@@ -1736,7 +1736,13 @@ void _fastcall r4300i_COP0_MT (void) {
 		ChangeCompareTimer();
 		break;
 	case 10: //Entry Hi
+	{
+		int previousASID = CP0[Opcode.REG.rd].UB[0];
 		CP0[Opcode.REG.rd].UDW = GPR[Opcode.BRANCH.rt].UW[0] & 0x0FFFFE0FF;
+		if (previousASID != (CP0[Opcode.REG.rd].UB[0])) {
+			SetupTLB();
+		}
+	}
 		break;
 	case 11: //Compare
 		CP0[Opcode.REG.rd].UW[0] = GPR[Opcode.BRANCH.rt].UW[0];
@@ -1869,7 +1875,13 @@ void _fastcall r4300i_COP0_DMT(void) {
 		ChangeCompareTimer();
 		break;
 	case 10: //Entry Hi
-		CP0[Opcode.REG.rd].UDW = GPR[Opcode.BRANCH.rt].UDW & 0xC00000FFFFFFE0FFLL;
+		{
+			int previousASID = CP0[Opcode.REG.rd].UB[0];
+			CP0[Opcode.REG.rd].UDW = GPR[Opcode.BRANCH.rt].UDW & 0xC00000FFFFFFE0FFLL;
+			if (previousASID != (CP0[Opcode.REG.rd].UB[0])) {
+				SetupTLB();
+			}
+		}
 		break;
 	case 11: //Compare
 		CP0[Opcode.REG.rd].UW[0] = GPR[Opcode.BRANCH.rt].UW[0];

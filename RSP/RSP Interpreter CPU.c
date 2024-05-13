@@ -57,7 +57,7 @@ void BuildInterpreterRspCPU(void) {
 	RSP_Opcode[10] = /*RSP_Opcode_SLTI*/(void*)rsp_UnknownOpcode;
 	RSP_Opcode[11] = /*RSP_Opcode_SLTIU*/(void*)rsp_UnknownOpcode;
 	RSP_Opcode[12] = /*RSP_Opcode_ANDI*/(void*)rsp_UnknownOpcode;
-	RSP_Opcode[13] = /*RSP_Opcode_ORI*/(void*)rsp_UnknownOpcode;
+	RSP_Opcode[13] = (void*)RSP_Opcode_ORI; // TOCHECK
 	RSP_Opcode[14] = /*RSP_Opcode_XORI*/(void*)rsp_UnknownOpcode;
 	RSP_Opcode[15] = /*RSP_Opcode_LUI*/(void*)rsp_UnknownOpcode;
 	RSP_Opcode[16] = /*RSP_Opcode_COP0*/(void*)rsp_UnknownOpcode;
