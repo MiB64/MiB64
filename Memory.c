@@ -1499,7 +1499,7 @@ int r4300i_CPU_MemoryFilter( DWORD dwExptCode, LPEXCEPTION_POINTERS lpEP) {
 static void checkValueWrittenToRomDecay() {
 	if (WrittenToRom) {
 		DWORD diff = COUNT_REGISTER - WrittenToRomCount;
-		const DWORD DecayThreshold = 3 * 70 * CountPerOp;
+		const DWORD DecayThreshold = 70 * CountPerOp;
 		if (COUNT_REGISTER < WrittenToRomCount) {
 			diff = COUNT_REGISTER + (0XFFFFFFFF - WrittenToRomCount) + 1;
 		}
