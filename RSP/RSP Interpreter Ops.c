@@ -31,9 +31,9 @@
 #include "RSP Command.h"
 #include "rsp_registers.h"
 #include "rsp_config.h"
-/*#include "Interpreter CPU.h"
-#include "memory.h"
-#include "dma.h"
+#include "RSP Interpreter CPU.h"
+#include "rsp_memory.h"
+/*#include "dma.h"
 #include "log.h"
 #include "x86.h"*/
 #include "../Main.h"
@@ -41,11 +41,11 @@
 /*extern U_WORD Recp, RecpResult, SQroot, SQrootResult;*/
 
 /************************* OpCode functions *************************/
-/*void RSP_Opcode_SPECIAL ( void ) {
-	((void (*)()) RSP_Special[ RSPOpC.funct ])();
+void RSP_Opcode_SPECIAL ( void ) {
+	((void (*)()) RSP_Special[ RSPOpC.OP.R.funct ])();
 }
 
-void RSP_Opcode_REGIMM ( void ) {
+/*void RSP_Opcode_REGIMM ( void ) {
 	((void (*)()) RSP_RegImm[ RSPOpC.rt ])();
 }
 
@@ -58,57 +58,57 @@ void RSP_Opcode_JAL ( void ) {
 	RSP_NextInstruction = DELAY_SLOT;
 	RSP_GPR[31].UW = ( *PrgCount + 8 ) & 0xFFC;
 	RSP_JumpTo = (RSPOpC.target << 2) & 0xFFC;
-}
+}*/
 
 void RSP_Opcode_BEQ ( void ) {
 	RSP_NextInstruction = DELAY_SLOT;
-	if (RSP_GPR[RSPOpC.rs].W == RSP_GPR[RSPOpC.rt].W) {
-		RSP_JumpTo = ( *PrgCount + ((short)RSPOpC.offset << 2) + 4 ) & 0xFFC;
+	if (RSP_GPR[RSPOpC.OP.B.rs].W == RSP_GPR[RSPOpC.OP.B.rt].W) {
+		RSP_JumpTo = ( SP_PC_REG + ((short)RSPOpC.OP.B.offset << 2) + 4 ) & 0xFFC;
 	} else  {
-		RSP_JumpTo = ( *PrgCount + 8 ) & 0xFFC;
+		RSP_JumpTo = ( SP_PC_REG + 8 ) & 0xFFC;
 	}
 }
 
 void RSP_Opcode_BNE ( void ) {
 	RSP_NextInstruction = DELAY_SLOT;
-	if (RSP_GPR[RSPOpC.rs].W != RSP_GPR[RSPOpC.rt].W) {
-		RSP_JumpTo = ( *PrgCount + ((short)RSPOpC.offset << 2) + 4 ) & 0xFFC;
+	if (RSP_GPR[RSPOpC.OP.B.rs].W != RSP_GPR[RSPOpC.OP.B.rt].W) {
+		RSP_JumpTo = ( SP_PC_REG + ((short)RSPOpC.OP.B.offset << 2) + 4 ) & 0xFFC;
 	} else  {
-		RSP_JumpTo = ( *PrgCount + 8 ) & 0xFFC;
+		RSP_JumpTo = ( SP_PC_REG + 8 ) & 0xFFC;
 	}
 }
 
-void RSP_Opcode_BLEZ ( void ) {
+/*void RSP_Opcode_BLEZ ( void ) {
 	RSP_NextInstruction = DELAY_SLOT;
 	if (RSP_GPR[RSPOpC.rs].W <= 0) {
 		RSP_JumpTo = ( *PrgCount + ((short)RSPOpC.offset << 2) + 4 ) & 0xFFC;
 	} else  {
 		RSP_JumpTo = ( *PrgCount + 8 ) & 0xFFC;
 	}
-}
+}*/
 
 void RSP_Opcode_BGTZ ( void ) {
 	RSP_NextInstruction = DELAY_SLOT;
-	if (RSP_GPR[RSPOpC.rs].W > 0) {
-		RSP_JumpTo = ( *PrgCount + ((short)RSPOpC.offset << 2) + 4 ) & 0xFFC;
+	if (RSP_GPR[RSPOpC.OP.B.rs].W > 0) {
+		RSP_JumpTo = ( SP_PC_REG + ((short)RSPOpC.OP.B.offset << 2) + 4 ) & 0xFFC;
 	} else  {
-		RSP_JumpTo = ( *PrgCount + 8 ) & 0xFFC;
+		RSP_JumpTo = ( SP_PC_REG + 8 ) & 0xFFC;
 	}
 }
 
-void RSP_Opcode_ADDI ( void ) {
+/*void RSP_Opcode_ADDI ( void ) {
 	if (RSPOpC.rt != 0) {
 		RSP_GPR[RSPOpC.rt].W = RSP_GPR[RSPOpC.rs].W + (short)RSPOpC.immediate;
 	}
-}
+}*/
 
 void RSP_Opcode_ADDIU ( void ) {
-	if (RSPOpC.rt != 0) {
-		RSP_GPR[RSPOpC.rt].UW = RSP_GPR[RSPOpC.rs].UW + (DWORD)((short)RSPOpC.immediate);
+	if (RSPOpC.OP.I.rt != 0) {
+		RSP_GPR[RSPOpC.OP.I.rt].UW = RSP_GPR[RSPOpC.OP.I.rs].UW + (DWORD)((short)RSPOpC.OP.I.immediate);
 	}
 }
 
-void RSP_Opcode_SLTI (void) {
+/*void RSP_Opcode_SLTI (void) {
 	if (RSPOpC.rt == 0) { return; }
 	if (RSP_GPR[RSPOpC.rs].W < (short)RSPOpC.immediate) {
 		RSP_GPR[RSPOpC.rt].W = 1;
@@ -124,38 +124,37 @@ void RSP_Opcode_SLTIU (void) {
 	} else {
 		RSP_GPR[RSPOpC.rt].W = 0;
 	}
-}
-
-void RSP_Opcode_ANDI ( void ) {
-	if (RSPOpC.rt != 0) {
-		RSP_GPR[RSPOpC.rt].W = RSP_GPR[RSPOpC.rs].W & RSPOpC.immediate;
-	}
 }*/
 
+void RSP_Opcode_ANDI ( void ) {
+	if (RSPOpC.OP.I.rt != 0) {
+		RSP_GPR[RSPOpC.OP.I.rt].W = RSP_GPR[RSPOpC.OP.I.rs].W & RSPOpC.OP.I.immediate;
+	}
+}
+
 void RSP_Opcode_ORI ( void ) {
-	/*if (RSPOpC.rt != 0) {
-		RSP_GPR[RSPOpC.rt].W = RSP_GPR[RSPOpC.rs].W | RSPOpC.immediate;
-	}*/
-	LogMessage("TODO: RDP_Opcode_ORI");
+	if (RSPOpC.OP.I.rt != 0) {
+		RSP_GPR[RSPOpC.OP.I.rt].W = RSP_GPR[RSPOpC.OP.I.rs].W | RSPOpC.OP.I.immediate;
+	}
 }
 
 /*void RSP_Opcode_XORI ( void ) {
 	if (RSPOpC.rt != 0) {
 		RSP_GPR[RSPOpC.rt].W = RSP_GPR[RSPOpC.rs].W ^ RSPOpC.immediate;
 	}
-}
+}*/
 
 void RSP_Opcode_LUI (void) {
-	if (RSPOpC.rt != 0) {
-		RSP_GPR[RSPOpC.rt].W = (short)RSPOpC.offset << 16;
+	if (RSPOpC.OP.I.rt != 0) {
+		RSP_GPR[RSPOpC.OP.I.rt].W = (short)RSPOpC.OP.I.immediate << 16;
 	}
 }
 
 void RSP_Opcode_COP0 (void) {
-	((void (*)()) RSP_Cop0[ RSPOpC.rs ])();
+	((void (*)()) RSP_Cop0[ RSPOpC.OP.I.rs ])();
 }
 
-void RSP_Opcode_COP2 (void) {
+/*void RSP_Opcode_COP2 (void) {
 	((void (*)()) RSP_Cop2[ RSPOpC.rs ])();
 }
 
@@ -196,14 +195,14 @@ void RSP_Opcode_SB ( void ) {
 void RSP_Opcode_SH ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (short)RSPOpC.offset) & 0xFFF);
 	RSP_SH_DMEM( Address, RSP_GPR[RSPOpC.rt].UHW[0] );
-}
+}*/
 
 void RSP_Opcode_SW ( void ) {
-	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (short)RSPOpC.offset) & 0xFFF);
-	RSP_SW_DMEM( Address, RSP_GPR[RSPOpC.rt].UW );
+	DWORD Address = ((RSP_GPR[RSPOpC.OP.LS.base].UW + (short)RSPOpC.OP.LS.offset) & 0xFFF);
+	RSP_SW_DMEM( Address, RSP_GPR[RSPOpC.OP.LS.rt].UW );
 }
 
-void RSP_Opcode_LC2 (void) {
+/*void RSP_Opcode_LC2 (void) {
 	((void (*)()) RSP_Lc2 [ RSPOpC.rd ])();
 }
 
@@ -211,13 +210,13 @@ void RSP_Opcode_SC2 (void) {
 	((void (*)()) RSP_Sc2 [ RSPOpC.rd ])();
 }*/
 /********************** R4300i OpCodes: Special **********************/
-/*void RSP_Special_SLL ( void ) {
-	if (RSPOpC.rd != 0) {
-		RSP_GPR[RSPOpC.rd].W = RSP_GPR[RSPOpC.rt].W << RSPOpC.sa;
+void RSP_Special_SLL ( void ) {
+	if (RSPOpC.OP.R.rd != 0) {
+		RSP_GPR[RSPOpC.OP.R.rd].W = RSP_GPR[RSPOpC.OP.R.rt].W << RSPOpC.OP.R.sa;
 	}
 }
 
-void RSP_Special_SRL ( void ) {
+/*void RSP_Special_SRL ( void ) {
 	if (RSPOpC.rd != 0) {
 		RSP_GPR[RSPOpC.rd].UW = RSP_GPR[RSPOpC.rt].UW >> RSPOpC.sa;
 	}
@@ -256,18 +255,18 @@ void RSP_Special_JALR (void) {
 	RSP_NextInstruction = DELAY_SLOT;
 	RSP_GPR[RSPOpC.rd].W = (*PrgCount + 8) & 0xFFC;
 	RSP_JumpTo = (RSP_GPR[RSPOpC.rs].W & 0xFFC);
-}
+}*/
 
 void RSP_Special_BREAK ( void ) {
 	RSP_Running = FALSE;
-	*RSPInfo.SP_STATUS_REG |= (SP_STATUS_HALT | SP_STATUS_BROKE );
-	if ((*RSPInfo.SP_STATUS_REG & SP_STATUS_INTR_BREAK) != 0 ) {
+	SP_STATUS_REG |= (SP_STATUS_HALT | SP_STATUS_BROKE );
+	/*if ((*RSPInfo.SP_STATUS_REG & SP_STATUS_INTR_BREAK) != 0 ) {
 		*RSPInfo.MI_INTR_REG |= R4300i_SP_Intr;
 		RSPInfo.CheckInterrupts();
-	}
+	}*/
 }
 
-void RSP_Special_ADD (void) {
+/*void RSP_Special_ADD (void) {
 	if (RSPOpC.rd != 0) {
 		RSP_GPR[RSPOpC.rd].W = RSP_GPR[RSPOpC.rs].W + RSP_GPR[RSPOpC.rt].W;
 	}
@@ -371,29 +370,33 @@ void RSP_Opcode_BGEZAL ( void ) {
 	}
 }*/
 /************************** Cop0 functions *************************/
-/*void RSP_Cop0_MF (void) {
-	switch (RSPOpC.rd) {
-	case 4: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.SP_STATUS_REG; break;
-	case 5: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.SP_DMA_FULL_REG; break;
-	case 6: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.SP_DMA_BUSY_REG; break;
+void RSP_Cop0_MF (void) {
+	switch (RSPOpC.OP.R.rd) {
+	case 0: RSP_GPR[RSPOpC.OP.R.rt].UW = SP_MEM_ADDR_REG; break;
+	case 1: RSP_GPR[RSPOpC.OP.R.rt].UW = SP_DRAM_ADDR_REG; break;
+	case 2: RSP_GPR[RSPOpC.OP.R.rt].UW = SP_RD_LEN_REG; break;
+	case 3: RSP_GPR[RSPOpC.OP.R.rt].UW = SP_WR_LEN_REG; break;
+	case 4: RSP_GPR[RSPOpC.OP.R.rt].UW = SP_STATUS_REG; break;
+	case 5: RSP_GPR[RSPOpC.OP.R.rt].UW = SP_DMA_FULL_REG; break;
+	case 6: RSP_GPR[RSPOpC.OP.R.rt].UW = SP_DMA_BUSY_REG; break;
 	case 7: 
-		RSP_GPR[RSPOpC.rt].W = 0;
-		//RSP_GPR[RSPOpC.rt].W = *RSPInfo.SP_SEMAPHORE_REG;
-		//*RSPInfo.SP_SEMAPHORE_REG = 1;
+		RSP_GPR[RSPOpC.OP.R.rt].W = SP_SEMAPHORE_REG;
+		SP_SEMAPHORE_REG = 1;
 		break;
-	case 8: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.DPC_START_REG ; break;
+	/*case 8: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.DPC_START_REG ; break;
 	case 9: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.DPC_END_REG ; break;
 	case 10: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.DPC_CURRENT_REG; break;
 	case 11: RSP_GPR[RSPOpC.rt].W = *RSPInfo.DPC_STATUS_REG; break;
-	case 12: RSP_GPR[RSPOpC.rt].W = *RSPInfo.DPC_CLOCK_REG; break;
+	case 12: RSP_GPR[RSPOpC.rt].W = *RSPInfo.DPC_CLOCK_REG; break;*/
 	default:
-		DisplayError("have not implemented RSP MF CP0 reg %s (%d)",COP0_Name(RSPOpC.rd),RSPOpC.rd);
+		DisplayError("have not implemented RSP MF CP0 reg %s (%d)",RspCOP0_Name(RSPOpC.OP.R.rd),RSPOpC.OP.R.rd);
+		LogMessage("have not implemented RSP MF CP0 reg %s (%d)", RspCOP0_Name(RSPOpC.OP.R.rd), RSPOpC.OP.R.rd);
 	}
 }
 
 void RSP_Cop0_MT (void) {
-	switch (RSPOpC.rd) {
-	case 0: *RSPInfo.SP_MEM_ADDR_REG  = RSP_GPR[RSPOpC.rt].UW; break;
+	switch (RSPOpC.OP.R.rd) {
+	/*case 0: *RSPInfo.SP_MEM_ADDR_REG  = RSP_GPR[RSPOpC.rt].UW; break;
 	case 1: *RSPInfo.SP_DRAM_ADDR_REG = RSP_GPR[RSPOpC.rt].UW; break;
 	case 2: 
 		*RSPInfo.SP_RD_LEN_REG = RSP_GPR[RSPOpC.rt].UW; 
@@ -402,36 +405,15 @@ void RSP_Cop0_MT (void) {
 	case 3: 
 		*RSPInfo.SP_WR_LEN_REG = RSP_GPR[RSPOpC.rt].UW; 
 		SP_DMA_WRITE();		
-		break;
+		break;*/
 	case 4:
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_CLR_HALT ) != 0) { *RSPInfo.SP_STATUS_REG &= ~SP_STATUS_HALT; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_SET_HALT ) != 0) { *RSPInfo.SP_STATUS_REG |= SP_STATUS_HALT;  }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_CLR_BROKE ) != 0) { *RSPInfo.SP_STATUS_REG &= ~SP_STATUS_BROKE; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_CLR_INTR ) != 0) { *RSPInfo.MI_INTR_REG &= ~R4300i_SP_Intr; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_SET_INTR ) != 0) { DisplayError("SP_SET_INTR");  }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_CLR_SSTEP ) != 0) { *RSPInfo.SP_STATUS_REG &= ~SP_STATUS_SSTEP; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_SET_SSTEP ) != 0) { *RSPInfo.SP_STATUS_REG |= SP_STATUS_SSTEP;  }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_CLR_INTR_BREAK ) != 0) { *RSPInfo.SP_STATUS_REG &= ~SP_STATUS_INTR_BREAK; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_SET_INTR_BREAK ) != 0) { *RSPInfo.SP_STATUS_REG |= SP_STATUS_INTR_BREAK;  }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_CLR_SIG0 ) != 0) { *RSPInfo.SP_STATUS_REG &= ~SP_STATUS_SIG0; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_SET_SIG0 ) != 0) { *RSPInfo.SP_STATUS_REG |= SP_STATUS_SIG0;  }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_CLR_SIG1 ) != 0) { *RSPInfo.SP_STATUS_REG &= ~SP_STATUS_SIG1; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_SET_SIG1 ) != 0) { *RSPInfo.SP_STATUS_REG |= SP_STATUS_SIG1;  }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_CLR_SIG2 ) != 0) { *RSPInfo.SP_STATUS_REG &= ~SP_STATUS_SIG2; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_SET_SIG2 ) != 0) { *RSPInfo.SP_STATUS_REG |= SP_STATUS_SIG2;  }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_CLR_SIG3 ) != 0) { *RSPInfo.SP_STATUS_REG &= ~SP_STATUS_SIG3; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_SET_SIG3 ) != 0) { *RSPInfo.SP_STATUS_REG |= SP_STATUS_SIG3;  }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_CLR_SIG4 ) != 0) { *RSPInfo.SP_STATUS_REG &= ~SP_STATUS_SIG4; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_SET_SIG4 ) != 0) { *RSPInfo.SP_STATUS_REG |= SP_STATUS_SIG4;  }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_CLR_SIG5 ) != 0) { *RSPInfo.SP_STATUS_REG &= ~SP_STATUS_SIG5; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_SET_SIG5 ) != 0) { *RSPInfo.SP_STATUS_REG |= SP_STATUS_SIG5;  }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_CLR_SIG6 ) != 0) { *RSPInfo.SP_STATUS_REG &= ~SP_STATUS_SIG6; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_SET_SIG6 ) != 0) { *RSPInfo.SP_STATUS_REG |= SP_STATUS_SIG6;  }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_CLR_SIG7 ) != 0) { *RSPInfo.SP_STATUS_REG &= ~SP_STATUS_SIG7; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & SP_SET_SIG7 ) != 0) { *RSPInfo.SP_STATUS_REG |= SP_STATUS_SIG7;  }
+		WriteRspStatusRegister(RSP_GPR[RSPOpC.OP.R.rt].W);
+		if (SP_STATUS_REG & SP_STATUS_HALT) {
+			RSP_Running = FALSE;
+		}
 		break;
-	case 7: *RSPInfo.SP_SEMAPHORE_REG = 0; break;
-	case 8: 
+	case 7: SP_SEMAPHORE_REG = 0; break;
+	/*case 8: 
 		*RSPInfo.DPC_START_REG = RSP_GPR[RSPOpC.rt].UW; 
 		*RSPInfo.DPC_CURRENT_REG = RSP_GPR[RSPOpC.rt].UW; 
 		break;
@@ -451,11 +433,12 @@ void RSP_Cop0_MT (void) {
 		if ( ( RSP_GPR[RSPOpC.rt].W & DPC_CLR_PIPE_CTR ) != 0) { DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_PIPE_CTR"); }
 		if ( ( RSP_GPR[RSPOpC.rt].W & DPC_CLR_CMD_CTR ) != 0) { DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_CMD_CTR"); }
 		if ( ( RSP_GPR[RSPOpC.rt].W & DPC_CLR_CLOCK_CTR ) != 0) {*/ /* DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_CLOCK_CTR"); */ /*}
-		break;
+		break;*/
 	default:
-		DisplayError("have not implemented RSP MT CP0 reg %s (%d)",COP0_Name(RSPOpC.rd),RSPOpC.rd);
+		DisplayError("have not implemented RSP MT CP0 reg %s (%d)",RspCOP0_Name(RSPOpC.OP.R.rd),RSPOpC.OP.R.rd);
+		LogMessage("TODO: have not implemented RSP MT CP0 reg % s(% d)", RspCOP0_Name(RSPOpC.OP.R.rd), RSPOpC.OP.R.rd);
 	}
-}*/
+}
 
 /************************** Cop2 functions *************************/
 /*void RSP_Cop2_MF (void) {

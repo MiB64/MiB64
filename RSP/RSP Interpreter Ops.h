@@ -28,45 +28,45 @@
 #pragma once
 
 /************************* OpCode functions *************************/
-/*void RSP_Opcode_SPECIAL ( void );
-void RSP_Opcode_REGIMM  ( void );
+void RSP_Opcode_SPECIAL ( void );
+/*void RSP_Opcode_REGIMM  ( void );
 void RSP_Opcode_J       ( void );
-void RSP_Opcode_JAL     ( void );
+void RSP_Opcode_JAL     ( void );*/
 void RSP_Opcode_BEQ     ( void );
 void RSP_Opcode_BNE     ( void );
-void RSP_Opcode_BLEZ    ( void );
+/*void RSP_Opcode_BLEZ    ( void );*/
 void RSP_Opcode_BGTZ    ( void );
-void RSP_Opcode_ADDI    ( void );
+/*void RSP_Opcode_ADDI    ( void );*/
 void RSP_Opcode_ADDIU   ( void );
-void RSP_Opcode_SLTI    ( void );
-void RSP_Opcode_SLTIU   ( void );
-void RSP_Opcode_ANDI    ( void );*/
+/*void RSP_Opcode_SLTI    ( void );
+void RSP_Opcode_SLTIU   ( void );*/
+void RSP_Opcode_ANDI    ( void );
 void RSP_Opcode_ORI     ( void );
-/*void RSP_Opcode_XORI    ( void );
+/*void RSP_Opcode_XORI    ( void );*/
 void RSP_Opcode_LUI     ( void );
 void RSP_Opcode_COP0    ( void );
-void RSP_Opcode_COP2    ( void );
+/*void RSP_Opcode_COP2    ( void );
 void RSP_Opcode_LB      ( void );
 void RSP_Opcode_LH      ( void );
 void RSP_Opcode_LW      ( void );
 void RSP_Opcode_LBU     ( void );
 void RSP_Opcode_LHU     ( void );
 void RSP_Opcode_SB      ( void );
-void RSP_Opcode_SH      ( void );
+void RSP_Opcode_SH      ( void );*/
 void RSP_Opcode_SW      ( void );
-void RSP_Opcode_LC2     ( void );
+/*void RSP_Opcode_LC2     ( void );
 void RSP_Opcode_SC2     ( void );*/
 /********************** R4300i OpCodes: Special **********************/
-/*void RSP_Special_SLL    ( void );
-void RSP_Special_SRL    ( void );
+void RSP_Special_SLL    ( void );
+/*void RSP_Special_SRL    ( void );
 void RSP_Special_SRA    ( void );
 void RSP_Special_SLLV   ( void );
 void RSP_Special_SRLV   ( void );
 void RSP_Special_SRAV   ( void );
 void RSP_Special_JR     ( void );
-void RSP_Special_JALR   ( void );
+void RSP_Special_JALR   ( void );*/
 void RSP_Special_BREAK  ( void );
-void RSP_Special_ADD    ( void );
+/*void RSP_Special_ADD    ( void );
 void RSP_Special_ADDU   ( void );
 void RSP_Special_SUB    ( void );
 void RSP_Special_SUBU   ( void );
@@ -82,8 +82,8 @@ void RSP_Opcode_BGEZ    ( void );
 void RSP_Opcode_BLTZAL  ( void );
 void RSP_Opcode_BGEZAL  ( void );*/
 /************************** Cop0 functions *************************/
-/*void RSP_Cop0_MF        ( void );
-void RSP_Cop0_MT        ( void );*/
+void RSP_Cop0_MF        ( void );
+void RSP_Cop0_MT        ( void );
 /************************** Cop2 functions *************************/
 /*void RSP_Cop2_MF        ( void );
 void RSP_Cop2_CF        ( void );

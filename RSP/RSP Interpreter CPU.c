@@ -44,23 +44,23 @@
 DWORD RSP_NextInstruction, RSP_JumpTo;
 
 void BuildInterpreterRspCPU(void) {
-	RSP_Opcode[ 0] = /*RSP_Opcode_SPECIAL*/(void*)rsp_UnknownOpcode;
+	RSP_Opcode[ 0] = (void*)RSP_Opcode_SPECIAL/*(void*)rsp_UnknownOpcode*/;
 	RSP_Opcode[ 1] = /*RSP_Opcode_REGIMM*/(void*)rsp_UnknownOpcode;
 	RSP_Opcode[ 2] = /*RSP_Opcode_J*/(void*)rsp_UnknownOpcode;
 	RSP_Opcode[ 3] = /*RSP_Opcode_JAL*/(void*)rsp_UnknownOpcode;
-	RSP_Opcode[ 4] = /*RSP_Opcode_BEQ*/(void*)rsp_UnknownOpcode;
-	RSP_Opcode[ 5] = /*RSP_Opcode_BNE*/(void*)rsp_UnknownOpcode;
+	RSP_Opcode[ 4] = (void*)RSP_Opcode_BEQ/*(void*)rsp_UnknownOpcode*/;
+	RSP_Opcode[ 5] = (void*)RSP_Opcode_BNE/*(void*)rsp_UnknownOpcode*/;
 	RSP_Opcode[ 6] = /*RSP_Opcode_BLEZ*/(void*)rsp_UnknownOpcode;
-	RSP_Opcode[ 7] = /*RSP_Opcode_BGTZ*/(void*)rsp_UnknownOpcode;
+	RSP_Opcode[ 7] = (void*)RSP_Opcode_BGTZ/*(void*)rsp_UnknownOpcode*/;
 	RSP_Opcode[ 8] = /*RSP_Opcode_ADDI*/(void*)rsp_UnknownOpcode;
-	RSP_Opcode[ 9] = /*RSP_Opcode_ADDIU*/(void*)rsp_UnknownOpcode;
+	RSP_Opcode[ 9] = (void*)RSP_Opcode_ADDIU/*(void*)rsp_UnknownOpcode*/;
 	RSP_Opcode[10] = /*RSP_Opcode_SLTI*/(void*)rsp_UnknownOpcode;
 	RSP_Opcode[11] = /*RSP_Opcode_SLTIU*/(void*)rsp_UnknownOpcode;
-	RSP_Opcode[12] = /*RSP_Opcode_ANDI*/(void*)rsp_UnknownOpcode;
-	RSP_Opcode[13] = (void*)RSP_Opcode_ORI; // TOCHECK
+	RSP_Opcode[12] = (void*)RSP_Opcode_ANDI/*(void*)rsp_UnknownOpcode*/;
+	RSP_Opcode[13] = (void*)RSP_Opcode_ORI;
 	RSP_Opcode[14] = /*RSP_Opcode_XORI*/(void*)rsp_UnknownOpcode;
-	RSP_Opcode[15] = /*RSP_Opcode_LUI*/(void*)rsp_UnknownOpcode;
-	RSP_Opcode[16] = /*RSP_Opcode_COP0*/(void*)rsp_UnknownOpcode;
+	RSP_Opcode[15] = (void*)RSP_Opcode_LUI;/*(void*)rsp_UnknownOpcode;*/
+	RSP_Opcode[16] = (void*)RSP_Opcode_COP0/*(void*)rsp_UnknownOpcode*/;
 	RSP_Opcode[17] = (void*)rsp_UnknownOpcode;
 	RSP_Opcode[18] = /*RSP_Opcode_COP2*/(void*)rsp_UnknownOpcode;
 	RSP_Opcode[19] = (void*)rsp_UnknownOpcode;
@@ -87,7 +87,7 @@ void BuildInterpreterRspCPU(void) {
 	RSP_Opcode[40] = /*RSP_Opcode_SB*/(void*)rsp_UnknownOpcode;
 	RSP_Opcode[41] = /*RSP_Opcode_SH*/(void*)rsp_UnknownOpcode;
 	RSP_Opcode[42] = (void*)rsp_UnknownOpcode;
-	RSP_Opcode[43] = /*RSP_Opcode_SW*/(void*)rsp_UnknownOpcode;
+	RSP_Opcode[43] = (void*)RSP_Opcode_SW/*(void*)rsp_UnknownOpcode*/;
 	RSP_Opcode[44] = (void*)rsp_UnknownOpcode;
 	RSP_Opcode[45] = (void*)rsp_UnknownOpcode;
 	RSP_Opcode[46] = (void*)rsp_UnknownOpcode;
@@ -109,70 +109,70 @@ void BuildInterpreterRspCPU(void) {
 	RSP_Opcode[62] = (void*)rsp_UnknownOpcode;
 	RSP_Opcode[63] = (void*)rsp_UnknownOpcode;
 
-//	RSP_Special[ 0] = /*RSP_Special_SLL*/rsp_UnknownOpcode;
-//	RSP_Special[ 1] = rsp_UnknownOpcode;
-//	RSP_Special[ 2] = /*RSP_Special_SRL*/rsp_UnknownOpcode;
-//	RSP_Special[ 3] = /*RSP_Special_SRA*/rsp_UnknownOpcode;
-//	RSP_Special[ 4] = /*RSP_Special_SLLV*/rsp_UnknownOpcode;
-//	RSP_Special[ 5] = rsp_UnknownOpcode;
-//	RSP_Special[ 6] = /*RSP_Special_SRLV*/rsp_UnknownOpcode;
-//	RSP_Special[ 7] = /*RSP_Special_SRAV*/rsp_UnknownOpcode;
-//	RSP_Special[ 8] = /*RSP_Special_JR*/rsp_UnknownOpcode;
-//	RSP_Special[ 9] = /*RSP_Special_JALR*/rsp_UnknownOpcode;
-/*	RSP_Special[10] = rsp_UnknownOpcode;
-	RSP_Special[11] = rsp_UnknownOpcode;
-	RSP_Special[12] = rsp_UnknownOpcode;*/
-//	RSP_Special[13] = /*RSP_Special_BREAK*/rsp_UnknownOpcode;
-/*	RSP_Special[14] = rsp_UnknownOpcode;
-	RSP_Special[15] = rsp_UnknownOpcode;
-	RSP_Special[16] = rsp_UnknownOpcode;
-	RSP_Special[17] = rsp_UnknownOpcode;
-	RSP_Special[18] = rsp_UnknownOpcode;
-	RSP_Special[19] = rsp_UnknownOpcode;
-	RSP_Special[20] = rsp_UnknownOpcode;
-	RSP_Special[21] = rsp_UnknownOpcode;
-	RSP_Special[22] = rsp_UnknownOpcode;
-	RSP_Special[23] = rsp_UnknownOpcode;
-	RSP_Special[24] = rsp_UnknownOpcode;
-	RSP_Special[25] = rsp_UnknownOpcode;
-	RSP_Special[26] = rsp_UnknownOpcode;
-	RSP_Special[27] = rsp_UnknownOpcode;
-	RSP_Special[28] = rsp_UnknownOpcode;
-	RSP_Special[29] = rsp_UnknownOpcode;
-	RSP_Special[30] = rsp_UnknownOpcode;
-	RSP_Special[31] = rsp_UnknownOpcode;*/
-//	RSP_Special[32] = /*RSP_Special_ADD*/rsp_UnknownOpcode;
-//	RSP_Special[33] = /*RSP_Special_ADDU*/rsp_UnknownOpcode;
-//	RSP_Special[34] = /*RSP_Special_SUB*/rsp_UnknownOpcode;
-//	RSP_Special[35] = /*RSP_Special_SUBU*/rsp_UnknownOpcode;
-//	RSP_Special[36] = /*RSP_Special_AND*/rsp_UnknownOpcode;
-//	RSP_Special[37] = /*RSP_Special_OR*/rsp_UnknownOpcode;
-//	RSP_Special[38] = /*RSP_Special_XOR*/rsp_UnknownOpcode;
-//	RSP_Special[39] = /*RSP_Special_NOR*/rsp_UnknownOpcode;
-/*	RSP_Special[40] = rsp_UnknownOpcode;
-	RSP_Special[41] = rsp_UnknownOpcode;*/
-//	RSP_Special[42] = /*RSP_Special_SLT*/rsp_UnknownOpcode;
-//	RSP_Special[43] = /*RSP_Special_SLTU*/rsp_UnknownOpcode;
-/*	RSP_Special[44] = rsp_UnknownOpcode;
-	RSP_Special[45] = rsp_UnknownOpcode;
-	RSP_Special[46] = rsp_UnknownOpcode;
-	RSP_Special[47] = rsp_UnknownOpcode;
-	RSP_Special[48] = rsp_UnknownOpcode;
-	RSP_Special[49] = rsp_UnknownOpcode;
-	RSP_Special[50] = rsp_UnknownOpcode;
-	RSP_Special[51] = rsp_UnknownOpcode;
-	RSP_Special[52] = rsp_UnknownOpcode;
-	RSP_Special[53] = rsp_UnknownOpcode;
-	RSP_Special[54] = rsp_UnknownOpcode;
-	RSP_Special[55] = rsp_UnknownOpcode;
-	RSP_Special[56] = rsp_UnknownOpcode;
-	RSP_Special[57] = rsp_UnknownOpcode;
-	RSP_Special[58] = rsp_UnknownOpcode;
-	RSP_Special[59] = rsp_UnknownOpcode;
-	RSP_Special[60] = rsp_UnknownOpcode;
-	RSP_Special[61] = rsp_UnknownOpcode;
-	RSP_Special[62] = rsp_UnknownOpcode;
-	RSP_Special[63] = rsp_UnknownOpcode;*/
+	RSP_Special[ 0] = (void*)RSP_Special_SLL/*(void*)rsp_UnknownOpcode*/;
+	RSP_Special[ 1] = (void*)rsp_UnknownOpcode;
+	RSP_Special[ 2] = /*RSP_Special_SRL*/(void*)rsp_UnknownOpcode;
+	RSP_Special[ 3] = /*RSP_Special_SRA*/(void*)rsp_UnknownOpcode;
+	RSP_Special[ 4] = /*RSP_Special_SLLV*/(void*)rsp_UnknownOpcode;
+	RSP_Special[ 5] = (void*)rsp_UnknownOpcode;
+	RSP_Special[ 6] = /*RSP_Special_SRLV*/(void*)rsp_UnknownOpcode;
+	RSP_Special[ 7] = /*RSP_Special_SRAV*/(void*)rsp_UnknownOpcode;
+	RSP_Special[ 8] = /*RSP_Special_JR*/(void*)rsp_UnknownOpcode;
+	RSP_Special[ 9] = /*RSP_Special_JALR*/(void*)rsp_UnknownOpcode;
+	RSP_Special[10] = (void*)rsp_UnknownOpcode;
+	RSP_Special[11] = (void*)rsp_UnknownOpcode;
+	RSP_Special[12] = (void*)rsp_UnknownOpcode;
+	RSP_Special[13] = (void*)RSP_Special_BREAK/*(void*)rsp_UnknownOpcode*/;
+	RSP_Special[14] = (void*)rsp_UnknownOpcode;
+	RSP_Special[15] = (void*)rsp_UnknownOpcode;
+	RSP_Special[16] = (void*)rsp_UnknownOpcode;
+	RSP_Special[17] = (void*)rsp_UnknownOpcode;
+	RSP_Special[18] = (void*)rsp_UnknownOpcode;
+	RSP_Special[19] = (void*)rsp_UnknownOpcode;
+	RSP_Special[20] = (void*)rsp_UnknownOpcode;
+	RSP_Special[21] = (void*)rsp_UnknownOpcode;
+	RSP_Special[22] = (void*)rsp_UnknownOpcode;
+	RSP_Special[23] = (void*)rsp_UnknownOpcode;
+	RSP_Special[24] = (void*)rsp_UnknownOpcode;
+	RSP_Special[25] = (void*)rsp_UnknownOpcode;
+	RSP_Special[26] = (void*)rsp_UnknownOpcode;
+	RSP_Special[27] = (void*)rsp_UnknownOpcode;
+	RSP_Special[28] = (void*)rsp_UnknownOpcode;
+	RSP_Special[29] = (void*)rsp_UnknownOpcode;
+	RSP_Special[30] = (void*)rsp_UnknownOpcode;
+	RSP_Special[31] = (void*)rsp_UnknownOpcode;
+	RSP_Special[32] = /*RSP_Special_ADD*/(void*)rsp_UnknownOpcode;
+	RSP_Special[33] = /*RSP_Special_ADDU*/(void*)rsp_UnknownOpcode;
+	RSP_Special[34] = /*RSP_Special_SUB*/(void*)rsp_UnknownOpcode;
+	RSP_Special[35] = /*RSP_Special_SUBU*/(void*)rsp_UnknownOpcode;
+	RSP_Special[36] = /*RSP_Special_AND*/(void*)rsp_UnknownOpcode;
+	RSP_Special[37] = /*RSP_Special_OR*/(void*)rsp_UnknownOpcode;
+	RSP_Special[38] = /*RSP_Special_XOR*/(void*)rsp_UnknownOpcode;
+	RSP_Special[39] = /*RSP_Special_NOR*/(void*)rsp_UnknownOpcode;
+	RSP_Special[40] = (void*)rsp_UnknownOpcode;
+	RSP_Special[41] = (void*)rsp_UnknownOpcode;
+	RSP_Special[42] = /*RSP_Special_SLT*/(void*)rsp_UnknownOpcode;
+	RSP_Special[43] = /*RSP_Special_SLTU*/(void*)rsp_UnknownOpcode;
+	RSP_Special[44] = (void*)rsp_UnknownOpcode;
+	RSP_Special[45] = (void*)rsp_UnknownOpcode;
+	RSP_Special[46] = (void*)rsp_UnknownOpcode;
+	RSP_Special[47] = (void*)rsp_UnknownOpcode;
+	RSP_Special[48] = (void*)rsp_UnknownOpcode;
+	RSP_Special[49] = (void*)rsp_UnknownOpcode;
+	RSP_Special[50] = (void*)rsp_UnknownOpcode;
+	RSP_Special[51] = (void*)rsp_UnknownOpcode;
+	RSP_Special[52] = (void*)rsp_UnknownOpcode;
+	RSP_Special[53] = (void*)rsp_UnknownOpcode;
+	RSP_Special[54] = (void*)rsp_UnknownOpcode;
+	RSP_Special[55] = (void*)rsp_UnknownOpcode;
+	RSP_Special[56] = (void*)rsp_UnknownOpcode;
+	RSP_Special[57] = (void*)rsp_UnknownOpcode;
+	RSP_Special[58] = (void*)rsp_UnknownOpcode;
+	RSP_Special[59] = (void*)rsp_UnknownOpcode;
+	RSP_Special[60] = (void*)rsp_UnknownOpcode;
+	RSP_Special[61] = (void*)rsp_UnknownOpcode;
+	RSP_Special[62] = (void*)rsp_UnknownOpcode;
+	RSP_Special[63] = (void*)rsp_UnknownOpcode;
 
 //	RSP_RegImm[ 0] = /*RSP_Opcode_BLTZ*/rsp_UnknownOpcode;
 //	RSP_RegImm[ 1] = /*RSP_Opcode_BGEZ*/rsp_UnknownOpcode;
@@ -207,38 +207,38 @@ void BuildInterpreterRspCPU(void) {
 	RSP_RegImm[30] = rsp_UnknownOpcode;
 	RSP_RegImm[31] = rsp_UnknownOpcode;*/
 
-//	RSP_Cop0[ 0] = /*RSP_Cop0_MF*/rsp_UnknownOpcode;
-/*	RSP_Cop0[ 1] = rsp_UnknownOpcode;
-	RSP_Cop0[ 2] = rsp_UnknownOpcode;
-	RSP_Cop0[ 3] = rsp_UnknownOpcode;*/
-//	RSP_Cop0[ 4] = /*RSP_Cop0_MT*/rsp_UnknownOpcode;
-/*	RSP_Cop0[ 5] = rsp_UnknownOpcode;
-	RSP_Cop0[ 6] = rsp_UnknownOpcode;
-	RSP_Cop0[ 7] = rsp_UnknownOpcode;
-	RSP_Cop0[ 8] = rsp_UnknownOpcode;
-	RSP_Cop0[ 9] = rsp_UnknownOpcode;
-	RSP_Cop0[10] = rsp_UnknownOpcode;
-	RSP_Cop0[11] = rsp_UnknownOpcode;
-	RSP_Cop0[12] = rsp_UnknownOpcode;
-	RSP_Cop0[13] = rsp_UnknownOpcode;
-	RSP_Cop0[14] = rsp_UnknownOpcode;
-	RSP_Cop0[15] = rsp_UnknownOpcode;
-	RSP_Cop0[16] = rsp_UnknownOpcode;
-	RSP_Cop0[17] = rsp_UnknownOpcode;
-	RSP_Cop0[18] = rsp_UnknownOpcode;
-	RSP_Cop0[19] = rsp_UnknownOpcode;
-	RSP_Cop0[20] = rsp_UnknownOpcode;
-	RSP_Cop0[21] = rsp_UnknownOpcode;
-	RSP_Cop0[22] = rsp_UnknownOpcode;
-	RSP_Cop0[23] = rsp_UnknownOpcode;
-	RSP_Cop0[24] = rsp_UnknownOpcode;
-	RSP_Cop0[25] = rsp_UnknownOpcode;
-	RSP_Cop0[26] = rsp_UnknownOpcode;
-	RSP_Cop0[27] = rsp_UnknownOpcode;
-	RSP_Cop0[28] = rsp_UnknownOpcode;
-	RSP_Cop0[29] = rsp_UnknownOpcode;
-	RSP_Cop0[30] = rsp_UnknownOpcode;
-	RSP_Cop0[31] = rsp_UnknownOpcode;*/
+	RSP_Cop0[ 0] = (void*)RSP_Cop0_MF/*(void*)rsp_UnknownOpcode*/;
+	RSP_Cop0[ 1] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[ 2] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[ 3] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[ 4] = (void*)RSP_Cop0_MT/*rsp_UnknownOpcode*/;
+	RSP_Cop0[ 5] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[ 6] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[ 7] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[ 8] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[ 9] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[10] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[11] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[12] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[13] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[14] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[15] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[16] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[17] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[18] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[19] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[20] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[21] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[22] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[23] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[24] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[25] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[26] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[27] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[28] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[29] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[30] = (void*)rsp_UnknownOpcode;
+	RSP_Cop0[31] = (void*)rsp_UnknownOpcode;
 	
 //	RSP_Cop2[ 0] = /*RSP_Cop2_MF*/rsp_UnknownOpcode;
 //	RSP_Cop2[ 1] = rsp_UnknownOpcode;
@@ -410,6 +410,7 @@ void BuildInterpreterRspCPU(void) {
 DWORD RunInterpreterRspCPU(DWORD Cycles) {
 	RSP_Running = TRUE;
 	Enable_RSP_Commands_Window();
+	DWORD remainingCycles = Cycles;
 
 	while (RSP_Running) {
 		if (NoOfRspBpoints != 0) {
@@ -458,9 +459,12 @@ DWORD RunInterpreterRspCPU(DWORD Cycles) {
 			SP_PC_REG = RSP_JumpTo;
 			break;
 		}
-	}
-	SP_PC_REG -= 4;
 
-	return Cycles;
+		if ((--remainingCycles) == 0) {
+			RSP_Running = FALSE;
+		}
+	}
+
+	return Cycles - remainingCycles;
 }
 

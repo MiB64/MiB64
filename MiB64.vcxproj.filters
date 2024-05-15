@@ -318,13 +318,13 @@
     <ClCompile Include="RSP\RSP Command.c">
       <Filter>Source Files\RSP Souce\RSP Debugger Source</Filter>
     </ClCompile>
-    <ClCompile Include="RSP\RSP Register.c">
-      <Filter>Source Files\RSP Souce\RSP Debugger Source</Filter>
-    </ClCompile>
     <ClCompile Include="RSP\rsp_memory.c">
       <Filter>Source Files\RSP Souce</Filter>
     </ClCompile>
     <ClCompile Include="RSP\RSP Interpreter Ops.c">
+      <Filter>Source Files\RSP Souce</Filter>
+    </ClCompile>
+    <ClCompile Include="RSP\RSP Register.c">
       <Filter>Source Files\RSP Souce</Filter>
     </ClCompile>
   </ItemGroup>

@@ -25,14 +25,17 @@
  *
  */
 
-/*#include <windows.h>
-#include <commctrl.h>
-#include <stdio.h>
-#include "rsp.h"*/
+#include <windows.h>
+/*#include <commctrl.h>
+#include <stdio.h>*/
+#include "rsp_registers.h"
 #include "rsp_config.h"
-/*#include "types.h"
+#include "../Types.h"
+#include "../mi_registers.h"
+#include "../Exception.h"
+#include "../Main.h"
 
-#define GeneralPurpose			1
+/*#define GeneralPurpose			1
 #define ControlProcessor0		2
 #define HiddenRegisters		    3
 #define Vector1					4
@@ -65,10 +68,117 @@ int InRSPRegisterWindow = FALSE;
 FARPROC RefreshProc;*/
 
 /*** RSP Registers ***/
-/*U_WORD  RSP_GPR[32];
-U_WORD  RSP_Flags[4];
+MIPS_WORD  RSP_GPR[32];
+/*U_WORD  RSP_Flags[4];
 UDWORD  RSP_ACCUM[8];
 VECTOR  RSP_Vect[32];*/
+
+void WriteRspStatusRegister(DWORD Value) {
+	switch (Value & (SP_CLR_HALT | SP_SET_HALT))
+	{
+	case SP_CLR_HALT: SP_STATUS_REG &= ~SP_STATUS_HALT;
+		break;
+	case SP_SET_HALT: SP_STATUS_REG |= SP_STATUS_HALT;
+		break;
+	}
+
+	if ((Value & SP_CLR_BROKE) != 0) { SP_STATUS_REG &= ~SP_STATUS_BROKE; }
+
+	switch (Value & (SP_CLR_INTR | SP_SET_INTR))
+	{
+	case SP_CLR_INTR: MI_INTR_REG &= ~MI_INTR_SP;
+		CheckInterrupts();
+		break;
+	case SP_SET_INTR: MI_INTR_REG |= MI_INTR_SP;
+		CheckInterrupts();
+		break;
+	}
+
+	switch (Value & (SP_CLR_SSTEP | SP_SET_SSTEP))
+	{
+	case SP_CLR_SSTEP: SP_STATUS_REG &= ~SP_STATUS_SSTEP;
+		break;
+	case SP_SET_SSTEP: SP_STATUS_REG |= SP_STATUS_SSTEP;
+		break;
+	}
+
+	switch (Value & (SP_CLR_INTR_BREAK | SP_SET_INTR_BREAK))
+	{
+	case SP_CLR_INTR_BREAK: SP_STATUS_REG &= ~SP_STATUS_INTR_BREAK;
+		break;
+	case SP_SET_INTR_BREAK: SP_STATUS_REG |= SP_STATUS_INTR_BREAK;
+		break;
+	}
+
+	switch (Value & (SP_CLR_SIG0 | SP_SET_SIG0))
+	{
+	case  SP_CLR_SIG0: SP_STATUS_REG &= ~SP_STATUS_SIG0;
+		break;
+	case  SP_SET_SIG0: SP_STATUS_REG |= SP_STATUS_SIG0;
+		if (AudioSignal)
+		{
+			MI_INTR_REG |= MI_INTR_SP;
+			CheckInterrupts();
+		}
+		break;
+	}
+
+	switch (Value & (SP_CLR_SIG1 | SP_SET_SIG1))
+	{
+	case  SP_CLR_SIG1: SP_STATUS_REG &= ~SP_STATUS_SIG1;
+		break;
+	case  SP_SET_SIG1: SP_STATUS_REG |= SP_STATUS_SIG1;
+		break;
+	}
+
+	switch (Value & (SP_CLR_SIG2 | SP_SET_SIG2))
+	{
+	case  SP_CLR_SIG2: SP_STATUS_REG &= ~SP_STATUS_SIG2;
+		break;
+	case  SP_SET_SIG2: SP_STATUS_REG |= SP_STATUS_SIG2;
+		break;
+	}
+
+	switch (Value & (SP_CLR_SIG3 | SP_SET_SIG3))
+	{
+	case  SP_CLR_SIG3: SP_STATUS_REG &= ~SP_STATUS_SIG3;
+		break;
+	case  SP_SET_SIG3: SP_STATUS_REG |= SP_STATUS_SIG3;
+		break;
+	}
+
+	switch (Value & (SP_CLR_SIG4 | SP_SET_SIG4))
+	{
+	case  SP_CLR_SIG4: SP_STATUS_REG &= ~SP_STATUS_SIG4;
+		break;
+	case  SP_SET_SIG4: SP_STATUS_REG |= SP_STATUS_SIG4;
+		break;
+	}
+
+	switch (Value & (SP_CLR_SIG5 | SP_SET_SIG5))
+	{
+	case  SP_CLR_SIG5: SP_STATUS_REG &= ~SP_STATUS_SIG5;
+		break;
+	case  SP_SET_SIG5: SP_STATUS_REG |= SP_STATUS_SIG5;
+		break;
+	}
+
+	switch (Value & (SP_CLR_SIG6 | SP_SET_SIG6))
+	{
+	case  SP_CLR_SIG6: SP_STATUS_REG &= ~SP_STATUS_SIG6;
+		break;
+	case  SP_SET_SIG6: SP_STATUS_REG |= SP_STATUS_SIG6;
+		break;
+	}
+
+	switch (Value & (SP_CLR_SIG7 | SP_SET_SIG7))
+	{
+	case  SP_CLR_SIG7: SP_STATUS_REG &= ~SP_STATUS_SIG7;
+		break;
+	case  SP_SET_SIG7: SP_STATUS_REG |= SP_STATUS_SIG7;
+		break;
+	}
+}
 
 char * RspGPR_Strings[32] = {
 	"R0", "AT", "V0", "V1", "A0", "A1", "A2", "A3",
@@ -118,14 +228,14 @@ void Enter_RSP_Register_Window ( void ) {
 		for (count = 0; count < 16;count ++) { ShowWindow(hVECT2[count], FALSE ); }
 		break;		
 	}
-}
+}*/
 
 void InitilizeRSPRegisters (void) {
 	memset(RSP_GPR,0,sizeof(RSP_GPR));
-	memset(RSP_Vect,0,sizeof(RSP_Vect));
+	/*memset(RSP_Vect,0,sizeof(RSP_Vect));*/
 }
 
-void PaintRSP_HiddenPanel (HWND hWnd) {	
+/*void PaintRSP_HiddenPanel (HWND hWnd) {	
 	PAINTSTRUCT ps;
 	RECT rcBox;
 	HFONT hOldFont;

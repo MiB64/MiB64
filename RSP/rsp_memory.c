@@ -513,25 +513,21 @@ void RSP_SUV_DMEM ( DWORD Addr, int vect, int element ) {
 		}
 		Addr += 1;
 	}
-}
+}*/
 
 void RSP_SW_DMEM ( DWORD Addr, DWORD Value ) {
 	Addr &= 0xFFF;
 	if ((Addr & 0x3) != 0) {
-		if (Addr > 0xFFC) {
-			DisplayError("hmmmm.... Problem with:\nRSP_SW_DMEM");
-			return;
-		}
-		*(BYTE *)(RSPInfo.DMEM + (Addr ^ 3)) = (BYTE)(Value >> 0x18);
-		*(BYTE *)(RSPInfo.DMEM + ((Addr + 1) ^ 3)) = (BYTE)(Value >> 0x10);
-		*(BYTE *)(RSPInfo.DMEM + ((Addr + 2) ^ 3)) = (BYTE)(Value >> 0x8);
-		*(BYTE *)(RSPInfo.DMEM + ((Addr + 3) ^ 3)) = (BYTE)(Value);
+		*(BYTE *)(DMEM + (Addr ^ 3)) = (BYTE)(Value >> 0x18);
+		*(BYTE *)(DMEM + (((Addr + 1) & 0xFFF) ^ 3)) = (BYTE)(Value >> 0x10);
+		*(BYTE *)(DMEM + (((Addr + 2) & 0xFFF) ^ 3)) = (BYTE)(Value >> 0x8);
+		*(BYTE *)(DMEM + (((Addr + 3) & 0xFFF) ^ 3)) = (BYTE)(Value);
 		return;
 	}
-	*(DWORD *)(RSPInfo.DMEM + Addr) = Value;
+	*(DWORD *)(DMEM + Addr) = Value;
 }
 
-void RSP_SWV_DMEM ( DWORD Addr, int vect, int element ) {
+/*void RSP_SWV_DMEM ( DWORD Addr, int vect, int element ) {
 	int Count, offset;
 
 	offset = Addr & 0xF;

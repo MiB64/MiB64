@@ -725,7 +725,7 @@ BOOL Machine_LoadState(void) {
 				continue;
 			}
 			unzReadCurrentFile(file,&formatVersion,4);
-			if (formatVersion != SaveStateFormat_ORIGINAL && formatVersion != SaveStateFormat_2023_1) {
+			if (formatVersion != SaveStateFormat_ORIGINAL && formatVersion != SaveStateFormat_2023_1 && formatVersion != SaveStateFormat_2024_1) {
 				unzCloseCurrentFile(file);
 				continue; 
 			}
@@ -850,13 +850,16 @@ BOOL Machine_LoadState(void) {
 			SetFpuLocations();
 			CheckRdramStatus();
 
-			// Specific data introducted in 2023.1
+			// Specific data introduced in 2023.1
 			unzReadCurrentFile(file, &lastUnusedCOP0Register, sizeof(int));
 			unzReadCurrentFile(file, &WrittenToRom, sizeof(BOOL));
 			unzReadCurrentFile(file, &WrittenToRomCount, sizeof(DWORD));
 			unzReadCurrentFile(file, &WroteToRom, sizeof(DWORD));
 			unzReadCurrentFile(file, ISViewerBuffer, sizeof(ISViewerBuffer));
 			unzReadCurrentFile(file, &cop2LatchedValue.UDW, sizeof(QWORD));
+
+			// Specific data introduced in  2024.1
+			unzReadCurrentFile(file, RSP_GPR, sizeof(MIPS_WORD) * 32);
 
 			unzCloseCurrentFile(file);
 			unzClose(file);
@@ -877,7 +880,7 @@ BOOL Machine_LoadState(void) {
 		}	
 		SetFilePointer(hSaveFile,0,NULL,FILE_BEGIN);	
 		ReadFile( hSaveFile,&formatVersion,sizeof(formatVersion),&dwRead,NULL);
-		if (formatVersion != SaveStateFormat_ORIGINAL && formatVersion != SaveStateFormat_2023_1) {
+		if (formatVersion != SaveStateFormat_ORIGINAL && formatVersion != SaveStateFormat_2023_1 && formatVersion != SaveStateFormat_2024_1) {
 			return FALSE;
 		}
 		if (formatVersion == SaveStateFormat_ORIGINAL) {
@@ -1003,13 +1006,16 @@ BOOL Machine_LoadState(void) {
 		SetFpuLocations();
 		CheckRdramStatus();
 
-		// Specific data introducted in 2023.1
+		// Specific data introduced in 2023.1
 		ReadFile(hSaveFile, &lastUnusedCOP0Register, sizeof(int), &dwRead, NULL);
 		ReadFile(hSaveFile, &WrittenToRom, sizeof(BOOL), &dwRead, NULL);
 		ReadFile(hSaveFile, &WrittenToRomCount, sizeof(DWORD), &dwRead, NULL);
 		ReadFile(hSaveFile, &WroteToRom, sizeof(DWORD), &dwRead, NULL);
 		ReadFile(hSaveFile, ISViewerBuffer, sizeof(ISViewerBuffer), &dwRead, NULL);
 		ReadFile(hSaveFile, &cop2LatchedValue.UDW, sizeof(QWORD), &dwRead, NULL);
+
+		// Specific data introduced in 2024.1
+		ReadFile(hSaveFile, RSP_GPR, sizeof(MIPS_WORD) * 32, &dwRead, NULL);
 
 		CloseHandle(hSaveFile);
 		_splitpath( FileName, drive, dir, ZipFile, ext );
@@ -1106,7 +1112,7 @@ BOOL Machine_SaveState(void) {
 		CreateDirectory(Directory,NULL);
 		file = zipOpen(ZipFile,FALSE);
 		zipOpenNewFileInZip(file,CurrentSave,&ZipInfo,NULL,0,NULL,0,NULL,Z_DEFLATED,Z_DEFAULT_COMPRESSION);
-		Value = SaveStateFormat_2023_1;
+		Value = SaveStateFormat_2024_1;
 		zipWriteInFileInZip( file,&Value,sizeof(Value));
 		zipWriteInFileInZip( file,&RdramSize,sizeof(RdramSize));
 		zipWriteInFileInZip( file,RomHeader,0x40);	
@@ -1140,13 +1146,16 @@ BOOL Machine_SaveState(void) {
 		zipWriteInFileInZip( file,DMEM,0x1000);
 		zipWriteInFileInZip( file,IMEM,0x1000);
 
-		// Specific data introducted in 2023.1
+		// Specific data introduced in 2023.1
 		zipWriteInFileInZip(file, &lastUnusedCOP0Register, sizeof(int));
 		zipWriteInFileInZip(file, &WrittenToRom, sizeof(BOOL));
 		zipWriteInFileInZip(file, &WrittenToRomCount, sizeof(DWORD));
 		zipWriteInFileInZip(file, &WroteToRom, sizeof(DWORD));
 		zipWriteInFileInZip(file, ISViewerBuffer, sizeof(ISViewerBuffer));
 		zipWriteInFileInZip(file, &cop2LatchedValue.UDW, sizeof(QWORD));
+
+		// Specific data introduced in 2024.1
+		zipWriteInFileInZip(file, RSP_GPR, sizeof(MIPS_WORD) * 32);
 
 		zipCloseFileInZip(file);
 		zipClose(file,"");
@@ -1180,7 +1189,7 @@ BOOL Machine_SaveState(void) {
 
 
 		SetFilePointer(hSaveFile,0,NULL,FILE_BEGIN);	
-		Value = SaveStateFormat_2023_1;
+		Value = SaveStateFormat_2024_1;
 		WriteFile( hSaveFile,&Value,sizeof(Value),&dwWritten,NULL);
 		WriteFile( hSaveFile,&RdramSize,sizeof(RdramSize),&dwWritten,NULL);
 		WriteFile( hSaveFile,RomHeader,0x40,&dwWritten,NULL);	
@@ -1214,13 +1223,16 @@ BOOL Machine_SaveState(void) {
 		WriteFile( hSaveFile,DMEM,0x1000,&dwWritten,NULL);
 		WriteFile( hSaveFile,IMEM,0x1000,&dwWritten,NULL);
 
-		// Specific data introducted in 2023.1
+		// Specific data introduced in 2023.1
 		WriteFile(hSaveFile, &lastUnusedCOP0Register, sizeof(int), &dwWritten, NULL);
 		WriteFile(hSaveFile, &WrittenToRom, sizeof(BOOL), &dwWritten, NULL);
 		WriteFile(hSaveFile, &WrittenToRomCount, sizeof(DWORD), &dwWritten, NULL);
 		WriteFile(hSaveFile, &WroteToRom, sizeof(DWORD), &dwWritten, NULL);
 		WriteFile(hSaveFile, ISViewerBuffer, sizeof(ISViewerBuffer), &dwWritten, NULL);
 		WriteFile(hSaveFile, &cop2LatchedValue.UDW, sizeof(QWORD), &dwWritten, NULL);
+
+		// Specific data introduced in 2024.1
+		WriteFile(hSaveFile, RSP_GPR, sizeof(MIPS_WORD) * 32, &dwWritten, NULL);
 
 		CloseHandle(hSaveFile);
 		DeleteFile(ZipFile);

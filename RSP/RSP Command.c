@@ -1284,7 +1284,7 @@ char * RSPOpcodeName ( DWORD OpCode, DWORD PC ) {
 }
 
 void SetRSPCommandToRunning ( void ) { 	
-	/*Stepping_Commands = FALSE;
+	Stepping_RspCommands = FALSE;
 	if (InRSPCommandsWindow == FALSE) { return; }
 	EnableWindow(hGoButton,    FALSE);
 	EnableWindow(hBreakButton, TRUE);
@@ -1293,8 +1293,7 @@ void SetRSPCommandToRunning ( void ) {
 	SendMessage(RSPCommandshWnd, DM_SETDEFID,IDC_BREAK_BUTTON,0);
 	SendMessage(hGoButton, BM_SETSTYLE,BS_PUSHBUTTON,TRUE);
 	SendMessage(hBreakButton, BM_SETSTYLE,BS_DEFPUSHBUTTON,TRUE);
-	SetFocus(hBreakButton);*/
-	LogMessage("TODO: SetRSPCommandToRunning");
+	SetFocus(hBreakButton);
 }
 
 void SetRSPCommandToStepping ( void ) { 	

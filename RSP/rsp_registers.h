@@ -27,6 +27,8 @@
 
 #pragma once
 
+#include "../Types.h"
+
 #define SP_MEM_ADDR_REGW		RegSPW[0]
 #define SP_DRAM_ADDR_REGW		RegSPW[1]
 #define SP_MEM_ADDR_REG			RegSP[0]
@@ -118,10 +120,12 @@ extern char* RspGPR_Strings[32];
 	(Elem) == 15 ? " [7]" : "Unknown Element"*/
 
 void Enter_RSP_Register_Window(void);
-/*void InitilizeRSPRegisters(void);*/
+void InitilizeRSPRegisters(void);
 void UpdateRSPRegistersScreen(void);
 
 /*** RSP Registers ***/
-/*extern U_WORD   RSP_GPR[32], RSP_Flags[4];
-extern UDWORD  RSP_ACCUM[8];
+extern MIPS_WORD   RSP_GPR[32]/*, RSP_Flags[4]*/;
+/*extern UDWORD  RSP_ACCUM[8];
 extern VECTOR  RSP_Vect[32];*/
+
+void WriteRspStatusRegister(DWORD Value);

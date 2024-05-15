@@ -131,8 +131,8 @@ void InitiateInternalRSP() {
 
 	LoadRspSettings();
 
-	/*AllocateMemory();
-	InitilizeRSPRegisters();*/
+	/*AllocateMemory();*/
+	InitilizeRSPRegisters();
 	Build_RSP();
 #ifdef GenerateLog
 	Start_Log();

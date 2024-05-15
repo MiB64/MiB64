@@ -118,7 +118,8 @@ enum SaveType {
 
 enum  SaveStateFormat {
 	SaveStateFormat_ORIGINAL = 0x23D8A6C8,
-	SaveStateFormat_2023_1   = 0x23D8A6C9
+	SaveStateFormat_2023_1   = 0x23D8A6C9,
+	SaveStateFormat_2024_1	 = 0x23D8A6CA
 };
 
 #ifdef CFB_READ
