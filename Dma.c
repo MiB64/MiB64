@@ -467,6 +467,18 @@ void SP_DMA_READ(void) {
 		return;
 	}
 
+	if (N64_Blocks.NoOfDMEMBlocks != 0 || N64_Blocks.NoOfIMEMBlocks != 0) {
+		DWORD OldProtect;
+		if (VirtualProtect(DMEM, 0x2000, PAGE_READWRITE, &OldProtect) == 0) {
+			DisplayError("Failed to unprotect DMEM/IMEM\n");
+		}
+		N64_Blocks.NoOfDMEMBlocks = 0;
+		N64_Blocks.NoOfIMEMBlocks = 0;
+		memset(JumpTable + (0x04000000 >> 2), 0, 0x2000);
+		*(DelaySlotTable + (0x04000000 >> 12)) = NULL;
+		*(DelaySlotTable + (0x04001000 >> 12)) = NULL;
+	}
+
 	if (SP_RD_LEN_REG + 1 + (SP_MEM_ADDR_REG & 0xFFF) > 0x1000) {
 		//if (ShowDebugMessages)
 		//	DisplayError("SP DMA\ncould not fit copy in memory segement");
