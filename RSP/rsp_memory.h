@@ -50,8 +50,8 @@ void RSP_LRV_DMEM ( DWORD Addr, int vect, int element );
 void RSP_LQV_DMEM ( DWORD Addr, int vect, int element );
 void RSP_LSV_DMEM ( DWORD Addr, int vect, int element );
 void RSP_LTV_DMEM ( DWORD Addr, int vect, int element );
-void RSP_LUV_DMEM ( DWORD Addr, int vect, int element );
-void RSP_LW_DMEM  ( DWORD Addr, DWORD * Value );*/
+void RSP_LUV_DMEM ( DWORD Addr, int vect, int element );*/
+void RSP_LW_DMEM  ( DWORD Addr, DWORD * Value );
 void RSP_LW_IMEM  ( DWORD Addr, DWORD * Value );
 /*void RSP_SB_DMEM  ( DWORD Addr, BYTE Value );
 void RSP_SBV_DMEM ( DWORD Addr, int vect, int element );

@@ -29,14 +29,14 @@
 
 /************************* OpCode functions *************************/
 void RSP_Opcode_SPECIAL ( void );
-/*void RSP_Opcode_REGIMM  ( void );
+/*void RSP_Opcode_REGIMM  ( void );*/
 void RSP_Opcode_J       ( void );
-void RSP_Opcode_JAL     ( void );*/
+/*void RSP_Opcode_JAL     ( void );*/
 void RSP_Opcode_BEQ     ( void );
 void RSP_Opcode_BNE     ( void );
 /*void RSP_Opcode_BLEZ    ( void );*/
 void RSP_Opcode_BGTZ    ( void );
-/*void RSP_Opcode_ADDI    ( void );*/
+void RSP_Opcode_ADDI    ( void );
 void RSP_Opcode_ADDIU   ( void );
 /*void RSP_Opcode_SLTI    ( void );
 void RSP_Opcode_SLTIU   ( void );*/
@@ -47,9 +47,9 @@ void RSP_Opcode_LUI     ( void );
 void RSP_Opcode_COP0    ( void );
 /*void RSP_Opcode_COP2    ( void );
 void RSP_Opcode_LB      ( void );
-void RSP_Opcode_LH      ( void );
+void RSP_Opcode_LH      ( void );*/
 void RSP_Opcode_LW      ( void );
-void RSP_Opcode_LBU     ( void );
+/*void RSP_Opcode_LBU     ( void );
 void RSP_Opcode_LHU     ( void );
 void RSP_Opcode_SB      ( void );
 void RSP_Opcode_SH      ( void );*/

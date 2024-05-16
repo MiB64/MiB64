@@ -257,23 +257,19 @@ void RSP_LUV_DMEM ( DWORD Addr, int vect, int element ) {
 	RSP_Vect[vect].HW[2] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 5) & 0xF)^3) & 0xFFF)) << 7;
 	RSP_Vect[vect].HW[1] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 6) & 0xF)^3) & 0xFFF)) << 7;
 	RSP_Vect[vect].HW[0] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 7) & 0xF)^3) & 0xFFF)) << 7;
-}
+}*/
 
 void RSP_LW_DMEM ( DWORD Addr, DWORD * Value ) {
 	if ((Addr & 0x3) != 0) {
 		Addr &= 0xFFF;
-		if (Addr > 0xFFC) {
-			DisplayError("hmmmm.... Problem with:\nRSP_LW_DMEM");
-			return;
-		}
-		*Value = *(BYTE *)(RSPInfo.DMEM + (Addr^ 3)) << 0x18;
-		*Value += *(BYTE *)(RSPInfo.DMEM + ((Addr + 1)^ 3)) << 0x10;
-		*Value += *(BYTE *)(RSPInfo.DMEM + ((Addr + 2)^ 3)) << 8;
-		*Value += *(BYTE *)(RSPInfo.DMEM + ((Addr + 3)^ 3));
+		*Value = *(BYTE *)(DMEM + (Addr^ 3)) << 0x18;
+		*Value += *(BYTE *)(DMEM + (((Addr + 1) & 0xFFF)^ 3)) << 0x10;
+		*Value += *(BYTE *)(DMEM + (((Addr + 2) & 0xFFF)^ 3)) << 8;
+		*Value += *(BYTE *)(DMEM + (((Addr + 3) & 0xFFF)^ 3));
 		return;
 	}
-	* Value = *(DWORD *)(RSPInfo.DMEM + (Addr & 0xFFF));	
-}*/
+	* Value = *(DWORD *)(DMEM + (Addr & 0xFFF));
+}
 
 void RSP_LW_IMEM ( DWORD Addr, DWORD * Value ) {
 	if ((Addr & 0x3) != 0) {
