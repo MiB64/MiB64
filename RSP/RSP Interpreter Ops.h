@@ -31,7 +31,7 @@
 void RSP_Opcode_SPECIAL ( void );
 /*void RSP_Opcode_REGIMM  ( void );*/
 void RSP_Opcode_J       ( void );
-/*void RSP_Opcode_JAL     ( void );*/
+void RSP_Opcode_JAL     ( void );
 void RSP_Opcode_BEQ     ( void );
 void RSP_Opcode_BNE     ( void );
 /*void RSP_Opcode_BLEZ    ( void );*/
@@ -62,9 +62,9 @@ void RSP_Special_SLL    ( void );
 void RSP_Special_SRA    ( void );
 void RSP_Special_SLLV   ( void );
 void RSP_Special_SRLV   ( void );
-void RSP_Special_SRAV   ( void );
+void RSP_Special_SRAV   ( void );*/
 void RSP_Special_JR     ( void );
-void RSP_Special_JALR   ( void );*/
+/*void RSP_Special_JALR   ( void );*/
 void RSP_Special_BREAK  ( void );
 /*void RSP_Special_ADD    ( void );
 void RSP_Special_ADDU   ( void );

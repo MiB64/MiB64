@@ -32,6 +32,7 @@
 #include "rsp_Cpu.h"
 #include "RSP_breakpoint.h"
 #include "RSP Command.h"
+#include "rsp_registers.h"
 
 #include <windows.h>
 #include <windowsx.h>

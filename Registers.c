@@ -567,6 +567,8 @@ void InitalizeR4300iRegisters (int UsePif, enum CIC_CHIP CIC_Chip) {
 	StackValue = GPR[29].W[0];
 #endif
 	MemoryStack = (DWORD)(N64MEM+(GPR[29].W[0] & 0x1FFFFFFF));
+
+	DPC_STATUS_REG = DPC_STATUS_CBUF_READY | DPC_STATUS_PIPE_BUSY | DPC_STATUS_START_GCLK;
 }
 
 BOOL Is8BitReg (int x86Reg) {

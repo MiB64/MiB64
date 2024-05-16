@@ -416,7 +416,7 @@ void SetupPlugins (HWND hWnd) {
 		GFX_INFO GfxInfo;
 
 		GfxInfo.MemoryBswaped = TRUE;
-		GfxInfo.CheckInterrupts = CheckInterrupts;
+		GfxInfo.CheckInterrupts = GfxCheckInterrupts;
 		GfxInfo.hStatusBar = hStatusWnd;
 		GfxInfo.hWnd = hWnd;
 		GfxInfo.HEADER = (BYTE *)RomHeader;

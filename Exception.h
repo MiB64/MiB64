@@ -65,6 +65,7 @@
 	(Except) == EXC_VCED    ? "Virt. Coherency on data read" :\
 	"Unkown"
 
+void __cdecl GfxCheckInterrupts         ( void );
 void __cdecl AiCheckInterrupts			( void );
 void __cdecl CheckInterrupts			( void );
 void DoIntegerOverflow					( BOOL DelaySlot );

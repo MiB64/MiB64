@@ -37,6 +37,7 @@
 /*#include "log.h"
 #include "x86.h"*/
 #include "../Main.h"
+#include "../rdp_registers.h"
 
 /*extern U_WORD Recp, RecpResult, SQroot, SQrootResult;*/
 
@@ -54,11 +55,11 @@ void RSP_Opcode_J ( void ) {
 	RSP_JumpTo = (RSPOpC.OP.J.target << 2) & 0xFFC;
 }
 
-/*void RSP_Opcode_JAL ( void ) {
+void RSP_Opcode_JAL ( void ) {
 	RSP_NextInstruction = DELAY_SLOT;
-	RSP_GPR[31].UW = ( *PrgCount + 8 ) & 0xFFC;
-	RSP_JumpTo = (RSPOpC.target << 2) & 0xFFC;
-}*/
+	RSP_GPR[31].UW = ( SP_PC_REG + 8 ) & 0xFFC;
+	RSP_JumpTo = (RSPOpC.OP.J.target << 2) & 0xFFC;
+}
 
 void RSP_Opcode_BEQ ( void ) {
 	RSP_NextInstruction = DELAY_SLOT;
@@ -246,14 +247,14 @@ void RSP_Special_SRAV (void) {
 	if (RSPOpC.rd != 0) {
 		RSP_GPR[RSPOpC.rd].W = RSP_GPR[RSPOpC.rt].W >> (RSP_GPR[RSPOpC.rs].W & 0x1F);
 	}
-}
+}*/
 
 void RSP_Special_JR (void) {
 	RSP_NextInstruction = DELAY_SLOT;
-	RSP_JumpTo = (RSP_GPR[RSPOpC.rs].W & 0xFFC);
+	RSP_JumpTo = (RSP_GPR[RSPOpC.OP.R.rs].W & 0xFFC);
 }
 
-void RSP_Special_JALR (void) {
+/*void RSP_Special_JALR (void) {
 	RSP_NextInstruction = DELAY_SLOT;
 	RSP_GPR[RSPOpC.rd].W = (*PrgCount + 8) & 0xFFC;
 	RSP_JumpTo = (RSP_GPR[RSPOpC.rs].W & 0xFFC);
@@ -387,9 +388,9 @@ void RSP_Cop0_MF (void) {
 		break;
 	/*case 8: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.DPC_START_REG ; break;
 	case 9: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.DPC_END_REG ; break;
-	case 10: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.DPC_CURRENT_REG; break;
-	case 11: RSP_GPR[RSPOpC.rt].W = *RSPInfo.DPC_STATUS_REG; break;
-	case 12: RSP_GPR[RSPOpC.rt].W = *RSPInfo.DPC_CLOCK_REG; break;*/
+	case 10: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.DPC_CURRENT_REG; break;*/
+	case 11: RSP_GPR[RSPOpC.OP.R.rt].W = DPC_STATUS_REG; break;
+	/*case 12: RSP_GPR[RSPOpC.rt].W = *RSPInfo.DPC_CLOCK_REG; break;*/
 	default:
 		DisplayError("have not implemented RSP MF CP0 reg %s (%d)",RspCOP0_Name(RSPOpC.OP.R.rd),RSPOpC.OP.R.rd);
 		LogMessage("have not implemented RSP MF CP0 reg %s (%d)", RspCOP0_Name(RSPOpC.OP.R.rd), RSPOpC.OP.R.rd);

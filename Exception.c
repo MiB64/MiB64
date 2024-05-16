@@ -59,6 +59,11 @@ void __cdecl CheckInterrupts ( void ) {
 	}
 }
 
+void __cdecl GfxCheckInterrupts( void ) {
+	DPC_STATUS_REG &= ~(DPC_STATUS_PIPE_BUSY | DPC_STATUS_START_GCLK);
+	CheckInterrupts();
+}
+
 void DoIntegerOverflow(BOOL DelaySlot) {
 	if (ShowDebugMessages) {
 		if ((STATUS_REGISTER & STATUS_EXL) != 0) {

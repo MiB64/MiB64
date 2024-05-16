@@ -47,11 +47,11 @@ void BuildInterpreterRspCPU(void) {
 	RSP_Opcode[ 0] = (void*)RSP_Opcode_SPECIAL;
 	RSP_Opcode[ 1] = /*RSP_Opcode_REGIMM*/(void*)rsp_UnknownOpcode;
 	RSP_Opcode[ 2] = (void*)RSP_Opcode_J;
-	RSP_Opcode[ 3] = /*RSP_Opcode_JAL*/(void*)rsp_UnknownOpcode;
+	RSP_Opcode[ 3] = (void*)RSP_Opcode_JAL;
 	RSP_Opcode[ 4] = (void*)RSP_Opcode_BEQ;
 	RSP_Opcode[ 5] = (void*)RSP_Opcode_BNE;
 	RSP_Opcode[ 6] = /*RSP_Opcode_BLEZ*/(void*)rsp_UnknownOpcode;
-	RSP_Opcode[ 7] = /*(void*)RSP_Opcode_BGTZ*/(void*)rsp_UnknownOpcode;
+	RSP_Opcode[ 7] = (void*)RSP_Opcode_BGTZ;
 	RSP_Opcode[ 8] = (void*)RSP_Opcode_ADDI;
 	RSP_Opcode[ 9] = /*(void*)RSP_Opcode_ADDIU*/(void*)rsp_UnknownOpcode;
 	RSP_Opcode[10] = /*RSP_Opcode_SLTI*/(void*)rsp_UnknownOpcode;
@@ -117,7 +117,7 @@ void BuildInterpreterRspCPU(void) {
 	RSP_Special[ 5] = (void*)rsp_UnknownOpcode;
 	RSP_Special[ 6] = /*RSP_Special_SRLV*/(void*)rsp_UnknownOpcode;
 	RSP_Special[ 7] = /*RSP_Special_SRAV*/(void*)rsp_UnknownOpcode;
-	RSP_Special[ 8] = /*RSP_Special_JR*/(void*)rsp_UnknownOpcode;
+	RSP_Special[ 8] = (void*)RSP_Special_JR;
 	RSP_Special[ 9] = /*RSP_Special_JALR*/(void*)rsp_UnknownOpcode;
 	RSP_Special[10] = (void*)rsp_UnknownOpcode;
 	RSP_Special[11] = (void*)rsp_UnknownOpcode;
