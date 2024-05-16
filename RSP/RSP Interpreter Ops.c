@@ -33,8 +33,8 @@
 #include "rsp_config.h"
 #include "RSP Interpreter CPU.h"
 #include "rsp_memory.h"
-/*#include "dma.h"
-#include "log.h"
+#include "../Dma.h"
+/*#include "log.h"
 #include "x86.h"*/
 #include "../Main.h"
 
@@ -398,13 +398,13 @@ void RSP_Cop0_MF (void) {
 
 void RSP_Cop0_MT (void) {
 	switch (RSPOpC.OP.R.rd) {
-	/*case 0: *RSPInfo.SP_MEM_ADDR_REG  = RSP_GPR[RSPOpC.rt].UW; break;
-	case 1: *RSPInfo.SP_DRAM_ADDR_REG = RSP_GPR[RSPOpC.rt].UW; break;
+	case 0: SP_MEM_ADDR_REG  = RSP_GPR[RSPOpC.OP.R.rt].UW & 0x1FF8; break;
+	case 1: SP_DRAM_ADDR_REG = RSP_GPR[RSPOpC.OP.R.rt].UW & 0xFFFFF8; break;
 	case 2: 
-		*RSPInfo.SP_RD_LEN_REG = RSP_GPR[RSPOpC.rt].UW; 
+		SP_RD_LEN_REG = RSP_GPR[RSPOpC.OP.R.rt].UW & 0xFF8FFFF8;
 		SP_DMA_READ();		
 		break;
-	case 3: 
+	/*case 3: 
 		*RSPInfo.SP_WR_LEN_REG = RSP_GPR[RSPOpC.rt].UW; 
 		SP_DMA_WRITE();		
 		break;*/
