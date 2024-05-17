@@ -265,7 +265,6 @@ extern MIPS_DWORD PROGRAM_COUNTER, *GPR, *FPR, HI, LO, *CP0;
 extern N64_REGISTERS Registers;
 extern int lastUnusedCOP0Register;
 extern MIPS_DWORD cop2LatchedValue;
-extern DWORD RegSPW[2];
 
 enum FPU_Format {
 	FPU_Unkown,FPU_Dword, FPU_Qword, FPU_Float, FPU_Double

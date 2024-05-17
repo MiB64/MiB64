@@ -139,23 +139,19 @@ void RSP_LFV_DMEM ( DWORD Addr, int vect, int element ) {
 	for (count = element; count < (length + element); count ++ ){
 		RSP_Vect[vect].B[15 - count] = Temp.B[15 - count];
 	}
-}
+}*/
 
 void RSP_LH_DMEM ( DWORD Addr, WORD * Value ) {
 	if ((Addr & 0x1) != 0) {
-		if (Addr > 0xFFE) {
-			DisplayError("hmmmm.... Problem with:\nRSP_LH_DMEM");
-			return;
-		}
 		Addr &= 0xFFF;
-		*Value = *(BYTE *)(RSPInfo.DMEM + (Addr^ 3)) << 8;		
-		*Value += *(BYTE *)(RSPInfo.DMEM + ((Addr + 1)^ 3));
+		*Value = *(BYTE *)(DMEM + (Addr^ 3)) << 8;		
+		*Value += *(BYTE *)(DMEM + (((Addr + 1) & 0xFFF)^ 3));
 		return;
 	}
-	* Value = *(WORD *)(RSPInfo.DMEM + ((Addr ^ 2 ) & 0xFFF));	
+	* Value = *(WORD *)(DMEM + ((Addr ^ 2 ) & 0xFFF));	
 }
 
-void RSP_LHV_DMEM ( DWORD Addr, int vect, int element ) {	
+/*void RSP_LHV_DMEM ( DWORD Addr, int vect, int element ) {	
 	RSP_Vect[vect].HW[7] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element) & 0xF) ^3) & 0xFFF)) << 7;
 	RSP_Vect[vect].HW[6] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 2) & 0xF) ^3) & 0xFFF)) << 7;
 	RSP_Vect[vect].HW[5] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 4) & 0xF) ^3) & 0xFFF)) << 7;
@@ -397,17 +393,18 @@ void RSP_SFV_DMEM ( DWORD Addr, int vect, int element ) {
 		*(RSPInfo.DMEM + ((Addr + ((offset + 12) & 0xF))^3)) = RSP_Vect[vect].UHW[4] >> 7;
 		break;
 	}
-}
+}*/
 
 void RSP_SH_DMEM ( DWORD Addr, WORD Value ) {
 	if ((Addr & 0x1) != 0) {
-		DisplayError("Unaligned RSP_SH_DMEM");
+		*(BYTE*)(DMEM + (Addr ^ 3)) = (BYTE)(Value >> 0x8);
+		*(BYTE*)(DMEM + (((Addr + 1) & 0xFFF) ^ 3)) = (BYTE)(Value);
 		return;
 	}
-	*(WORD *)(RSPInfo.DMEM + ((Addr ^ 2) & 0xFFF)) = Value;
+	*(WORD *)(DMEM + ((Addr ^ 2) & 0xFFF)) = Value;
 }
 
-void RSP_SHV_DMEM ( DWORD Addr, int vect, int element ) {	
+/*void RSP_SHV_DMEM ( DWORD Addr, int vect, int element ) {	
 	*(RSPInfo.DMEM + ((Addr^3) & 0xFFF)) = (RSP_Vect[vect].UB[(15 - element) & 0xF] << 1) + 
 		(RSP_Vect[vect].UB[(14 - element) & 0xF] >> 7);
 	*(RSPInfo.DMEM + (((Addr + 2)^3) & 0xFFF)) = (RSP_Vect[vect].UB[(13 - element) & 0xF] << 1) + 

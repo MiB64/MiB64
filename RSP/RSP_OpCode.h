@@ -71,14 +71,14 @@ typedef struct tagOPCODE {
 			unsigned op : 6;
 		} R;
 
-		/*struct {
+		struct {
 			signed   voffset : 7;
 			unsigned del    : 4;
-			unsigned : 5;
+			unsigned rd: 5;
 			unsigned dest   : 5;
 			unsigned : 5;
-			unsigned : 6;
-		};*/
+			unsigned op : 6;
+		} V;
 
 	} OP;
 } OPCODE;
@@ -145,13 +145,13 @@ typedef struct tagOPCODE {
 #define	RSP_COP0_MT				 4
 
 /* RSP COP2 opcodes */
-/*#define	RSP_COP2_MF				 0 
+#define	RSP_COP2_MF				 0 
 #define	RSP_COP2_CF				 2
 #define	RSP_COP2_MT				 4 
-#define	RSP_COP2_CT				 6*/
+#define	RSP_COP2_CT				 6
 
 /* RSP Vector opcodes */
-/*#define	RSP_VECTOR_VMULF		 0
+#define	RSP_VECTOR_VMULF		 0
 #define	RSP_VECTOR_VMULU		 1
 #define	RSP_VECTOR_VRNDP		 2
 #define	RSP_VECTOR_VMULQ		 3
@@ -194,10 +194,10 @@ typedef struct tagOPCODE {
 #define	RSP_VECTOR_VRSQ			52
 #define	RSP_VECTOR_VRSQL		53
 #define	RSP_VECTOR_VRSQH		54
-#define	RSP_VECTOR_VNOOP		55*/
+#define	RSP_VECTOR_VNOOP		55
 
 /* RSP LSC2 opcodes */
-/*#define RSP_LSC2_BV				 0
+#define RSP_LSC2_BV				 0
 #define RSP_LSC2_SV				 1
 #define RSP_LSC2_LV				 2
 #define RSP_LSC2_DV				 3
@@ -208,6 +208,6 @@ typedef struct tagOPCODE {
 #define RSP_LSC2_HV				 8
 #define RSP_LSC2_FV				 9
 #define RSP_LSC2_WV				10
-#define	RSP_LSC2_TV				11*/
+#define	RSP_LSC2_TV				11
 
 #endif

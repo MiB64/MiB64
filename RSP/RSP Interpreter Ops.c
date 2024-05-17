@@ -79,14 +79,14 @@ void RSP_Opcode_BNE ( void ) {
 	}
 }
 
-/*void RSP_Opcode_BLEZ ( void ) {
+void RSP_Opcode_BLEZ ( void ) {
 	RSP_NextInstruction = DELAY_SLOT;
-	if (RSP_GPR[RSPOpC.rs].W <= 0) {
-		RSP_JumpTo = ( *PrgCount + ((short)RSPOpC.offset << 2) + 4 ) & 0xFFC;
+	if (RSP_GPR[RSPOpC.OP.B.rs].W <= 0) {
+		RSP_JumpTo = ( SP_PC_REG + ((short)RSPOpC.OP.B.offset << 2) + 4 ) & 0xFFC;
 	} else  {
-		RSP_JumpTo = ( *PrgCount + 8 ) & 0xFFC;
+		RSP_JumpTo = ( SP_PC_REG + 8 ) & 0xFFC;
 	}
-}*/
+}
 
 void RSP_Opcode_BGTZ ( void ) {
 	RSP_NextInstruction = DELAY_SLOT;
@@ -163,13 +163,15 @@ void RSP_Opcode_LB ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (short)RSPOpC.offset) & 0xFFF);
 	RSP_LB_DMEM( Address, &RSP_GPR[RSPOpC.rt].UB[0] );
 	RSP_GPR[RSPOpC.rt].W = RSP_GPR[RSPOpC.rt].B[0];
-}
+}*/
 
 void RSP_Opcode_LH ( void ) {
-	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (short)RSPOpC.offset) & 0xFFF);
-	RSP_LH_DMEM( Address, &RSP_GPR[RSPOpC.rt].UHW[0] );
-	RSP_GPR[RSPOpC.rt].W = RSP_GPR[RSPOpC.rt].HW[0];
-}*/
+	if (RSPOpC.OP.LS.rt != 0) {
+		DWORD Address = ((RSP_GPR[RSPOpC.OP.LS.base].UW + (short)RSPOpC.OP.LS.offset) & 0xFFF);
+		RSP_LH_DMEM(Address, &RSP_GPR[RSPOpC.OP.LS.rt].UHW[0]);
+		RSP_GPR[RSPOpC.OP.LS.rt].W = RSP_GPR[RSPOpC.OP.LS.rt].HW[0];
+	}
+}
 
 void RSP_Opcode_LW ( void ) {
 	if (RSPOpC.OP.LS.rt != 0) {
@@ -182,23 +184,25 @@ void RSP_Opcode_LW ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (short)RSPOpC.offset) & 0xFFF);
 	RSP_LB_DMEM( Address, &RSP_GPR[RSPOpC.rt].UB[0] );
 	RSP_GPR[RSPOpC.rt].UW = RSP_GPR[RSPOpC.rt].UB[0];
-}
+}*/
 
 void RSP_Opcode_LHU ( void ) {
-	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (short)RSPOpC.offset) & 0xFFF);
-	RSP_LH_DMEM( Address, &RSP_GPR[RSPOpC.rt].UHW[0] );
-	RSP_GPR[RSPOpC.rt].UW = RSP_GPR[RSPOpC.rt].UHW[0];
+	if (RSPOpC.OP.LS.rt != 0) {
+		DWORD Address = ((RSP_GPR[RSPOpC.OP.LS.base].UW + (short)RSPOpC.OP.LS.offset) & 0xFFF);
+		RSP_LH_DMEM(Address, &RSP_GPR[RSPOpC.OP.LS.rt].UHW[0]);
+		RSP_GPR[RSPOpC.OP.LS.rt].UW = RSP_GPR[RSPOpC.OP.LS.rt].UHW[0];
+	}
 }
 
-void RSP_Opcode_SB ( void ) {
+/*void RSP_Opcode_SB ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (short)RSPOpC.offset) & 0xFFF);
 	RSP_SB_DMEM( Address, RSP_GPR[RSPOpC.rt].UB[0] );
-}
+}*/
 
 void RSP_Opcode_SH ( void ) {
-	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (short)RSPOpC.offset) & 0xFFF);
-	RSP_SH_DMEM( Address, RSP_GPR[RSPOpC.rt].UHW[0] );
-}*/
+	DWORD Address = ((RSP_GPR[RSPOpC.OP.LS.base].UW + (short)RSPOpC.OP.LS.offset) & 0xFFF);
+	RSP_SH_DMEM( Address, RSP_GPR[RSPOpC.OP.LS.rt].UHW[0] );
+}
 
 void RSP_Opcode_SW ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.OP.LS.base].UW + (short)RSPOpC.OP.LS.offset) & 0xFFF);
@@ -219,13 +223,13 @@ void RSP_Special_SLL ( void ) {
 	}
 }
 
-/*void RSP_Special_SRL ( void ) {
-	if (RSPOpC.rd != 0) {
-		RSP_GPR[RSPOpC.rd].UW = RSP_GPR[RSPOpC.rt].UW >> RSPOpC.sa;
+void RSP_Special_SRL ( void ) {
+	if (RSPOpC.OP.R.rd != 0) {
+		RSP_GPR[RSPOpC.OP.R.rd].UW = RSP_GPR[RSPOpC.OP.R.rt].UW >> RSPOpC.OP.R.sa;
 	}
 }
 
-void RSP_Special_SRA ( void ) {
+/*void RSP_Special_SRA ( void ) {
 	if (RSPOpC.rd != 0) {
 		RSP_GPR[RSPOpC.rd].W = RSP_GPR[RSPOpC.rt].W >> RSPOpC.sa;
 	}
@@ -269,13 +273,13 @@ void RSP_Special_BREAK ( void ) {
 	}*/
 }
 
-/*void RSP_Special_ADD (void) {
-	if (RSPOpC.rd != 0) {
-		RSP_GPR[RSPOpC.rd].W = RSP_GPR[RSPOpC.rs].W + RSP_GPR[RSPOpC.rt].W;
+void RSP_Special_ADD (void) {
+	if (RSPOpC.OP.R.rd != 0) {
+		RSP_GPR[RSPOpC.OP.R.rd].W = RSP_GPR[RSPOpC.OP.R.rs].W + RSP_GPR[RSPOpC.OP.R.rt].W;
 	}
 }
 
-void RSP_Special_ADDU (void) {
+/*void RSP_Special_ADDU (void) {
 	if (RSPOpC.rd != 0) {
 		RSP_GPR[RSPOpC.rd].UW = RSP_GPR[RSPOpC.rs].UW + RSP_GPR[RSPOpC.rt].UW;
 	}
@@ -399,9 +403,9 @@ void RSP_Cop0_MF (void) {
 
 void RSP_Cop0_MT (void) {
 	switch (RSPOpC.OP.R.rd) {
-	case 0: SP_MEM_ADDR_REG  = RSP_GPR[RSPOpC.OP.R.rt].UW & 0x1FF8; break;
-	case 1: SP_DRAM_ADDR_REG = RSP_GPR[RSPOpC.OP.R.rt].UW & 0xFFFFF8; break;
-	case 2: 
+	case 0: SP_MEM_ADDR_REGW  = RSP_GPR[RSPOpC.OP.R.rt].UW & 0x1FF8; break;
+	case 1: SP_DRAM_ADDR_REGW = RSP_GPR[RSPOpC.OP.R.rt].UW & 0xFFFFF8; break;
+	case 2:
 		SP_RD_LEN_REG = RSP_GPR[RSPOpC.OP.R.rt].UW & 0xFF8FFFF8;
 		SP_DMA_READ();		
 		break;
