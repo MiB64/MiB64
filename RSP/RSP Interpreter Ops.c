@@ -1617,12 +1617,12 @@ void RSP_Opcode_SSV ( void ) {
 void RSP_Opcode_SLV ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 2)) &0xFFF);
 	RSP_SLV_DMEM( Address, RSPOpC.rt, RSPOpC.del);
-}
+}*/
 
 void RSP_Opcode_SDV ( void ) {
-	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 3)) &0xFFF);
-	RSP_SDV_DMEM( Address, RSPOpC.rt, RSPOpC.del);
-}*/
+	DWORD Address = ((RSP_GPR[RSPOpC.OP.LSV.base].UW + (DWORD)(RSPOpC.OP.LSV.offset << 3)) &0xFFF);
+	RSP_SDV_DMEM( Address, RSPOpC.OP.LSV.vt, RSPOpC.OP.LSV.element);
+}
 
 void RSP_Opcode_SQV ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.OP.LSV.base].UW + (DWORD)(RSPOpC.OP.LSV.offset << 4)) &0xFFF);

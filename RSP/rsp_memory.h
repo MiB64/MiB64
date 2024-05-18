@@ -54,9 +54,9 @@ void RSP_LUV_DMEM ( DWORD Addr, int vect, int element );*/
 void RSP_LW_DMEM  ( DWORD Addr, DWORD * Value );
 void RSP_LW_IMEM  ( DWORD Addr, DWORD * Value );
 /*void RSP_SB_DMEM  ( DWORD Addr, BYTE Value );
-void RSP_SBV_DMEM ( DWORD Addr, int vect, int element );
+void RSP_SBV_DMEM ( DWORD Addr, int vect, int element );*/
 void RSP_SDV_DMEM ( DWORD Addr, int vect, int element );
-void RSP_SFV_DMEM ( DWORD Addr, int vect, int element );*/
+/*void RSP_SFV_DMEM ( DWORD Addr, int vect, int element );*/
 void RSP_SH_DMEM  ( DWORD Addr, WORD Value );
 /*void RSP_SHV_DMEM ( DWORD Addr, int vect, int element );
 void RSP_SLV_DMEM ( DWORD Addr, int vect, int element );

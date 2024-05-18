@@ -280,18 +280,18 @@ void RSP_LW_IMEM ( DWORD Addr, DWORD * Value ) {
 
 void RSP_SBV_DMEM ( DWORD Addr, int vect, int element ) {
 	*(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].B[15 - element];
-}
+}*/
 
 void RSP_SDV_DMEM ( DWORD Addr, int vect, int element ) {
 	int Count;
 
 	for (Count = element; Count < (8 + element); Count ++ ){
-		*(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].B[15 - (Count & 0xF)];
+		*(DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].B[15 - (Count & 0xF)];
 		Addr += 1;
 	}
 }
 
-void RSP_SFV_DMEM ( DWORD Addr, int vect, int element ) {	
+/*void RSP_SFV_DMEM ( DWORD Addr, int vect, int element ) {	
 	int offset = Addr & 0xF;
 	Addr &= 0xFF0;
 

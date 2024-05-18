@@ -147,8 +147,8 @@ void RSP_Opcode_LTV     ( void );*/
 /************************** lc2 functions **************************/
 /*void RSP_Opcode_SBV     ( void );
 void RSP_Opcode_SSV     ( void );
-void RSP_Opcode_SLV     ( void );
-void RSP_Opcode_SDV     ( void );*/
+void RSP_Opcode_SLV     ( void );*/
+void RSP_Opcode_SDV     ( void );
 void RSP_Opcode_SQV     ( void );
 /*void RSP_Opcode_SRV     ( void );
 void RSP_Opcode_SPV     ( void );
