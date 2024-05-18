@@ -1047,54 +1047,54 @@ char * RSPLc2Name ( DWORD OpCode ) {
 	OPCODE command;
 	command.OP.Hex = OpCode;
 
-	switch (command.OP.V.rd) {
+	switch (command.OP.LSV.lsop) {
 	case RSP_LSC2_BV:
-		sprintf(CommandName,"LBV\t$v%d [%d], 0x%04X (%s)",command.OP.V.dest, command.OP.V.del, 
-			command.OP.V.voffset, RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"LBV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			command.OP.LSV.offset, RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_SV:
-		sprintf(CommandName,"LSV\t$v%d [%d], 0x%04X (%s)",command.OP.V.dest, command.OP.V.del, 
-			(command.OP.V.voffset << 1), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"LSV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 1), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_LV:
-		sprintf(CommandName,"LLV\t$v%d [%d], 0x%04X (%s)",command.OP.V.dest, command.OP.V.del, 
-			(command.OP.V.voffset << 2), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"LLV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 2), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_DV:
-		sprintf(CommandName,"LDV\t$v%d [%d], 0x%04X (%s)",command.OP.V.dest, command.OP.V.del, 
-			(command.OP.V.voffset << 3), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"LDV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 3), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_QV:
-		sprintf(CommandName,"LQV\t$v%d [%d], 0x%04X (%s)",command.OP.V.dest, command.OP.V.del, 
-			(command.OP.V.voffset << 4), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"LQV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 4), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_RV:
-		sprintf(CommandName,"LRV\t$v%d [%d], 0x%04X (%s)",command.OP.V.dest, command.OP.V.del, 
-			(command.OP.V.voffset << 4), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"LRV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 4), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_PV:
-		sprintf(CommandName,"LPV\t$v%d [%d], 0x%04X (%s)",command.OP.V.dest, command.OP.V.del, 
-			(command.OP.V.voffset << 3), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"LPV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 3), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_UV:
-		sprintf(CommandName,"LUV\t$v%d [%d], 0x%04X (%s)",command.OP.V.dest, command.OP.V.del, 
-			(command.OP.V.voffset << 3), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"LUV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 3), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_HV:
-		sprintf(CommandName,"LHV\t$v%d [%d], 0x%04X (%s)",command.OP.V.dest, command.OP.V.del, 
-			(command.OP.V.voffset << 4), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"LHV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 4), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_FV:
-		sprintf(CommandName,"LFV\t$v%d [%d], 0x%04X (%s)",command.OP.V.dest, command.OP.V.del, 
-			(command.OP.V.voffset << 4), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"LFV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 4), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_WV:
-		sprintf(CommandName,"LWV\t$v%d [%d], 0x%04X (%s)",command.OP.V.dest, command.OP.V.del, 
-			(command.OP.V.voffset << 4), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"LWV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 4), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_TV:
-		sprintf(CommandName,"LTV\t$v%d [%d], 0x%04X (%s)",command.OP.V.dest, command.OP.V.del, 
-			(command.OP.V.voffset << 4), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"LTV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 4), RspGPR_Name(command.OP.LSV.base));
 		break;
 	default:
 		sprintf(CommandName,"RSP: Unknown\t%02X %02X %02X %02X",
@@ -1107,54 +1107,54 @@ char * RSPSc2Name ( DWORD OpCode ) {
 	OPCODE command;
 	command.OP.Hex = OpCode;
 
-	switch (command.OP.V.rd) {
+	switch (command.OP.LSV.lsop) {
 	case RSP_LSC2_BV:
-		sprintf(CommandName,"SBV\t$v%d [%d], 0x%04X (%s)",command.OP.R.rt, command.OP.V.del, 
-			command.OP.V.voffset, RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"SBV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			command.OP.LSV.offset, RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_SV:
-		sprintf(CommandName,"SSV\t$v%d [%d], 0x%04X (%s)",command.OP.R.rt, command.OP.V.del, 
-			(command.OP.V.voffset << 1), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"SSV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 1), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_LV:
-		sprintf(CommandName,"SLV\t$v%d [%d], 0x%04X (%s)",command.OP.R.rt, command.OP.V.del, 
-			(command.OP.V.voffset << 2), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"SLV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 2), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_DV:
-		sprintf(CommandName,"SDV\t$v%d [%d], 0x%04X (%s)",command.OP.R.rt, command.OP.V.del, 
-			(command.OP.V.voffset << 3), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"SDV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 3), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_QV:
-		sprintf(CommandName,"SQV\t$v%d [%d], 0x%04X (%s)",command.OP.R.rt, command.OP.V.del, 
-			(command.OP.V.voffset << 4), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"SQV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 4), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_RV:
-		sprintf(CommandName,"SRV\t$v%d [%d], 0x%04X (%s)",command.OP.R.rt, command.OP.V.del, 
-			(command.OP.V.voffset << 4), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"SRV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 4), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_PV:
-		sprintf(CommandName,"SPV\t$v%d [%d], 0x%04X (%s)",command.OP.R.rt, command.OP.V.del, 
-			(command.OP.V.voffset << 3), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"SPV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 3), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_UV:
-		sprintf(CommandName,"SUV\t$v%d [%d], 0x%04X (%s)",command.OP.R.rt, command.OP.V.del, 
-			(command.OP.V.voffset << 3), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"SUV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 3), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_HV:
-		sprintf(CommandName,"SHV\t$v%d [%d], 0x%04X (%s)",command.OP.R.rt, command.OP.V.del, 
-			(command.OP.V.voffset << 4), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"SHV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 4), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_FV:
-		sprintf(CommandName,"SFV\t$v%d [%d], 0x%04X (%s)",command.OP.R.rt, command.OP.V.del, 
-			(command.OP.V.voffset << 4), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"SFV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 4), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_WV:
-		sprintf(CommandName,"SWV\t$v%d [%d], 0x%04X (%s)",command.OP.R.rt, command.OP.V.del, 
-			(command.OP.V.voffset << 4), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"SWV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 4), RspGPR_Name(command.OP.LSV.base));
 		break;
 	case RSP_LSC2_TV:
-		sprintf(CommandName,"STV\t$v%d [%d], 0x%04X (%s)",command.OP.R.rt, command.OP.V.del, 
-			(command.OP.V.voffset << 4), RspGPR_Name(command.OP.LS.base));
+		sprintf(CommandName,"STV\t$v%d [%d], 0x%04X (%s)",command.OP.LSV.vt, command.OP.LSV.element, 
+			(command.OP.LSV.offset << 4), RspGPR_Name(command.OP.LSV.base));
 		break;
 	default:
 		sprintf(CommandName,"RSP: Unknown\t%02X %02X %02X %02X",

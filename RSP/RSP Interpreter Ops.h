@@ -54,8 +54,8 @@ void RSP_Opcode_LHU     ( void );
 /*void RSP_Opcode_SB      ( void );*/
 void RSP_Opcode_SH      ( void );
 void RSP_Opcode_SW      ( void );
-/*void RSP_Opcode_LC2     ( void );
-void RSP_Opcode_SC2     ( void );*/
+void RSP_Opcode_LC2     ( void );
+void RSP_Opcode_SC2     ( void );
 /********************** R4300i OpCodes: Special **********************/
 void RSP_Special_SLL    ( void );
 void RSP_Special_SRL    ( void );
@@ -135,10 +135,10 @@ void RSP_Vector_VNOOP   ( void );*/
 /************************** lc2 functions **************************/
 /*void RSP_Opcode_LBV     ( void );
 void RSP_Opcode_LSV     ( void );
-void RSP_Opcode_LLV     ( void );
+void RSP_Opcode_LLV     ( void );*/
 void RSP_Opcode_LDV     ( void );
 void RSP_Opcode_LQV     ( void );
-void RSP_Opcode_LRV     ( void );
+/*void RSP_Opcode_LRV     ( void );
 void RSP_Opcode_LPV     ( void );
 void RSP_Opcode_LUV     ( void );
 void RSP_Opcode_LHV     ( void );
@@ -148,9 +148,9 @@ void RSP_Opcode_LTV     ( void );*/
 /*void RSP_Opcode_SBV     ( void );
 void RSP_Opcode_SSV     ( void );
 void RSP_Opcode_SLV     ( void );
-void RSP_Opcode_SDV     ( void );
+void RSP_Opcode_SDV     ( void );*/
 void RSP_Opcode_SQV     ( void );
-void RSP_Opcode_SRV     ( void );
+/*void RSP_Opcode_SRV     ( void );
 void RSP_Opcode_SPV     ( void );
 void RSP_Opcode_SUV     ( void );
 void RSP_Opcode_SHV     ( void );

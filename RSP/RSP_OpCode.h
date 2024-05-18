@@ -80,6 +80,15 @@ typedef struct tagOPCODE {
 			unsigned op : 6;
 		} V;
 
+		struct {
+			signed   offset : 7;
+			unsigned element : 4;
+			unsigned lsop : 5;
+			unsigned vt : 5;
+			unsigned base : 5;
+			unsigned op : 6;
+		} LSV;
+
 	} OP;
 } OPCODE;
 

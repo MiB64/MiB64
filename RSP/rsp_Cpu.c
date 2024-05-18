@@ -48,9 +48,9 @@ void * RSP_Opcode[64];
 void * RSP_Special[64];
 void * RSP_Cop0[32];
 /*void * RSP_Cop2[32];
-void * RSP_Vector[64];
+void * RSP_Vector[64];*/
 void * RSP_Lc2[32];
-void * RSP_Sc2[32];*/
+void * RSP_Sc2[32];
 
 void BuildInterpreterRspCPU(void);
 /*void BuildRecompilerCPU(void);*/

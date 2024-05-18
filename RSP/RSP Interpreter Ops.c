@@ -209,13 +209,13 @@ void RSP_Opcode_SW ( void ) {
 	RSP_SW_DMEM( Address, RSP_GPR[RSPOpC.OP.LS.rt].UW );
 }
 
-/*void RSP_Opcode_LC2 (void) {
-	((void (*)()) RSP_Lc2 [ RSPOpC.rd ])();
+void RSP_Opcode_LC2 (void) {
+	((void (*)()) RSP_Lc2 [ RSPOpC.OP.R.rd ])();
 }
 
 void RSP_Opcode_SC2 (void) {
-	((void (*)()) RSP_Sc2 [ RSPOpC.rd ])();
-}*/
+	((void (*)()) RSP_Sc2 [ RSPOpC.OP.R.rd ])();
+}
 /********************** R4300i OpCodes: Special **********************/
 void RSP_Special_SLL ( void ) {
 	if (RSPOpC.OP.R.rd != 0) {
@@ -1561,19 +1561,21 @@ void RSP_Opcode_LSV ( void ) {
 void RSP_Opcode_LLV ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 2)) &0xFFF);
 	RSP_LLV_DMEM( Address, RSPOpC.rt, RSPOpC.del);
-}
+}*/
 
 void RSP_Opcode_LDV ( void ) {
-	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 3)) &0xFFF);
-	RSP_LDV_DMEM( Address, RSPOpC.rt, RSPOpC.del);
+	/*DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 3)) &0xFFF);
+	RSP_LDV_DMEM( Address, RSPOpC.rt, RSPOpC.del);*/
+	LogMessage("TODO: RSP_Opcode_LDV");
 }
 
 void RSP_Opcode_LQV ( void ) {
-	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 4)) &0xFFF);
-	RSP_LQV_DMEM( Address, RSPOpC.rt, RSPOpC.del);
+	/*DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 4)) &0xFFF);
+	RSP_LQV_DMEM( Address, RSPOpC.rt, RSPOpC.del);*/
+	LogMessage("TODO: RSP_Opcode_LQV");
 }
 
-void RSP_Opcode_LRV ( void ) {
+/*void RSP_Opcode_LRV ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 4)) &0xFFF);
 	RSP_LRV_DMEM( Address, RSPOpC.rt, RSPOpC.del);
 }
@@ -1622,14 +1624,15 @@ void RSP_Opcode_SLV ( void ) {
 void RSP_Opcode_SDV ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 3)) &0xFFF);
 	RSP_SDV_DMEM( Address, RSPOpC.rt, RSPOpC.del);
-}
+}*/
 
 void RSP_Opcode_SQV ( void ) {
-	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 4)) &0xFFF);
-	RSP_SQV_DMEM( Address, RSPOpC.rt, RSPOpC.del);
+	/*DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 4)) &0xFFF);
+	RSP_SQV_DMEM( Address, RSPOpC.rt, RSPOpC.del);*/
+	LogMessage("RSP_Opcode_SQV");
 }
 
-void RSP_Opcode_SRV ( void ) {
+/*void RSP_Opcode_SRV ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 4)) &0xFFF);
 	RSP_SRV_DMEM( Address, RSPOpC.rt, RSPOpC.del);
 }

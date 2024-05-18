@@ -36,9 +36,9 @@ extern void * RSP_Opcode[64];
 extern void * RSP_Special[64];
 extern void * RSP_Cop0[32];
 /*extern void * RSP_Cop2[32];
-extern void * RSP_Vector[64];
+extern void * RSP_Vector[64];*/
 extern void * RSP_Lc2[32];
-extern void * RSP_Sc2[32];*/
+extern void * RSP_Sc2[32];
 extern DWORD RSP_Running;
 extern OPCODE RSPOpC;
 
