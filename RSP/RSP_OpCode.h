@@ -72,12 +72,12 @@ typedef struct tagOPCODE {
 		} R;
 
 		struct {
-			signed   voffset : 7;
-			unsigned del    : 4;
-			unsigned rd: 5;
-			unsigned dest   : 5;
-			unsigned : 5;
-			unsigned op : 6;
+			unsigned funct : 6;
+			unsigned vd : 5;
+			unsigned vs : 5;
+			unsigned vt : 5;
+			unsigned element : 4;
+			unsigned op : 7;
 		} V;
 
 		struct {
@@ -88,6 +88,15 @@ typedef struct tagOPCODE {
 			unsigned base : 5;
 			unsigned op : 6;
 		} LSV;
+
+		struct {
+			signed   undefined : 7;
+			unsigned element : 4;
+			unsigned vs : 5;
+			unsigned rt : 5;
+			unsigned moveop : 5;
+			unsigned op : 6;
+		} MV;
 
 	} OP;
 } OPCODE;
@@ -181,7 +190,7 @@ typedef struct tagOPCODE {
 #define	RSP_VECTOR_VABS			19
 #define	RSP_VECTOR_VADDC		20
 #define	RSP_VECTOR_VSUBC		21
-#define	RSP_VECTOR_VSAW			29
+#define	RSP_VECTOR_VSAR			29
 #define	RSP_VECTOR_VLT			32
 #define	RSP_VECTOR_VEQ			33
 #define	RSP_VECTOR_VNE			34
