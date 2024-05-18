@@ -860,6 +860,7 @@ BOOL Machine_LoadState(void) {
 
 			// Specific data introduced in  2024.1
 			unzReadCurrentFile(file, RSP_GPR, sizeof(MIPS_WORD) * 32);
+			unzReadCurrentFile(file, RSP_Vect, sizeof(VECTOR) * 32);
 
 			unzCloseCurrentFile(file);
 			unzClose(file);
@@ -1016,6 +1017,7 @@ BOOL Machine_LoadState(void) {
 
 		// Specific data introduced in 2024.1
 		ReadFile(hSaveFile, RSP_GPR, sizeof(MIPS_WORD) * 32, &dwRead, NULL);
+		ReadFile(hSaveFile, RSP_Vect, sizeof(VECTOR) * 32, &dwRead, NULL);
 
 		CloseHandle(hSaveFile);
 		_splitpath( FileName, drive, dir, ZipFile, ext );
@@ -1156,6 +1158,7 @@ BOOL Machine_SaveState(void) {
 
 		// Specific data introduced in 2024.1
 		zipWriteInFileInZip(file, RSP_GPR, sizeof(MIPS_WORD) * 32);
+		zipWriteInFileInZip(file, RSP_Vect, sizeof(VECTOR) * 32);
 
 		zipCloseFileInZip(file);
 		zipClose(file,"");
@@ -1233,6 +1236,7 @@ BOOL Machine_SaveState(void) {
 
 		// Specific data introduced in 2024.1
 		WriteFile(hSaveFile, RSP_GPR, sizeof(MIPS_WORD) * 32, &dwWritten, NULL);
+		WriteFile(hSaveFile, RSP_Vect, sizeof(VECTOR) * 32, &dwWritten, NULL);
 
 		CloseHandle(hSaveFile);
 		DeleteFile(ZipFile);

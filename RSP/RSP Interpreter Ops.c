@@ -1564,15 +1564,13 @@ void RSP_Opcode_LLV ( void ) {
 }*/
 
 void RSP_Opcode_LDV ( void ) {
-	/*DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 3)) &0xFFF);
-	RSP_LDV_DMEM( Address, RSPOpC.rt, RSPOpC.del);*/
-	LogMessage("TODO: RSP_Opcode_LDV");
+	DWORD Address = ((RSP_GPR[RSPOpC.OP.LSV.base].UW + (DWORD)(RSPOpC.OP.LSV.offset << 3)) &0xFFF);
+	RSP_LDV_DMEM( Address, RSPOpC.OP.LSV.vt, RSPOpC.OP.LSV.element);
 }
 
 void RSP_Opcode_LQV ( void ) {
-	/*DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 4)) &0xFFF);
-	RSP_LQV_DMEM( Address, RSPOpC.rt, RSPOpC.del);*/
-	LogMessage("TODO: RSP_Opcode_LQV");
+	DWORD Address = ((RSP_GPR[RSPOpC.OP.LSV.base].UW + (DWORD)(RSPOpC.OP.LSV.offset << 4)) &0xFFF);
+	RSP_LQV_DMEM( Address, RSPOpC.OP.LSV.vt, RSPOpC.OP.LSV.element);
 }
 
 /*void RSP_Opcode_LRV ( void ) {
@@ -1627,9 +1625,8 @@ void RSP_Opcode_SDV ( void ) {
 }*/
 
 void RSP_Opcode_SQV ( void ) {
-	/*DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 4)) &0xFFF);
-	RSP_SQV_DMEM( Address, RSPOpC.rt, RSPOpC.del);*/
-	LogMessage("RSP_Opcode_SQV");
+	DWORD Address = ((RSP_GPR[RSPOpC.OP.LSV.base].UW + (DWORD)(RSPOpC.OP.LSV.offset << 4)) &0xFFF);
+	RSP_SQV_DMEM( Address, RSPOpC.OP.LSV.vt, RSPOpC.OP.LSV.element);
 }
 
 /*void RSP_Opcode_SRV ( void ) {

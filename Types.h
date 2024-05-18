@@ -52,4 +52,17 @@ typedef union tagUDWORD {
 	unsigned char		UB[8];
 } MIPS_DWORD;
 
+typedef union tagVect {
+	double				FD[2];
+	_int64				DW[2];
+	unsigned _int64		UDW[2];
+	long				W[4];
+	float				FS[4];
+	unsigned long		UW[4];
+	short				HW[8];
+	unsigned short		UHW[8];
+	char				B[16];
+	unsigned char		UB[16];
+} VECTOR;
+
 #endif

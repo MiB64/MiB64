@@ -30,7 +30,7 @@
 #include <windows.h>
 #include "rsp_config.h"
 #include "rsp_memory.h"
-/*#include "RSP Registers.h"*/
+#include "rsp_registers.h"
 #include "../Main.h"
 
 /*DWORD NoOfMaps, MapsCRC[MaxMaps], Table;
@@ -102,7 +102,7 @@ void RSP_LB_DMEM ( DWORD Addr, BYTE * Value ) {
 
 void RSP_LBV_DMEM ( DWORD Addr, int vect, int element ) {
 	RSP_Vect[vect].B[15 - element] = *(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF));
-}
+}*/
 
 void RSP_LDV_DMEM ( DWORD Addr, int vect, int element ) {
 	int length, Count;
@@ -112,13 +112,13 @@ void RSP_LDV_DMEM ( DWORD Addr, int vect, int element ) {
 		length = 16 - element;
 	}
 	for (Count = element; Count < (length + element); Count ++ ){
-		RSP_Vect[vect].B[15 - Count] = *(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF));
+		RSP_Vect[vect].B[15 - Count] = *(DMEM + ((Addr ^ 3) & 0xFFF));
 		Addr += 1;
 	}
 
 }
 
-void RSP_LFV_DMEM ( DWORD Addr, int vect, int element ) {
+/*void RSP_LFV_DMEM ( DWORD Addr, int vect, int element ) {
 	int length, count;
 	VECTOR Temp;
 
@@ -198,7 +198,7 @@ void RSP_LRV_DMEM ( DWORD Addr, int vect, int element ) {
 		Addr += 1;
 	}
 
-}
+}*/
 
 void RSP_LQV_DMEM ( DWORD Addr, int vect, int element ) {
 	int length, Count;
@@ -208,13 +208,13 @@ void RSP_LQV_DMEM ( DWORD Addr, int vect, int element ) {
 		length = 16 - element;
 	}
 	for (Count = element; Count < (length + element); Count ++ ){
-		RSP_Vect[vect].B[15 - Count] = *(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF));
+		RSP_Vect[vect].B[15 - Count] = *(DMEM + ((Addr ^ 3) & 0xFFF));
 		Addr += 1;
 	}
 
 }
 
-void RSP_LSV_DMEM ( DWORD Addr, int vect, int element ) {
+/*void RSP_LSV_DMEM ( DWORD Addr, int vect, int element ) {
 	int length, Count;
 	
 	length = 2;
@@ -444,19 +444,19 @@ void RSP_SPV_DMEM ( DWORD Addr, int vect, int element ) {
 		}
 		Addr += 1;
 	}
-}
+}*/
 
 void RSP_SQV_DMEM ( DWORD Addr, int vect, int element ) {
 	int length, Count;
 	
 	length = ((Addr + 0x10) & ~0xF) - Addr;
 	for (Count = element; Count < (length + element); Count ++ ){
-		*(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].B[15 - (Count & 0xF)];
+		*(DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].B[15 - (Count & 0xF)];
 		Addr += 1;
 	}
 }
 
-void RSP_SRV_DMEM ( DWORD Addr, int vect, int element ) {
+/*void RSP_SRV_DMEM ( DWORD Addr, int vect, int element ) {
 	int length, Count, offset;
 
 	length = (Addr & 0xF);
