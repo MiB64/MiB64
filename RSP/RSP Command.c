@@ -945,7 +945,7 @@ char * RSPCop2Name ( DWORD OpCode ) {
 				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
 			break;
 		case RSP_VECTOR_VSAR:
-			sprintf(CommandName,"VSAW\t$v%d [%d], $v%d, $v%d ",command.OP.V.vd, command.OP.V.element,
+			sprintf(CommandName,"VSAR\t$v%d [%d], $v%d, $v%d ",command.OP.V.vd, command.OP.V.element,
 				command.OP.V.vd, command.OP.V.vt);
 			break;
 		case RSP_VECTOR_VLT:

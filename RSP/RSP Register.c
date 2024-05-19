@@ -69,8 +69,8 @@ FARPROC RefreshProc;*/
 
 /*** RSP Registers ***/
 MIPS_WORD  RSP_GPR[32];
-/*U_WORD  RSP_Flags[4];
-UDWORD  RSP_ACCUM[8];*/
+/*U_WORD  RSP_Flags[4];*/
+MIPS_DWORD  RSP_ACCUM[8];
 VECTOR  RSP_Vect[32];
 
 void WriteRspStatusRegister(DWORD Value) {
@@ -233,6 +233,7 @@ void Enter_RSP_Register_Window ( void ) {
 void InitilizeRSPRegisters (void) {
 	memset(RSP_GPR,0,sizeof(RSP_GPR));
 	memset(RSP_Vect,0,sizeof(RSP_Vect));
+	memset(RSP_ACCUM, 0, sizeof(RSP_ACCUM));
 }
 
 /*void PaintRSP_HiddenPanel (HWND hWnd) {	
