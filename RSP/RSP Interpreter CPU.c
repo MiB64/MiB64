@@ -270,7 +270,7 @@ void BuildInterpreterRspCPU(void) {
 	RSP_Cop2[27] = (void*)RSP_COP2_VECTOR/*(void*)rsp_UnknownOpcode*/;
 	RSP_Cop2[28] = (void*)RSP_COP2_VECTOR/*(void*)rsp_UnknownOpcode*/;
 	RSP_Cop2[29] = (void*)RSP_COP2_VECTOR/*(void*)rsp_UnknownOpcode*/;
-	RSP_Cop2[30] = (void*)RSP_COP2_VECTOR/*(void*)rsp_UnknownOpcode*/;
+	RSP_Cop2[30] = (void*)RSP_COP2_VECTOR;
 	RSP_Cop2[31] = /*RSP_COP2_VECTOR*/(void*)rsp_UnknownOpcode;
 
 	RSP_Vector[ 0] = (void*)RSP_Vector_VMULF;
@@ -281,7 +281,7 @@ void BuildInterpreterRspCPU(void) {
 	RSP_Vector[ 5] = /*RSP_Vector_VMUDM*/(void*)rsp_UnknownOpcode;
 	RSP_Vector[ 6] = /*RSP_Vector_VMUDN*/(void*)rsp_UnknownOpcode;
 	RSP_Vector[ 7] = /*RSP_Vector_VMUDH*/(void*)rsp_UnknownOpcode;
-	RSP_Vector[ 8] = /*RSP_Vector_VMACF*/(void*)rsp_UnknownOpcode;
+	RSP_Vector[ 8] = (void*)RSP_Vector_VMACF;
 	RSP_Vector[ 9] = /*RSP_Vector_VMACU*/(void*)rsp_UnknownOpcode;
 	RSP_Vector[10] = (void*)rsp_UnknownOpcode;
 	RSP_Vector[11] = /*RSP_Vector_VMACQ*/(void*)rsp_UnknownOpcode;
