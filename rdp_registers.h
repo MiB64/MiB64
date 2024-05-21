@@ -60,3 +60,5 @@
 #define DPC_STATUS_START_VALID		0x400	/* Bit 10: start valid */
 
 extern DWORD* RegDPC;
+
+void WriteDPCStatusRegister(DWORD Value);

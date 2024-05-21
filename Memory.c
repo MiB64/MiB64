@@ -2729,32 +2729,7 @@ int r4300i_SW_NonMemory ( DWORD PAddr, DWORD Value ) {
 			break;
 		//case 0x04100008: DPC_CURRENT_REG = Value; break;
 		case 0x0410000C:
-			if ( ( Value & DPC_CLR_XBUS_DMEM_DMA ) != 0) { DPC_STATUS_REG &= ~DPC_STATUS_XBUS_DMEM_DMA; }
-			if ( ( Value & DPC_SET_XBUS_DMEM_DMA ) != 0) { DPC_STATUS_REG |= DPC_STATUS_XBUS_DMEM_DMA;  }
-			if ( ( Value & DPC_CLR_FREEZE ) != 0) {
-				DPC_STATUS_REG &= ~DPC_STATUS_FREEZE;
-				if (ProcessRDPList) { ProcessRDPList();  }
-			}
-			if ( ( Value & DPC_SET_FREEZE ) != 0) { DPC_STATUS_REG |= DPC_STATUS_FREEZE;  }		
-			if ( ( Value & DPC_CLR_FLUSH ) != 0) { DPC_STATUS_REG &= ~DPC_STATUS_FLUSH; }
-			if ( ( Value & DPC_SET_FLUSH ) != 0) { DPC_STATUS_REG |= DPC_STATUS_FLUSH;  }
-			if ( ( Value & DPC_CLR_FREEZE ) != 0) 
-			{
-				/*if ( ( SP_STATUS_REG & SP_STATUS_HALT ) == 0) 
-				{
-					if ( ( SP_STATUS_REG & SP_STATUS_BROKE ) == 0 ) 
-					{
-						RunRsp();
-					}
-				}*/
-				if (ProcessRDPList) { ProcessRDPList(); }
-			}
-			if (ShowUnhandledMemory) {
-				//if ( ( Value & DPC_CLR_TMEM_CTR ) != 0) { DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_TMEM_CTR"); }
-				//if ( ( Value & DPC_CLR_PIPE_CTR ) != 0) { DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_PIPE_CTR"); }
-				//if ( ( Value & DPC_CLR_CMD_CTR ) != 0) { DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_CMD_CTR"); }
-				//if ( ( Value & DPC_CLR_CLOCK_CTR ) != 0) { DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_CLOCK_CTR"); }
-			}
+			WriteDPCStatusRegister(Value);
 			break;
 		default:
 			return FALSE;
@@ -3238,4 +3213,44 @@ BYTE* GetBaseRdramAddress(DWORD PAddr) {
 		return NULL;
 	}
 	return N64MEM;
+}
+
+void WriteDPCStatusRegister(DWORD Value) {
+	switch (Value & (DPC_CLR_XBUS_DMEM_DMA | DPC_SET_XBUS_DMEM_DMA)) {
+	case DPC_CLR_XBUS_DMEM_DMA:
+		DPC_STATUS_REG &= ~DPC_STATUS_XBUS_DMEM_DMA;
+		break;
+	case DPC_SET_XBUS_DMEM_DMA:
+		DPC_STATUS_REG |= DPC_STATUS_XBUS_DMEM_DMA;
+		break;
+	}
+	switch(Value & (DPC_CLR_FREEZE | DPC_SET_FREEZE)) {
+	case DPC_CLR_FREEZE:
+		DPC_STATUS_REG &= ~DPC_STATUS_FREEZE;
+		if (ProcessRDPList) { ProcessRDPList(); }
+		break;
+	case DPC_SET_FREEZE:
+		DPC_STATUS_REG |= DPC_STATUS_FREEZE;
+		break;
+	}
+	switch (Value & (DPC_CLR_FLUSH | DPC_SET_FLUSH)) {
+	case DPC_CLR_FLUSH:
+		DPC_STATUS_REG &= ~DPC_STATUS_FLUSH;
+		break;
+	case DPC_SET_FLUSH:
+		DPC_STATUS_REG |= DPC_STATUS_FLUSH;
+		break;
+	}
+
+	if ((Value & DPC_CLR_TMEM_CTR) != 0) DPC_STATUS_REG &= ~DPC_STATUS_TMEM_BUSY;
+	if ((Value & DPC_CLR_PIPE_CTR) != 0) DPC_STATUS_REG &= ~DPC_STATUS_PIPE_BUSY;
+	if ((Value & DPC_CLR_CMD_CTR) != 0) DPC_STATUS_REG &= ~DPC_STATUS_CMD_BUSY;
+	if ((Value & DPC_CLR_CLOCK_CTR) != 0) DPC_CLOCK_REG = 0;
+
+	if (ShowUnhandledMemory) {
+		//if ( ( Value & DPC_CLR_TMEM_CTR ) != 0) { DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_TMEM_CTR"); }
+		//if ( ( Value & DPC_CLR_PIPE_CTR ) != 0) { DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_PIPE_CTR"); }
+		//if ( ( Value & DPC_CLR_CMD_CTR ) != 0) { DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_CMD_CTR"); }
+		//if ( ( Value & DPC_CLR_CLOCK_CTR ) != 0) { DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_CLOCK_CTR"); }
+	}
 }

@@ -49,7 +49,7 @@ void RSP_Opcode_COP2    ( void );
 /*void RSP_Opcode_LB      ( void );*/
 void RSP_Opcode_LH      ( void );
 void RSP_Opcode_LW      ( void );
-/*void RSP_Opcode_LBU     ( void );*/
+void RSP_Opcode_LBU     ( void );
 void RSP_Opcode_LHU     ( void );
 /*void RSP_Opcode_SB      ( void );*/
 void RSP_Opcode_SH      ( void );
@@ -67,9 +67,9 @@ void RSP_Special_JR     ( void );
 /*void RSP_Special_JALR   ( void );*/
 void RSP_Special_BREAK  ( void );
 void RSP_Special_ADD    ( void );
-/*void RSP_Special_ADDU   ( void );
+/*void RSP_Special_ADDU   ( void );*/
 void RSP_Special_SUB    ( void );
-void RSP_Special_SUBU   ( void );
+/*void RSP_Special_SUBU   ( void );
 void RSP_Special_AND    ( void );
 void RSP_Special_OR     ( void );
 void RSP_Special_XOR    ( void );
@@ -145,9 +145,9 @@ void RSP_Opcode_LHV     ( void );
 void RSP_Opcode_LFV     ( void );
 void RSP_Opcode_LTV     ( void );*/
 /************************** lc2 functions **************************/
-/*void RSP_Opcode_SBV     ( void );
+/*void RSP_Opcode_SBV     ( void );*/
 void RSP_Opcode_SSV     ( void );
-void RSP_Opcode_SLV     ( void );*/
+/*void RSP_Opcode_SLV     ( void );*/
 void RSP_Opcode_SDV     ( void );
 void RSP_Opcode_SQV     ( void );
 /*void RSP_Opcode_SRV     ( void );

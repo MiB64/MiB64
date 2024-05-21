@@ -94,13 +94,13 @@ void SetJumpTable (void) {
 	JumpTable = (void **)(JumpTables + NoOfMaps * 0x1000);
 	Table = NoOfMaps;
 	NoOfMaps += 1;
-}
+}*/
 
 void RSP_LB_DMEM ( DWORD Addr, BYTE * Value ) {
-	* Value = *(BYTE *)(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF)) ;
+	* Value = *(BYTE *)(DMEM + ((Addr ^ 3) & 0xFFF)) ;
 }
 
-void RSP_LBV_DMEM ( DWORD Addr, int vect, int element ) {
+/*void RSP_LBV_DMEM ( DWORD Addr, int vect, int element ) {
 	RSP_Vect[vect].B[15 - element] = *(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF));
 }*/
 
@@ -466,18 +466,18 @@ void RSP_SQV_DMEM ( DWORD Addr, int vect, int element ) {
 		*(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].B[15 - ((Count + offset) & 0xF)];
 		Addr += 1;
 	}
-}
+}*/
 
 void RSP_SSV_DMEM ( DWORD Addr, int vect, int element ) {
 	int Count;
 
 	for (Count = element; Count < (2 + element); Count ++ ){
-		*(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].B[15 - (Count & 0xF)];
+		*(DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].B[15 - (Count & 0xF)];
 		Addr += 1;
 	}
 }
 
-void RSP_STV_DMEM ( DWORD Addr, int vect, int element ) {
+/*void RSP_STV_DMEM ( DWORD Addr, int vect, int element ) {
 	int del, count, length;
 	
 	length = 8;

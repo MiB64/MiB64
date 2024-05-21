@@ -36,10 +36,10 @@ extern BYTE* IMEM;
 
 /*extern BYTE * RecompCode, * RecompCodeSecondary, * RecompPos;
 extern void ** JumpTable;
-extern DWORD Table;
+extern DWORD Table;*/
 
 void RSP_LB_DMEM  ( DWORD Addr, BYTE * Value );
-void RSP_LBV_DMEM ( DWORD Addr, int vect, int element );*/
+/*void RSP_LBV_DMEM ( DWORD Addr, int vect, int element );*/
 void RSP_LDV_DMEM ( DWORD Addr, int vect, int element );
 /*void RSP_LFV_DMEM ( DWORD Addr, int vect, int element );*/
 void RSP_LH_DMEM  ( DWORD Addr, WORD * Value );
@@ -62,9 +62,9 @@ void RSP_SH_DMEM  ( DWORD Addr, WORD Value );
 void RSP_SLV_DMEM ( DWORD Addr, int vect, int element );
 void RSP_SPV_DMEM ( DWORD Addr, int vect, int element );*/
 void RSP_SQV_DMEM ( DWORD Addr, int vect, int element );
-/*void RSP_SRV_DMEM ( DWORD Addr, int vect, int element );
+/*void RSP_SRV_DMEM ( DWORD Addr, int vect, int element );*/
 void RSP_SSV_DMEM ( DWORD Addr, int vect, int element );
-void RSP_STV_DMEM ( DWORD Addr, int vect, int element );
+/*void RSP_STV_DMEM ( DWORD Addr, int vect, int element );
 void RSP_SUV_DMEM ( DWORD Addr, int vect, int element );*/
 void RSP_SW_DMEM  ( DWORD Addr, DWORD Value );
 /*void RSP_SWV_DMEM ( DWORD Addr, int vect, int element );*/

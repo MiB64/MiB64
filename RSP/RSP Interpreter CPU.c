@@ -80,7 +80,7 @@ void BuildInterpreterRspCPU(void) {
 	RSP_Opcode[33] = (void*)RSP_Opcode_LH;
 	RSP_Opcode[34] = (void*)rsp_UnknownOpcode;
 	RSP_Opcode[35] = (void*)RSP_Opcode_LW;
-	RSP_Opcode[36] = /*RSP_Opcode_LBU*/(void*)rsp_UnknownOpcode;
+	RSP_Opcode[36] = (void*)RSP_Opcode_LBU;
 	RSP_Opcode[37] = (void*)RSP_Opcode_LHU;
 	RSP_Opcode[38] = (void*)rsp_UnknownOpcode;
 	RSP_Opcode[39] = (void*)rsp_UnknownOpcode;
@@ -122,7 +122,7 @@ void BuildInterpreterRspCPU(void) {
 	RSP_Special[10] = (void*)rsp_UnknownOpcode;
 	RSP_Special[11] = (void*)rsp_UnknownOpcode;
 	RSP_Special[12] = (void*)rsp_UnknownOpcode;
-	RSP_Special[13] = (void*)RSP_Special_BREAK/*(void*)rsp_UnknownOpcode*/;
+	RSP_Special[13] = (void*)RSP_Special_BREAK;
 	RSP_Special[14] = (void*)rsp_UnknownOpcode;
 	RSP_Special[15] = (void*)rsp_UnknownOpcode;
 	RSP_Special[16] = (void*)rsp_UnknownOpcode;
@@ -143,7 +143,7 @@ void BuildInterpreterRspCPU(void) {
 	RSP_Special[31] = (void*)rsp_UnknownOpcode;
 	RSP_Special[32] = (void*)RSP_Special_ADD;
 	RSP_Special[33] = /*RSP_Special_ADDU*/(void*)rsp_UnknownOpcode;
-	RSP_Special[34] = /*RSP_Special_SUB*/(void*)rsp_UnknownOpcode;
+	RSP_Special[34] = (void*)RSP_Special_SUB;
 	RSP_Special[35] = /*RSP_Special_SUBU*/(void*)rsp_UnknownOpcode;
 	RSP_Special[36] = /*RSP_Special_AND*/(void*)rsp_UnknownOpcode;
 	RSP_Special[37] = /*RSP_Special_OR*/(void*)rsp_UnknownOpcode;
@@ -264,7 +264,7 @@ void BuildInterpreterRspCPU(void) {
 	RSP_Cop2[21] = (void*)RSP_COP2_VECTOR/*(void*)rsp_UnknownOpcode*/;
 	RSP_Cop2[22] = (void*)RSP_COP2_VECTOR/*(void*)rsp_UnknownOpcode*/;
 	RSP_Cop2[23] = (void*)RSP_COP2_VECTOR/*(void*)rsp_UnknownOpcode*/;
-	RSP_Cop2[24] = (void*)RSP_COP2_VECTOR/*(void*)rsp_UnknownOpcode*/;
+	RSP_Cop2[24] = (void*)RSP_COP2_VECTOR;
 	RSP_Cop2[25] = (void*)RSP_COP2_VECTOR/*(void*)rsp_UnknownOpcode*/;
 	RSP_Cop2[26] = (void*)RSP_COP2_VECTOR/*(void*)rsp_UnknownOpcode*/;
 	RSP_Cop2[27] = (void*)RSP_COP2_VECTOR/*(void*)rsp_UnknownOpcode*/;
@@ -372,10 +372,10 @@ void BuildInterpreterRspCPU(void) {
 	RSP_Lc2[31] = (void*)rsp_UnknownOpcode;
 
 	RSP_Sc2[ 0] = /*RSP_Opcode_SBV*/(void*)rsp_UnknownOpcode;
-	RSP_Sc2[ 1] = /*RSP_Opcode_SSV*/(void*)rsp_UnknownOpcode;
+	RSP_Sc2[ 1] = (void*)RSP_Opcode_SSV;
 	RSP_Sc2[ 2] = /*RSP_Opcode_SLV*/(void*)rsp_UnknownOpcode;
 	RSP_Sc2[ 3] = (void*)RSP_Opcode_SDV;
-	RSP_Sc2[ 4] = (void*)RSP_Opcode_SQV/*(void*)rsp_UnknownOpcode*/;
+	RSP_Sc2[ 4] = (void*)RSP_Opcode_SQV;
 	RSP_Sc2[ 5] = /*RSP_Opcode_SRV*/(void*)rsp_UnknownOpcode;
 	RSP_Sc2[ 6] = /*RSP_Opcode_SPV*/(void*)rsp_UnknownOpcode;
 	RSP_Sc2[ 7] = /*RSP_Opcode_SUV*/(void*)rsp_UnknownOpcode;

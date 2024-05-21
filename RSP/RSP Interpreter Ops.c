@@ -38,6 +38,8 @@
 #include "x86.h"*/
 #include "../Main.h"
 #include "../rdp_registers.h"
+#include "../mi_registers.h"
+#include "../Exception.h"
 
 /*extern U_WORD Recp, RecpResult, SQroot, SQrootResult;*/
 
@@ -181,11 +183,13 @@ void RSP_Opcode_LW ( void ) {
 	}
 }
 
-/*void RSP_Opcode_LBU ( void ) {
-	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (short)RSPOpC.offset) & 0xFFF);
-	RSP_LB_DMEM( Address, &RSP_GPR[RSPOpC.rt].UB[0] );
-	RSP_GPR[RSPOpC.rt].UW = RSP_GPR[RSPOpC.rt].UB[0];
-}*/
+void RSP_Opcode_LBU ( void ) {
+	if (RSPOpC.OP.LS.rt != 0) {
+		DWORD Address = ((RSP_GPR[RSPOpC.OP.LS.base].UW + (short)RSPOpC.OP.LS.offset) & 0xFFF);
+		RSP_LB_DMEM(Address, &RSP_GPR[RSPOpC.OP.LS.rt].UB[0]);
+		RSP_GPR[RSPOpC.OP.LS.rt].UW = RSP_GPR[RSPOpC.OP.LS.rt].UB[0];
+	}
+}
 
 void RSP_Opcode_LHU ( void ) {
 	if (RSPOpC.OP.LS.rt != 0) {
@@ -268,10 +272,10 @@ void RSP_Special_JR (void) {
 void RSP_Special_BREAK ( void ) {
 	RSP_Running = FALSE;
 	SP_STATUS_REG |= (SP_STATUS_HALT | SP_STATUS_BROKE );
-	/*if ((*RSPInfo.SP_STATUS_REG & SP_STATUS_INTR_BREAK) != 0 ) {
-		*RSPInfo.MI_INTR_REG |= R4300i_SP_Intr;
-		RSPInfo.CheckInterrupts();
-	}*/
+	if ((SP_STATUS_REG & SP_STATUS_INTR_BREAK) != 0 ) {
+		MI_INTR_REG |= MI_INTR_SP;
+		CheckInterrupts();
+	}
 }
 
 void RSP_Special_ADD (void) {
@@ -284,15 +288,15 @@ void RSP_Special_ADD (void) {
 	if (RSPOpC.rd != 0) {
 		RSP_GPR[RSPOpC.rd].UW = RSP_GPR[RSPOpC.rs].UW + RSP_GPR[RSPOpC.rt].UW;
 	}
-}
+}*/
 
 void RSP_Special_SUB (void) {
-	if (RSPOpC.rd != 0) {
-		RSP_GPR[RSPOpC.rd].W = RSP_GPR[RSPOpC.rs].W - RSP_GPR[RSPOpC.rt].W;
+	if (RSPOpC.OP.R.rd != 0) {
+		RSP_GPR[RSPOpC.OP.R.rd].W = RSP_GPR[RSPOpC.OP.R.rs].W - RSP_GPR[RSPOpC.OP.R.rt].W;
 	}
 }
 
-void RSP_Special_SUBU (void) {
+/*void RSP_Special_SUBU (void) {
 	if (RSPOpC.rd != 0) {
 		RSP_GPR[RSPOpC.rd].UW = RSP_GPR[RSPOpC.rs].UW - RSP_GPR[RSPOpC.rt].UW;
 	}
@@ -391,9 +395,9 @@ void RSP_Cop0_MF (void) {
 		RSP_GPR[RSPOpC.OP.R.rt].W = SP_SEMAPHORE_REG;
 		SP_SEMAPHORE_REG = 1;
 		break;
-	/*case 8: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.DPC_START_REG ; break;
-	case 9: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.DPC_END_REG ; break;
-	case 10: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.DPC_CURRENT_REG; break;*/
+	/*case 8: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.DPC_START_REG ; break;*/
+	case 9: RSP_GPR[RSPOpC.OP.R.rt].UW = DPC_END_REG; break;
+	case 10: RSP_GPR[RSPOpC.OP.R.rt].UW = DPC_CURRENT_REG; break;
 	case 11: RSP_GPR[RSPOpC.OP.R.rt].W = DPC_STATUS_REG; break;
 	/*case 12: RSP_GPR[RSPOpC.rt].W = *RSPInfo.DPC_CLOCK_REG; break;*/
 	default:
@@ -410,10 +414,10 @@ void RSP_Cop0_MT (void) {
 		SP_RD_LEN_REG = RSP_GPR[RSPOpC.OP.R.rt].UW & 0xFF8FFFF8;
 		SP_DMA_READ();		
 		break;
-	/*case 3: 
-		*RSPInfo.SP_WR_LEN_REG = RSP_GPR[RSPOpC.rt].UW; 
-		SP_DMA_WRITE();		
-		break;*/
+	case 3:
+		SP_WR_LEN_REG = RSP_GPR[RSPOpC.OP.R.rt].UW & 0xFF8FFFF8;
+		SP_DMA_WRITE();
+		break;
 	case 4:
 		WriteRspStatusRegister(RSP_GPR[RSPOpC.OP.R.rt].W);
 		if (SP_STATUS_REG & SP_STATUS_HALT) {
@@ -421,27 +425,27 @@ void RSP_Cop0_MT (void) {
 		}
 		break;
 	case 7: SP_SEMAPHORE_REG = 0; break;
-	/*case 8: 
-		*RSPInfo.DPC_START_REG = RSP_GPR[RSPOpC.rt].UW; 
-		*RSPInfo.DPC_CURRENT_REG = RSP_GPR[RSPOpC.rt].UW; 
+	case 8:
+		if ((DPC_STATUS_REG & DPC_STATUS_START_VALID) == 0) {
+			DPC_START_REG = RSP_GPR[RSPOpC.OP.R.rt].UW & 0xFFFFF8;
+			DPC_STATUS_REG |= DPC_STATUS_START_VALID;
+		}
 		break;
-	case 9: 
-		*RSPInfo.DPC_END_REG = RSP_GPR[RSPOpC.rt].UW; 
-		if (RSPInfo.ProcessRdpList != NULL) { RSPInfo.ProcessRdpList(); }
+	case 9:
+		DPC_END_REG = RSP_GPR[RSPOpC.OP.R.rt].UW & 0xFFFFF8;
+		if (DPC_STATUS_REG & DPC_STATUS_START_VALID) {
+			DPC_CURRENT_REG = DPC_START_REG;
+			DPC_STATUS_REG &= ~DPC_STATUS_START_VALID;
+			DPC_STATUS_REG |= (DPC_STATUS_PIPE_BUSY | DPC_STATUS_START_GCLK);
+		}
+		if ((DPC_STATUS_REG & DPC_STATUS_FREEZE) == 0) {
+			if (ProcessRDPList) { ProcessRDPList(); }
+		}
 		break;
-	case 10: *RSPInfo.DPC_CURRENT_REG = RSP_GPR[RSPOpC.rt].UW; break;
-	case 11: 
-		if ( ( RSP_GPR[RSPOpC.rt].W & DPC_CLR_XBUS_DMEM_DMA ) != 0) { *RSPInfo.DPC_STATUS_REG &= ~DPC_STATUS_XBUS_DMEM_DMA; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & DPC_SET_XBUS_DMEM_DMA ) != 0) { *RSPInfo.DPC_STATUS_REG |= DPC_STATUS_XBUS_DMEM_DMA;  }
-		if ( ( RSP_GPR[RSPOpC.rt].W & DPC_CLR_FREEZE ) != 0) { *RSPInfo.DPC_STATUS_REG &= ~DPC_STATUS_FREEZE; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & DPC_SET_FREEZE ) != 0) { *RSPInfo.DPC_STATUS_REG |= DPC_STATUS_FREEZE;  }		
-		if ( ( RSP_GPR[RSPOpC.rt].W & DPC_CLR_FLUSH ) != 0) { *RSPInfo.DPC_STATUS_REG &= ~DPC_STATUS_FLUSH; }
-		if ( ( RSP_GPR[RSPOpC.rt].W & DPC_SET_FLUSH ) != 0) { *RSPInfo.DPC_STATUS_REG |= DPC_STATUS_FLUSH;  }
-		if ( ( RSP_GPR[RSPOpC.rt].W & DPC_CLR_TMEM_CTR ) != 0) {*/ /* DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_TMEM_CTR"); */ /*}
-		if ( ( RSP_GPR[RSPOpC.rt].W & DPC_CLR_PIPE_CTR ) != 0) { DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_PIPE_CTR"); }
-		if ( ( RSP_GPR[RSPOpC.rt].W & DPC_CLR_CMD_CTR ) != 0) { DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_CMD_CTR"); }
-		if ( ( RSP_GPR[RSPOpC.rt].W & DPC_CLR_CLOCK_CTR ) != 0) {*/ /* DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_CLOCK_CTR"); */ /*}
-		break;*/
+	/*case 10: *RSPInfo.DPC_CURRENT_REG = RSP_GPR[RSPOpC.rt].UW; break;*/
+	case 11:
+		WriteDPCStatusRegister(RSP_GPR[RSPOpC.OP.R.rt].W);
+		break;
 	default:
 		DisplayError("have not implemented RSP MT CP0 reg %s (%d)",RspCOP0_Name(RSPOpC.OP.R.rd),RSPOpC.OP.R.rd);
 		LogMessage("TODO: have not implemented RSP MT CP0 reg % s(% d)", RspCOP0_Name(RSPOpC.OP.R.rd), RSPOpC.OP.R.rd);
@@ -1584,14 +1588,14 @@ void RSP_Opcode_LTV ( void ) {
 /*void RSP_Opcode_SBV ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset)) &0xFFF);
 	RSP_SBV_DMEM( Address, RSPOpC.rt, RSPOpC.del);
-}
+}*/
 
 void RSP_Opcode_SSV ( void ) {
-	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 1)) &0xFFF);
-	RSP_SSV_DMEM( Address, RSPOpC.rt, RSPOpC.del);
+	DWORD Address = ((RSP_GPR[RSPOpC.OP.LSV.base].UW + (DWORD)(RSPOpC.OP.LSV.offset << 1)) &0xFFF);
+	RSP_SSV_DMEM( Address, RSPOpC.OP.LSV.vt, RSPOpC.OP.LSV.element);
 }
 
-void RSP_Opcode_SLV ( void ) {
+/*void RSP_Opcode_SLV ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 2)) &0xFFF);
 	RSP_SLV_DMEM( Address, RSPOpC.rt, RSPOpC.del);
 }*/
