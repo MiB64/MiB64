@@ -33,7 +33,7 @@
 extern MIPS_DWORD EleSpec[16], Indx[16];
 
 extern void * RSP_Opcode[64];
-/*extern void * RSP_RegImm[32];*/
+extern void * RSP_RegImm[32];
 extern void * RSP_Special[64];
 extern void * RSP_Cop0[32];
 extern void * RSP_Cop2[32];

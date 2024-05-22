@@ -276,11 +276,11 @@ void RSP_LW_IMEM ( DWORD Addr, DWORD * Value ) {
 
 /*void RSP_SB_DMEM ( DWORD Addr, BYTE Value ) {
 	*(BYTE *)(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF)) = Value;
-}
+}*/
 
 void RSP_SBV_DMEM ( DWORD Addr, int vect, int element ) {
-	*(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].B[15 - element];
-}*/
+	*(DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].B[15 - element];
+}
 
 void RSP_SDV_DMEM ( DWORD Addr, int vect, int element ) {
 	int Count;

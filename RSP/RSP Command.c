@@ -782,37 +782,35 @@ char * RSPSpecialName ( DWORD OpCode ) {
 }
 
 char * RSPRegimmName ( DWORD OpCode, DWORD PC ) {
-	/*OPCODE command;
-	command.Hex = OpCode;
+	OPCODE command;
+	command.OP.Hex = OpCode;
 		
-	switch (command.rt) {
+	switch (command.OP.B.rt) {
 	case RSP_REGIMM_BLTZ:
-		sprintf(CommandName,"BLTZ\t%s, 0x%03X",GPR_Name(command.rs),
-			(PC + ((short)command.offset << 2) + 4) & 0xFFC);
+		sprintf(CommandName,"BLTZ\t%s, 0x%03X",RspGPR_Name(command.OP.B.rs),
+			(PC + ((short)command.OP.B.offset << 2) + 4) & 0xFFC);
 		break;
 	case RSP_REGIMM_BGEZ:
-		sprintf(CommandName,"BGEZ\t%s, 0x%03X",GPR_Name(command.rs),
-			(PC + ((short)command.offset << 2) + 4) & 0xFFC);
+		sprintf(CommandName,"BGEZ\t%s, 0x%03X",RspGPR_Name(command.OP.B.rs),
+			(PC + ((short)command.OP.B.offset << 2) + 4) & 0xFFC);
 		break;
 	case RSP_REGIMM_BLTZAL:
-		sprintf(CommandName,"BLTZAL\t%s, 0x%03X",GPR_Name(command.rs),
-			(PC + ((short)command.offset << 2) + 4) & 0xFFC);
+		sprintf(CommandName,"BLTZAL\t%s, 0x%03X",RspGPR_Name(command.OP.B.rs),
+			(PC + ((short)command.OP.B.offset << 2) + 4) & 0xFFC);
 		break;
 	case RSP_REGIMM_BGEZAL:
-		if (command.rs == 0) {
-			sprintf(CommandName,"BAL\t0x%03X",(PC + ((short)command.offset << 2) + 4) & 0xFFC);
+		if (command.OP.B.rs == 0) {
+			sprintf(CommandName,"BAL\t0x%03X",(PC + ((short)command.OP.B.offset << 2) + 4) & 0xFFC);
 		} else {
-			sprintf(CommandName,"BGEZAL\t%s, 0x%03X",GPR_Name(command.rs),
-				(PC + ((short)command.offset << 2) + 4) & 0xFFC);
+			sprintf(CommandName,"BGEZAL\t%s, 0x%03X",RspGPR_Name(command.OP.B.rs),
+				(PC + ((short)command.OP.B.offset << 2) + 4) & 0xFFC);
 		}	
 		break;
 	default:
 		sprintf(CommandName,"RSP: Unknown\t%02X %02X %02X %02X",
-			command.Ascii[3],command.Ascii[2],command.Ascii[1],command.Ascii[0]);
+			command.OP.Ascii[3],command.OP.Ascii[2],command.OP.Ascii[1],command.OP.Ascii[0]);
 	}
-	return CommandName;*/
-	LogMessage("TODO: RSPRegimmName");
-	return "";
+	return CommandName;
 }
 
 char * RSPCop0Name ( DWORD OpCode ) {

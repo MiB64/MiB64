@@ -45,7 +45,7 @@ OPCODE RSPOpC;
 DWORD /*NextInstruction,*/ RSP_Running;
 
 void * RSP_Opcode[64];
-/*void * RSP_RegImm[32];*/
+void * RSP_RegImm[32];
 void * RSP_Special[64];
 void * RSP_Cop0[32];
 void * RSP_Cop2[32];

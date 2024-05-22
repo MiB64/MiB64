@@ -153,10 +153,10 @@ typedef struct tagOPCODE {
 #define RSP_SPECIAL_SLTU		43
 
 /* RSP RegImm opcodes */
-/*#define RSP_REGIMM_BLTZ			 0
+#define RSP_REGIMM_BLTZ			 0
 #define RSP_REGIMM_BGEZ			 1
 #define RSP_REGIMM_BLTZAL		16
-#define RSP_REGIMM_BGEZAL		17*/
+#define RSP_REGIMM_BGEZAL		17
 
 /* RSP COP0 opcodes */
 #define	RSP_COP0_MF				 0 
