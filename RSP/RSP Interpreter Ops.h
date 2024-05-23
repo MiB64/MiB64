@@ -99,12 +99,12 @@ void RSP_Vector_VMUDN   ( void );*/
 void RSP_Vector_VMUDH   ( void );
 void RSP_Vector_VMACF   ( void );
 /*void RSP_Vector_VMACU   ( void );
-void RSP_Vector_VMACQ   ( void );
+void RSP_Vector_VMACQ   ( void );*/
 void RSP_Vector_VMADL   ( void );
 void RSP_Vector_VMADM   ( void );
-void RSP_Vector_VMADN   ( void );
+/*void RSP_Vector_VMADN   ( void );*/
 void RSP_Vector_VMADH   ( void );
-void RSP_Vector_VADD    ( void );
+/*void RSP_Vector_VADD    ( void );
 void RSP_Vector_VSUB    ( void );
 void RSP_Vector_VABS    ( void );
 void RSP_Vector_VADDC   ( void );
