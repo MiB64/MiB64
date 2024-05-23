@@ -862,6 +862,7 @@ BOOL Machine_LoadState(void) {
 			unzReadCurrentFile(file, RSP_GPR, sizeof(MIPS_WORD) * 32);
 			unzReadCurrentFile(file, RSP_Vect, sizeof(VECTOR) * 32);
 			unzReadCurrentFile(file, RSP_ACCUM, sizeof(MIPS_DWORD) * 8);
+			unzReadCurrentFile(file, RSP_Flags, sizeof(MIPS_WORD) * 3);
 
 			unzCloseCurrentFile(file);
 			unzClose(file);
@@ -1020,6 +1021,7 @@ BOOL Machine_LoadState(void) {
 		ReadFile(hSaveFile, RSP_GPR, sizeof(MIPS_WORD) * 32, &dwRead, NULL);
 		ReadFile(hSaveFile, RSP_Vect, sizeof(VECTOR) * 32, &dwRead, NULL);
 		ReadFile(hSaveFile, RSP_ACCUM, sizeof(MIPS_DWORD) * 8, &dwRead, NULL);
+		ReadFile(hSaveFile, RSP_Flags, sizeof(MIPS_WORD) * 3, &dwRead, NULL);
 
 		CloseHandle(hSaveFile);
 		_splitpath( FileName, drive, dir, ZipFile, ext );
@@ -1162,6 +1164,7 @@ BOOL Machine_SaveState(void) {
 		zipWriteInFileInZip(file, RSP_GPR, sizeof(MIPS_WORD) * 32);
 		zipWriteInFileInZip(file, RSP_Vect, sizeof(VECTOR) * 32);
 		zipWriteInFileInZip(file, RSP_ACCUM, sizeof(MIPS_DWORD) * 8);
+		zipWriteInFileInZip(file, RSP_Flags, sizeof(MIPS_WORD) * 3);
 
 		zipCloseFileInZip(file);
 		zipClose(file,"");
@@ -1241,6 +1244,7 @@ BOOL Machine_SaveState(void) {
 		WriteFile(hSaveFile, RSP_GPR, sizeof(MIPS_WORD) * 32, &dwWritten, NULL);
 		WriteFile(hSaveFile, RSP_Vect, sizeof(VECTOR) * 32, &dwWritten, NULL);
 		WriteFile(hSaveFile, RSP_ACCUM, sizeof(MIPS_DWORD) * 8, &dwWritten, NULL);
+		WriteFile(hSaveFile, RSP_Flags, sizeof(MIPS_WORD) * 3, &dwWritten, NULL);
 
 		CloseHandle(hSaveFile);
 		DeleteFile(ZipFile);

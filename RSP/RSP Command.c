@@ -103,7 +103,7 @@ static void Create_RSP_Commands_Window ( int Child ) {
 }
 
 void Disable_RSP_Commands_Window ( void ) {
-	/*SCROLLINFO si;
+	SCROLLINFO si;
 
 	if (!InRSPCommandsWindow) { return; }
 	EnableWindow(hList,            FALSE);
@@ -123,8 +123,7 @@ void Disable_RSP_Commands_Window ( void ) {
 	si.nMax   = 0;
 	si.nPos   = 1;
 	si.nPage  = 1;
-	SetScrollInfo(hScrlBar,SB_CTL,&si,TRUE);*/
-	LogMessage("TODO: Disable_RSP_Commands_Window");
+	SetScrollInfo(hScrlBar,SB_CTL,&si,TRUE);
 }
 
 int DisplayRSPCommand (DWORD location, int InsertPos) {
@@ -156,7 +155,7 @@ int DisplayRSPCommand (DWORD location, int InsertPos) {
 	return LinesUsed;
 }
 
-/*void DumpRSPCode (void) {
+void DumpRSPCode (void) {
 	char string[100], LogFileName[255], *p ;
 	DWORD location, OpCode, dwWritten;
 	HANDLE hLogFile = NULL;
@@ -226,7 +225,7 @@ void DumpRSPData (void) {
 		WriteFile( hLogFile,string,strlen(string),&dwWritten,NULL );
 	}
 	CloseHandle(hLogFile);
-}*/
+}
 
 void DrawRSPCommand ( LPARAM lParam ) {	
 	char Command[150], Offset[30], Instruction[30], Arguments[40];
@@ -1289,7 +1288,7 @@ void SetRSPCommandToRunning ( void ) {
 }
 
 void SetRSPCommandToStepping ( void ) { 	
-	/*if (InRSPCommandsWindow == FALSE) { return; }
+	if (InRSPCommandsWindow == FALSE) { return; }
 	EnableWindow(hGoButton,    TRUE);
 	EnableWindow(hBreakButton, FALSE);
 	EnableWindow(hStepButton,  TRUE);
@@ -1298,8 +1297,7 @@ void SetRSPCommandToStepping ( void ) {
 	SendMessage(hStepButton, BM_SETSTYLE, BS_DEFPUSHBUTTON,TRUE);
 	SendMessage(RSPCommandshWnd, DM_SETDEFID,IDC_STEP_BUTTON,0);
 	SetFocus(hStepButton);
-	Stepping_Commands = TRUE;*/
-	LogMessage("TODO: SetRSPCommandToStepping()");
+	Stepping_RspCommands = TRUE;
 }
 
 void SetRSPCommandViewto ( UINT NewLocation ) {

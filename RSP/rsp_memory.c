@@ -160,7 +160,7 @@ void RSP_LH_DMEM ( DWORD Addr, WORD * Value ) {
 	RSP_Vect[vect].HW[2] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 10) & 0xF) ^3) & 0xFFF)) << 7;
 	RSP_Vect[vect].HW[1] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 12) & 0xF) ^3) & 0xFFF)) << 7;
 	RSP_Vect[vect].HW[0] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 14) & 0xF) ^3) & 0xFFF)) << 7;
-}
+}*/
 
 void RSP_LLV_DMEM ( DWORD Addr, int vect, int element ) {
 	int length, Count;
@@ -170,13 +170,13 @@ void RSP_LLV_DMEM ( DWORD Addr, int vect, int element ) {
 		length = 16 - element;
 	}
 	for (Count = element; Count < (length + element); Count ++ ){
-		RSP_Vect[vect].B[15 - Count] = *(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF));
+		RSP_Vect[vect].B[15 - Count] = *(DMEM + ((Addr ^ 3) & 0xFFF));
 		Addr += 1;
 	}
 
 }
 
-void RSP_LPV_DMEM ( DWORD Addr, int vect, int element ) {	
+/*void RSP_LPV_DMEM ( DWORD Addr, int vect, int element ) {	
 	RSP_Vect[vect].HW[7] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element) & 0xF)^3) & 0xFFF)) << 8;
 	RSP_Vect[vect].HW[6] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 1) & 0xF)^3) & 0xFFF)) << 8;
 	RSP_Vect[vect].HW[5] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 2) & 0xF)^3) & 0xFFF)) << 8;
@@ -214,7 +214,7 @@ void RSP_LQV_DMEM ( DWORD Addr, int vect, int element ) {
 
 }
 
-/*void RSP_LSV_DMEM ( DWORD Addr, int vect, int element ) {
+void RSP_LSV_DMEM ( DWORD Addr, int vect, int element ) {
 	int length, Count;
 	
 	length = 2;
@@ -222,12 +222,12 @@ void RSP_LQV_DMEM ( DWORD Addr, int vect, int element ) {
 		length = 16 - element;
 	}
 	for (Count = element; Count < (length + element); Count ++ ){
-		RSP_Vect[vect].B[15 - Count] = *(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF));
+		RSP_Vect[vect].B[15 - Count] = *(DMEM + ((Addr ^ 3) & 0xFFF));
 		Addr += 1;
 	}
 }
 
-void RSP_LTV_DMEM ( DWORD Addr, int vect, int element ) {
+/*void RSP_LTV_DMEM ( DWORD Addr, int vect, int element ) {
 	int del, count, length;
 	
 	length = 8;
@@ -274,9 +274,9 @@ void RSP_LW_IMEM ( DWORD Addr, DWORD * Value ) {
 	* Value = *(DWORD *)(IMEM + (Addr & 0xFFF));
 }
 
-/*void RSP_SB_DMEM ( DWORD Addr, BYTE Value ) {
-	*(BYTE *)(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF)) = Value;
-}*/
+void RSP_SB_DMEM ( DWORD Addr, BYTE Value ) {
+	*(BYTE *)(DMEM + ((Addr ^ 3) & 0xFFF)) = Value;
+}
 
 void RSP_SBV_DMEM ( DWORD Addr, int vect, int element ) {
 	*(DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].B[15 - element];

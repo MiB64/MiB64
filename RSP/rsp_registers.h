@@ -125,8 +125,12 @@ void InitilizeRSPRegisters(void);
 void UpdateRSPRegistersScreen(void);
 
 /*** RSP Registers ***/
-extern MIPS_WORD   RSP_GPR[32]/*, RSP_Flags[4]*/;
+extern MIPS_WORD   RSP_GPR[32], RSP_Flags[3];
 extern MIPS_DWORD  RSP_ACCUM[8];
 extern VECTOR  RSP_Vect[32];
+
+#define RspVCO RSP_Flags[0].HW[0]
+#define RspVCC RSP_Flags[1].HW[0]
+#define RspVCE RSP_Flags[2].B[0]
 
 void WriteRspStatusRegister(DWORD Value);

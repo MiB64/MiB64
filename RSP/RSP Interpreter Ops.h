@@ -51,7 +51,7 @@ void RSP_Opcode_LH      ( void );
 void RSP_Opcode_LW      ( void );
 void RSP_Opcode_LBU     ( void );
 void RSP_Opcode_LHU     ( void );
-/*void RSP_Opcode_SB      ( void );*/
+void RSP_Opcode_SB      ( void );
 void RSP_Opcode_SH      ( void );
 void RSP_Opcode_SW      ( void );
 void RSP_Opcode_LC2     ( void );
@@ -67,7 +67,7 @@ void RSP_Special_JR     ( void );
 /*void RSP_Special_JALR   ( void );*/
 void RSP_Special_BREAK  ( void );
 void RSP_Special_ADD    ( void );
-/*void RSP_Special_ADDU   ( void );*/
+void RSP_Special_ADDU   ( void );
 void RSP_Special_SUB    ( void );
 /*void RSP_Special_SUBU   ( void );*/
 void RSP_Special_AND    ( void );
@@ -85,24 +85,24 @@ void RSP_Opcode_BGEZAL  ( void );*/
 void RSP_Cop0_MF        ( void );
 void RSP_Cop0_MT        ( void );
 /************************** Cop2 functions *************************/
-/*void RSP_Cop2_MF        ( void );
-void RSP_Cop2_CF        ( void );*/
+/*void RSP_Cop2_MF        ( void );*/
+void RSP_Cop2_CF        ( void );
 void RSP_Cop2_MT        ( void );
-/*void RSP_Cop2_CT        ( void );*/
+void RSP_Cop2_CT        ( void );
 void RSP_COP2_VECTOR    ( void );
 /************************** Vect functions **************************/
 void RSP_Vector_VMULF   ( void );
 /*void RSP_Vector_VMULU	( void );
-void RSP_Vector_VMUDL   ( void );
+void RSP_Vector_VMUDL   ( void );*/
 void RSP_Vector_VMUDM   ( void );
-void RSP_Vector_VMUDN   ( void );*/
+void RSP_Vector_VMUDN   ( void );
 void RSP_Vector_VMUDH   ( void );
 void RSP_Vector_VMACF   ( void );
 /*void RSP_Vector_VMACU   ( void );
 void RSP_Vector_VMACQ   ( void );*/
 void RSP_Vector_VMADL   ( void );
 void RSP_Vector_VMADM   ( void );
-/*void RSP_Vector_VMADN   ( void );*/
+void RSP_Vector_VMADN   ( void );
 void RSP_Vector_VMADH   ( void );
 /*void RSP_Vector_VADD    ( void );
 void RSP_Vector_VSUB    ( void );
@@ -114,9 +114,9 @@ void RSP_Vector_VSAR    ( void );
 void RSP_Vector_VEQ     ( void );
 void RSP_Vector_VNE     ( void );
 void RSP_Vector_VGE     ( void );
-void RSP_Vector_VCL     ( void );
+void RSP_Vector_VCL     ( void );*/
 void RSP_Vector_VCH     ( void );
-void RSP_Vector_VCR     ( void );
+/*void RSP_Vector_VCR     ( void );
 void RSP_Vector_VMRG    ( void );
 void RSP_Vector_VAND    ( void );
 void RSP_Vector_VNAND   ( void );
@@ -133,9 +133,9 @@ void RSP_Vector_VRSQL   ( void );
 void RSP_Vector_VRSQH   ( void );
 void RSP_Vector_VNOOP   ( void );*/
 /************************** lc2 functions **************************/
-/*void RSP_Opcode_LBV     ( void );
+/*void RSP_Opcode_LBV     ( void );*/
 void RSP_Opcode_LSV     ( void );
-void RSP_Opcode_LLV     ( void );*/
+void RSP_Opcode_LLV     ( void );
 void RSP_Opcode_LDV     ( void );
 void RSP_Opcode_LQV     ( void );
 /*void RSP_Opcode_LRV     ( void );

@@ -148,11 +148,11 @@ void __cdecl ProcessMenuItem(int ID) {
 	UINT uState;*/
 
 	switch (ID) {
-	/*case ID_RSPCOMMANDS: Enter_RSP_Commands_Window(); break;
+	case ID_RSPCOMMANDS: Enter_RSP_Commands_Window(); break;
 	case ID_RSPREGISTERS: Enter_RSP_Register_Window(); break;
 	case ID_DUMP_RSPCODE: DumpRSPCode(); break;
 	case ID_DUMP_DMEM: DumpRSPData(); break;
-	case ID_PROFILING_ON:
+	/*case ID_PROFILING_ON:
 	case ID_PROFILING_OFF:
 		uState = GetMenuState(hRSPMenu, ID_PROFILING_ON, MF_BYCOMMAND);
 		hKeyResults = 0;
