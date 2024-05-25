@@ -103,7 +103,7 @@ LANG_STR DefaultString[] = {
 		{ MENU_USER_MAN,    "&User Manual..."    },
 		{ MENU_GAME_FAQ,    "&Game FAQ..."       },
 		{ MENU_ABOUT_INI,   "About &INI Files"   },
-		{ MENU_ABOUT_PJ64,  "&About Project 64"  },
+		{ MENU_ABOUT_PJ64,  "&About MiB64"  },
 		{ MENU_GITHUB,      "GitHub"  },
 		{ MENU_HOMEPAGE,    "&Homepage"  },
 		{ MENU_DISCORD,     "&Discord"   },
