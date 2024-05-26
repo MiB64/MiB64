@@ -863,6 +863,9 @@ BOOL Machine_LoadState(void) {
 			unzReadCurrentFile(file, RSP_Vect, sizeof(VECTOR) * 32);
 			unzReadCurrentFile(file, RSP_ACCUM, sizeof(MIPS_DWORD) * 8);
 			unzReadCurrentFile(file, RSP_Flags, sizeof(MIPS_WORD) * 3);
+			unzReadCurrentFile(file, &DivOut, sizeof(MIPS_WORD));
+			unzReadCurrentFile(file, &DivIn, sizeof(MIPS_WORD));
+			unzReadCurrentFile(file, &PendingDivIn, sizeof(BYTE));
 
 			unzCloseCurrentFile(file);
 			unzClose(file);
@@ -1022,6 +1025,9 @@ BOOL Machine_LoadState(void) {
 		ReadFile(hSaveFile, RSP_Vect, sizeof(VECTOR) * 32, &dwRead, NULL);
 		ReadFile(hSaveFile, RSP_ACCUM, sizeof(MIPS_DWORD) * 8, &dwRead, NULL);
 		ReadFile(hSaveFile, RSP_Flags, sizeof(MIPS_WORD) * 3, &dwRead, NULL);
+		ReadFile(hSaveFile, &DivOut, sizeof(MIPS_WORD), &dwRead, NULL);
+		ReadFile(hSaveFile, &DivIn, sizeof(MIPS_WORD), &dwRead, NULL);
+		ReadFile(hSaveFile, &PendingDivIn, sizeof(BYTE), &dwRead, NULL);
 
 		CloseHandle(hSaveFile);
 		_splitpath( FileName, drive, dir, ZipFile, ext );
@@ -1165,6 +1171,9 @@ BOOL Machine_SaveState(void) {
 		zipWriteInFileInZip(file, RSP_Vect, sizeof(VECTOR) * 32);
 		zipWriteInFileInZip(file, RSP_ACCUM, sizeof(MIPS_DWORD) * 8);
 		zipWriteInFileInZip(file, RSP_Flags, sizeof(MIPS_WORD) * 3);
+		zipWriteInFileInZip(file, &DivOut, sizeof(MIPS_WORD));
+		zipWriteInFileInZip(file, &DivIn, sizeof(MIPS_WORD));
+		zipWriteInFileInZip(file, &PendingDivIn, sizeof(BYTE));
 
 		zipCloseFileInZip(file);
 		zipClose(file,"");
@@ -1245,6 +1254,9 @@ BOOL Machine_SaveState(void) {
 		WriteFile(hSaveFile, RSP_Vect, sizeof(VECTOR) * 32, &dwWritten, NULL);
 		WriteFile(hSaveFile, RSP_ACCUM, sizeof(MIPS_DWORD) * 8, &dwWritten, NULL);
 		WriteFile(hSaveFile, RSP_Flags, sizeof(MIPS_WORD) * 3, &dwWritten, NULL);
+		WriteFile(hSaveFile, &DivOut, sizeof(MIPS_WORD), &dwWritten, NULL);
+		WriteFile(hSaveFile, &DivIn, sizeof(MIPS_WORD), &dwWritten, NULL);
+		WriteFile(hSaveFile, &PendingDivIn, sizeof(BYTE), &dwWritten, NULL);
 
 		CloseHandle(hSaveFile);
 		DeleteFile(ZipFile);

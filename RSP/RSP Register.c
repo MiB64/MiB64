@@ -73,6 +73,8 @@ MIPS_WORD  RSP_GPR[32];
 MIPS_WORD  RSP_Flags[3];
 MIPS_DWORD  RSP_ACCUM[8];
 VECTOR  RSP_Vect[32];
+MIPS_WORD DivOut, DivIn;
+BYTE PendingDivIn;
 
 void WriteRspStatusRegister(DWORD Value) {
 	switch (Value & (SP_CLR_HALT | SP_SET_HALT))
@@ -235,6 +237,9 @@ void InitilizeRSPRegisters (void) {
 	memset(RSP_Vect,0,sizeof(RSP_Vect));
 	memset(RSP_ACCUM, 0, sizeof(RSP_ACCUM));
 	memset(RSP_Flags, 0, sizeof(RSP_Flags));
+	DivIn.UW = 0;
+	DivOut.UW = 0;
+	PendingDivIn = 0;
 }
 
 void PaintRSP_HiddenPanel (HWND hWnd) {	
