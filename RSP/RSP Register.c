@@ -63,7 +63,7 @@ void UpdateRSPRegistersScreen ( void );
 static LRESULT CALLBACK RefreshRSP_RegProc ( HWND, UINT, WPARAM, LPARAM );
 static LRESULT CALLBACK RSP_Registers_Proc ( HWND, UINT, WPARAM, LPARAM );
 
-static HWND RSP_Registers_hDlg, hTab, hStatic, hGPR[32], hCP0[16], hHIDDEN[11],
+static HWND RSP_Registers_hDlg, hTab, hStatic, hGPR[32], hCP0[16], hHIDDEN[13],
 	hVECT1[16], hVECT2[16];
 static int InRSPRegisterWindow = FALSE;
 static FARPROC RefreshProc;
@@ -221,7 +221,7 @@ void HideRSP_RegisterPanel ( int Panel) {
 		for (count = 0; count < 16;count ++) { ShowWindow(hCP0[count], FALSE ); }
 		break;
 	case HiddenRegisters:
-		for (count = 0; count < 11;count ++) { ShowWindow(hHIDDEN[count], FALSE ); }
+		for (count = 0; count < 13;count ++) { ShowWindow(hHIDDEN[count], FALSE ); }
 		break;
 	case Vector1:
 		for (count = 0; count < 16;count ++) { ShowWindow(hVECT1[count], FALSE ); }
@@ -262,7 +262,7 @@ void PaintRSP_HiddenPanel (HWND hWnd) {
 	FillRect( ps.hdc, &rcBox,(HBRUSH)COLOR_WINDOW);		
 
 	rcBox.left   = 365; rcBox.top    = 35;
-	rcBox.right  = 425; rcBox.bottom = 50;
+	rcBox.right  = 455; rcBox.bottom = 50;
 	FillRect( ps.hdc, &rcBox,(HBRUSH)COLOR_WINDOW);		
 
 	hOldFont = SelectObject( ps.hdc,
@@ -279,10 +279,12 @@ void PaintRSP_HiddenPanel (HWND hWnd) {
 	TextOut( ps.hdc, 80,206,"Accumulator 6:",14);
 	TextOut( ps.hdc, 80,231,"Accumulator 7:",14);
 		
-	TextOut( ps.hdc, 371,34,"RSP Flags",9);
+	TextOut( ps.hdc, 371,34,"RSP Flags / Div",15);
 	TextOut( ps.hdc, 375,86,"VCO:",7);
 	TextOut( ps.hdc, 375,116,"VCC:",7);
 	TextOut( ps.hdc, 375,146,"VCE:",7);
+	TextOut( ps.hdc, 375,176, "DivIn:",7);
+	TextOut( ps.hdc, 375,206, "DivOut:",7);
 
 	SelectObject( ps.hdc,hOldFont );
 	SetBkMode( ps.hdc, OldBkMode );
@@ -552,9 +554,9 @@ void SetupRSP_HiddenPanel (HWND hDlg) {
 			hDlg,0,hInst, NULL );
 		SendMessage(hHIDDEN[count],WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
 	}
-	for (count = 0; count < 3;count ++) {
+	for (count = 0; count < 5;count ++) {
 		hHIDDEN[count + 8] = CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT","", WS_CHILD | 
-			ES_READONLY | WS_BORDER | WS_TABSTOP,425,(count*30) + 90,55,19, 
+			ES_READONLY | WS_BORDER | WS_TABSTOP,425,(count*30) + 90,75,19, 
 			hDlg,0,hInst, NULL );
 		SendMessage(hHIDDEN[count + 8],WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT),0);
 	}
@@ -693,7 +695,7 @@ void ShowRSP_RegisterPanel ( int Panel) {
 		for (count = 0; count < 16;count ++) { ShowWindow(hCP0[count], TRUE ); }
 		break;
 	case HiddenRegisters:
-		for (count = 0; count < 11;count ++) { ShowWindow(hHIDDEN[count], TRUE ); }
+		for (count = 0; count < 13;count ++) { ShowWindow(hHIDDEN[count], TRUE ); }
 		break;
 	case Vector1:
 		for (count = 0; count < 16;count ++) { ShowWindow(hVECT1[count], TRUE ); }
@@ -764,8 +766,15 @@ void UpdateRSPRegistersScreen ( void ) {
 				sprintf(RegisterValue," 0x%04X",RSP_Flags[count].UHW[0]);
 				SetWindowText(hHIDDEN[count + 8],RegisterValue);
 			}
-			sprintf(RegisterValue," 0x%04X",RSP_Flags[2].UHW[0]);
-			SetWindowText(hHIDDEN[11],RegisterValue);
+			if (PendingDivIn) {
+				sprintf(RegisterValue, " 0x%08X", DivIn.UW);
+			}
+			else {
+				sprintf(RegisterValue, " NULL");
+			}
+			SetWindowText(hHIDDEN[11], RegisterValue);
+			sprintf(RegisterValue, " 0x%08X", DivOut.UW);
+			SetWindowText(hHIDDEN[12], RegisterValue);
 			break;
 		case Vector1:
 			for (count = 0; count < 16;count ++) { 
