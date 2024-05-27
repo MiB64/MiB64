@@ -421,18 +421,18 @@ void RSP_SH_DMEM ( DWORD Addr, WORD Value ) {
 		(RSP_Vect[vect].UB[(2 - element) & 0xF] >> 7);
 	*(RSPInfo.DMEM + (((Addr + 14)^3) & 0xFFF)) = (RSP_Vect[vect].UB[(1 - element) & 0xF] << 1) + 
 		(RSP_Vect[vect].UB[(0 - element) & 0xF] >> 7);
-}
+}*/
 
 void RSP_SLV_DMEM ( DWORD Addr, int vect, int element ) {
 	int Count;
 
 	for (Count = element; Count < (4 + element); Count ++ ){
-		*(RSPInfo.DMEM + ((Addr ^3) & 0xFFF)) = RSP_Vect[vect].B[15 - (Count & 0xF)];
+		*(DMEM + ((Addr ^3) & 0xFFF)) = RSP_Vect[vect].B[15 - (Count & 0xF)];
 		Addr += 1;
 	}
 }
 
-void RSP_SPV_DMEM ( DWORD Addr, int vect, int element ) {
+/*void RSP_SPV_DMEM ( DWORD Addr, int vect, int element ) {
 	int Count;
 
 	for (Count = element; Count < (8 + element); Count ++ ){
