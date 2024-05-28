@@ -176,15 +176,14 @@ void RSP_LLV_DMEM ( DWORD Addr, int vect, int element ) {
 
 }
 
-/*void RSP_LPV_DMEM ( DWORD Addr, int vect, int element ) {	
-	RSP_Vect[vect].HW[7] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element) & 0xF)^3) & 0xFFF)) << 8;
-	RSP_Vect[vect].HW[6] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 1) & 0xF)^3) & 0xFFF)) << 8;
-	RSP_Vect[vect].HW[5] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 2) & 0xF)^3) & 0xFFF)) << 8;
-	RSP_Vect[vect].HW[4] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 3) & 0xF)^3) & 0xFFF)) << 8;
-	RSP_Vect[vect].HW[3] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 4) & 0xF)^3) & 0xFFF)) << 8;
-	RSP_Vect[vect].HW[2] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 5) & 0xF)^3) & 0xFFF)) << 8;
-	RSP_Vect[vect].HW[1] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 6) & 0xF)^3) & 0xFFF)) << 8;
-	RSP_Vect[vect].HW[0] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 7) & 0xF)^3) & 0xFFF)) << 8;
+void RSP_LPV_DMEM ( DWORD Addr, int vect, int element ) {	
+	int alignedAddr = Addr & ~7;
+	int misalignment = Addr & 7;
+	for (int i = 0; i < 8; ++i) {
+		int elementOffset = (0x10 - element + i + misalignment) & 0xF;
+		int elemAddr = alignedAddr + elementOffset;
+		RSP_Vect[vect].HW[7 - i] = *(DMEM + ((elemAddr & 0xFFF) ^ 3)) << 8;
+	}
 }
 
 void RSP_LRV_DMEM ( DWORD Addr, int vect, int element ) {	
@@ -194,11 +193,11 @@ void RSP_LRV_DMEM ( DWORD Addr, int vect, int element ) {
 	length = (Addr & 0xF) - element;
 	Addr &= 0xFF0;
 	for (Count = element; Count < (length + element); Count ++ ){
-		RSP_Vect[vect].B[offset - Count] = *(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF));
+		RSP_Vect[vect].B[offset - Count] = *(DMEM + ((Addr ^ 3) & 0xFFF));
 		Addr += 1;
 	}
 
-}*/
+}
 
 void RSP_LQV_DMEM ( DWORD Addr, int vect, int element ) {
 	int length, Count;
@@ -227,33 +226,30 @@ void RSP_LSV_DMEM ( DWORD Addr, int vect, int element ) {
 	}
 }
 
-/*void RSP_LTV_DMEM ( DWORD Addr, int vect, int element ) {
-	int del, count, length;
-	
-	length = 8;
-	if (length > 32 - vect) {
-		length = 32 - vect;
-	}
-	
-	Addr = ((Addr + 8) & 0xFF0) + (element & 0x1);	
-	for (count = 0; count < length; count ++) {
-		del = ((8 - (element >> 1) + count) << 1) & 0xF;
-		RSP_Vect[vect + count].B[15 - del] = *(RSPInfo.DMEM + (Addr ^ 3));
-		RSP_Vect[vect + count].B[14 - del] = *(RSPInfo.DMEM + ((Addr + 1) ^ 3));
-		Addr += 2;
+void RSP_LTV_DMEM ( DWORD Addr, int vect, int element ) {
+	int firstReg = (vect & ~7);
+	int regOffset = element / 2;
+	int currentAddress = (Addr & ~7) + ((element + (Addr & 8)) & 15);
+	int maxAddress = (Addr & ~7) + 16;
+		
+	for(int count = 0; count < 8; count++) {
+		RSP_Vect[firstReg + regOffset].B[15 - (count * 2)]     = *(DMEM + (currentAddress++ ^ 3));
+		if (currentAddress == maxAddress) currentAddress = Addr & ~7;
+		RSP_Vect[firstReg + regOffset].B[15 - ((count * 2)+1)] = *(DMEM + (currentAddress++ ^ 3));
+		if (currentAddress == maxAddress) currentAddress = Addr & ~7;
+		regOffset = (regOffset + 1) & 7;
 	}
 }
 
-void RSP_LUV_DMEM ( DWORD Addr, int vect, int element ) {	
-	RSP_Vect[vect].HW[7] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element) & 0xF)^3) & 0xFFF)) << 7;
-	RSP_Vect[vect].HW[6] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 1) & 0xF)^3) & 0xFFF)) << 7;
-	RSP_Vect[vect].HW[5] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 2) & 0xF)^3) & 0xFFF)) << 7;
-	RSP_Vect[vect].HW[4] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 3) & 0xF)^3) & 0xFFF)) << 7;
-	RSP_Vect[vect].HW[3] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 4) & 0xF)^3) & 0xFFF)) << 7;
-	RSP_Vect[vect].HW[2] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 5) & 0xF)^3) & 0xFFF)) << 7;
-	RSP_Vect[vect].HW[1] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 6) & 0xF)^3) & 0xFFF)) << 7;
-	RSP_Vect[vect].HW[0] = *(RSPInfo.DMEM + ((Addr + ((0x10 - element + 7) & 0xF)^3) & 0xFFF)) << 7;
-}*/
+void RSP_LUV_DMEM ( DWORD Addr, int vect, int element ) {
+	int alignedAddr = Addr & ~7;
+	int misalignment = Addr & 7;
+	for (int i = 0; i < 8; ++i) {
+		int elementOffset = (0x10 - element + i + misalignment) & 0xF;
+		int elemAddr = alignedAddr + elementOffset;
+		RSP_Vect[vect].HW[7-i] = *(DMEM + ((elemAddr & 0xFFF) ^ 3)) << 7;
+	}
+}
 
 void RSP_LW_DMEM ( DWORD Addr, DWORD * Value ) {
 	if ((Addr & 0x3) != 0) {
@@ -432,19 +428,19 @@ void RSP_SLV_DMEM ( DWORD Addr, int vect, int element ) {
 	}
 }
 
-/*void RSP_SPV_DMEM ( DWORD Addr, int vect, int element ) {
+void RSP_SPV_DMEM ( DWORD Addr, int vect, int element ) {
 	int Count;
 
 	for (Count = element; Count < (8 + element); Count ++ ){
 		if (((Count) & 0xF) < 8) {
-			*(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].UB[15 - ((Count & 0xF) << 1)];
+			*(DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].UB[15 - ((Count & 0xF) << 1)];
 		} else {
-			*(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF)) = (RSP_Vect[vect].UB[15 - ((Count & 0x7) << 1)] << 1) +
+			*(DMEM + ((Addr ^ 3) & 0xFFF)) = (RSP_Vect[vect].UB[15 - ((Count & 0x7) << 1)] << 1) +
 				(RSP_Vect[vect].UB[14 - ((Count & 0x7) << 1)] >> 7);
 		}
 		Addr += 1;
 	}
-}*/
+}
 
 void RSP_SQV_DMEM ( DWORD Addr, int vect, int element ) {
 	int length, Count;
@@ -477,20 +473,16 @@ void RSP_SSV_DMEM ( DWORD Addr, int vect, int element ) {
 	}
 }
 
-/*void RSP_STV_DMEM ( DWORD Addr, int vect, int element ) {
-	int del, count, length;
-	
-	length = 8;
-	if (length > 32 - vect) {
-		length = 32 - vect;
-	}
-	length = length << 1;
-	del = element >> 1;
-	for (count = 0; count < length; count += 2) {
-		*(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect + del].UB[15 - count];
-		*(RSPInfo.DMEM + (((Addr + 1) ^ 3) & 0xFFF)) = RSP_Vect[vect + del].UB[14 - count];
-		del = (del + 1) & 7;
-		Addr += 2;
+void RSP_STV_DMEM ( DWORD Addr, int vect, int element ) {
+	int firstReg = vect & ~7;
+	int lastReg = firstReg + 7;
+	int currentElement = 16 - (element & ~1);
+	int alignedAddress = Addr & ~7;
+	int offset = (Addr & 7) - (element & ~1);
+
+	for (int reg = firstReg; reg <= lastReg; ++reg) {
+		*(DMEM + (((alignedAddress + (offset++ & 15)) ^ 3) & 0xFFF)) = RSP_Vect[reg].UB[15 - (currentElement++ & 15)];
+		*(DMEM + (((alignedAddress + (offset++ & 15)) ^ 3) & 0xFFF)) = RSP_Vect[reg].UB[15 - (currentElement++ & 15)];
 	}
 }
 
@@ -499,14 +491,14 @@ void RSP_SUV_DMEM ( DWORD Addr, int vect, int element ) {
 
 	for (Count = element; Count < (8 + element); Count ++ ){
 		if (((Count) & 0xF) < 8) {
-			*(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF)) = (RSP_Vect[vect].UB[15 - ((Count & 0x7) << 1)] << 1) +
+			*(DMEM + ((Addr ^ 3) & 0xFFF)) = (RSP_Vect[vect].UB[15 - ((Count & 0x7) << 1)] << 1) +
 				(RSP_Vect[vect].UB[14 - ((Count & 0x7) << 1)] >> 7);
 		} else {
-			*(RSPInfo.DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].UB[15 - ((Count & 0x7) << 1)];
+			*(DMEM + ((Addr ^ 3) & 0xFFF)) = RSP_Vect[vect].UB[15 - ((Count & 0x7) << 1)];
 		}
 		Addr += 1;
 	}
-}*/
+}
 
 void RSP_SW_DMEM ( DWORD Addr, DWORD Value ) {
 	Addr &= 0xFFF;
