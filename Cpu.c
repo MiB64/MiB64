@@ -1407,7 +1407,7 @@ void RunRsp (void) {
 			return;
 		}
 
-		if ((SP_STATUS_REG & SP_STATUS_BROKE) == 0) {
+		if (!InternalRSP && (SP_STATUS_REG & SP_STATUS_BROKE) == 0) {
 			if (Task == 1 && (DPC_STATUS_REG & DPC_STATUS_FREEZE) != 0) {
 return;
 			}
@@ -1607,6 +1607,7 @@ void TimerDone (void) {
 	case PiTimer:
 		ChangeTimer(PiTimer,0);
 		PI_STATUS_REG &= ~PI_STATUS_DMA_BUSY;
+		PI_STATUS_REG |= PI_STATUS_INTR;
 		MI_INTR_REG |= MI_INTR_PI;
 		CheckInterrupts();
 		break;

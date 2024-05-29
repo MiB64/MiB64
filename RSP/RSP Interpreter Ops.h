@@ -62,9 +62,9 @@ void RSP_Special_SRL    ( void );
 void RSP_Special_SRA    ( void );
 void RSP_Special_SLLV   ( void );
 void RSP_Special_SRLV   ( void );
-/*void RSP_Special_SRAV   ( void );*/
+void RSP_Special_SRAV   ( void );
 void RSP_Special_JR     ( void );
-/*void RSP_Special_JALR   ( void );*/
+void RSP_Special_JALR   ( void );
 void RSP_Special_BREAK  ( void );
 void RSP_Special_ADD    ( void );
 void RSP_Special_ADDU   ( void );
@@ -73,14 +73,14 @@ void RSP_Special_SUB    ( void );
 void RSP_Special_AND    ( void );
 void RSP_Special_OR     ( void );
 void RSP_Special_XOR    ( void );
-/*void RSP_Special_NOR    ( void );*/
+void RSP_Special_NOR    ( void );
 void RSP_Special_SLT    ( void );
 /*void RSP_Special_SLTU   ( void );*/
 /********************** R4300i OpCodes: RegImm **********************/
 void RSP_Opcode_BLTZ    ( void );
 void RSP_Opcode_BGEZ    ( void );
-/*void RSP_Opcode_BLTZAL  ( void );
-void RSP_Opcode_BGEZAL  ( void );*/
+/*void RSP_Opcode_BLTZAL  ( void );*/
+void RSP_Opcode_BGEZAL  ( void );
 /************************** Cop0 functions *************************/
 void RSP_Cop0_MF        ( void );
 void RSP_Cop0_MT        ( void );

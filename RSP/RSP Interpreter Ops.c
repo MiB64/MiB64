@@ -252,22 +252,22 @@ void RSP_Special_SRLV (void) {
 	}
 }
 
-/*void RSP_Special_SRAV (void) {
-	if (RSPOpC.rd != 0) {
-		RSP_GPR[RSPOpC.rd].W = RSP_GPR[RSPOpC.rt].W >> (RSP_GPR[RSPOpC.rs].W & 0x1F);
+void RSP_Special_SRAV (void) {
+	if (RSPOpC.OP.R.rd != 0) {
+		RSP_GPR[RSPOpC.OP.R.rd].W = RSP_GPR[RSPOpC.OP.R.rt].W >> (RSP_GPR[RSPOpC.OP.R.rs].W & 0x1F);
 	}
-}*/
+}
 
 void RSP_Special_JR (void) {
 	RSP_NextInstruction = DELAY_SLOT;
 	RSP_JumpTo = (RSP_GPR[RSPOpC.OP.R.rs].W & 0xFFC);
 }
 
-/*void RSP_Special_JALR (void) {
+void RSP_Special_JALR (void) {
 	RSP_NextInstruction = DELAY_SLOT;
-	RSP_GPR[RSPOpC.rd].W = (*PrgCount + 8) & 0xFFC;
-	RSP_JumpTo = (RSP_GPR[RSPOpC.rs].W & 0xFFC);
-}*/
+	RSP_JumpTo = (RSP_GPR[RSPOpC.OP.R.rs].W & 0xFFC);
+	RSP_GPR[RSPOpC.OP.R.rd].W = (SP_PC_REG + 8) & 0xFFC;
+}
 
 void RSP_Special_BREAK ( void ) {
 	RSP_Running = FALSE;
@@ -320,11 +320,11 @@ void RSP_Special_XOR (void) {
 	}
 }
 
-/*void RSP_Special_NOR (void) {
-	if (RSPOpC.rd != 0) {
-		RSP_GPR[RSPOpC.rd].UW = ~(RSP_GPR[RSPOpC.rs].UW | RSP_GPR[RSPOpC.rt].UW);
+void RSP_Special_NOR (void) {
+	if (RSPOpC.OP.R.rd != 0) {
+		RSP_GPR[RSPOpC.OP.R.rd].UW = ~(RSP_GPR[RSPOpC.OP.R.rs].UW | RSP_GPR[RSPOpC.OP.R.rt].UW);
 	}
-}*/
+}
 
 void RSP_Special_SLT (void) {
 	if (RSPOpC.OP.R.rd == 0) { return; }
@@ -370,17 +370,17 @@ void RSP_Opcode_BGEZ ( void ) {
 	} else  {
 		RSP_JumpTo = ( *PrgCount + 8 ) & 0xFFC;
 	}
-}
+}*/
 
 void RSP_Opcode_BGEZAL ( void ) {
 	RSP_NextInstruction = DELAY_SLOT;
-	RSP_GPR[31].UW = ( *PrgCount + 8 ) & 0xFFC;
-	if (RSP_GPR[RSPOpC.rs].W >= 0) {
-		RSP_JumpTo = ( *PrgCount + ((short)RSPOpC.offset << 2) + 4 ) & 0xFFC;
+	if (RSP_GPR[RSPOpC.OP.B.rs].W >= 0) {
+		RSP_JumpTo = ( SP_PC_REG + ((short)RSPOpC.OP.B.offset << 2) + 4 ) & 0xFFC;
 	} else  {
-		RSP_JumpTo = ( *PrgCount + 8 ) & 0xFFC;
+		RSP_JumpTo = ( SP_PC_REG + 8 ) & 0xFFC;
 	}
-}*/
+	RSP_GPR[31].UW = (SP_PC_REG + 8) & 0xFFC;
+}
 /************************** Cop0 functions *************************/
 void RSP_Cop0_MF (void) {
 	switch (RSPOpC.OP.R.rd) {
@@ -439,7 +439,7 @@ void RSP_Cop0_MT (void) {
 			DPC_STATUS_REG |= (DPC_STATUS_PIPE_BUSY | DPC_STATUS_START_GCLK);
 		}
 		if ((DPC_STATUS_REG & DPC_STATUS_FREEZE) == 0) {
-			if (ProcessRDPList) { ProcessRDPList(); }
+			if ((DPC_STATUS_REG & DPC_STATUS_START_VALID) == 0 && DPC_END_REG > DPC_CURRENT_REG && ProcessRDPList) { ProcessRDPList(); }
 		}
 		break;
 	/*case 10: *RSPInfo.DPC_CURRENT_REG = RSP_GPR[RSPOpC.rt].UW; break;*/

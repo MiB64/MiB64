@@ -214,11 +214,11 @@ void PI_DMA_WRITE (void) {
 			DMAUsed = TRUE;
 			FirstDMA(); 
 		}
-		PI_STATUS_REG &= ~PI_STATUS_DMA_BUSY;
+		/*PI_STATUS_REG &= ~PI_STATUS_DMA_BUSY;
 		PI_STATUS_REG |= PI_STATUS_INTR;
-		MI_INTR_REG |= MI_INTR_PI;
+		MI_INTR_REG |= MI_INTR_PI;*/
 		CheckInterrupts();
-		//ChangeTimer(PiTimer,(int)(PI_WR_LEN_REG * 8.9) + 50);
+		ChangeTimer(PiTimer,(int)(PI_WR_LEN_REG * 8.9) + 50);
 		//ChangeTimer(PiTimer,(int)(PI_WR_LEN_REG * 8.9));
 		return;
 	}
@@ -251,11 +251,12 @@ void PI_DMA_WRITE (void) {
 			DMAUsed = TRUE;
 			FirstDMA(); 
 		}
-		PI_STATUS_REG &= ~PI_STATUS_DMA_BUSY;
+		/*PI_STATUS_REG &= ~PI_STATUS_DMA_BUSY;
 		PI_STATUS_REG |= PI_STATUS_INTR;
 		MI_INTR_REG |= MI_INTR_PI;
-		CheckInterrupts();
-		//ChangeTimer(PiTimer,(int)(PI_WR_LEN_REG * 8.9) + 50);
+		CheckInterrupts();*/
+
+		ChangeTimer(PiTimer,(int)(PI_WR_LEN_REG * /*8.9*/15) + 50);
 		//ChangeTimer(PiTimer,(int)(PI_WR_LEN_REG * 8.9));
 		return;
 	}

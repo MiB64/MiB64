@@ -2724,7 +2724,7 @@ int r4300i_SW_NonMemory ( DWORD PAddr, DWORD Value ) {
 				DPC_STATUS_REG |= (DPC_STATUS_PIPE_BUSY | DPC_STATUS_START_GCLK);
 			}
 			if ((DPC_STATUS_REG & DPC_STATUS_FREEZE) == 0) {
-				if (ProcessRDPList) { ProcessRDPList(); }
+				if ((DPC_STATUS_REG & DPC_STATUS_START_VALID) == 0 && DPC_END_REG > DPC_CURRENT_REG && ProcessRDPList) { ProcessRDPList(); }
 			}
 			break;
 		//case 0x04100008: DPC_CURRENT_REG = Value; break;
@@ -3227,7 +3227,7 @@ void WriteDPCStatusRegister(DWORD Value) {
 	switch(Value & (DPC_CLR_FREEZE | DPC_SET_FREEZE)) {
 	case DPC_CLR_FREEZE:
 		DPC_STATUS_REG &= ~DPC_STATUS_FREEZE;
-		if (ProcessRDPList) { ProcessRDPList(); }
+		if ((DPC_STATUS_REG & DPC_STATUS_START_VALID) == 0 &&  DPC_END_REG > DPC_CURRENT_REG && ProcessRDPList) { ProcessRDPList(); }
 		break;
 	case DPC_SET_FREEZE:
 		DPC_STATUS_REG |= DPC_STATUS_FREEZE;
