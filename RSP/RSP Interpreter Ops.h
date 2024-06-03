@@ -39,7 +39,7 @@ void RSP_Opcode_BGTZ    ( void );
 void RSP_Opcode_ADDI    ( void );
 void RSP_Opcode_ADDIU   ( void );
 void RSP_Opcode_SLTI    ( void );
-/*void RSP_Opcode_SLTIU   ( void );*/
+void RSP_Opcode_SLTIU   ( void );
 void RSP_Opcode_ANDI    ( void );
 void RSP_Opcode_ORI     ( void );
 void RSP_Opcode_XORI    ( void );
@@ -69,7 +69,7 @@ void RSP_Special_BREAK  ( void );
 void RSP_Special_ADD    ( void );
 void RSP_Special_ADDU   ( void );
 void RSP_Special_SUB    ( void );
-/*void RSP_Special_SUBU   ( void );*/
+void RSP_Special_SUBU   ( void );
 void RSP_Special_AND    ( void );
 void RSP_Special_OR     ( void );
 void RSP_Special_XOR    ( void );
@@ -93,6 +93,7 @@ void RSP_COP2_VECTOR    ( void );
 /************************** Vect functions **************************/
 void RSP_Vector_VMULF   ( void );
 void RSP_Vector_VMULU	( void );
+void RSP_Vector_VRNDP	( void );
 void RSP_Vector_VMULQ	( void );
 void RSP_Vector_VMUDL   ( void );
 void RSP_Vector_VMUDM   ( void );
@@ -123,7 +124,7 @@ void RSP_Vector_VMRG    ( void );
 void RSP_Vector_VAND    ( void );
 /*void RSP_Vector_VNAND   ( void );*/
 void RSP_Vector_VOR     ( void );
-/*void RSP_Vector_VNOR    ( void );*/
+void RSP_Vector_VNOR    ( void );
 void RSP_Vector_VXOR    ( void );
 void RSP_Vector_VNXOR   ( void );
 void RSP_Vector_VRCP    ( void );
@@ -135,7 +136,7 @@ void RSP_Vector_VRSQL   ( void );
 void RSP_Vector_VRSQH   ( void );
 /*void RSP_Vector_VNOOP   ( void );*/
 /************************** lc2 functions **************************/
-/*void RSP_Opcode_LBV     ( void );*/
+void RSP_Opcode_LBV     ( void );
 void RSP_Opcode_LSV     ( void );
 void RSP_Opcode_LLV     ( void );
 void RSP_Opcode_LDV     ( void );
@@ -152,11 +153,11 @@ void RSP_Opcode_SSV     ( void );
 void RSP_Opcode_SLV     ( void );
 void RSP_Opcode_SDV     ( void );
 void RSP_Opcode_SQV     ( void );
-/*void RSP_Opcode_SRV     ( void );*/
+void RSP_Opcode_SRV     ( void );
 void RSP_Opcode_SPV     ( void );
 void RSP_Opcode_SUV     ( void );
 void RSP_Opcode_SHV     ( void );
-/*void RSP_Opcode_SFV     ( void );*/
+void RSP_Opcode_SFV     ( void );
 void RSP_Opcode_STV     ( void );
 /*void RSP_Opcode_SWV     ( void );*/
 /************************** Other functions **************************/
