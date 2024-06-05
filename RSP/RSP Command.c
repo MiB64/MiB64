@@ -929,6 +929,10 @@ char * RSPCop2Name ( DWORD OpCode ) {
 			sprintf(CommandName,"VSUB\t$v%d, $v%d, $v%d%s",command.OP.V.vd, command.OP.V.vs, 
 				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
 			break;
+		case RSP_VECTOR_VSUT:
+			sprintf(CommandName, "VSUT\t$v%d, $v%d, $v%d%s", command.OP.V.vd, command.OP.V.vs,
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
+			break;
 		case RSP_VECTOR_VABS:
 			sprintf(CommandName,"VABS\t$v%d, $v%d, $v%d%s",command.OP.V.vd, command.OP.V.vs, 
 				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
@@ -941,8 +945,44 @@ char * RSPCop2Name ( DWORD OpCode ) {
 			sprintf(CommandName,"VSUBC\t$v%d, $v%d, $v%d%s",command.OP.V.vd, command.OP.V.vs, 
 				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
 			break;
+		case RSP_VECTOR_VADDB:
+			sprintf(CommandName,"VADDB\t$v%d, $v%d, $v%d%s",command.OP.V.vd, command.OP.V.vs,
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
+			break;
+		case RSP_VECTOR_VSUBB:
+			sprintf(CommandName, "VSUBB\t$v%d, $v%d, $v%d%s", command.OP.V.vd, command.OP.V.vs,
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
+			break;
+		case RSP_VECTOR_VACCB:
+			sprintf(CommandName, "VACCB\t$v%d, $v%d, $v%d%s", command.OP.V.vd, command.OP.V.vs,
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
+			break;
+		case RSP_VECTOR_VSUCB:
+			sprintf(CommandName, "VSUCB\t$v%d, $v%d, $v%d%s", command.OP.V.vd, command.OP.V.vs,
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
+			break;
+		case RSP_VECTOR_VSAD:
+			sprintf(CommandName, "VSAD\t$v%d, $v%d, $v%d%s", command.OP.V.vd, command.OP.V.vs,
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
+			break;
+		case RSP_VECTOR_VSAC:
+			sprintf(CommandName, "VSAC\t$v%d, $v%d, $v%d%s", command.OP.V.vd, command.OP.V.vs,
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
+			break;
+		case RSP_VECTOR_VSUM:
+			sprintf(CommandName, "VSUM\t$v%d, $v%d, $v%d%s", command.OP.V.vd, command.OP.V.vs,
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
+			break;
 		case RSP_VECTOR_VSAR:
 			sprintf(CommandName,"VSAR\t$v%d [%d], $v%d, $v%d ",command.OP.V.vd, command.OP.V.element,
+				command.OP.V.vd, command.OP.V.vt);
+			break;
+		case RSP_VECTOR_V30:
+			sprintf(CommandName, "V30\t$v%d [%d], $v%d, $v%d ", command.OP.V.vd, command.OP.V.element,
+				command.OP.V.vd, command.OP.V.vt);
+			break;
+		case RSP_VECTOR_V31:
+			sprintf(CommandName, "V31\t$v%d [%d], $v%d, $v%d ", command.OP.V.vd, command.OP.V.element,
 				command.OP.V.vd, command.OP.V.vt);
 			break;
 		case RSP_VECTOR_VLT:
@@ -1001,6 +1041,14 @@ char * RSPCop2Name ( DWORD OpCode ) {
 			sprintf(CommandName,"VNXOR\t$v%d, $v%d, $v%d%s",command.OP.V.vd, command.OP.V.vs, 
 				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
 			break;
+		case RSP_VECTOR_V46:
+			sprintf(CommandName, "V46\t$v%d [%d], $v%d, $v%d ", command.OP.V.vd, command.OP.V.element,
+				command.OP.V.vd, command.OP.V.vt);
+			break;
+		case RSP_VECTOR_V47:
+			sprintf(CommandName, "V47\t$v%d [%d], $v%d, $v%d ", command.OP.V.vd, command.OP.V.element,
+				command.OP.V.vd, command.OP.V.vt);
+			break;
 		case RSP_VECTOR_VRCP:
 			sprintf(CommandName,"VRCP\t$v%d [%d], $v%d%s",command.OP.V.vd, (command.OP.V.vs & 0x7), 
 				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
@@ -1031,6 +1079,38 @@ char * RSPCop2Name ( DWORD OpCode ) {
 			break;
 		case RSP_VECTOR_VNOOP:
 			sprintf(CommandName,"VNOOP");
+			break;
+		case RSP_VECTOR_VEXTT:
+			sprintf(CommandName, "VEXTT\t$v%d [%d], $v%d%s", command.OP.V.vd, (command.OP.V.vs & 0x7),
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
+			break;
+		case RSP_VECTOR_VEXTQ:
+			sprintf(CommandName, "VEXTQ\t$v%d [%d], $v%d%s", command.OP.V.vd, (command.OP.V.vs & 0x7),
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
+			break;
+		case RSP_VECTOR_VEXTN:
+			sprintf(CommandName, "VEXTN\t$v%d [%d], $v%d%s", command.OP.V.vd, (command.OP.V.vs & 0x7),
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
+			break;
+		case RSP_VECTOR_V59:
+			sprintf(CommandName, "V59\t$v%d [%d], $v%d, $v%d ", command.OP.V.vd, command.OP.V.element,
+				command.OP.V.vd, command.OP.V.vt);
+			break;
+		case RSP_VECTOR_VINST:
+			sprintf(CommandName, "VINST\t$v%d [%d], $v%d%s", command.OP.V.vd, (command.OP.V.vs & 0x7),
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
+			break;
+		case RSP_VECTOR_VINSQ:
+			sprintf(CommandName, "VINSQ\t$v%d [%d], $v%d%s", command.OP.V.vd, (command.OP.V.vs & 0x7),
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
+			break;
+		case RSP_VECTOR_VINSN:
+			sprintf(CommandName, "VINSN\t$v%d [%d], $v%d%s", command.OP.V.vd, (command.OP.V.vs & 0x7),
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
+			break;
+		case RSP_VECTOR_VNULL:
+			sprintf(CommandName, "VNULL\t$v%d [%d], $v%d%s", command.OP.V.vd, (command.OP.V.vs & 0x7),
+				command.OP.V.vt, RspElementSpecifier(command.OP.V.element));
 			break;
 		default:
 			sprintf(CommandName,"RSP: Unknown\t%02X %02X %02X %02X",
@@ -1249,6 +1329,10 @@ char * RSPOpcodeName ( DWORD OpCode, DWORD PC ) {
 		break;
 	case RSP_LHU:
 		sprintf(CommandName,"LHU\t%s, 0x%04X(%s)",RspGPR_Name(command.OP.LS.rt), command.OP.LS.offset,
+			RspGPR_Name(command.OP.LS.base));
+		break;
+	case RSP_LWU:
+		sprintf(CommandName, "LWU\t%s, 0x%04X(%s)", RspGPR_Name(command.OP.LS.rt), command.OP.LS.offset,
 			RspGPR_Name(command.OP.LS.base));
 		break;
 	case RSP_SB:

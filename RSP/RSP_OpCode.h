@@ -125,6 +125,7 @@ typedef struct tagOPCODE {
 #define RSP_LW					35
 #define RSP_LBU					36
 #define RSP_LHU					37
+#define RSP_LWU					39
 #define RSP_SB					40
 #define RSP_SH					41
 #define RSP_SW					43
@@ -187,10 +188,20 @@ typedef struct tagOPCODE {
 #define	RSP_VECTOR_VMADH		15
 #define	RSP_VECTOR_VADD			16
 #define	RSP_VECTOR_VSUB			17
+#define RSP_VECTOR_VSUT			18
 #define	RSP_VECTOR_VABS			19
 #define	RSP_VECTOR_VADDC		20
 #define	RSP_VECTOR_VSUBC		21
+#define RSP_VECTOR_VADDB		22
+#define RSP_VECTOR_VSUBB		23
+#define RSP_VECTOR_VACCB		24
+#define RSP_VECTOR_VSUCB		25
+#define RSP_VECTOR_VSAD			26
+#define RSP_VECTOR_VSAC			27
+#define RSP_VECTOR_VSUM			28
 #define	RSP_VECTOR_VSAR			29
+#define RSP_VECTOR_V30			30
+#define RSP_VECTOR_V31			31
 #define	RSP_VECTOR_VLT			32
 #define	RSP_VECTOR_VEQ			33
 #define	RSP_VECTOR_VNE			34
@@ -205,6 +216,8 @@ typedef struct tagOPCODE {
 #define	RSP_VECTOR_VNOR			43
 #define	RSP_VECTOR_VXOR			44
 #define	RSP_VECTOR_VNXOR		45
+#define RSP_VECTOR_V46			46
+#define RSP_VECTOR_V47			47
 #define	RSP_VECTOR_VRCP			48
 #define	RSP_VECTOR_VRCPL		49
 #define	RSP_VECTOR_VRCPH		50
@@ -213,6 +226,14 @@ typedef struct tagOPCODE {
 #define	RSP_VECTOR_VRSQL		53
 #define	RSP_VECTOR_VRSQH		54
 #define	RSP_VECTOR_VNOOP		55
+#define RSP_VECTOR_VEXTT		56
+#define RSP_VECTOR_VEXTQ		57
+#define RSP_VECTOR_VEXTN		58
+#define RSP_VECTOR_V59			59
+#define RSP_VECTOR_VINST		60
+#define RSP_VECTOR_VINSQ		61
+#define RSP_VECTOR_VINSN		62
+#define RSP_VECTOR_VNULL		63
 
 /* RSP LSC2 opcodes */
 #define RSP_LSC2_BV				 0

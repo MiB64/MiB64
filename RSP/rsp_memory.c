@@ -505,13 +505,15 @@ void RSP_SW_DMEM ( DWORD Addr, DWORD Value ) {
 	*(DWORD *)(DMEM + Addr) = Value;
 }
 
-/*void RSP_SWV_DMEM ( DWORD Addr, int vect, int element ) {
+void RSP_SWV_DMEM ( DWORD Addr, int vect, int element ) {
 	int Count, offset;
 
-	offset = Addr & 0xF;
-	Addr &= 0xFF0;
+	/*offset = Addr & 0xF;
+	Addr &= 0xFF0;*/
+	offset = Addr & 7;
+	Addr &= ~7;
 	for (Count = element; Count < (16 + element); Count ++ ){
-		*(RSPInfo.DMEM + ((Addr + (offset & 0xF)) ^ 3)) = RSP_Vect[vect].B[15 - (Count & 0xF)];
+		*(DMEM + ((Addr + (offset & 0xF)) ^ 3)) = RSP_Vect[vect].B[15 - (Count & 0xF)];
 		offset += 1;
 	}
-}*/
+}

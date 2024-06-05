@@ -67,4 +67,4 @@ void RSP_SSV_DMEM ( DWORD Addr, int vect, int element );
 void RSP_STV_DMEM ( DWORD Addr, int vect, int element );
 void RSP_SUV_DMEM ( DWORD Addr, int vect, int element );
 void RSP_SW_DMEM  ( DWORD Addr, DWORD Value );
-/*void RSP_SWV_DMEM ( DWORD Addr, int vect, int element );*/
+void RSP_SWV_DMEM ( DWORD Addr, int vect, int element );

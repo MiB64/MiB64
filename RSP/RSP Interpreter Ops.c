@@ -199,6 +199,13 @@ void RSP_Opcode_LHU ( void ) {
 	}
 }
 
+void RSP_Opcode_LWU ( void ) {
+	if (RSPOpC.OP.LS.rt != 0) {
+		DWORD Address = ((RSP_GPR[RSPOpC.OP.LS.base].UW + (short)RSPOpC.OP.LS.offset) & 0xFFF);
+		RSP_LW_DMEM(Address, &RSP_GPR[RSPOpC.OP.LS.rt].UW);
+	}
+}
+
 void RSP_Opcode_SB ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.OP.LS.base].UW + (short)RSPOpC.OP.LS.offset) & 0xFFF);
 	RSP_SB_DMEM( Address, RSP_GPR[RSPOpC.OP.LS.rt].UB[0] );
@@ -362,15 +369,15 @@ void RSP_Opcode_BGEZ ( void ) {
 	}
 }
 
-/*void RSP_Opcode_BLTZAL ( void ) {
+void RSP_Opcode_BLTZAL ( void ) {
 	RSP_NextInstruction = DELAY_SLOT;
-	RSP_GPR[31].UW = ( *PrgCount + 8 ) & 0xFFC;
-	if (RSP_GPR[RSPOpC.rs].W < 0) {
-		RSP_JumpTo = ( *PrgCount + ((short)RSPOpC.offset << 2) + 4 ) & 0xFFC;
+	if (RSP_GPR[RSPOpC.OP.B.rs].W < 0) {
+		RSP_JumpTo = ( SP_PC_REG + ((short)RSPOpC.OP.B.offset << 2) + 4 ) & 0xFFC;
 	} else  {
-		RSP_JumpTo = ( *PrgCount + 8 ) & 0xFFC;
+		RSP_JumpTo = ( SP_PC_REG + 8 ) & 0xFFC;
 	}
-}*/
+	RSP_GPR[31].UW = (SP_PC_REG + 8) & 0xFFC;
+}
 
 void RSP_Opcode_BGEZAL ( void ) {
 	RSP_NextInstruction = DELAY_SLOT;
@@ -982,6 +989,20 @@ void RSP_Vector_VSUB (void) {
 	RspVCO = 0;
 }
 
+static void AddAndClear() {
+	for (int count = 0; count < 8; ++count) {
+		int el = Indx[RSPOpC.OP.V.element].B[count];
+		int del = EleSpec[RSPOpC.OP.V.element].B[el];
+
+		RSP_ACCUM[el].HW[1] = RSP_Vect[RSPOpC.OP.V.vs].UHW[el] + RSP_Vect[RSPOpC.OP.V.vt].UHW[del];
+		RSP_Vect[RSPOpC.OP.V.vd].UHW[el] = 0;
+	}
+}
+
+void RSP_Vector_VSUT(void) {
+	AddAndClear();
+}
+
 void RSP_Vector_VABS (void) {
 	int count, el, del;
 
@@ -1046,6 +1067,35 @@ void RSP_Vector_VSUBC (void) {
 	}
 }
 
+void RSP_Vector_VADDB(void) {
+	AddAndClear();
+}
+
+void RSP_Vector_VSUBB(void) {
+	AddAndClear();
+}
+
+void RSP_Vector_VACCB(void) {
+	AddAndClear();
+}
+
+void RSP_Vector_VSUCB(void) {
+	AddAndClear();
+}
+
+void RSP_Vector_VSAD(void) {
+	AddAndClear();
+}
+
+void RSP_Vector_VSAC(void) {
+	AddAndClear();
+
+}
+
+void RSP_Vector_VSUM(void) {
+	AddAndClear();
+}
+
 void RSP_Vector_VSAR (void) {
 	switch (RSPOpC.OP.V.element) {
 	case 8:
@@ -1082,6 +1132,14 @@ void RSP_Vector_VSAR (void) {
 		RSP_Vect[RSPOpC.OP.V.vd].UDW[1] = 0;
 		RSP_Vect[RSPOpC.OP.V.vd].UDW[0] = 0;
 	}
+}
+
+void RSP_Vector_V30(void) {
+	AddAndClear();
+}
+
+void RSP_Vector_V31(void) {
+	AddAndClear();
 }
 
 void RSP_Vector_VLT (void) {
@@ -1351,16 +1409,16 @@ void RSP_Vector_VAND (void) {
 	}	
 }
 
-/*void RSP_Vector_VNAND (void) {
+void RSP_Vector_VNAND (void) {
 	int count, el, del;
 
 	for ( count = 0; count < 8; count ++ ){
-		el = 7 - count;
-		del = EleSpec[RSPOpC.rs].B[el];
-		RSP_Vect[RSPOpC.sa].HW[el] = ~(RSP_Vect[RSPOpC.rd].HW[el] & RSP_Vect[RSPOpC.rt].HW[del]);
-		RSP_ACCUM[el].HW[1] = RSP_Vect[RSPOpC.sa].HW[el];
-	}	
-}*/
+		el = Indx[RSPOpC.OP.V.element].B[count];
+		del = EleSpec[RSPOpC.OP.V.element].B[el];
+		RSP_Vect[RSPOpC.OP.V.vd].HW[el] = ~(RSP_Vect[RSPOpC.OP.V.vs].HW[el] & RSP_Vect[RSPOpC.OP.V.vt].HW[del]);
+		RSP_ACCUM[el].HW[1] = RSP_Vect[RSPOpC.OP.V.vd].HW[el];
+	}
+}
 
 void RSP_Vector_VOR (void) {
 	int count, el, del;
@@ -1404,6 +1462,14 @@ void RSP_Vector_VNXOR (void) {
 		RSP_Vect[RSPOpC.OP.V.vd].HW[el] = ~(RSP_Vect[RSPOpC.OP.V.vs].HW[el] ^ RSP_Vect[RSPOpC.OP.V.vt].HW[del]);
 		RSP_ACCUM[el].HW[1] = RSP_Vect[RSPOpC.OP.V.vd].HW[el];
 	}	
+}
+
+void RSP_Vector_V46(void) {
+	AddAndClear();
+}
+
+void RSP_Vector_V47(void) {
+	AddAndClear();
 }
 
 static DWORD rcp(int index) { // TOCHECK: it may be faster to compute each time than doing a lookup in a precomputed table
@@ -1622,7 +1688,39 @@ void RSP_Vector_VRSQH (void) {
 	RSP_Vect[RSPOpC.OP.V.vd].UHW[7 - (RSPOpC.OP.R.rd & 0x7)] = DivOut.UHW[1];
 }
 
-/*void RSP_Vector_VNOOP (void) {}*/
+void RSP_Vector_VNOOP(void) {}
+
+void RSP_Vector_VEXTT(void) {
+	AddAndClear();
+}
+
+void RSP_Vector_VEXTQ(void) {
+	AddAndClear();
+}
+
+void RSP_Vector_VEXTN(void) {
+	AddAndClear();
+}
+
+void RSP_Vector_V59(void) {
+	AddAndClear();
+}
+
+void RSP_Vector_VINST(void) {
+	AddAndClear();
+}
+
+void RSP_Vector_VINSQ(void) {
+	AddAndClear();
+}
+
+void RSP_Vector_VINSN(void) {
+	AddAndClear();
+}
+
+void RSP_Vector_VNULL(void) {
+}
+
 /************************** lc2 functions **************************/
 void RSP_Opcode_LBV ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.OP.LSV.base].UW + (DWORD)(RSPOpC.OP.LSV.offset)) &0xFFF);
@@ -1672,6 +1770,9 @@ void RSP_Opcode_LHV ( void ) {
 void RSP_Opcode_LFV ( void ) {
 	DWORD Address = ((RSP_GPR[RSPOpC.OP.LSV.base].UW + (DWORD)(RSPOpC.OP.LSV.offset << 4)) &0xFFF);
 	RSP_LFV_DMEM( Address, RSPOpC.OP.LSV.vt, RSPOpC.OP.LSV.element);
+}
+
+void RSP_Opcode_LWV( void ) {
 }
 
 void RSP_Opcode_LTV ( void ) {
@@ -1735,10 +1836,10 @@ void RSP_Opcode_STV ( void ) {
 	RSP_STV_DMEM( Address, RSPOpC.OP.LSV.vt, RSPOpC.OP.LSV.element);
 }
 
-/*void RSP_Opcode_SWV ( void ) {
-	DWORD Address = ((RSP_GPR[RSPOpC.base].UW + (DWORD)(RSPOpC.voffset << 4)) &0xFFF);
-	RSP_SWV_DMEM( Address, RSPOpC.rt, RSPOpC.del);
-}*/
+void RSP_Opcode_SWV ( void ) {
+	DWORD Address = ((RSP_GPR[RSPOpC.OP.LSV.base].UW + (DWORD)(RSPOpC.OP.LSV.offset << 4)) &0xFFF);
+	RSP_SWV_DMEM( Address, RSPOpC.OP.LSV.vt, RSPOpC.OP.LSV.element);
+}
 
 /************************** Other functions **************************/
 
