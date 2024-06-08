@@ -714,6 +714,8 @@ void BuildInterpreter (void ) {
 	R4300i_CoP2[31] = R4300i_UnknownOpcode;
 }
 
+int lastInc = 1;
+
 void ExecuteInterpreterOpCode (void) {
 	MIPS_DWORD Address;
 	Address = PROGRAM_COUNTER;
@@ -723,8 +725,9 @@ void ExecuteInterpreterOpCode (void) {
 		return;
 	}
 
-	COUNT_REGISTER += CountPerOp;
-	if (CPU_Type != CPU_SyncCores) { Timers.Timer -= CountPerOp; }
+	lastInc ^= 1;
+	COUNT_REGISTER += CountPerOp/*lastInc*/;
+	if (CPU_Type != CPU_SyncCores) { Timers.Timer -= CountPerOp/*lastInc*/; }
 
 	RANDOM_REGISTER -= 1;
 	if (WIRED_REGISTER < 32) {
@@ -757,7 +760,7 @@ void ExecuteInterpreterOpCode (void) {
 		PROGRAM_COUNTER.UDW += 4; 
 		break;
 	case DELAY_SLOT:
-		COUNT_REGISTER += CPOAdjust * 2;
+		//COUNT_REGISTER += CPOAdjust * 2;
 		NextInstruction = JUMP;
 		PROGRAM_COUNTER.UDW += 4; 
 		break;

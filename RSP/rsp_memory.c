@@ -25,7 +25,7 @@
  *
  */
 
-/*#define MaxMaps	32*/
+#define MaxMaps	32
 
 #include <windows.h>
 #include "rsp_config.h"
@@ -33,12 +33,14 @@
 #include "rsp_registers.h"
 #include "../Main.h"
 
-/*DWORD NoOfMaps, MapsCRC[MaxMaps], Table;
-BYTE * RecompCode, * RecompCodeSecondary, * RecompPos, *JumpTables;
-void ** JumpTable;
+DWORD NoOfRspMaps, RspMapsCRC[MaxMaps];
+static DWORD Table;
+/*BYTE * RecompCode, * RecompCodeSecondary, * RecompPos;*/
+BYTE* RspJumpTables;
+void ** RspJumpTable;
 
-int AllocateMemory (void) {
-	RecompCode=(BYTE *) VirtualAlloc( NULL, 0x00400004, MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+int AllocateRspMemory (void) {
+	/*RecompCode=(BYTE *) VirtualAlloc( NULL, 0x00400004, MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 	RecompCode=(BYTE *) VirtualAlloc( RecompCode, 0x00400000, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 	
 	if(RecompCode == NULL) {
@@ -50,51 +52,51 @@ int AllocateMemory (void) {
 	if(RecompCodeSecondary == NULL) {
 		DisplayError("Not enough memory for RSP RecompCode Secondary!");
 		return FALSE;
-	}
+	}*/
 
-	JumpTables = (BYTE *)VirtualAlloc( NULL, 0x1000 * MaxMaps, MEM_COMMIT, PAGE_READWRITE );
-	if( JumpTables == NULL ) {  
+	RspJumpTables = (BYTE *)VirtualAlloc( NULL, 0x1000 * MaxMaps, MEM_COMMIT, PAGE_READWRITE );
+	if( RspJumpTables == NULL ) {  
 		DisplayError("Not enough memory for Jump Table!");
 		return FALSE;
 	}
 
-	JumpTable = (void **)JumpTables;
-	RecompPos = RecompCode;
-	NoOfMaps = 0;
+	RspJumpTable = (void **)RspJumpTables;
+	/*RecompPos = RecompCode;*/
+	NoOfRspMaps = 0;
 	return TRUE;
 }
 
-void FreeMemory (void) {
+/*void FreeMemory (void) {
 	VirtualFree( RecompCode, 0 , MEM_RELEASE);
 	VirtualFree( JumpTable, 0 , MEM_RELEASE);
 	VirtualFree( RecompCodeSecondary, 0 , MEM_RELEASE);
-}
+}*/
 
-void SetJumpTable (void) {
-	DWORD CRC, count;
+void SetRspJumpTable (void) {
+	DWORD CRC;
 
 	CRC = 0;
-	for (count = 0; count < 0x800; count += 0x40) {
-		CRC += *(DWORD *)(RSPInfo.IMEM + count);		
+	for (DWORD count = 0; count < 0x800; count += 0x40) {
+		CRC += *(DWORD *)(IMEM + count);		
 	}
 
-	for (count = 0; count <	NoOfMaps; count++ ) {
-		if (CRC == MapsCRC[count]) {
-			JumpTable = (void **)(JumpTables + count * 0x1000);
+	for (DWORD count = 0; count <	NoOfRspMaps; count++ ) {
+		if (CRC == RspMapsCRC[count]) {
+			RspJumpTable = (void **)(RspJumpTables + count * 0x1000);
 			Table = count;
 			return;
 		}
 	}
-	//DisplayError("%X %X",NoOfMaps,CRC);
-	if (NoOfMaps == MaxMaps) {
+	
+	if (NoOfRspMaps == MaxMaps) {
 		DisplayError("Used up all the Jump tables in the rsp");
 		ExitThread(0);
 	}
-	MapsCRC[NoOfMaps] = CRC;
-	JumpTable = (void **)(JumpTables + NoOfMaps * 0x1000);
-	Table = NoOfMaps;
-	NoOfMaps += 1;
-}*/
+	RspMapsCRC[NoOfRspMaps] = CRC;
+	RspJumpTable = (void **)(RspJumpTables + NoOfRspMaps * 0x1000);
+	Table = NoOfRspMaps;
+	NoOfRspMaps += 1;
+}
 
 void RSP_LB_DMEM ( DWORD Addr, BYTE * Value ) {
 	* Value = *(BYTE *)(DMEM + ((Addr ^ 3) & 0xFFF)) ;
@@ -508,8 +510,6 @@ void RSP_SW_DMEM ( DWORD Addr, DWORD Value ) {
 void RSP_SWV_DMEM ( DWORD Addr, int vect, int element ) {
 	int Count, offset;
 
-	/*offset = Addr & 0xF;
-	Addr &= 0xFF0;*/
 	offset = Addr & 7;
 	Addr &= ~7;
 	for (Count = element; Count < (16 + element); Count ++ ){

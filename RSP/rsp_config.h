@@ -38,6 +38,7 @@ extern BOOL GraphicsHle;
 extern DWORD RspCPUCore;
 extern BOOL RspProfiling;
 extern BOOL IndividualRspBlock;
+extern BOOL RspShowErrors;
 
 extern HANDLE hRspConfigMutex;
 

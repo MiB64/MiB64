@@ -29,6 +29,8 @@
 #include "main.h"
 #include "debugger.h"
 #include "CPU.h"
+#include "Plugin.h"
+#include "RSP/rsp_main.h"
 
 int DMAUsed;
 
@@ -509,6 +511,9 @@ void SP_DMA_READ(void) {
 			for (int ix = 0; ix < length; ix++)
 			{
 				IMEM[(SP_MEM_ADDR_REG + ix) & 0xFFF] = N64MEM[(SP_DRAM_ADDR_REG + ix)];
+				if (InternalRSP) {
+					notifyRSPOfIMEMChange();
+				}
 			}
 		}
 		else

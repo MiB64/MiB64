@@ -415,6 +415,9 @@ void __cdecl DisplayError(char* Message, ...) {
 	va_end(ap);
 	MessageBox(NULL, Msg, GS(MSG_MSGBOX_TITLE), MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
 	SetActiveWindow(hMainWindow);
+
+	// Log the message too
+	LogMessage(Msg);
 }
 
 void __cdecl DisplayErrorFatal(char* Message, ...) {

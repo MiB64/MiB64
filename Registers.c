@@ -31,6 +31,8 @@
 #include "x86.h"
 #include "debugger.h"
 #include "RomTools_Common.h"
+#include "Plugin.h"
+#include "RSP/rsp_main.h"
 
 char *GPR_Name[32] = {"r0","at","v0","v1","a0","a1","a2","a3",
                      "t0","t1","t2","t3","t4","t5","t6","t7",
@@ -569,6 +571,10 @@ void InitalizeR4300iRegisters (int UsePif, enum CIC_CHIP CIC_Chip) {
 	MemoryStack = (DWORD)(N64MEM+(GPR[29].W[0] & 0x1FFFFFFF));
 
 	DPC_STATUS_REG = DPC_STATUS_CBUF_READY | DPC_STATUS_PIPE_BUSY | DPC_STATUS_START_GCLK;
+
+	if (InternalRSP) {
+		notifyRSPOfIMEMChange();
+	}
 }
 
 BOOL Is8BitReg (int x86Reg) {

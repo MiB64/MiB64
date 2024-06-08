@@ -327,6 +327,12 @@
     <ClCompile Include="RSP\RSP Register.c">
       <Filter>Source Files\RSP Souce</Filter>
     </ClCompile>
+    <ClCompile Include="RSP\RSP Recompiler Ops.c">
+      <Filter>Source Files\RSP Souce</Filter>
+    </ClCompile>
+    <ClCompile Include="RSP\RSP Recompiler Analysis.c">
+      <Filter>Source Files\RSP Souce</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BreakPoints.h">
@@ -591,6 +597,9 @@
       <Filter>Header Files\RSP Headers</Filter>
     </ClInclude>
     <ClInclude Include="RSP\RSP Interpreter Ops.h">
+      <Filter>Header Files\RSP Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="RSP\RSP Recompiler Ops.h">
       <Filter>Header Files\RSP Headers</Filter>
     </ClInclude>
   </ItemGroup>

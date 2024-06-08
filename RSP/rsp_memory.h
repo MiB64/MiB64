@@ -27,16 +27,16 @@
 
 #pragma once
 
-/*int  AllocateMemory ( void );
-void FreeMemory     ( void );
-void SetJumpTable   ( void );*/
+int  AllocateRspMemory ( void );
+/*void FreeMemory     ( void );*/
+void SetRspJumpTable   ( void );
 
 extern BYTE* DMEM;
 extern BYTE* IMEM;
 
-/*extern BYTE * RecompCode, * RecompCodeSecondary, * RecompPos;
-extern void ** JumpTable;
-extern DWORD Table;*/
+/*extern BYTE * RecompCode, * RecompCodeSecondary, * RecompPos;*/
+extern void ** RspJumpTable;
+/*extern DWORD Table;*/
 
 void RSP_LB_DMEM  ( DWORD Addr, BYTE * Value );
 void RSP_LBV_DMEM ( DWORD Addr, int vect, int element );

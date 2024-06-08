@@ -105,3 +105,7 @@ DWORD __cdecl InternalDoRspCycles(DWORD numberOfCycles) {
 
 	return executedCycles;
 }
+
+void notifyRSPOfIMEMChange() {
+	IMEMIsUpdated = TRUE;
+}

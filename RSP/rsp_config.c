@@ -33,6 +33,7 @@
 #include "RSP_breakpoint.h"
 #include "RSP Command.h"
 #include "rsp_registers.h"
+#include "rsp_memory.h"
 
 #include <windows.h>
 #include <windowsx.h>
@@ -132,7 +133,7 @@ void InitiateInternalRSP() {
 
 	LoadRspSettings();
 
-	/*AllocateMemory();*/
+	AllocateRspMemory();
 	InitilizeRSPRegisters();
 	Build_RSP();
 #ifdef GenerateLog
@@ -144,8 +145,8 @@ void __cdecl ProcessMenuItem(int ID) {
 	/*DWORD Disposition;
 	HKEY hKeyResults;
 	char String[200];
-	long lResult;
-	UINT uState;*/
+	long lResult;*/
+	UINT uState;
 
 	switch (ID) {
 	case ID_RSPCOMMANDS: Enter_RSP_Commands_Window(); break;
@@ -206,29 +207,22 @@ void __cdecl ProcessMenuItem(int ID) {
 				(BYTE*)&IndvidualBlock, sizeof(DWORD));
 		}
 		RegCloseKey(hKeyResults);
-		break;
+		break;*/
 	case ID_SHOWCOMPILERERRORS:
 		uState = GetMenuState(hRSPMenu, ID_SHOWCOMPILERERRORS, MF_BYCOMMAND);
 
 		if (uState & MFS_CHECKED) {
 			CheckMenuItem(hRSPMenu, ID_SHOWCOMPILERERRORS, MF_BYCOMMAND | MFS_UNCHECKED);
-			ShowErrors = FALSE;
+			RspShowErrors = FALSE;
 		}
 		else {
 			CheckMenuItem(hRSPMenu, ID_SHOWCOMPILERERRORS, MF_BYCOMMAND | MFS_CHECKED);
-			ShowErrors = TRUE;
+			RspShowErrors = TRUE;
 		}
-		sprintf(String, "Software\\N64 Emulation\\DLL\\%s", AppName);
-		lResult = RegCreateKeyEx(HKEY_CURRENT_USER, String, 0, "",
-			REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKeyResults, &Disposition);
 
-		if (lResult == ERROR_SUCCESS) {
-			RegSetValueEx(hKeyResults, "Show Compiler Errors", 0, REG_DWORD,
-				(BYTE*)&ShowErrors, sizeof(DWORD));
-		}
-		RegCloseKey(hKeyResults);
+		Settings_Write(APPS_NAME, STR_RSP_SETTINGS, STR_RSP_SHOW_ERRORS, RspShowErrors ? "True" : "False");
 		break;
-	case ID_COMPILER:
+	/*case ID_COMPILER:
 		DialogBox(hinstDLL, "RSPCOMPILER", HWND_DESKTOP, CompilerDlgProc);
 		break;*/
 	}

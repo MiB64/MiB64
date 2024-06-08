@@ -343,7 +343,9 @@
     <ClCompile Include="RSP\RSP Command.c" />
     <ClCompile Include="RSP\RSP Interpreter CPU.c" />
     <ClCompile Include="RSP\RSP Interpreter Ops.c" />
+    <ClCompile Include="RSP\RSP Recompiler Analysis.c" />
     <ClCompile Include="RSP\RSP Recompiler CPU.c" />
+    <ClCompile Include="RSP\RSP Recompiler Ops.c" />
     <ClCompile Include="RSP\RSP Register.c" />
     <ClCompile Include="RSP\RSP_breakpoint.c" />
     <ClCompile Include="RSP\rsp_Cpu.c" />
@@ -429,6 +431,7 @@
     <ClInclude Include="RSP\RSP Interpreter CPU.h" />
     <ClInclude Include="RSP\RSP Interpreter Ops.h" />
     <ClInclude Include="RSP\RSP Recompiler CPU.h" />
+    <ClInclude Include="RSP\RSP Recompiler Ops.h" />
     <ClInclude Include="RSP\RSP_breakpoint.h" />
     <ClInclude Include="RSP\rsp_Cpu.h" />
     <ClInclude Include="RSP\rsp_config.h" />

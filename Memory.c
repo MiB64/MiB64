@@ -31,6 +31,7 @@
 #include "x86.h"
 #include "plugin.h"
 #include "debugger.h"
+#include "RSP/rsp_main.h"
 
 
 DWORD *TLB_ReadMap, *TLB_WriteMap, RdramSize, SystemRdramSize;
@@ -2312,6 +2313,9 @@ BOOL r4300i_SB_VAddr ( MIPS_DWORD VAddr, MIPS_DWORD* Value ) {
 	else if (((PAddr & ~0x03E000) >= 0x04000000 && (PAddr & ~0x03E000) < 0x04004000)) {
 		int tmp = PAddr & 3;
 		*(DWORD*)(N64MEM + (((PAddr & ~3) & ~0x3E000) & ~0x2000)) = Value->W[0] << ((3 - tmp) * 8);
+		if (InternalRSP && PAddr & 0x1000) {
+			notifyRSPOfIMEMChange();
+		}
 	}
 	else {
 		RegisterCurrentlyWritten = Value;
@@ -2348,6 +2352,9 @@ BOOL r4300i_SB_VAddr_NonCPU ( MIPS_DWORD VAddr, BYTE Value ) {
 	else if (((PAddr & ~0x03E000) >= 0x04000000 && (PAddr & ~0x03E000) < 0x04004000)) {
 		int tmp = PAddr & 3;
 		*(DWORD*)(N64MEM + (((PAddr & ~3) & ~0x3E000) & ~0x2000)) = Value << ((3 - tmp) * 8);
+		if (InternalRSP && PAddr & 0x1000) {
+			notifyRSPOfIMEMChange();
+		}
 	}
 	else {
 		r4300i_SB_NonMemory(PAddr ^ 3, Value);
@@ -2458,7 +2465,10 @@ BOOL r4300i_SD_VAddr ( MIPS_DWORD VAddr, unsigned _int64 Value ) {
 		}
 	}
 	else if (((PAddr & ~0x03E000) >= 0x04000000 && (PAddr & ~0x03E000) < 0x04004000)) {
-    *(DWORD*)(N64MEM + ((PAddr & ~0x3E000 & ~0x2000))) = *((DWORD*)(&Value)+1);
+		*(DWORD*)(N64MEM + ((PAddr & ~0x3E000 & ~0x2000))) = *((DWORD*)(&Value)+1);
+		if (InternalRSP && PAddr & 0x1000) {
+			notifyRSPOfIMEMChange();
+		}
 	}
 	else {
 		r4300i_SW_NonMemory(PAddr, *((DWORD*)(&Value) + 1));
@@ -2499,6 +2509,9 @@ BOOL r4300i_SH_VAddr ( MIPS_DWORD VAddr, MIPS_DWORD* Value) {
 		else
 			*(WORD*)(N64MEM + ((PAddr & ~0x3E000) & ~0x2000)) = Value->UHW[1];
 		*(WORD*)(N64MEM + (((PAddr & ~0x3E000) & ~0x2000) ^ 2)) = Value->UHW[0];
+		if (InternalRSP && PAddr & 0x1000) {
+			notifyRSPOfIMEMChange();
+		}
 	}
 	else {
 		RegisterCurrentlyWritten = Value;
@@ -2535,6 +2548,9 @@ BOOL r4300i_SH_VAddr_NonCPU ( MIPS_DWORD VAddr, WORD Value ) {
   else if (((PAddr & ~0x03E000) >= 0x04000000 && (PAddr & ~0x03E000) < 0x04004000)) {
 		*(WORD*)(N64MEM + ((PAddr & ~0x3E000) & ~0x2000)) = 0;
 		*(WORD*)(N64MEM + (((PAddr & ~0x3E000) & ~0x2000) ^ 2)) = Value & 0xFFFF;
+		if (InternalRSP && PAddr & 0x1000) {
+			notifyRSPOfIMEMChange();
+		}
 	}
 	else {
 		r4300i_SH_NonMemory(PAddr ^ 2, Value);
@@ -2679,6 +2695,9 @@ int r4300i_SW_NonMemory ( DWORD PAddr, DWORD Value ) {
 			} else {
 				if (N64_Blocks.NoOfIMEMBlocks == 0) { break; } 
 				N64_Blocks.NoOfIMEMBlocks = 0;
+				if (InternalRSP) {
+					notifyRSPOfIMEMChange();
+				}
 			}
 			memset(JumpTable+((PAddr & 0xFFFFF000) >> 2),0,0x1000);
 			*(DelaySlotTable + ((PAddr & 0xFFFFF000) >> 12)) = NULL;
@@ -2988,7 +3007,10 @@ BOOL r4300i_SW_VAddr ( MIPS_DWORD VAddr, DWORD Value ) {
 		}
 	}
 	else if (((PAddr & ~0x03E000) >= 0x04000000 && (PAddr & ~0x03E000) < 0x04004000)) {
-    *(DWORD*)(N64MEM + ((PAddr & ~0x3E000) & ~0x2000)) = Value;
+		*(DWORD*)(N64MEM + ((PAddr & ~0x3E000) & ~0x2000)) = Value;
+		if (InternalRSP && PAddr & 0x1000) {
+			notifyRSPOfIMEMChange();
+		}
 	}
 	else
 	{
@@ -3022,8 +3044,11 @@ BOOL r4300i_SW_VAddr_NonCPU ( MIPS_DWORD VAddr, DWORD Value ) {
 			}
 		}
 	}
-  else if (((PAddr & ~0x03E000) >= 0x04000000 && (PAddr & ~0x03E000) < 0x04004000)) {
-    *(DWORD*)(N64MEM + ((PAddr & ~0x3E000) & ~0x2000)) = Value;
+	else if (((PAddr & ~0x03E000) >= 0x04000000 && (PAddr & ~0x03E000) < 0x04004000)) {
+		*(DWORD*)(N64MEM + ((PAddr & ~0x3E000) & ~0x2000)) = Value;
+		if (InternalRSP && PAddr & 0x1000) {
+			notifyRSPOfIMEMChange();
+		}
 	}
 	else {
 		r4300i_SW_NonMemory(PAddr, Value);

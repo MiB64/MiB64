@@ -1,12 +1,13 @@
 /*
- * RSP Compiler plug in for Project 64 (A Nintendo 64 emulator).
+ * MiB64 - A Nintendo 64 emulator.
  *
- * (c) Copyright 2001 jabo (jabo@emulation64.com) and
- * zilmar (zilmar@emulation64.com)
+ * Project64 (c) Copyright 2001 Zilmar, Jabo, Smiff, Gent, Witten
+ * Projectg64 Legacy (c) Copyright 2010 PJ64LegacyTeam
+ * MiB64 (c) Copyright 2024 MiB64Team
  *
- * pj64 homepage: www.pj64.net
- * 
- * Permission to use, copy, modify and distribute Project64 in both binary and
+ * MiB64 Homepage: www.mib64.net
+ *
+ * Permission to use, copy, modify and distribute MiB64 in both binary and
  * source form, for non-commercial purposes, is hereby granted without fee,
  * providing that this license information and copyright notice appear with
  * all copies and any derived work.
@@ -15,9 +16,9 @@
  * warranty. In no event shall the authors be held liable for any damages
  * arising from the use of this software.
  *
- * Project64 is freeware for PERSONAL USE only. Commercial users should
+ * MiB64 is freeware for PERSONAL USE only. Commercial users should
  * seek permission of the copyright holders first. Commercial use includes
- * charging money for Project64 or software derived from Project64.
+ * charging money for MiB64 or software derived from MiB64.
  *
  * The copyright holders request that bug fixes and improvements to the code
  * should be forwarded to them so if they want them.
@@ -26,20 +27,20 @@
 
 #pragma once
 
-/*#include "opcode.h"
+#include "RSP_OpCode.h"
 
-#define NORMAL				0
+/*#define NORMAL				0
 #define DO_DELAY_SLOT 		1
 #define DELAY_SLOT 			2
 #define DELAY_SLOT_DONE		3
 #define FINISH_BLOCK		4
 #define FINISH_SUB_BLOCK	5
 
-extern DWORD CompilePC, NextInstruction;
+extern DWORD CompilePC, NextInstruction;*/
 
-#define CompilerWarning if (ShowErrors) DisplayError
+#define RspCompilerWarning if (RspShowErrors) DisplayError
 
-#define High16BitAccum		1
+/*#define High16BitAccum		1
 #define Middle16BitAccum	2
 #define Low16BitAccum		4
 #define EntireAccum			(Low16BitAccum|Middle16BitAccum|High16BitAccum)
@@ -49,9 +50,9 @@ BOOL WriteToVectorDest (DWORD DestReg, int PC);
 BOOL UseRspFlags (int PC);
 
 BOOL DelaySlotAffectBranch(DWORD PC);
-BOOL CompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom);
-BOOL IsOpcodeBranch(DWORD PC, OPCODE RspOp);
-BOOL IsOpcodeNop(DWORD PC);
+BOOL CompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom);*/
+BOOL IsRspOpcodeBranch(DWORD PC, OPCODE RspOp);
+/*BOOL IsOpcodeNop(DWORD PC);
 
 BOOL IsNextInstructionMmx(DWORD PC);
 BOOL IsRegisterConstant (DWORD Reg, DWORD * Constant);
@@ -63,9 +64,9 @@ void RSP_MultiElement2Mmx(int MmxReg1, int MmxReg2);
 #define SecondaryBuffer		1*/
 
 DWORD RunRecompilerRspCPU ( DWORD Cycles );
-/*void BuildRecompilerCPU ( void );
+void BuildRecompilerCPU ( void );
 
-void CompilerRSPBlock ( void );
+/*void CompilerRSPBlock ( void );
 void CompilerToggleBuffer (void);
 BOOL RSP_DoSections(void);
 
@@ -81,18 +82,19 @@ typedef struct {
 /*	BYTE IMEM[0x1000];*/			/* Saved off for re-order */
 /*} RSP_BLOCK;
 
-extern RSP_BLOCK CurrentBlock;
+extern RSP_BLOCK CurrentBlock;*/
 
 typedef struct {
-	BOOL bIsRegConst[32];*/		/* BOOLean toggle for constant */
+	/*BOOL bIsRegConst[32];*/		/* BOOLean toggle for constant */
 /*	DWORD MipsRegConst[32];*/		/* Value of register 32-bit */
 /*	DWORD BranchLabels[200];
 	DWORD LabelCount;
 	DWORD BranchLocations[200];
-	DWORD BranchCount;
+	DWORD BranchCount;*/
+	BOOL toto;
 } RSP_CODE;
 
-extern RSP_CODE RspCode;
+/*extern RSP_CODE RspCode;
 
 #define IsRegConst(i)	(RspCode.bIsRegConst[i])
 #define MipsRegConst(i) (RspCode.MipsRegConst[i])
@@ -114,3 +116,5 @@ extern RSP_COMPILER Compiler;
 #define IsMmxEnabled	(Compiler.mmx)
 #define IsMmx2Enabled	(Compiler.mmx2)
 #define IsSseEnabled	(Compiler.sse)*/
+
+extern BOOL IMEMIsUpdated;

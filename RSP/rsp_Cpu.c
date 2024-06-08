@@ -54,15 +54,14 @@ void * RSP_Lc2[32];
 void * RSP_Sc2[32];
 
 void BuildInterpreterRspCPU(void);
-/*void BuildRecompilerCPU(void);*/
+void BuildRecompilerRspCPU(void);
 
 void SetRspCPU(DWORD core) {
 	WaitForSingleObjectEx(hRspConfigMutex, INFINITE, FALSE);
 	RspCPUCore = core;
 	switch (core) {
 	case RecompilerCPU:
-		/*BuildRecompilerCPU();*/
-		LogMessage("TODO: rsp_Cpu.c: SetRspCPU RecompilerCPU");
+		BuildRecompilerRspCPU();
 		break;
 	case InterpreterCPU:
 		BuildInterpreterRspCPU();
