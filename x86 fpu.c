@@ -45,71 +45,71 @@ static char fpupop[2][2] = {
 	"", "p"
 };
 
-void fpuAbs(void) {
+void fpuAbs(BYTE** code) {
 	CPU_Message("      fabs ST(0)");
-	PUTDST16(RecompPos,0xE1D9);
+	PUTDST16(*code,0xE1D9);
 }
 
-void fpuAddDword(void *Variable, char *VariableName) {
+/*void fpuAddDword(void *Variable, char *VariableName) {
 	CPU_Message("      fadd ST(0), dword ptr [%s]", VariableName);
 	PUTDST16(RecompPos,0x05D8);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuAddDwordRegPointer(int x86Pointer) {
+void fpuAddDwordRegPointer(BYTE** code, int x86Pointer) {
 	CPU_Message("      fadd ST(0), dword ptr [%s]",x86_Name(x86Pointer));
 	switch (x86Pointer) {
-	case x86_EAX: PUTDST16(RecompPos,0x00D8); break;
-	case x86_EBX: PUTDST16(RecompPos,0x03D8); break;
-	case x86_ECX: PUTDST16(RecompPos,0x01D8); break;
-	case x86_EDX: PUTDST16(RecompPos,0x02D8); break;
-	case x86_ESI: PUTDST16(RecompPos,0x06D8); break;
-	case x86_EDI: PUTDST16(RecompPos,0x07D8); break;
+	case x86_EAX: PUTDST16(*code,0x00D8); break;
+	case x86_EBX: PUTDST16(*code,0x03D8); break;
+	case x86_ECX: PUTDST16(*code,0x01D8); break;
+	case x86_EDX: PUTDST16(*code,0x02D8); break;
+	case x86_ESI: PUTDST16(*code,0x06D8); break;
+	case x86_EDI: PUTDST16(*code,0x07D8); break;
 	default:
 		DisplayError("fpuAddDwordRegPointer\nUnknown x86 Register");
 		break;
 	}
 }
 
-void fpuAddQword(void *Variable, char *VariableName) {
+/*void fpuAddQword(void *Variable, char *VariableName) {
 	CPU_Message("      fadd ST(0), qword ptr [%s]", VariableName);
 	PUTDST16(RecompPos,0x05DC);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuAddQwordRegPointer(int x86Pointer) {
+void fpuAddQwordRegPointer(BYTE** code, int x86Pointer) {
 	CPU_Message("      fadd ST(0), qword ptr [%s]",x86_Name(x86Pointer));
 	switch (x86Pointer) {
-	case x86_EAX: PUTDST16(RecompPos,0x00DC); break;
-	case x86_EBX: PUTDST16(RecompPos,0x03DC); break;
-	case x86_ECX: PUTDST16(RecompPos,0x01DC); break;
-	case x86_EDX: PUTDST16(RecompPos,0x02DC); break;
-	case x86_ESI: PUTDST16(RecompPos,0x06DC); break;
-	case x86_EDI: PUTDST16(RecompPos,0x07DC); break;
+	case x86_EAX: PUTDST16(*code,0x00DC); break;
+	case x86_EBX: PUTDST16(*code,0x03DC); break;
+	case x86_ECX: PUTDST16(*code,0x01DC); break;
+	case x86_EDX: PUTDST16(*code,0x02DC); break;
+	case x86_ESI: PUTDST16(*code,0x06DC); break;
+	case x86_EDI: PUTDST16(*code,0x07DC); break;
 	default:
 		DisplayError("fpuAddQwordRegPointer\nUnknown x86 Register");
 		break;
 	}
 }
 
-void fpuAddReg(int x86reg) {
+void fpuAddReg(BYTE** code, int x86reg) {
 	CPU_Message("      fadd ST(0), %s",fpu_Name(x86reg));
 	switch (x86reg) {
-	case x86_ST0: PUTDST16(RecompPos,0xC0D8); break;
-	case x86_ST1: PUTDST16(RecompPos,0xC1D8); break;
-	case x86_ST2: PUTDST16(RecompPos,0xC2D8); break;
-	case x86_ST3: PUTDST16(RecompPos,0xC3D8); break;
-	case x86_ST4: PUTDST16(RecompPos,0xC4D8); break;
-	case x86_ST5: PUTDST16(RecompPos,0xC5D8); break;
-	case x86_ST6: PUTDST16(RecompPos,0xC6D8); break;
-	case x86_ST7: PUTDST16(RecompPos,0xC7D8); break;
+	case x86_ST0: PUTDST16(*code,0xC0D8); break;
+	case x86_ST1: PUTDST16(*code,0xC1D8); break;
+	case x86_ST2: PUTDST16(*code,0xC2D8); break;
+	case x86_ST3: PUTDST16(*code,0xC3D8); break;
+	case x86_ST4: PUTDST16(*code,0xC4D8); break;
+	case x86_ST5: PUTDST16(*code,0xC5D8); break;
+	case x86_ST6: PUTDST16(*code,0xC6D8); break;
+	case x86_ST7: PUTDST16(*code,0xC7D8); break;
 	default:
 		DisplayError("fpuAddReg\nUnknown x86 Register");
 		break;
 	}
 }
 
-void fpuAddRegPop(int * StackPos, int x86reg) {
+/*void fpuAddRegPop(int * StackPos, int x86reg) {
 	CPU_Message("      faddp ST(0), %s",fpu_Name(x86reg));
 	*StackPos = (*StackPos + 1) & 7;
 	switch (x86reg) {
@@ -131,9 +131,9 @@ void fpuComDword(void *Variable, char *VariableName, BOOL Pop) {
 	CPU_Message("      fcom%s ST(0), dword ptr [%s]", fpupop[Pop], VariableName);
 	PUTDST16(RecompPos, (Pop == TRUE) ? 0x1DD8 : 0x15D8);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuComDwordRegPointer(int x86Pointer, BOOL Pop) {
+void fpuComDwordRegPointer(BYTE** code, int x86Pointer, BOOL Pop) {
 	WORD x86Command;
 
 	CPU_Message("      fcom%s ST(0), dword ptr [%s]",fpupop[Pop],x86_Name(x86Pointer));
@@ -146,16 +146,16 @@ void fpuComDwordRegPointer(int x86Pointer, BOOL Pop) {
 	case x86_EDI: x86Command = 0x17D8; break;
 	}
 	if (Pop) { x86Command |= 0x0800; }
-	PUTDST16(RecompPos,x86Command);
+	PUTDST16(*code,x86Command);
 }
 
-void fpuComQword(void *Variable, char *VariableName, BOOL Pop) {
+/*void fpuComQword(void *Variable, char *VariableName, BOOL Pop) {
 	CPU_Message("      fcom%s ST(0), qword ptr [%s]", fpupop[Pop], VariableName);
 	PUTDST16(RecompPos, (Pop == TRUE) ? 0x1DDC : 0x15DC);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuComQwordRegPointer(int x86Pointer, BOOL Pop) {
+void fpuComQwordRegPointer(BYTE** code, int x86Pointer, BOOL Pop) {
 	WORD x86Command;
 
 	CPU_Message("      fcom%s ST(0), qword ptr [%s]",fpupop[Pop],x86_Name(x86Pointer));
@@ -168,88 +168,88 @@ void fpuComQwordRegPointer(int x86Pointer, BOOL Pop) {
 	case x86_EDI: x86Command = 0x17DC; break;
 	}
 	if (Pop) { x86Command |= 0x0800; }
-	PUTDST16(RecompPos,x86Command);
+	PUTDST16(*code,x86Command);
 }
 
-void fpuComReg(int x86reg, BOOL Pop) {
+void fpuComReg(BYTE** code, int x86reg, BOOL Pop) {
 	int s = (Pop == TRUE) ? 0x0800 : 0x0000;
 	CPU_Message("      fcom%s ST(0), %s", fpupop[Pop], fpu_Name(x86reg));
 
 	switch (x86reg) {
-	case x86_ST0: PUTDST16(RecompPos,0xD0D8|s); break;
-	case x86_ST1: PUTDST16(RecompPos,0xD1D8|s); break;
-	case x86_ST2: PUTDST16(RecompPos,0xD2D8|s); break;
-	case x86_ST3: PUTDST16(RecompPos,0xD3D8|s); break;
-	case x86_ST4: PUTDST16(RecompPos,0xD4D8|s); break;
-	case x86_ST5: PUTDST16(RecompPos,0xD5D8|s); break;
-	case x86_ST6: PUTDST16(RecompPos,0xD6D8|s); break;
-	case x86_ST7: PUTDST16(RecompPos,0xD7D8|s); break;
+	case x86_ST0: PUTDST16(*code,0xD0D8|s); break;
+	case x86_ST1: PUTDST16(*code,0xD1D8|s); break;
+	case x86_ST2: PUTDST16(*code,0xD2D8|s); break;
+	case x86_ST3: PUTDST16(*code,0xD3D8|s); break;
+	case x86_ST4: PUTDST16(*code,0xD4D8|s); break;
+	case x86_ST5: PUTDST16(*code,0xD5D8|s); break;
+	case x86_ST6: PUTDST16(*code,0xD6D8|s); break;
+	case x86_ST7: PUTDST16(*code,0xD7D8|s); break;
 	default:
 		DisplayError("fpuComReg\nUnknown x86 Register");
 		break;
 	}
 }
 
-void fpuDivDword(void *Variable, char *VariableName) {
+/*void fpuDivDword(void *Variable, char *VariableName) {
 	CPU_Message("      fdiv ST(0), dword ptr [%s]", VariableName);
 	PUTDST16(RecompPos,0x35D8);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuDivDwordRegPointer(int x86Pointer) {
+void fpuDivDwordRegPointer(BYTE** code, int x86Pointer) {
 	CPU_Message("      fdiv ST(0), dword ptr [%s]",x86_Name(x86Pointer));
 	switch (x86Pointer) {
-	case x86_EAX: PUTDST16(RecompPos,0x30D8); break;
-	case x86_EBX: PUTDST16(RecompPos,0x33D8); break;
-	case x86_ECX: PUTDST16(RecompPos,0x31D8); break;
-	case x86_EDX: PUTDST16(RecompPos,0x32D8); break;
-	case x86_ESI: PUTDST16(RecompPos,0x36D8); break;
-	case x86_EDI: PUTDST16(RecompPos,0x37D8); break;
+	case x86_EAX: PUTDST16(*code,0x30D8); break;
+	case x86_EBX: PUTDST16(*code,0x33D8); break;
+	case x86_ECX: PUTDST16(*code,0x31D8); break;
+	case x86_EDX: PUTDST16(*code,0x32D8); break;
+	case x86_ESI: PUTDST16(*code,0x36D8); break;
+	case x86_EDI: PUTDST16(*code,0x37D8); break;
 	default:
 		DisplayError("fpuDivDwordRegPointer\nUnknown x86 Register");
 		break;
 	}
 }
 
-void fpuDivQword(void *Variable, char *VariableName) {
+/*void fpuDivQword(void *Variable, char *VariableName) {
 	CPU_Message("      fdiv ST(0), qword ptr [%s]", VariableName);
 	PUTDST16(RecompPos,0x35DC);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuDivQwordRegPointer(int x86Pointer) {
+void fpuDivQwordRegPointer(BYTE** code, int x86Pointer) {
 	CPU_Message("      fdiv ST(0), qword ptr [%s]",x86_Name(x86Pointer));
 	switch (x86Pointer) {
-	case x86_EAX: PUTDST16(RecompPos,0x30DC); break;
-	case x86_EBX: PUTDST16(RecompPos,0x33DC); break;
-	case x86_ECX: PUTDST16(RecompPos,0x31DC); break;
-	case x86_EDX: PUTDST16(RecompPos,0x32DC); break;
-	case x86_ESI: PUTDST16(RecompPos,0x36DC); break;
-	case x86_EDI: PUTDST16(RecompPos,0x37DC); break;
+	case x86_EAX: PUTDST16(*code,0x30DC); break;
+	case x86_EBX: PUTDST16(*code,0x33DC); break;
+	case x86_ECX: PUTDST16(*code,0x31DC); break;
+	case x86_EDX: PUTDST16(*code,0x32DC); break;
+	case x86_ESI: PUTDST16(*code,0x36DC); break;
+	case x86_EDI: PUTDST16(*code,0x37DC); break;
 	default:
 		DisplayError("fpuDivQwordRegPointer\nUnknown x86 Register");
 		break;
 	}
 }
 
-void fpuDivReg(int Reg) {
+void fpuDivReg(BYTE** code, int Reg) {
 	CPU_Message("      fdiv ST(0), %s", fpu_Name(Reg));
 	switch (Reg) {
-	case x86_ST0: PUTDST16(RecompPos,0xF0D8); break;
-	case x86_ST1: PUTDST16(RecompPos,0xF1D8); break;
-	case x86_ST2: PUTDST16(RecompPos,0xF2D8); break;
-	case x86_ST3: PUTDST16(RecompPos,0xF3D8); break;
-	case x86_ST4: PUTDST16(RecompPos,0xF4D8); break;
-	case x86_ST5: PUTDST16(RecompPos,0xF5D8); break;
-	case x86_ST6: PUTDST16(RecompPos,0xF6D8); break;
-	case x86_ST7: PUTDST16(RecompPos,0xF7D8); break;
+	case x86_ST0: PUTDST16(*code,0xF0D8); break;
+	case x86_ST1: PUTDST16(*code,0xF1D8); break;
+	case x86_ST2: PUTDST16(*code,0xF2D8); break;
+	case x86_ST3: PUTDST16(*code,0xF3D8); break;
+	case x86_ST4: PUTDST16(*code,0xF4D8); break;
+	case x86_ST5: PUTDST16(*code,0xF5D8); break;
+	case x86_ST6: PUTDST16(*code,0xF6D8); break;
+	case x86_ST7: PUTDST16(*code,0xF7D8); break;
 	default:
 		DisplayError("fpuDivReg\nUnknown x86 Register");
 		break;
 	}
 }
 
-void fpuDivRegPop(int x86reg) {
+/*void fpuDivRegPop(int x86reg) {
 	CPU_Message("      fdivp ST(0), %s",fpu_Name(x86reg));
 	switch (x86reg) {
 	case x86_ST0: PUTDST16(RecompPos,0xF8DE); break;
@@ -264,84 +264,84 @@ void fpuDivRegPop(int x86reg) {
 		DisplayError("fpuDivReg\nUnknown x86 Register");
 		break;
 	}
-}
+}*/
 
-void fpuExchange(int Reg) {
+void fpuExchange(BYTE** code, int Reg) {
 	CPU_Message("      fxch ST(0), %s",fpu_Name(Reg));
 	switch (Reg) {
-	case x86_ST0: PUTDST16(RecompPos,0xC8D9); break;
-	case x86_ST1: PUTDST16(RecompPos,0xC9D9); break;
-	case x86_ST2: PUTDST16(RecompPos,0xCAD9); break;
-	case x86_ST3: PUTDST16(RecompPos,0xCBD9); break;
-	case x86_ST4: PUTDST16(RecompPos,0xCCD9); break;
-	case x86_ST5: PUTDST16(RecompPos,0xCDD9); break;
-	case x86_ST6: PUTDST16(RecompPos,0xCED9); break;
-	case x86_ST7: PUTDST16(RecompPos,0xCFD9); break;
+	case x86_ST0: PUTDST16(*code,0xC8D9); break;
+	case x86_ST1: PUTDST16(*code,0xC9D9); break;
+	case x86_ST2: PUTDST16(*code,0xCAD9); break;
+	case x86_ST3: PUTDST16(*code,0xCBD9); break;
+	case x86_ST4: PUTDST16(*code,0xCCD9); break;
+	case x86_ST5: PUTDST16(*code,0xCDD9); break;
+	case x86_ST6: PUTDST16(*code,0xCED9); break;
+	case x86_ST7: PUTDST16(*code,0xCFD9); break;
 	default:
 		DisplayError("fpuExchange\nUnknown x86 Register: %i", Reg);
 		break;
 	}
 }
 
-void fpuFree(int Reg) {
+void fpuFree(BYTE** code, int Reg) {
 	CPU_Message("      ffree %s",fpu_Name(Reg));
 	switch (Reg) {
-	case x86_ST0: PUTDST16(RecompPos,0xC0DD); break;
-	case x86_ST1: PUTDST16(RecompPos,0xC1DD); break;
-	case x86_ST2: PUTDST16(RecompPos,0xC2DD); break;
-	case x86_ST3: PUTDST16(RecompPos,0xC3DD); break;
-	case x86_ST4: PUTDST16(RecompPos,0xC4DD); break;
-	case x86_ST5: PUTDST16(RecompPos,0xC5DD); break;
-	case x86_ST6: PUTDST16(RecompPos,0xC6DD); break;
-	case x86_ST7: PUTDST16(RecompPos,0xC7DD); break;
+	case x86_ST0: PUTDST16(*code,0xC0DD); break;
+	case x86_ST1: PUTDST16(*code,0xC1DD); break;
+	case x86_ST2: PUTDST16(*code,0xC2DD); break;
+	case x86_ST3: PUTDST16(*code,0xC3DD); break;
+	case x86_ST4: PUTDST16(*code,0xC4DD); break;
+	case x86_ST5: PUTDST16(*code,0xC5DD); break;
+	case x86_ST6: PUTDST16(*code,0xC6DD); break;
+	case x86_ST7: PUTDST16(*code,0xC7DD); break;
 	default:
 		DisplayError("fpuFree\nUnknown x86 Register");
 		break;
 	}
 }
 
-void fpuDecStack(int * StackPos) {
+/*void fpuDecStack(int * StackPos) {
 	CPU_Message("      fdecstp");
 	*StackPos = (*StackPos - 1) & 7;
 	PUTDST16(RecompPos,0xF6D9);
-}
+}*/
 
-void fpuIncStack(int * StackPos) {
+void fpuIncStack(BYTE** code, int * StackPos) {
 	CPU_Message("      fincstp");
 	*StackPos = (*StackPos + 1) & 7;
-	PUTDST16(RecompPos,0xF7D9);
+	PUTDST16(*code,0xF7D9);
 }
 
-void fpuLoadControl(void *Variable, char *VariableName) {
+void fpuLoadControl(BYTE** code, void *Variable, char *VariableName) {
 	CPU_Message("      fldcw [%s]",VariableName);
-	PUTDST16(RecompPos,0x2DD9);
-	PUTDST32(RecompPos,Variable);
+	PUTDST16(*code,0x2DD9);
+	PUTDST32(*code,Variable);
 }
 
-void fpuLoadDword(int * StackPos,void *Variable, char *VariableName) {
+/*void fpuLoadDword(int * StackPos,void *Variable, char *VariableName) {
 	CPU_Message("      fld dword ptr [%s]",VariableName);
 	*StackPos = (*StackPos - 1) & 7;
 	PUTDST16(RecompPos,0x05D9);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuLoadDwordFromX86Reg(int * StackPos, int x86Reg) {
+void fpuLoadDwordFromX86Reg(BYTE** code, int * StackPos, int x86Reg) {
 	CPU_Message("      fld dword ptr [%s]",x86_Name(x86Reg));
 	*StackPos = (*StackPos - 1) & 7;
-	PUTDST8(RecompPos,0xD9);
+	PUTDST8(*code,0xD9);
 	switch (x86Reg) {
-	case x86_EAX: PUTDST8(RecompPos,0x00); break;
-	case x86_EBX: PUTDST8(RecompPos,0x03); break;
-	case x86_ECX: PUTDST8(RecompPos,0x01); break;
-	case x86_EDX: PUTDST8(RecompPos,0x02); break;
-	case x86_ESI: PUTDST8(RecompPos,0x06); break;
-	case x86_EDI: PUTDST8(RecompPos,0x07); break;
+	case x86_EAX: PUTDST8(*code,0x00); break;
+	case x86_EBX: PUTDST8(*code,0x03); break;
+	case x86_ECX: PUTDST8(*code,0x01); break;
+	case x86_EDX: PUTDST8(*code,0x02); break;
+	case x86_ESI: PUTDST8(*code,0x06); break;
+	case x86_EDI: PUTDST8(*code,0x07); break;
 	default:
 		DisplayError("fpuLoadDwordFromX86Reg\nUnknown x86 Register");
 	}
 }
 
-void fpuLoadDwordFromN64Mem(int * StackPos,int x86reg) {
+/*void fpuLoadDwordFromN64Mem(int * StackPos,int x86reg) {
 	CPU_Message("      fld dword ptr [%s+N64mem]",x86_Name(x86reg));
 	*StackPos = (*StackPos - 1) & 7;
 	switch (x86reg) {
@@ -380,71 +380,71 @@ void fpuLoadIntegerDword(int * StackPos,void *Variable, char *VariableName) {
 	*StackPos = (*StackPos - 1) & 7;
 	PUTDST16(RecompPos,0x05DB);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuLoadIntegerDwordFromX86Reg(int * StackPos,int x86Reg) {
+void fpuLoadIntegerDwordFromX86Reg(BYTE** code, int * StackPos,int x86Reg) {
 	CPU_Message("      fild dword ptr [%s]",x86_Name(x86Reg));
 	*StackPos = (*StackPos - 1) & 7;
-	PUTDST8(RecompPos,0xDB);
+	PUTDST8(*code,0xDB);
 	switch (x86Reg) {
-	case x86_EAX: PUTDST8(RecompPos,0x00); break;
-	case x86_EBX: PUTDST8(RecompPos,0x03); break;
-	case x86_ECX: PUTDST8(RecompPos,0x01); break;
-	case x86_EDX: PUTDST8(RecompPos,0x02); break;
-	case x86_ESI: PUTDST8(RecompPos,0x06); break;
-	case x86_EDI: PUTDST8(RecompPos,0x07); break;
+	case x86_EAX: PUTDST8(*code,0x00); break;
+	case x86_EBX: PUTDST8(*code,0x03); break;
+	case x86_ECX: PUTDST8(*code,0x01); break;
+	case x86_EDX: PUTDST8(*code,0x02); break;
+	case x86_ESI: PUTDST8(*code,0x06); break;
+	case x86_EDI: PUTDST8(*code,0x07); break;
 	default:
 		DisplayError("fpuLoadIntegerDwordFromX86Reg\nUnknown x86 Register");
 	}
 }
 
-void fpuLoadIntegerQword(int * StackPos,void *Variable, char *VariableName) {
+/*void fpuLoadIntegerQword(int * StackPos,void *Variable, char *VariableName) {
 	CPU_Message("      fild qword ptr [%s]",VariableName);
 	*StackPos = (*StackPos - 1) & 7;
 	PUTDST16(RecompPos,0x2DDF);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuLoadIntegerQwordFromX86Reg(int * StackPos,int x86Reg) {
+void fpuLoadIntegerQwordFromX86Reg(BYTE** code, int * StackPos,int x86Reg) {
 	CPU_Message("      fild qword ptr [%s]",x86_Name(x86Reg));
 	*StackPos = (*StackPos - 1) & 7;
-	PUTDST8(RecompPos,0xDF);
+	PUTDST8(*code,0xDF);
 	switch (x86Reg) {
-	case x86_EAX: PUTDST8(RecompPos,0x28); break;
-	case x86_EBX: PUTDST8(RecompPos,0x2B); break;
-	case x86_ECX: PUTDST8(RecompPos,0x29); break;
-	case x86_EDX: PUTDST8(RecompPos,0x2A); break;
-	case x86_ESI: PUTDST8(RecompPos,0x2E); break;
-	case x86_EDI: PUTDST8(RecompPos,0x2F); break;
+	case x86_EAX: PUTDST8(*code,0x28); break;
+	case x86_EBX: PUTDST8(*code,0x2B); break;
+	case x86_ECX: PUTDST8(*code,0x29); break;
+	case x86_EDX: PUTDST8(*code,0x2A); break;
+	case x86_ESI: PUTDST8(*code,0x2E); break;
+	case x86_EDI: PUTDST8(*code,0x2F); break;
 	default:
 		DisplayError("fpuLoadIntegerDwordFromX86Reg\nUnknown x86 Register");
 	}
 }
 
-void fpuLoadQword(int * StackPos,void *Variable, char *VariableName) {
+/*void fpuLoadQword(int * StackPos,void *Variable, char *VariableName) {
 	CPU_Message("      fld qword ptr [%s]",VariableName);
 	*StackPos = (*StackPos - 1) & 7;
 	PUTDST16(RecompPos,0x05DD);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuLoadQwordFromX86Reg(int * StackPos, int x86Reg) {
+void fpuLoadQwordFromX86Reg(BYTE** code, int * StackPos, int x86Reg) {
 	CPU_Message("      fld qword ptr [%s]",x86_Name(x86Reg));
 	*StackPos = (*StackPos - 1) & 7;
-	PUTDST8(RecompPos,0xDD);
+	PUTDST8(*code,0xDD);
 	switch (x86Reg) {
-	case x86_EAX: PUTDST8(RecompPos,0x00); break;
-	case x86_EBX: PUTDST8(RecompPos,0x03); break;
-	case x86_ECX: PUTDST8(RecompPos,0x01); break;
-	case x86_EDX: PUTDST8(RecompPos,0x02); break;
-	case x86_ESI: PUTDST8(RecompPos,0x06); break;
-	case x86_EDI: PUTDST8(RecompPos,0x07); break;
+	case x86_EAX: PUTDST8(*code,0x00); break;
+	case x86_EBX: PUTDST8(*code,0x03); break;
+	case x86_ECX: PUTDST8(*code,0x01); break;
+	case x86_EDX: PUTDST8(*code,0x02); break;
+	case x86_ESI: PUTDST8(*code,0x06); break;
+	case x86_EDI: PUTDST8(*code,0x07); break;
 	default:
 		DisplayError("fpuLoadQwordFromX86Reg\nUnknown x86 Register");
 	}
 }
 
-void fpuLoadQwordFromN64Mem(int * StackPos,int x86reg) {
+/*void fpuLoadQwordFromN64Mem(int * StackPos,int x86reg) {
 	CPU_Message("      fld qword ptr [%s+N64mem]",x86_Name(x86reg));
 	*StackPos = (*StackPos - 1) & 7;
 	switch (x86reg) {
@@ -459,86 +459,86 @@ void fpuLoadQwordFromN64Mem(int * StackPos,int x86reg) {
 		DisplayError("fpuLoadQwordFromN64Mem\nUnknown x86 Register");
 	}
 	PUTDST32(RecompPos,N64MEM);
-}
+}*/
 
-void fpuLoadReg(int * StackPos,int Reg) {
+void fpuLoadReg(BYTE** code, int * StackPos,int Reg) {
 	CPU_Message("      fld ST(0), %s",fpu_Name(Reg));
 	*StackPos = (*StackPos - 1) & 7;
 	switch (Reg) {
-	case x86_ST0: PUTDST16(RecompPos,0xC0D9); break;
-	case x86_ST1: PUTDST16(RecompPos,0xC1D9); break;
-	case x86_ST2: PUTDST16(RecompPos,0xC2D9); break;
-	case x86_ST3: PUTDST16(RecompPos,0xC3D9); break;
-	case x86_ST4: PUTDST16(RecompPos,0xC4D9); break;
-	case x86_ST5: PUTDST16(RecompPos,0xC5D9); break;
-	case x86_ST6: PUTDST16(RecompPos,0xC6D9); break;
-	case x86_ST7: PUTDST16(RecompPos,0xC7D9); break;
+	case x86_ST0: PUTDST16(*code,0xC0D9); break;
+	case x86_ST1: PUTDST16(*code,0xC1D9); break;
+	case x86_ST2: PUTDST16(*code,0xC2D9); break;
+	case x86_ST3: PUTDST16(*code,0xC3D9); break;
+	case x86_ST4: PUTDST16(*code,0xC4D9); break;
+	case x86_ST5: PUTDST16(*code,0xC5D9); break;
+	case x86_ST6: PUTDST16(*code,0xC6D9); break;
+	case x86_ST7: PUTDST16(*code,0xC7D9); break;
 	default:
 		DisplayError("fpuLoadReg\nUnknown x86 Register:%i", Reg);
 		break;
 	}
 }
 
-void fpuMulDword(void *Variable, char *VariableName) {
+/*void fpuMulDword(void *Variable, char *VariableName) {
 	CPU_Message("      fmul ST(0), dword ptr [%s]", VariableName);
 	PUTDST16(RecompPos,0x0DD8);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuMulDwordRegPointer(int x86Pointer) {
+void fpuMulDwordRegPointer(BYTE** code, int x86Pointer) {
 	CPU_Message("      fmul ST(0), dword ptr [%s]",x86_Name(x86Pointer));
 	switch (x86Pointer) {
-	case x86_EAX: PUTDST16(RecompPos,0x08D8); break;
-	case x86_EBX: PUTDST16(RecompPos,0x0BD8); break;
-	case x86_ECX: PUTDST16(RecompPos,0x09D8); break;
-	case x86_EDX: PUTDST16(RecompPos,0x0AD8); break;
-	case x86_ESI: PUTDST16(RecompPos,0x0ED8); break;
-	case x86_EDI: PUTDST16(RecompPos,0x0FD8); break;
+	case x86_EAX: PUTDST16(*code,0x08D8); break;
+	case x86_EBX: PUTDST16(*code,0x0BD8); break;
+	case x86_ECX: PUTDST16(*code,0x09D8); break;
+	case x86_EDX: PUTDST16(*code,0x0AD8); break;
+	case x86_ESI: PUTDST16(*code,0x0ED8); break;
+	case x86_EDI: PUTDST16(*code,0x0FD8); break;
 	default:
 		DisplayError("fpuMulDwordRegPointer\nUnknown x86 Register");
 		break;
 	}
 }
 
-void fpuMulQword(void *Variable, char *VariableName) {
+/*void fpuMulQword(void *Variable, char *VariableName) {
 	CPU_Message("      fmul ST(0), qword ptr [%s]", VariableName);
 	PUTDST16(RecompPos,0x0DDC);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuMulQwordRegPointer(int x86Pointer) {
+void fpuMulQwordRegPointer(BYTE** code, int x86Pointer) {
 	CPU_Message("      fmul ST(0), qword ptr [%s]",x86_Name(x86Pointer));
 	switch (x86Pointer) {
-	case x86_EAX: PUTDST16(RecompPos,0x08DC); break;
-	case x86_EBX: PUTDST16(RecompPos,0x0BDC); break;
-	case x86_ECX: PUTDST16(RecompPos,0x09DC); break;
-	case x86_EDX: PUTDST16(RecompPos,0x0ADC); break;
-	case x86_ESI: PUTDST16(RecompPos,0x0EDC); break;
-	case x86_EDI: PUTDST16(RecompPos,0x0FDC); break;
+	case x86_EAX: PUTDST16(*code,0x08DC); break;
+	case x86_EBX: PUTDST16(*code,0x0BDC); break;
+	case x86_ECX: PUTDST16(*code,0x09DC); break;
+	case x86_EDX: PUTDST16(*code,0x0ADC); break;
+	case x86_ESI: PUTDST16(*code,0x0EDC); break;
+	case x86_EDI: PUTDST16(*code,0x0FDC); break;
 	default:
 		DisplayError("fpuMulQwordRegPointer\nUnknown x86 Register");
 		break;
 	}
 }
 
-void fpuMulReg(int x86reg) {
+void fpuMulReg(BYTE** code, int x86reg) {
 	CPU_Message("      fmul ST(0), %s",fpu_Name(x86reg));
 	switch (x86reg) {
-	case x86_ST0: PUTDST16(RecompPos,0xC8D8); break;
-	case x86_ST1: PUTDST16(RecompPos,0xC9D8); break;
-	case x86_ST2: PUTDST16(RecompPos,0xCAD8); break;
-	case x86_ST3: PUTDST16(RecompPos,0xCBD8); break;
-	case x86_ST4: PUTDST16(RecompPos,0xCCD8); break;
-	case x86_ST5: PUTDST16(RecompPos,0xCDD8); break;
-	case x86_ST6: PUTDST16(RecompPos,0xCED8); break;
-	case x86_ST7: PUTDST16(RecompPos,0xCFD8); break;
+	case x86_ST0: PUTDST16(*code,0xC8D8); break;
+	case x86_ST1: PUTDST16(*code,0xC9D8); break;
+	case x86_ST2: PUTDST16(*code,0xCAD8); break;
+	case x86_ST3: PUTDST16(*code,0xCBD8); break;
+	case x86_ST4: PUTDST16(*code,0xCCD8); break;
+	case x86_ST5: PUTDST16(*code,0xCDD8); break;
+	case x86_ST6: PUTDST16(*code,0xCED8); break;
+	case x86_ST7: PUTDST16(*code,0xCFD8); break;
 	default:
 		DisplayError("fpuMulReg\nUnknown x86 Register");
 		break;
 	}
 }
 
-void fpuMulRegPop(int x86reg) {
+/*void fpuMulRegPop(int x86reg) {
 	CPU_Message("      fmulp ST(0), %s",fpu_Name(x86reg));
 	switch (x86reg) {
 	case x86_ST0: PUTDST16(RecompPos,0xC8DE); break;
@@ -553,42 +553,42 @@ void fpuMulRegPop(int x86reg) {
 		DisplayError("fpuMulReg\nUnknown x86 Register");
 		break;
 	}
-}
+}*/
 
-void fpuNeg(void) {
+void fpuNeg(BYTE** code) {
 	CPU_Message("      fchs ST(0)");
-	PUTDST16(RecompPos,0xE0D9);
+	PUTDST16(*code,0xE0D9);
 }
 
-void fpuRound(void) {
+/*void fpuRound(void) {
 	CPU_Message("      frndint ST(0)");
 	PUTDST16(RecompPos,0xFCD9);
-}
+}*/
 
-void fpuSqrt(void) {
+void fpuSqrt(BYTE** code) {
 	CPU_Message("      fsqrt ST(0)");
-	PUTDST16(RecompPos,0xFAD9);
+	PUTDST16(*code,0xFAD9);
 }
 
-void fpuStoreControl(void *Variable, char *VariableName) {
+void fpuStoreControl(BYTE** code, void *Variable, char *VariableName) {
 	CPU_Message("      fnstcw [%s]",VariableName);
-	PUTDST16(RecompPos,0x3DD9);
-	PUTDST32(RecompPos,Variable);
+	PUTDST16(*code,0x3DD9);
+	PUTDST32(*code,Variable);
 }
 
-void fpuStoreDword(int * StackPos,void *Variable, char *VariableName, BOOL pop) {
+/*void fpuStoreDword(int * StackPos,void *Variable, char *VariableName, BOOL pop) {
 	CPU_Message("      fst%s dword ptr [%s]", fpupop[pop], VariableName);
 	if (pop) { *StackPos = (*StackPos + 1) & 7; }
 	PUTDST16(RecompPos,(pop == FALSE) ? 0x15D9 : 0x1DD9);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuStoreDwordFromX86Reg(int * StackPos,int x86Reg, BOOL pop) {
+void fpuStoreDwordFromX86Reg(BYTE** code, int * StackPos,int x86Reg, BOOL pop) {
 	BYTE Command = 0;
 
 	CPU_Message("      fst%s dword ptr [%s]", fpupop[pop], x86_Name(x86Reg));
 	if (pop) { *StackPos = (*StackPos + 1) & 7; }
-	PUTDST8(RecompPos,0xD9);
+	PUTDST8(*code,0xD9);
 
 	switch (x86Reg) {
 	case x86_EAX: Command = 0x10; break;
@@ -600,10 +600,10 @@ void fpuStoreDwordFromX86Reg(int * StackPos,int x86Reg, BOOL pop) {
 	default:
 		DisplayError("fpuStoreIntegerQwordFromX86Reg\nUnknown x86 Register");
 	}
-	PUTDST8(RecompPos, (pop == FALSE) ? Command : (Command + 0x8));
+	PUTDST8(*code, (pop == FALSE) ? Command : (Command + 0x8));
 }
 
-void fpuStoreDwordToN64Mem(int * StackPos,int x86reg, BOOL Pop) {
+/*void fpuStoreDwordToN64Mem(int * StackPos,int x86reg, BOOL Pop) {
 	int s = (Pop == TRUE) ? 0x0800 : 0;
 
 	CPU_Message("      fst%s dword ptr [%s+N64mem]", fpupop[Pop], x86_Name(x86reg));
@@ -628,14 +628,14 @@ void fpuStoreIntegerDword(int * StackPos,void *Variable, char *VariableName, BOO
 	if (pop) { *StackPos = (*StackPos + 1) & 7; }
 	PUTDST16(RecompPos, (pop == FALSE) ? 0x15DB : 0x1DDB);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuStoreIntegerDwordFromX86Reg(int * StackPos,int x86Reg, BOOL pop) {
+void fpuStoreIntegerDwordFromX86Reg(BYTE** code, int * StackPos,int x86Reg, BOOL pop) {
 	BYTE Command = 0;
 
 	CPU_Message("      fist%s dword ptr [%s]", fpupop[pop], x86_Name(x86Reg));
 	if (pop) { *StackPos = (*StackPos + 1) & 7; }
-	PUTDST8(RecompPos,0xDB);
+	PUTDST8(*code,0xDB);
 	
 	switch (x86Reg) {
 	case x86_EAX: Command = 0x10; break;
@@ -647,23 +647,23 @@ void fpuStoreIntegerDwordFromX86Reg(int * StackPos,int x86Reg, BOOL pop) {
 	default:
 		DisplayError("fpuStoreIntegerDwordFromX86Reg\nUnknown x86 Register");
 	}
-	PUTDST8(RecompPos, (pop == FALSE) ? Command : (Command + 0x8));
+	PUTDST8(*code, (pop == FALSE) ? Command : (Command + 0x8));
 }
 
-void fpuStoreIntegerQword(int * StackPos,void *Variable, char *VariableName, BOOL pop) {
+/*void fpuStoreIntegerQword(int * StackPos,void *Variable, char *VariableName, BOOL pop) {
 	CPU_Message("      fist%s qword ptr [%s]", fpupop[pop], VariableName);
 	if (pop) { *StackPos = (*StackPos + 1) & 7; }
 	PUTDST16(RecompPos, (pop == FALSE) ? 0x35DF : 0x3DDF);
 	PUTDST32(RecompPos,Variable);
 	if (!pop) { BreakPoint(); }
-}
+}*/
 
-void fpuStoreIntegerQwordFromX86Reg(int * StackPos, int x86Reg, BOOL pop) {
+void fpuStoreIntegerQwordFromX86Reg(BYTE** code, int * StackPos, int x86Reg, BOOL pop) {
 	BYTE Command = 0;
 
 	CPU_Message("      fist%s qword ptr [%s]", fpupop[pop], x86_Name(x86Reg));
 	if (pop) { *StackPos = (*StackPos + 1) & 7; }
-	PUTDST8(RecompPos,0xDF);
+	PUTDST8(*code,0xDF);
 
 	switch (x86Reg) {
 	case x86_EAX: Command = 0x30; break;
@@ -675,15 +675,15 @@ void fpuStoreIntegerQwordFromX86Reg(int * StackPos, int x86Reg, BOOL pop) {
 	default:
 		DisplayError("fpuStoreIntegerQwordFromX86Reg\nUnknown x86 Register");
 	}
-	PUTDST8(RecompPos, (pop == FALSE) ? Command : (Command + 0x8));
+	PUTDST8(*code, (pop == FALSE) ? Command : (Command + 0x8));
 }
 
-void fpuStoreQwordFromX86Reg(int * StackPos, int x86Reg, BOOL pop) {
+void fpuStoreQwordFromX86Reg(BYTE** code, int * StackPos, int x86Reg, BOOL pop) {
 	BYTE Command = 0;
 
 	CPU_Message("      fst%s qword ptr [%s]", fpupop[pop], x86_Name(x86Reg));
 	if (pop) { *StackPos = (*StackPos + 1) & 7; }
-	PUTDST8(RecompPos,0xDD);
+	PUTDST8(*code,0xDD);
 
 	switch (x86Reg) {
 	case x86_EAX: Command = 0x10; break;
@@ -695,36 +695,36 @@ void fpuStoreQwordFromX86Reg(int * StackPos, int x86Reg, BOOL pop) {
 	default:
 		DisplayError("fpuStoreQwordFromX86Reg\nUnknown x86 Register");
 	}
-	PUTDST8(RecompPos, (pop == FALSE) ? Command : (Command + 0x8));
+	PUTDST8(*code, (pop == FALSE) ? Command : (Command + 0x8));
 }
 
-void fpuStoreStatus(void) {
+void fpuStoreStatus(BYTE** code) {
 	CPU_Message("      fnstsw ax");
-	PUTDST16(RecompPos,0xE0DF);
+	PUTDST16(*code,0xE0DF);
 }
 
-void fpuSubDword(void *Variable, char *VariableName) {
+/*void fpuSubDword(void *Variable, char *VariableName) {
 	CPU_Message("      fsub ST(0), dword ptr [%s]", VariableName);
 	PUTDST16(RecompPos,0x25D8);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuSubDwordRegPointer(int x86Pointer) {
+void fpuSubDwordRegPointer(BYTE** code, int x86Pointer) {
 	CPU_Message("      fsub ST(0), dword ptr [%s]",x86_Name(x86Pointer));
 	switch (x86Pointer) {
-	case x86_EAX: PUTDST16(RecompPos,0x20D8); break;
-	case x86_EBX: PUTDST16(RecompPos,0x23D8); break;
-	case x86_ECX: PUTDST16(RecompPos,0x21D8); break;
-	case x86_EDX: PUTDST16(RecompPos,0x22D8); break;
-	case x86_ESI: PUTDST16(RecompPos,0x26D8); break;
-	case x86_EDI: PUTDST16(RecompPos,0x27D8); break;
+	case x86_EAX: PUTDST16(*code,0x20D8); break;
+	case x86_EBX: PUTDST16(*code,0x23D8); break;
+	case x86_ECX: PUTDST16(*code,0x21D8); break;
+	case x86_EDX: PUTDST16(*code,0x22D8); break;
+	case x86_ESI: PUTDST16(*code,0x26D8); break;
+	case x86_EDI: PUTDST16(*code,0x27D8); break;
 	default:
 		DisplayError("fpuSubDwordRegPointer\nUnknown x86 Register");
 		break;
 	}
 }
 
-void fpuSubDwordReverse(void *Variable, char *VariableName) {
+/*void fpuSubDwordReverse(void *Variable, char *VariableName) {
 	CPU_Message("      fsubr ST(0), dword ptr [%s]", VariableName);
 	PUTDST16(RecompPos,0x2DD8);
 	PUTDST32(RecompPos,Variable);
@@ -734,47 +734,47 @@ void fpuSubQword(void *Variable, char *VariableName) {
 	CPU_Message("      fsub ST(0), qword ptr [%s]", VariableName);
 	PUTDST16(RecompPos,0x25DC);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuSubQwordRegPointer(int x86Pointer) {
+void fpuSubQwordRegPointer(BYTE** code, int x86Pointer) {
 	CPU_Message("      fsub ST(0), qword ptr [%s]",x86_Name(x86Pointer));
 	switch (x86Pointer) {
-	case x86_EAX: PUTDST16(RecompPos,0x20DC); break;
-	case x86_EBX: PUTDST16(RecompPos,0x23DC); break;
-	case x86_ECX: PUTDST16(RecompPos,0x21DC); break;
-	case x86_EDX: PUTDST16(RecompPos,0x22DC); break;
-	case x86_ESI: PUTDST16(RecompPos,0x26DC); break;
-	case x86_EDI: PUTDST16(RecompPos,0x27DC); break;
+	case x86_EAX: PUTDST16(*code,0x20DC); break;
+	case x86_EBX: PUTDST16(*code,0x23DC); break;
+	case x86_ECX: PUTDST16(*code,0x21DC); break;
+	case x86_EDX: PUTDST16(*code,0x22DC); break;
+	case x86_ESI: PUTDST16(*code,0x26DC); break;
+	case x86_EDI: PUTDST16(*code,0x27DC); break;
 	default:
 		DisplayError("fpuSubQwordRegPointer\nUnknown x86 Register");
 		break;
 	}
 }
 
-void fpuSubQwordReverse(void *Variable, char *VariableName) {
+/*void fpuSubQwordReverse(void *Variable, char *VariableName) {
 	CPU_Message("      fsubr ST(0), qword ptr [%s]", VariableName);
 	PUTDST16(RecompPos,0x2DDC);
 	PUTDST32(RecompPos,Variable);
-}
+}*/
 
-void fpuSubReg(int x86reg) {
+void fpuSubReg(BYTE** code, int x86reg) {
 	CPU_Message("      fsub ST(0), %s",fpu_Name(x86reg));
 	switch (x86reg) {
-	case x86_ST0: PUTDST16(RecompPos,0xE0D8); break;
-	case x86_ST1: PUTDST16(RecompPos,0xE1D8); break;
-	case x86_ST2: PUTDST16(RecompPos,0xE2D8); break;
-	case x86_ST3: PUTDST16(RecompPos,0xE3D8); break;
-	case x86_ST4: PUTDST16(RecompPos,0xE4D8); break;
-	case x86_ST5: PUTDST16(RecompPos,0xE5D8); break;
-	case x86_ST6: PUTDST16(RecompPos,0xE6D8); break;
-	case x86_ST7: PUTDST16(RecompPos,0xE7D8); break;
+	case x86_ST0: PUTDST16(*code,0xE0D8); break;
+	case x86_ST1: PUTDST16(*code,0xE1D8); break;
+	case x86_ST2: PUTDST16(*code,0xE2D8); break;
+	case x86_ST3: PUTDST16(*code,0xE3D8); break;
+	case x86_ST4: PUTDST16(*code,0xE4D8); break;
+	case x86_ST5: PUTDST16(*code,0xE5D8); break;
+	case x86_ST6: PUTDST16(*code,0xE6D8); break;
+	case x86_ST7: PUTDST16(*code,0xE7D8); break;
 	default:
 		DisplayError("fpuSubReg\nUnknown x86 Register");
 		break;
 	}
 }
 
-void fpuSubRegPop(int x86reg) {
+/*void fpuSubRegPop(int x86reg) {
 	CPU_Message("      fsubp ST(0), %s",fpu_Name(x86reg));
 	switch (x86reg) {
 	case x86_ST0: PUTDST16(RecompPos,0xE8DE); break;
@@ -827,10 +827,10 @@ void fpuDivQwordReverse(void *Variable, char *VariableName) {
 // FPU Utility
 //
 
-unsigned int fpucontrol;
+unsigned int fpucontrol;*/
 
 /* returns and pushes current fpu state, bool for set normal */
-int fpuSaveControl(BOOL bSetNormal) {
+/*int fpuSaveControl(BOOL bSetNormal) {
 	_asm {
 		fnstcw word ptr [fpucontrol]
 	}
@@ -843,10 +843,10 @@ int fpuSaveControl(BOOL bSetNormal) {
 	}
 
 	return fpucontrol;
-}
+}*/
 
 /* returns and pops fpu state previously pushed */
-int fpuRestoreControl() {
+/*int fpuRestoreControl() {
 	_asm {
 		fldcw word ptr [fpucontrol]
 	}
@@ -862,4 +862,4 @@ void fpuSetupDouble(void) {
 		and [temp], 0xFFFFF3FF
 		fldcw word ptr [temp]
 	}
-}
+}*/

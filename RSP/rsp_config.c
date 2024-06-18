@@ -32,6 +32,7 @@
 #include "rsp_Cpu.h"
 #include "RSP_breakpoint.h"
 #include "RSP Command.h"
+#include "RSP Recompiler CPU.h"
 #include "rsp_registers.h"
 #include "rsp_memory.h"
 
@@ -46,6 +47,8 @@ BOOL IndividualRspBlock = FALSE;
 BOOL RspShowErrors = FALSE;
 HANDLE hRspConfigMutex = NULL;
 HMENU hRSPMenu = NULL;
+
+RSP_COMPILER Compiler;
 
 BOOL GetBooleanCheck(HWND hDlg, DWORD DialogID) {
 	return (IsDlgButtonChecked(hDlg, DialogID) == BST_CHECKED) ? TRUE : FALSE;
@@ -117,18 +120,18 @@ void __cdecl rspConfig(HWND hWnd) {
 }
 
 void InitiateInternalRSP() {
-	/*memset(&Compiler, 0, sizeof(Compiler));
+	memset(&Compiler, 0, sizeof(Compiler));
 
-	Compiler.bAlignGPR = TRUE;
+	/*Compiler.bAlignGPR = TRUE;
 	Compiler.bAlignVector = TRUE;
-	Compiler.bFlags = TRUE;
+	Compiler.bFlags = TRUE;*/
 	Compiler.bReOrdering = TRUE;
 	Compiler.bSections = TRUE;
-	Compiler.bDest = TRUE;
-	Compiler.bAccum = TRUE;
+	/*Compiler.bDest = TRUE;
+	Compiler.bAccum = TRUE;*/
 	Compiler.bGPRConstants = TRUE;
 
-	DetectCpuSpecs();*/
+	/*DetectCpuSpecs();*/
 	hRspConfigMutex = CreateMutex(NULL, FALSE, NULL);
 
 	LoadRspSettings();
@@ -139,6 +142,80 @@ void InitiateInternalRSP() {
 #ifdef GenerateLog
 	Start_Log();
 #endif
+}
+
+static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	/*extern BYTE* pLastSecondary;*/
+	char Buffer[256];
+
+	UNREFERENCED_PARAMETER(lParam);
+
+	switch (uMsg) {
+	case WM_INITDIALOG:
+		/*if (Compiler.mmx == TRUE)
+			CheckDlgButton(hDlg, IDC_CHECK_MMX, BST_CHECKED);
+		if (Compiler.mmx2 == TRUE)
+			CheckDlgButton(hDlg, IDC_CHECK_MMX2, BST_CHECKED);
+		if (Compiler.sse == TRUE)
+			CheckDlgButton(hDlg, IDC_CHECK_SSE, BST_CHECKED);
+
+		if (Compiler.bAlignGPR == TRUE)
+			CheckDlgButton(hDlg, IDC_COMPILER_ALIGNGPR, BST_CHECKED);
+		if (Compiler.bAlignVector == TRUE)
+			CheckDlgButton(hDlg, IDC_COMPILER_ALIGNVEC, BST_CHECKED);*/
+
+		if (Compiler.bSections == TRUE)
+			CheckDlgButton(hDlg, IDC_COMPILER_SECTIONS, BST_CHECKED);
+		if (Compiler.bGPRConstants == TRUE)
+			CheckDlgButton(hDlg, IDC_COMPILER_GPRCONSTANTS, BST_CHECKED);
+		if (Compiler.bReOrdering == TRUE)
+			CheckDlgButton(hDlg, IDC_COMPILER_REORDER, BST_CHECKED);
+		/*if (Compiler.bFlags == TRUE)
+			CheckDlgButton(hDlg, IDC_COMPILER_FLAGS, BST_CHECKED);
+		if (Compiler.bAccum == TRUE)
+			CheckDlgButton(hDlg, IDC_COMPILER_ACCUM, BST_CHECKED);
+		if (Compiler.bDest == TRUE)
+			CheckDlgButton(hDlg, IDC_COMPILER_DEST, BST_CHECKED);*/
+
+		SetTimer(hDlg, 1, 250, NULL);
+		break;
+
+	case WM_TIMER:
+		sprintf(Buffer, "x86: %2.2f KB / %2.2f KB", (float)(RspRecompPos - RspRecompCode) / 1024.0F,
+			/*pLastSecondary ? (float)((pLastSecondary - RecompCodeSecondary) / 1024.0F) :*/ 0.0F);
+
+		SetDlgItemText(hDlg, IDC_COMPILER_BUFFERS, Buffer);
+		break;
+
+	case WM_COMMAND:
+		switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+		case IDOK:
+			/*Compiler.mmx = GetBooleanCheck(hDlg, IDC_CHECK_MMX);
+			Compiler.mmx2 = GetBooleanCheck(hDlg, IDC_CHECK_MMX2);
+			Compiler.sse = GetBooleanCheck(hDlg, IDC_CHECK_SSE);*/
+			Compiler.bSections = GetBooleanCheck(hDlg, IDC_COMPILER_SECTIONS);
+			Compiler.bReOrdering = GetBooleanCheck(hDlg, IDC_COMPILER_REORDER);
+			Compiler.bGPRConstants = GetBooleanCheck(hDlg, IDC_COMPILER_GPRCONSTANTS);
+			/*Compiler.bFlags = GetBooleanCheck(hDlg, IDC_COMPILER_FLAGS);
+			Compiler.bAccum = GetBooleanCheck(hDlg, IDC_COMPILER_ACCUM);
+			Compiler.bDest = GetBooleanCheck(hDlg, IDC_COMPILER_DEST);
+			Compiler.bAlignGPR = GetBooleanCheck(hDlg, IDC_COMPILER_ALIGNGPR);
+			Compiler.bAlignVector = GetBooleanCheck(hDlg, IDC_COMPILER_ALIGNVEC);*/
+			KillTimer(hDlg, 1);
+			EndDialog(hDlg, TRUE);
+			break;
+
+		case IDCANCEL:
+			KillTimer(hDlg, 1);
+			EndDialog(hDlg, TRUE);
+			break;
+		}
+		break;
+
+	default:
+		return FALSE;
+	}
+	return TRUE;
 }
 
 void __cdecl ProcessMenuItem(int ID) {
@@ -222,9 +299,9 @@ void __cdecl ProcessMenuItem(int ID) {
 
 		Settings_Write(APPS_NAME, STR_RSP_SETTINGS, STR_RSP_SHOW_ERRORS, RspShowErrors ? "True" : "False");
 		break;
-	/*case ID_COMPILER:
-		DialogBox(hinstDLL, "RSPCOMPILER", HWND_DESKTOP, CompilerDlgProc);
-		break;*/
+	case ID_COMPILER:
+		DialogBox(hInst, "RSPCOMPILER", HWND_DESKTOP, CompilerDlgProc);
+		break;
 	}
 }
 

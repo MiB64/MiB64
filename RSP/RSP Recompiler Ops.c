@@ -25,18 +25,17 @@
  *
  */
 
-/*#include <windows.h>
-#include <stdio.h>
-#include "RSP.h"
-#include "CPU.h"
-#include "Recompiler CPU.h"
-#include "Interpreter Ops.h"
+#include <windows.h>
+/*#include <stdio.h>*/
+#include "rsp_Cpu.h"
+#include "RSP Recompiler CPU.h"
+#include "RSP Interpreter Ops.h"
 #include "RSP Command.h"
-#include "RSP Registers.h"
-#include "memory.h"
-#include "dma.h"
-#include "log.h"
-#include "x86.h"*/
+#include "rsp_registers.h"
+#include "rsp_memory.h"
+/*#include "dma.h"*/
+#include "rsp_log.h"
+#include "../x86.h"
 #include "rsp_config.h"
 
 /*U_WORD Recp, RecpResult, SQroot, SQrootResult;
@@ -4547,11 +4546,10 @@ void Compile_Opcode_SWV ( void ) {
 /************************** Other functions **************************/
 
 void CompileRsp_UnknownOpcode (void) {
-	/*CPU_Message("  %X Unhandled Opcode: %s",CompilePC, RSPOpcodeName(RSPOpC.Hex,CompilePC) );	
-	NextInstruction = FINISH_BLOCK;
-	MoveConstToVariable(CompilePC,PrgCount,"RSP PC");
-	MoveConstToVariable(RSPOpC.Hex,&RSPOpC.Hex, "RSPOpC.Hex");
-	Call_Direct(rsp_UnknownOpcode, "rsp_UnknownOpcode" );
-	Ret();*/
-	LogMessage("TODO: Compile_UnknownOpcode");
+	RSP_CPU_Message("  %X Unhandled Opcode: %s",RspCompilePC, RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC) );	
+	RSP_NextInstruction = FINISH_BLOCK;
+	MoveConstToVariable(&RspRecompPos, RspCompilePC,&SP_PC_REG,"RSP PC");
+	MoveConstToVariable(&RspRecompPos, RSPOpC.OP.Hex,&RSPOpC.OP.Hex, "RSPOpC.Hex");
+	Call_Direct(&RspRecompPos, (void*)rsp_UnknownOpcode, "rsp_UnknownOpcode" );
+	Ret(&RspRecompPos);
 }

@@ -51,7 +51,7 @@ BEGIN
                     WS_TABSTOP,127,74,30,10
     CONTROL         "MMX",IDC_CHECK_MMX,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,127,46,33,10
-    CONTROL         "MMX ²",IDC_CHECK_MMX2,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "MMX2",IDC_CHECK_MMX2,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,127,60,37,10
     CONTROL         "Vector Dest Analysis",IDC_COMPILER_DEST,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,22,18,81,10

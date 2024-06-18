@@ -636,7 +636,7 @@ void Load_FPR_ToTop (BLOCK_SECTION * Section, int Reg, int RegToLoad, int Format
 			if (FpuMappedTo((StackTopPos - 1) & 7) != (DWORD)RegToLoad) {
 				UnMap_FPR(Section,FpuMappedTo((StackTopPos - 1) & 7),TRUE);
 				CPU_Message("    regcache: allocate ST(0) to %s", FPR_Name[Reg]);
-				fpuLoadReg((int*)&StackTopPos,StackPosition(Section,RegToLoad));		
+				fpuLoadReg(&RecompPos, (int*)&StackTopPos,StackPosition(Section,RegToLoad));
 				FpuRoundingModel(StackTopPos) = RoundDefault;
 				FpuMappedTo(StackTopPos)      = Reg;
 				FpuState(StackTopPos)         = Format;
@@ -665,7 +665,7 @@ void Load_FPR_ToTop (BLOCK_SECTION * Section, int Reg, int RegToLoad, int Format
 			CPU_Message("    regcache: allocate ST(%d) to %s", StackPos,FPR_Name[FpuMappedTo(RegPos)]);
 			CPU_Message("    regcache: allocate ST(0) to %s", FPR_Name[Reg]);
 
-			fpuExchange(StackPos);
+			fpuExchange(&RecompPos, StackPos);
 
 			FpuRoundingModel(StackTopPos) = RoundDefault;
 			FpuMappedTo(StackTopPos)      = Reg;
@@ -687,23 +687,23 @@ void Load_FPR_ToTop (BLOCK_SECTION * Section, int Reg, int RegToLoad, int Format
 		switch (Format) {
 		case FPU_Dword:
 			sprintf(Name,"FPRFloatLocation[%d]",RegToLoad);
-			MoveVariableToX86reg(&FPRFloatLoadStoreLocation[RegToLoad],Name,TempReg);
-			fpuLoadIntegerDwordFromX86Reg((int*)&StackTopPos,TempReg);
+			MoveVariableToX86reg(&RecompPos, &FPRFloatLoadStoreLocation[RegToLoad],Name,TempReg);
+			fpuLoadIntegerDwordFromX86Reg(&RecompPos, (int*)&StackTopPos,TempReg);
 			break;
 		case FPU_Qword:
 			sprintf(Name,"FPRDoubleLocation[%d]",RegToLoad);
-			MoveVariableToX86reg(&FPRDoubleLocation[RegToLoad],Name,TempReg);
-			fpuLoadIntegerQwordFromX86Reg((int*)&StackTopPos,TempReg);
+			MoveVariableToX86reg(&RecompPos, &FPRDoubleLocation[RegToLoad],Name,TempReg);
+			fpuLoadIntegerQwordFromX86Reg(&RecompPos, (int*)&StackTopPos,TempReg);
 			break;
 		case FPU_Float:
 			sprintf(Name,"FPRFloatLocation[%d]",RegToLoad);
-			MoveVariableToX86reg(&FPRFloatLoadStoreLocation[RegToLoad],Name,TempReg);
-			fpuLoadDwordFromX86Reg((int*)&StackTopPos,TempReg);
+			MoveVariableToX86reg(&RecompPos, &FPRFloatLoadStoreLocation[RegToLoad],Name,TempReg);
+			fpuLoadDwordFromX86Reg(&RecompPos, (int*)&StackTopPos,TempReg);
 			break;
 		case FPU_Double:
 			sprintf(Name,"FPRDoubleLocation[%d]",RegToLoad);
-			MoveVariableToX86reg(&FPRDoubleLocation[RegToLoad],Name,TempReg);
-			fpuLoadQwordFromX86Reg((int*)&StackTopPos,TempReg);
+			MoveVariableToX86reg(&RecompPos, &FPRDoubleLocation[RegToLoad],Name,TempReg);
+			fpuLoadQwordFromX86Reg(&RecompPos, (int*)&StackTopPos,TempReg);
 			break;
 		default:
 			if (ShowDebugMessages)
@@ -756,20 +756,20 @@ void Map_GPR_32bit (BLOCK_SECTION * Section, int Reg, BOOL SignValue, int MipsRe
 	
 	if (MipsRegToLoad > 0) {
 		if (IsUnknown(MipsRegToLoad)) {
-			MoveVariableToX86reg(&GPR[MipsRegToLoad].UW[0],GPR_NameLo[MipsRegToLoad],x86Reg);
+			MoveVariableToX86reg(&RecompPos, &GPR[MipsRegToLoad].UW[0],GPR_NameLo[MipsRegToLoad],x86Reg);
 		} else if (IsMapped(MipsRegToLoad)) {
 			if (Reg != MipsRegToLoad) {
-				MoveX86RegToX86Reg(MipsRegLo(MipsRegToLoad),x86Reg);
+				MoveX86RegToX86Reg(&RecompPos, MipsRegLo(MipsRegToLoad),x86Reg);
 			}
 		} else {
 			if (MipsRegLo(MipsRegToLoad) != 0) {
-				MoveConstToX86reg(MipsRegLo(MipsRegToLoad),x86Reg);
+				MoveConstToX86reg(&RecompPos, MipsRegLo(MipsRegToLoad),x86Reg);
 			} else {
-				XorX86RegToX86Reg(x86Reg,x86Reg);
+				XorX86RegToX86Reg(&RecompPos, x86Reg,x86Reg);
 			}
 		}
 	} else if (MipsRegToLoad == 0) {
-		XorX86RegToX86Reg(x86Reg,x86Reg);
+		XorX86RegToX86Reg(&RecompPos, x86Reg,x86Reg);
 	}
 	x86Mapped(x86Reg) = GPR_Mapped;
 	x86Protected(x86Reg) = TRUE;
@@ -818,23 +818,23 @@ void Map_GPR_64bit (BLOCK_SECTION * Section, int Reg, int MipsRegToLoad) {
 	x86MapOrder(x86lo) = 1;
 	if (MipsRegToLoad > 0) {
 		if (IsUnknown(MipsRegToLoad)) {
-			MoveVariableToX86reg(&GPR[MipsRegToLoad].UW[1],GPR_NameHi[MipsRegToLoad],x86Hi);
-			MoveVariableToX86reg(&GPR[MipsRegToLoad].UW[0],GPR_NameLo[MipsRegToLoad],x86lo);
+			MoveVariableToX86reg(&RecompPos, &GPR[MipsRegToLoad].UW[1],GPR_NameHi[MipsRegToLoad],x86Hi);
+			MoveVariableToX86reg(&RecompPos, &GPR[MipsRegToLoad].UW[0],GPR_NameLo[MipsRegToLoad],x86lo);
 		} else if (IsMapped(MipsRegToLoad)) {
 			if (Is32Bit(MipsRegToLoad)) {
 				if (IsSigned(MipsRegToLoad)) {
-					MoveX86RegToX86Reg(MipsRegLo(MipsRegToLoad),x86Hi);
-					ShiftRightSignImmed(x86Hi,31);
+					MoveX86RegToX86Reg(&RecompPos, MipsRegLo(MipsRegToLoad),x86Hi);
+					ShiftRightSignImmed(&RecompPos, x86Hi,31);
 				} else {
-					XorX86RegToX86Reg(x86Hi,x86Hi);
+					XorX86RegToX86Reg(&RecompPos, x86Hi,x86Hi);
 				}
 				if (Reg != MipsRegToLoad) {
-					MoveX86RegToX86Reg(MipsRegLo(MipsRegToLoad),x86lo);
+					MoveX86RegToX86Reg(&RecompPos, MipsRegLo(MipsRegToLoad),x86lo);
 				}
 			} else {
 				if (Reg != MipsRegToLoad) {
-					MoveX86RegToX86Reg(MipsRegHi(MipsRegToLoad),x86Hi);
-					MoveX86RegToX86Reg(MipsRegLo(MipsRegToLoad),x86lo);
+					MoveX86RegToX86Reg(&RecompPos, MipsRegHi(MipsRegToLoad),x86Hi);
+					MoveX86RegToX86Reg(&RecompPos, MipsRegLo(MipsRegToLoad),x86lo);
 				}
 			}
 		} else {
@@ -842,29 +842,29 @@ CPU_Message("Map_GPR_64bit 11");
 			if (Is32Bit(MipsRegToLoad)) {
 				if (IsSigned(MipsRegToLoad)) {
 					if (MipsRegLo((int)MipsRegLo(MipsRegToLoad) >> 31) != 0) {
-						MoveConstToX86reg((int)MipsRegLo(MipsRegToLoad) >> 31,x86Hi);
+						MoveConstToX86reg(&RecompPos, (int)MipsRegLo(MipsRegToLoad) >> 31,x86Hi);
 					} else {
-						XorX86RegToX86Reg(x86Hi,x86Hi);
+						XorX86RegToX86Reg(&RecompPos, x86Hi,x86Hi);
 					}
 				} else {
-					XorX86RegToX86Reg(x86Hi,x86Hi);
+					XorX86RegToX86Reg(&RecompPos, x86Hi,x86Hi);
 				}
 			} else {
 				if (MipsRegHi(MipsRegToLoad) != 0) {
-					MoveConstToX86reg(MipsRegHi(MipsRegToLoad),x86Hi);
+					MoveConstToX86reg(&RecompPos, MipsRegHi(MipsRegToLoad),x86Hi);
 				} else {
-					XorX86RegToX86Reg(x86Hi,x86Hi);
+					XorX86RegToX86Reg(&RecompPos, x86Hi,x86Hi);
 				}
 			}
 			if (MipsRegLo(MipsRegToLoad) != 0) {
-				MoveConstToX86reg(MipsRegLo(MipsRegToLoad),x86lo);
+				MoveConstToX86reg(&RecompPos, MipsRegLo(MipsRegToLoad),x86lo);
 			} else {
-				XorX86RegToX86Reg(x86lo,x86lo);
+				XorX86RegToX86Reg(&RecompPos, x86lo,x86lo);
 			}
 		}
 	} else if (MipsRegToLoad == 0) {
-		XorX86RegToX86Reg(x86Hi,x86Hi);
-		XorX86RegToX86Reg(x86lo,x86lo);
+		XorX86RegToX86Reg(&RecompPos, x86Hi,x86Hi);
+		XorX86RegToX86Reg(&RecompPos, x86lo,x86lo);
 	}
 	x86Mapped(x86Hi) = GPR_Mapped;
 	x86Mapped(x86lo) = GPR_Mapped;
@@ -891,7 +891,7 @@ int Map_MemoryStack (BLOCK_SECTION * Section, BOOL AutoMap) {
 	}
 	x86Mapped(x86Reg) = Stack_Mapped;
 	CPU_Message("    regcache: allocate %s as Memory Stack",x86_Name(x86Reg));		
-	MoveVariableToX86reg(&MemoryStack,"MemoryStack",x86Reg);
+	MoveVariableToX86reg(&RecompPos, &MemoryStack,"MemoryStack",x86Reg);
 	return x86Reg;
 }
 
@@ -958,7 +958,7 @@ int Map_TempReg (BLOCK_SECTION * Section, int x86Reg, int MipsReg, BOOL LoadHiWo
 						x86Mapped(NewReg) = GPR_Mapped;
 						x86MapOrder(NewReg) = x86MapOrder(x86Reg);
 						MipsRegLo(count) = NewReg;
-						MoveX86RegToX86Reg(x86Reg,NewReg);
+						MoveX86RegToX86Reg(&RecompPos, x86Reg,NewReg);
 						if (MipsReg == count && LoadHiWord == FALSE) { MipsReg = -1; }
 						count = 32;
 					}
@@ -973,7 +973,7 @@ int Map_TempReg (BLOCK_SECTION * Section, int x86Reg, int MipsReg, BOOL LoadHiWo
 						x86Mapped(NewReg) = GPR_Mapped;
 						x86MapOrder(NewReg) = x86MapOrder(x86Reg);
 						MipsRegHi(count) = NewReg;
-						MoveX86RegToX86Reg(x86Reg,NewReg);
+						MoveX86RegToX86Reg(&RecompPos, x86Reg,NewReg);
 						if (MipsReg == count && LoadHiWord == TRUE) { MipsReg = -1; }
 						count = 32;
 					}
@@ -988,41 +988,41 @@ int Map_TempReg (BLOCK_SECTION * Section, int x86Reg, int MipsReg, BOOL LoadHiWo
 	if (MipsReg >= 0) {
 		if (LoadHiWord) {
 			if (IsUnknown(MipsReg)) {
-				MoveVariableToX86reg(&GPR[MipsReg].UW[1],GPR_NameHi[MipsReg],x86Reg);
+				MoveVariableToX86reg(&RecompPos, &GPR[MipsReg].UW[1],GPR_NameHi[MipsReg],x86Reg);
 			} else if (IsMapped(MipsReg)) {
 				if (Is64Bit(MipsReg)) {
-					MoveX86RegToX86Reg(MipsRegHi(MipsReg),x86Reg);
+					MoveX86RegToX86Reg(&RecompPos, MipsRegHi(MipsReg),x86Reg);
 				} else if (IsSigned(MipsReg)){
-					MoveX86RegToX86Reg(MipsRegLo(MipsReg),x86Reg);
-					ShiftRightSignImmed(x86Reg,31);
+					MoveX86RegToX86Reg(&RecompPos, MipsRegLo(MipsReg),x86Reg);
+					ShiftRightSignImmed(&RecompPos, x86Reg,31);
 				} else {
-					MoveConstToX86reg(0,x86Reg);
+					MoveConstToX86reg(&RecompPos, 0,x86Reg);
 				}
 			} else {
 				if (Is64Bit(MipsReg)) {
 					if (MipsRegHi(MipsReg) != 0) {
-						MoveConstToX86reg(MipsRegHi(MipsReg),x86Reg);
+						MoveConstToX86reg(&RecompPos, MipsRegHi(MipsReg),x86Reg);
 					} else {
-						XorX86RegToX86Reg(x86Reg,x86Reg);
+						XorX86RegToX86Reg(&RecompPos, x86Reg,x86Reg);
 					}
 				} else {
 					if ((int)MipsRegLo(MipsReg) >> 31 != 0) {
-						MoveConstToX86reg((int)MipsRegLo(MipsReg) >> 31,x86Reg);
+						MoveConstToX86reg(&RecompPos, (int)MipsRegLo(MipsReg) >> 31,x86Reg);
 					} else {
-						XorX86RegToX86Reg(x86Reg,x86Reg);
+						XorX86RegToX86Reg(&RecompPos, x86Reg,x86Reg);
 					}
 				}
 			}
 		} else {
 			if (IsUnknown(MipsReg)) {
-				MoveVariableToX86reg(&GPR[MipsReg].UW[0],GPR_NameLo[MipsReg],x86Reg);
+				MoveVariableToX86reg(&RecompPos, &GPR[MipsReg].UW[0],GPR_NameLo[MipsReg],x86Reg);
 			} else if (IsMapped(MipsReg)) {
-				MoveX86RegToX86Reg(MipsRegLo(MipsReg),x86Reg);
+				MoveX86RegToX86Reg(&RecompPos, MipsRegLo(MipsReg),x86Reg);
 			} else {
 				if (MipsRegLo(MipsReg) != 0) {
-					MoveConstToX86reg(MipsRegLo(MipsReg),x86Reg);
+					MoveConstToX86reg(&RecompPos, MipsRegLo(MipsReg),x86Reg);
 				} else {
-					XorX86RegToX86Reg(x86Reg,x86Reg);
+					XorX86RegToX86Reg(&RecompPos, x86Reg,x86Reg);
 				}
 			}
 		}
@@ -1146,7 +1146,7 @@ void UnMap_AllFPRs ( BLOCK_SECTION * Section ) {
 		//see if any more registers mapped
 		StartPos = StackTopPos;
 		for (i = 0; i < 8; i++) {
-			if (FpuMappedTo((StartPos + i) & 7) != -1 ) { fpuIncStack((int*)&StackTopPos); }
+			if (FpuMappedTo((StartPos + i) & 7) != -1 ) { fpuIncStack(&RecompPos, (int*)&StackTopPos); }
 		}
 		if (StackPos != StackTopPos) { continue; }
 		return;
@@ -1177,7 +1177,7 @@ void UnMap_FPR (BLOCK_SECTION * Section, int Reg, int WriteBackValue ) {
 				FpuRoundingModel(i) = tmpRoundingModel; 
 				FpuMappedTo(i)      = MappedTo;
 				FpuState(i)         = RegState;
-				fpuExchange((i - StackTopPos) & 7);
+				fpuExchange(&RecompPos, (i - StackTopPos) & 7);
 			}
 			
 			CPU_Message("CurrentRoundingModel: %d  FpuRoundingModel(i): %d",
@@ -1187,23 +1187,23 @@ void UnMap_FPR (BLOCK_SECTION * Section, int Reg, int WriteBackValue ) {
 				int x86reg;
 
 				fpuControl = 0;			
-				fpuStoreControl(&fpuControl, "fpuControl");
+				fpuStoreControl(&RecompPos, &fpuControl, "fpuControl");
 				x86reg = Map_TempReg(Section,x86_Any,-1,FALSE);
-				MoveVariableToX86reg(&fpuControl, "fpuControl", x86reg);
-				AndConstToX86Reg(x86reg, 0xF3FF);
+				MoveVariableToX86reg(&RecompPos, &fpuControl, "fpuControl", x86reg);
+				AndConstToX86Reg(&RecompPos, x86reg, 0xF3FF);
 				
 				switch (FpuRoundingModel(i)) {
-				case RoundDefault: OrVariableToX86Reg(&FPU_RoundingMode,"FPU_RoundingMode", x86reg); break;
-				case RoundTruncate: OrConstToX86Reg(0x0C00, x86reg); break;
+				case RoundDefault: OrVariableToX86Reg(&RecompPos, &FPU_RoundingMode,"FPU_RoundingMode", x86reg); break;
+				case RoundTruncate: OrConstToX86Reg(&RecompPos, 0x0C00, x86reg); break;
 				case RoundNearest: /*OrConstToX86Reg(0x0000, x86reg);*/ break;
-				case RoundDown: OrConstToX86Reg(0x0400, x86reg); break;
-				case RoundUp: OrConstToX86Reg(0x0800, x86reg); break;
+				case RoundDown: OrConstToX86Reg(&RecompPos, 0x0400, x86reg); break;
+				case RoundUp: OrConstToX86Reg(&RecompPos, 0x0800, x86reg); break;
 				default:
 					if (ShowDebugMessages)
 						DisplayError("Unknown Rounding model");
 				}
-				MoveX86regToVariable(x86reg, &fpuControl, "fpuControl");
-				fpuLoadControl(&fpuControl, "fpuControl");
+				MoveX86regToVariable(&RecompPos, x86reg, &fpuControl, "fpuControl");
+				fpuLoadControl(&RecompPos, &fpuControl, "fpuControl");
 				CurrentRoundingModel = FpuRoundingModel(i);
 			}
 
@@ -1212,23 +1212,23 @@ void UnMap_FPR (BLOCK_SECTION * Section, int Reg, int WriteBackValue ) {
 			switch (FpuState(StackTopPos)) {
 			case FPU_Dword: 
 				sprintf(Name,"FPRFloatLocation[%d]",FpuMappedTo(StackTopPos));
-				MoveVariableToX86reg(&FPRFloatLoadStoreLocation[FpuMappedTo(StackTopPos)],Name,TempReg);
-				fpuStoreIntegerDwordFromX86Reg((int*)&StackTopPos,TempReg, TRUE); 
+				MoveVariableToX86reg(&RecompPos, &FPRFloatLoadStoreLocation[FpuMappedTo(StackTopPos)],Name,TempReg);
+				fpuStoreIntegerDwordFromX86Reg(&RecompPos, (int*)&StackTopPos,TempReg, TRUE);
 				break;
 			case FPU_Qword: 
 				sprintf(Name,"FPRDoubleLocation[%d]",FpuMappedTo(StackTopPos));
-				MoveVariableToX86reg(&FPRDoubleLocation[FpuMappedTo(StackTopPos)],Name,TempReg);
-				fpuStoreIntegerQwordFromX86Reg((int*)&StackTopPos,TempReg, TRUE); 
+				MoveVariableToX86reg(&RecompPos, &FPRDoubleLocation[FpuMappedTo(StackTopPos)],Name,TempReg);
+				fpuStoreIntegerQwordFromX86Reg(&RecompPos, (int*)&StackTopPos,TempReg, TRUE);
 				break;
 			case FPU_Float: 
 				sprintf(Name,"FPRFloatLocation[%d]",FpuMappedTo(StackTopPos));
-				MoveVariableToX86reg(&FPRFloatLoadStoreLocation[FpuMappedTo(StackTopPos)],Name,TempReg);
-				fpuStoreDwordFromX86Reg((int*)&StackTopPos,TempReg, TRUE); 
+				MoveVariableToX86reg(&RecompPos, &FPRFloatLoadStoreLocation[FpuMappedTo(StackTopPos)],Name,TempReg);
+				fpuStoreDwordFromX86Reg(&RecompPos, (int*)&StackTopPos,TempReg, TRUE);
 				break;
 			case FPU_Double: 
 				sprintf(Name,"FPRDoubleLocation[%d]",FpuMappedTo(StackTopPos));
-				MoveVariableToX86reg(&FPRDoubleLocation[FpuMappedTo(StackTopPos)],Name,TempReg);
-				fpuStoreQwordFromX86Reg((int*)&StackTopPos,TempReg, TRUE); 
+				MoveVariableToX86reg(&RecompPos, &FPRDoubleLocation[FpuMappedTo(StackTopPos)],Name,TempReg);
+				fpuStoreQwordFromX86Reg(&RecompPos, (int*)&StackTopPos,TempReg, TRUE);
 				break;
 			default:
 				if (ShowDebugMessages)
@@ -1239,7 +1239,7 @@ void UnMap_FPR (BLOCK_SECTION * Section, int Reg, int WriteBackValue ) {
 			FpuMappedTo(RegPos)      = (DWORD)-1;
 			FpuState(RegPos)         = FPU_Unkown;
 		} else {				
-			fpuFree((i - StackTopPos) & 7);
+			fpuFree(&RecompPos, (i - StackTopPos) & 7);
 			FpuRoundingModel(i) = RoundDefault;
 			FpuMappedTo(i)      = (DWORD)-1;
 			FpuState(i)         = FPU_Unkown;
@@ -1263,17 +1263,17 @@ void UnMap_GPR (BLOCK_SECTION * Section, DWORD Reg, int WriteBackValue) {
 			return; 
 		}
 		if (Is64Bit(Reg)) {
-			MoveConstToVariable(MipsRegHi(Reg),&GPR[Reg].UW[1],GPR_NameHi[Reg]);
-			MoveConstToVariable(MipsRegLo(Reg),&GPR[Reg].UW[0],GPR_NameLo[Reg]);
+			MoveConstToVariable(&RecompPos, MipsRegHi(Reg),&GPR[Reg].UW[1],GPR_NameHi[Reg]);
+			MoveConstToVariable(&RecompPos, MipsRegLo(Reg),&GPR[Reg].UW[0],GPR_NameLo[Reg]);
 			MipsRegState(Reg) = STATE_UNKNOWN;
 			return;
 		}
 		if ((MipsRegLo(Reg) & 0x80000000) != 0) {
-			MoveConstToVariable(0xFFFFFFFF,&GPR[Reg].UW[1],GPR_NameHi[Reg]);
+			MoveConstToVariable(&RecompPos, 0xFFFFFFFF,&GPR[Reg].UW[1],GPR_NameHi[Reg]);
 		} else {
-			MoveConstToVariable(0,&GPR[Reg].UW[1],GPR_NameHi[Reg]);
+			MoveConstToVariable(&RecompPos, 0,&GPR[Reg].UW[1],GPR_NameHi[Reg]);
 		}
-		MoveConstToVariable(MipsRegLo(Reg),&GPR[Reg].UW[0],GPR_NameLo[Reg]);
+		MoveConstToVariable(&RecompPos, MipsRegLo(Reg),&GPR[Reg].UW[0],GPR_NameLo[Reg]);
 		MipsRegState(Reg) = STATE_UNKNOWN;
 		return;
 	}
@@ -1289,15 +1289,15 @@ void UnMap_GPR (BLOCK_SECTION * Section, DWORD Reg, int WriteBackValue) {
 		MipsRegState(Reg) = STATE_UNKNOWN;
 		return; 
 	}
-	MoveX86regToVariable(MipsRegLo(Reg),&GPR[Reg].UW[0],GPR_NameLo[Reg]);
+	MoveX86regToVariable(&RecompPos, MipsRegLo(Reg),&GPR[Reg].UW[0],GPR_NameLo[Reg]);
 	if (Is64Bit(Reg)) {
-		MoveX86regToVariable(MipsRegHi(Reg),&GPR[Reg].UW[1],GPR_NameHi[Reg]);
+		MoveX86regToVariable(&RecompPos, MipsRegHi(Reg),&GPR[Reg].UW[1],GPR_NameHi[Reg]);
 	} else {
 		if (IsSigned(Reg)) {
-			ShiftRightSignImmed(MipsRegLo(Reg),31);
-			MoveX86regToVariable(MipsRegLo(Reg),&GPR[Reg].UW[1],GPR_NameHi[Reg]);
+			ShiftRightSignImmed(&RecompPos, MipsRegLo(Reg),31);
+			MoveX86regToVariable(&RecompPos, MipsRegLo(Reg),&GPR[Reg].UW[1],GPR_NameHi[Reg]);
 		} else {
-			MoveConstToVariable(0,&GPR[Reg].UW[1],GPR_NameHi[Reg]);
+			MoveConstToVariable(&RecompPos, 0,&GPR[Reg].UW[1],GPR_NameHi[Reg]);
 		}
 	}
 	MipsRegState(Reg) = STATE_UNKNOWN;
@@ -1352,7 +1352,7 @@ BOOL UnMap_X86reg (BLOCK_SECTION * Section, DWORD x86Reg) {
 	}
 	if (x86Mapped(x86Reg) == Stack_Mapped) { 
 		CPU_Message("    regcache: unallocate %s from Memory Stack",x86_Name(x86Reg));
-		MoveX86regToVariable(x86Reg,&MemoryStack,"MemoryStack");
+		MoveX86regToVariable(&RecompPos, x86Reg,&MemoryStack,"MemoryStack");
 		x86Mapped(x86Reg) = NotMapped;
 		return TRUE;
 	}
@@ -1431,53 +1431,53 @@ void WriteBackRegisters (BLOCK_SECTION * Section) {
 		case STATE_UNKNOWN: break;
 		case STATE_CONST_32:
 			if (!bEdiZero && (!MipsRegLo(count) || !(MipsRegLo(count) & 0x80000000))) {
-				XorX86RegToX86Reg(x86_EDI, x86_EDI);
+				XorX86RegToX86Reg(&RecompPos, x86_EDI, x86_EDI);
 				bEdiZero = TRUE;
 			}
 			if (!bEsiSign && (MipsRegLo(count) & 0x80000000)) {
-				MoveConstToX86reg(0xFFFFFFFF, x86_ESI);
+				MoveConstToX86reg(&RecompPos, 0xFFFFFFFF, x86_ESI);
 				bEsiSign = TRUE;
 			}
 
 			if ((MipsRegLo(count) & 0x80000000) != 0) {
-				MoveX86regToVariable(x86_ESI,&GPR[count].UW[1],GPR_NameHi[count]);
+				MoveX86regToVariable(&RecompPos, x86_ESI,&GPR[count].UW[1],GPR_NameHi[count]);
 			} else {
-				MoveX86regToVariable(x86_EDI,&GPR[count].UW[1],GPR_NameHi[count]);
+				MoveX86regToVariable(&RecompPos, x86_EDI,&GPR[count].UW[1],GPR_NameHi[count]);
 			}
 
 			if (MipsRegLo(count) == 0) {
-				MoveX86regToVariable(x86_EDI,&GPR[count].UW[0],GPR_NameLo[count]);
+				MoveX86regToVariable(&RecompPos, x86_EDI,&GPR[count].UW[0],GPR_NameLo[count]);
 			} else if (MipsRegLo(count) == 0xFFFFFFFF) {
-				MoveX86regToVariable(x86_ESI,&GPR[count].UW[0],GPR_NameLo[count]);
+				MoveX86regToVariable(&RecompPos, x86_ESI,&GPR[count].UW[0],GPR_NameLo[count]);
 			} else
-				MoveConstToVariable(MipsRegLo(count),&GPR[count].UW[0],GPR_NameLo[count]);
+				MoveConstToVariable(&RecompPos, MipsRegLo(count),&GPR[count].UW[0],GPR_NameLo[count]);
 
 			MipsRegState(count) = STATE_UNKNOWN;
 			break;
 		case STATE_CONST_64:
 			if (MipsRegLo(count) == 0 || MipsRegHi(count) == 0) {
-				XorX86RegToX86Reg(x86_EDI, x86_EDI);
+				XorX86RegToX86Reg(&RecompPos, x86_EDI, x86_EDI);
 				bEdiZero = TRUE;
 			}
 			if (MipsRegLo(count) == 0xFFFFFFFF || MipsRegHi(count) == 0xFFFFFFFF) {
-				MoveConstToX86reg(0xFFFFFFFF, x86_ESI);
+				MoveConstToX86reg(&RecompPos, 0xFFFFFFFF, x86_ESI);
 				bEsiSign = TRUE;
 			}
 
 			if (MipsRegHi(count) == 0) {
-				MoveX86regToVariable(x86_EDI,&GPR[count].UW[1],GPR_NameHi[count]);
+				MoveX86regToVariable(&RecompPos, x86_EDI,&GPR[count].UW[1],GPR_NameHi[count]);
 			} else if (MipsRegLo(count) == 0xFFFFFFFF) {
-				MoveX86regToVariable(x86_ESI,&GPR[count].UW[1],GPR_NameHi[count]);
+				MoveX86regToVariable(&RecompPos, x86_ESI,&GPR[count].UW[1],GPR_NameHi[count]);
 			} else {
-				MoveConstToVariable(MipsRegHi(count),&GPR[count].UW[1],GPR_NameHi[count]);
+				MoveConstToVariable(&RecompPos, MipsRegHi(count),&GPR[count].UW[1],GPR_NameHi[count]);
 			} 
 
 			if (MipsRegLo(count) == 0) {
-				MoveX86regToVariable(x86_EDI,&GPR[count].UW[0],GPR_NameLo[count]);
+				MoveX86regToVariable(&RecompPos, x86_EDI,&GPR[count].UW[0],GPR_NameLo[count]);
 			} else if (MipsRegLo(count) == 0xFFFFFFFF) {
-				MoveX86regToVariable(x86_ESI,&GPR[count].UW[0],GPR_NameLo[count]);
+				MoveX86regToVariable(&RecompPos, x86_ESI,&GPR[count].UW[0],GPR_NameLo[count]);
 			} else {
-				MoveConstToVariable(MipsRegLo(count),&GPR[count].UW[0],GPR_NameLo[count]);
+				MoveConstToVariable(&RecompPos, MipsRegLo(count),&GPR[count].UW[0],GPR_NameLo[count]);
 			}
 			MipsRegState(count) = STATE_UNKNOWN;
 			break;

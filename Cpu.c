@@ -38,6 +38,7 @@
 #include "resource.h" 
 #include "CheatSearch.h"
 #include "RomTools_Common.h"
+#include "RSP/rsp_main.h"
 
 int CPOAdjust = 0;
 int NextInstruction, ManualPaused, CPU_Paused, CountPerOp;
@@ -847,6 +848,10 @@ BOOL Machine_LoadState(void) {
 			unzReadCurrentFile(file,DMEM,0x1000);
 			unzReadCurrentFile(file,IMEM,0x1000);
 
+			if (InternalRSP) {
+				notifyRSPOfIMEMChange();
+			}
+
 			SetFpuLocations();
 			CheckRdramStatus();
 
@@ -1008,6 +1013,10 @@ BOOL Machine_LoadState(void) {
 		ReadFile( hSaveFile,RDRAM,RdramSize,&dwRead,NULL);
 		ReadFile( hSaveFile,DMEM,0x1000,&dwRead,NULL);
 		ReadFile( hSaveFile,IMEM,0x1000,&dwRead,NULL);
+
+		if (InternalRSP) {
+			notifyRSPOfIMEMChange();
+		}
 
 		SetFpuLocations();
 		CheckRdramStatus();

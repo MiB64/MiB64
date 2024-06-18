@@ -179,13 +179,13 @@ BOOL Compile_LB ( int Reg, DWORD Addr, BOOL SignExtend) {
 	case 0x10000000:
 		sprintf(VarName,"N64MEM + %X",Addr);
 		if (SignExtend) {
-			MoveSxVariableToX86regByte(Addr + N64MEM,VarName,Reg); 
+			MoveSxVariableToX86regByte(&RecompPos, Addr + N64MEM,VarName,Reg); 
 		} else {
-			MoveZxVariableToX86regByte(Addr + N64MEM,VarName,Reg); 
+			MoveZxVariableToX86regByte(&RecompPos, Addr + N64MEM,VarName,Reg); 
 		}
 		break;
 	default:
-		MoveConstToX86reg(0,Reg);
+		MoveConstToX86reg(&RecompPos, 0,Reg);
 		CPU_Message("Compile_LB\nFailed to compile address: %X", Addr);
 		if (ShowUnhandledMemory) { DisplayError("Compile_LB\nFailed to compile address: %X",Addr); }
 	}
@@ -215,13 +215,13 @@ BOOL Compile_LH ( int Reg, DWORD Addr, BOOL SignExtend) {
 	case 0x10000000:
 		sprintf(VarName,"N64MEM + %X",Addr);
 		if (SignExtend) {
-			MoveSxVariableToX86regHalf(Addr + N64MEM,VarName,Reg); 
+			MoveSxVariableToX86regHalf(&RecompPos, Addr + N64MEM,VarName,Reg); 
 		} else {
-			MoveZxVariableToX86regHalf(Addr + N64MEM,VarName,Reg); 
+			MoveZxVariableToX86regHalf(&RecompPos, Addr + N64MEM,VarName,Reg); 
 		}
 		break;
 	default:
-		MoveConstToX86reg(0,Reg);
+		MoveConstToX86reg(&RecompPos, 0,Reg);
 		CPU_Message("Compile_LH\nFailed to compile address: %X", Addr);
 		if (ShowUnhandledMemory) { DisplayError("Compile_LH\nFailed to compile address: %X",Addr); }
 	}
@@ -290,60 +290,60 @@ BOOL Compile_LW(int Reg, DWORD Addr) {
 	case 0x10000000:
 	case 0x10200000:  // Same as 0x10000000, added for Game Boy 64 by McBain & Snake (POM '98) (PD)
  		sprintf(VarName,"N64MEM + %X",Addr);
-		MoveVariableToX86reg(Addr + N64MEM,VarName,Reg); 
+		MoveVariableToX86reg(&RecompPos, Addr + N64MEM,VarName,Reg); 
 		break;
 	case 0x03F00000:
-		MoveConstToVariable(Addr & 0x1FFFFFFF, &ReadRdramRegisterAddr, "ReadRdramRegisterAddr");
-		Pushad();
-		Call_Direct((void*)&ReadRdramRegister, "ReadRdramRegister");
-		MoveX86regToVariable(x86_EAX, &TempValue, "TempValue");
-		Popad();
-		MoveVariableToX86reg(&TempValue, "TempValue", Reg);
+		MoveConstToVariable(&RecompPos, Addr & 0x1FFFFFFF, &ReadRdramRegisterAddr, "ReadRdramRegisterAddr");
+		Pushad(&RecompPos);
+		Call_Direct(&RecompPos, (void*)&ReadRdramRegister, "ReadRdramRegister");
+		MoveX86regToVariable(&RecompPos, x86_EAX, &TempValue, "TempValue");
+		Popad(&RecompPos);
+		MoveVariableToX86reg(&RecompPos, &TempValue, "TempValue", Reg);
 		break;
 	case 0x04000000:
 		if (Addr < 0x04002000) { 
 			sprintf(VarName,"N64MEM + %X",Addr);
-			MoveVariableToX86reg(Addr + N64MEM,VarName,Reg); 
+			MoveVariableToX86reg(&RecompPos, Addr + N64MEM,VarName,Reg); 
 			break; 
 		}
 		switch (Addr) {
-		case 0x04040000: MoveVariableToX86reg(&SP_MEM_ADDR_REG, "SP_MEM_ADDR_REG", Reg); break;
-		case 0x04040004: MoveVariableToX86reg(&SP_DRAM_ADDR_REG, "SP_DRAM_ADDR_REG", Reg); break;
-		case 0x04040008: MoveVariableToX86reg(&SP_RD_LEN_REG, "SP_RD_LEN_REG", Reg); break;
-		case 0x0404000C: MoveVariableToX86reg(&SP_WR_LEN_REG, "SP_WR_LEN_REG", Reg); break;
-		case 0x04040010: MoveVariableToX86reg(&SP_STATUS_REG, "SP_STATUS_REG", Reg); break;
-		case 0x04040014: MoveVariableToX86reg(&SP_DMA_FULL_REG, "SP_DMA_FULL_REG", Reg); break;
-		case 0x04040018: MoveVariableToX86reg(&SP_DMA_BUSY_REG, "SP_DMA_BUSY_REG", Reg); break;
-		case 0x04080000: MoveVariableToX86reg(&SP_PC_REG, "SP_PC_REG", Reg); break;
+		case 0x04040000: MoveVariableToX86reg(&RecompPos, &SP_MEM_ADDR_REG, "SP_MEM_ADDR_REG", Reg); break;
+		case 0x04040004: MoveVariableToX86reg(&RecompPos, &SP_DRAM_ADDR_REG, "SP_DRAM_ADDR_REG", Reg); break;
+		case 0x04040008: MoveVariableToX86reg(&RecompPos, &SP_RD_LEN_REG, "SP_RD_LEN_REG", Reg); break;
+		case 0x0404000C: MoveVariableToX86reg(&RecompPos, &SP_WR_LEN_REG, "SP_WR_LEN_REG", Reg); break;
+		case 0x04040010: MoveVariableToX86reg(&RecompPos, &SP_STATUS_REG, "SP_STATUS_REG", Reg); break;
+		case 0x04040014: MoveVariableToX86reg(&RecompPos, &SP_DMA_FULL_REG, "SP_DMA_FULL_REG", Reg); break;
+		case 0x04040018: MoveVariableToX86reg(&RecompPos, &SP_DMA_BUSY_REG, "SP_DMA_BUSY_REG", Reg); break;
+		case 0x04080000: MoveVariableToX86reg(&RecompPos, &SP_PC_REG, "SP_PC_REG", Reg); break;
 		default:
-			MoveConstToX86reg(0, Reg);
+			MoveConstToX86reg(&RecompPos, 0, Reg);
 			CPU_Message("Compile_LW\nFailed to compile address: %X", Addr);
 			if (ShowUnhandledMemory) { DisplayError("Compile_LW\nFailed to compile address: %X", Addr); }
 		}
 		break;
 	case 0x04100000:
 		switch (Addr) {
-			case 0x0410000C: MoveVariableToX86reg(&DPC_STATUS_REG,"DPC_STATUS_REG",Reg); break;
-			case 0x04100010: MoveVariableToX86reg(&DPC_CLOCK_REG,"DPC_CLOCK_REG",Reg); break;
-			case 0x04100014: MoveVariableToX86reg(&DPC_BUFBUSY_REG,"DPC_BUFBUSY_REG",Reg); break;
-			case 0x04100018: MoveVariableToX86reg(&DPC_PIPEBUSY_REG,"DPC_PIPEBUSY_REG",Reg); break;
-			case 0x0410001C: MoveVariableToX86reg(&DPC_TMEM_REG,"DPC_TMEM_REG",Reg); break;
+			case 0x0410000C: MoveVariableToX86reg(&RecompPos, &DPC_STATUS_REG,"DPC_STATUS_REG",Reg); break;
+			case 0x04100010: MoveVariableToX86reg(&RecompPos, &DPC_CLOCK_REG,"DPC_CLOCK_REG",Reg); break;
+			case 0x04100014: MoveVariableToX86reg(&RecompPos, &DPC_BUFBUSY_REG,"DPC_BUFBUSY_REG",Reg); break;
+			case 0x04100018: MoveVariableToX86reg(&RecompPos, &DPC_PIPEBUSY_REG,"DPC_PIPEBUSY_REG",Reg); break;
+			case 0x0410001C: MoveVariableToX86reg(&RecompPos, &DPC_TMEM_REG,"DPC_TMEM_REG",Reg); break;
 			default:
 				CPU_Message("Compile_LW\nFailed to compile address: %X", Addr);
 				if (ShowUnhandledMemory) { DisplayError("Compile_LW\nFailed to compile address: %X",Addr); }
 				sprintf(VarName,"N64MEM + %X",Addr);
-				MoveVariableToX86reg(Addr + N64MEM,VarName,Reg); 
+				MoveVariableToX86reg(&RecompPos, Addr + N64MEM,VarName,Reg); 
 				break;
 		}
 		break;
 	case 0x04300000:
 		switch (Addr) {
-		case 0x04300000: MoveVariableToX86reg(&MI_MODE_REG,"MI_MODE_REG",Reg); break;
-		case 0x04300004: MoveVariableToX86reg(&MI_VERSION_REG,"MI_VERSION_REG",Reg); break;
-		case 0x04300008: MoveVariableToX86reg(&MI_INTR_REG,"MI_INTR_REG",Reg); break;
-		case 0x0430000C: MoveVariableToX86reg(&MI_INTR_MASK_REG,"MI_INTR_MASK_REG",Reg); break;
+		case 0x04300000: MoveVariableToX86reg(&RecompPos, &MI_MODE_REG,"MI_MODE_REG",Reg); break;
+		case 0x04300004: MoveVariableToX86reg(&RecompPos, &MI_VERSION_REG,"MI_VERSION_REG",Reg); break;
+		case 0x04300008: MoveVariableToX86reg(&RecompPos, &MI_INTR_REG,"MI_INTR_REG",Reg); break;
+		case 0x0430000C: MoveVariableToX86reg(&RecompPos, &MI_INTR_MASK_REG,"MI_INTR_MASK_REG",Reg); break;
 		default:
-			MoveConstToX86reg(0,Reg);
+			MoveConstToX86reg(&RecompPos, 0,Reg);
 			CPU_Message("Compile_LW\nFailed to compile address: %X", Addr);
 			if (ShowUnhandledMemory) { DisplayError("Compile_LW\nFailed to compile address: %X",Addr); }
 		}
@@ -351,14 +351,14 @@ BOOL Compile_LW(int Reg, DWORD Addr) {
 	case 0x04400000: 
 		switch (Addr) {
 		case 0x04400010:
-			Pushad();
-			Call_Direct((void*)&UpdateCurrentHalfLine,"UpdateCurrentHalfLine");
-			Popad();
-			MoveVariableToX86reg(&HalfLine,"HalfLine",Reg);
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos, (void*)&UpdateCurrentHalfLine,"UpdateCurrentHalfLine");
+			Popad(&RecompPos);
+			MoveVariableToX86reg(&RecompPos, &HalfLine,"HalfLine",Reg);
 			break;
 		default:
 			CPU_Message("Compile_LW\nFailed to compile address: %X", Addr);
-			MoveConstToX86reg(0,Reg);
+			MoveConstToX86reg(&RecompPos, 0,Reg);
 			if (ShowUnhandledMemory) { DisplayError("Compile_LW\nFailed to compile address: %X",Addr); }
 		}
 		break;
@@ -366,70 +366,70 @@ BOOL Compile_LW(int Reg, DWORD Addr) {
 		switch (Addr) {
 		case 0x04500004: 
 			if (AiReadLength != NULL) {
-				Pushad();
-				Call_Direct((void*)AiReadLength,"AiReadLength");
-				MoveX86regToVariable(x86_EAX,&TempValue,"TempValue"); 
-				Popad();
-				MoveVariableToX86reg(&TempValue,"TempValue",Reg);
+				Pushad(&RecompPos);
+				Call_Direct(&RecompPos, (void*)AiReadLength,"AiReadLength");
+				MoveX86regToVariable(&RecompPos,x86_EAX,&TempValue,"TempValue"); 
+				Popad(&RecompPos);
+				MoveVariableToX86reg(&RecompPos,&TempValue,"TempValue",Reg);
 			} else {
-				MoveConstToX86reg(0,Reg);
+				MoveConstToX86reg(&RecompPos,0,Reg);
 			}						
 			break;
-		case 0x0450000C: MoveVariableToX86reg(&AI_STATUS_REG,"AI_STATUS_REG",Reg); break;
+		case 0x0450000C: MoveVariableToX86reg(&RecompPos,&AI_STATUS_REG,"AI_STATUS_REG",Reg); break;
 		default:
-			MoveConstToX86reg(0,Reg);
+			MoveConstToX86reg(&RecompPos,0,Reg);
 			CPU_Message("Compile_LW\nFailed to compile address: %X", Addr);
 			if (ShowUnhandledMemory) { DisplayError("Compile_LW\nFailed to compile address: %X",Addr); }
 		}
 		break;
 	case 0x04600000:
 		switch (Addr) {
-		case 0x04600004: MoveVariableToX86reg(&PI_CART_ADDR_REG,"PI_CART_ADDR_REG", Reg); break;
-		case 0x04600010: MoveVariableToX86reg(&PI_STATUS_REG,"PI_STATUS_REG",Reg); break;
-		case 0x04600014: MoveVariableToX86reg(&PI_DOMAIN1_REG,"PI_DOMAIN1_REG",Reg); break;
-		case 0x04600018: MoveVariableToX86reg(&PI_BSD_DOM1_PWD_REG,"PI_BSD_DOM1_PWD_REG",Reg); break;
-		case 0x0460001C: MoveVariableToX86reg(&PI_BSD_DOM1_PGS_REG,"PI_BSD_DOM1_PGS_REG",Reg); break;
-		case 0x04600020: MoveVariableToX86reg(&PI_BSD_DOM1_RLS_REG,"PI_BSD_DOM1_RLS_REG",Reg); break;
-		case 0x04600024: MoveVariableToX86reg(&PI_DOMAIN2_REG,"PI_DOMAIN2_REG",Reg); break;
-		case 0x04600028: MoveVariableToX86reg(&PI_BSD_DOM2_PWD_REG,"PI_BSD_DOM2_PWD_REG",Reg); break;
-		case 0x0460002C: MoveVariableToX86reg(&PI_BSD_DOM2_PGS_REG,"PI_BSD_DOM2_PGS_REG",Reg); break;
-		case 0x04600030: MoveVariableToX86reg(&PI_BSD_DOM2_RLS_REG,"PI_BSD_DOM2_RLS_REG",Reg); break;
+		case 0x04600004: MoveVariableToX86reg(&RecompPos, &PI_CART_ADDR_REG,"PI_CART_ADDR_REG", Reg); break;
+		case 0x04600010: MoveVariableToX86reg(&RecompPos, &PI_STATUS_REG,"PI_STATUS_REG",Reg); break;
+		case 0x04600014: MoveVariableToX86reg(&RecompPos, &PI_DOMAIN1_REG,"PI_DOMAIN1_REG",Reg); break;
+		case 0x04600018: MoveVariableToX86reg(&RecompPos, &PI_BSD_DOM1_PWD_REG,"PI_BSD_DOM1_PWD_REG",Reg); break;
+		case 0x0460001C: MoveVariableToX86reg(&RecompPos, &PI_BSD_DOM1_PGS_REG,"PI_BSD_DOM1_PGS_REG",Reg); break;
+		case 0x04600020: MoveVariableToX86reg(&RecompPos, &PI_BSD_DOM1_RLS_REG,"PI_BSD_DOM1_RLS_REG",Reg); break;
+		case 0x04600024: MoveVariableToX86reg(&RecompPos, &PI_DOMAIN2_REG,"PI_DOMAIN2_REG",Reg); break;
+		case 0x04600028: MoveVariableToX86reg(&RecompPos, &PI_BSD_DOM2_PWD_REG,"PI_BSD_DOM2_PWD_REG",Reg); break;
+		case 0x0460002C: MoveVariableToX86reg(&RecompPos, &PI_BSD_DOM2_PGS_REG,"PI_BSD_DOM2_PGS_REG",Reg); break;
+		case 0x04600030: MoveVariableToX86reg(&RecompPos, &PI_BSD_DOM2_RLS_REG,"PI_BSD_DOM2_RLS_REG",Reg); break;
 		default:
-			MoveConstToX86reg(0,Reg);
+			MoveConstToX86reg(&RecompPos,0,Reg);
 			CPU_Message("Compile_LW\nFailed to compile address: %X", Addr);
 			if (ShowUnhandledMemory) { DisplayError("Compile_LW\nFailed to compile address: %X",Addr); }
 		}
 		break;
 	case 0x04700000:
 		switch (Addr) {
-		case 0x0470000C: MoveVariableToX86reg(&RI_SELECT_REG,"RI_SELECT_REG",Reg); break;
-		case 0x04700010: MoveVariableToX86reg(&RI_REFRESH_REG,"RI_REFRESH_REG",Reg); break;
+		case 0x0470000C: MoveVariableToX86reg(&RecompPos,&RI_SELECT_REG,"RI_SELECT_REG",Reg); break;
+		case 0x04700010: MoveVariableToX86reg(&RecompPos,&RI_REFRESH_REG,"RI_REFRESH_REG",Reg); break;
 		default:
-			MoveConstToX86reg(0,Reg);
+			MoveConstToX86reg(&RecompPos,0,Reg);
 			CPU_Message("Compile_LW\nFailed to compile address: %X", Addr);
 			if (ShowUnhandledMemory) { DisplayError("Compile_LW\nFailed to compile address: %X",Addr); }
 		}
 		break;
 	case 0x04800000:
 		switch (Addr) {
-		case 0x04800018: MoveVariableToX86reg(&SI_STATUS_REG,"SI_STATUS_REG",Reg); break;
+		case 0x04800018: MoveVariableToX86reg(&RecompPos,&SI_STATUS_REG,"SI_STATUS_REG",Reg); break;
 		default:
-			MoveConstToX86reg(0,Reg);
+			MoveConstToX86reg(&RecompPos,0,Reg);
 			CPU_Message("Compile_LW\nFailed to compile address: %X", Addr);
 			if (ShowUnhandledMemory) { DisplayError("Compile_LW\nFailed to compile address: %X",Addr); }
 		}
 		break;
 	case 0x05000000:
-		MoveConstToX86reg(0,Reg);
+		MoveConstToX86reg(&RecompPos,0,Reg);
 		CPU_Message("Compile_LW\nFailed to compile address: %X", Addr);
 		if (ShowUnhandledMemory) { DisplayError("Compile_LW\nFailed to compile address: %X",Addr); }
 		break;
 	case 0x1FC00000:
 		sprintf(VarName,"N64MEM + %X",Addr);
-		MoveVariableToX86reg(Addr + N64MEM,VarName,Reg); 
+		MoveVariableToX86reg(&RecompPos,Addr + N64MEM,VarName,Reg); 
 		break;
 	default:
-		MoveConstToX86reg(((Addr & 0xFFFF) << 16) | (Addr & 0xFFFF),Reg);
+		MoveConstToX86reg(&RecompPos,((Addr & 0xFFFF) << 16) | (Addr & 0xFFFF),Reg);
 		CPU_Message("Compile_LW\nFailed to compile address: %X", Addr);
 		if (ShowUnhandledMemory) {
 			DisplayError("Compile_LW\nFailed to compile address: %X",Addr);
@@ -456,7 +456,7 @@ BOOL Compile_SB_Const ( BYTE Value, DWORD Addr ) {
 	case 0x00600000: 
 	case 0x00700000: 
 		sprintf(VarName,"N64MEM + %X",Addr);
-		MoveConstByteToVariable(Value,Addr + N64MEM,VarName); 
+		MoveConstByteToVariable(&RecompPos,Value,Addr + N64MEM,VarName); 
 		break;
 	default:
 		CPU_Message("Compile_SB_Const\ntrying to store in %X?", Addr);
@@ -483,7 +483,7 @@ BOOL Compile_SB_Register ( int x86Reg, DWORD Addr ) {
 	case 0x00600000: 
 	case 0x00700000: 
 		sprintf(VarName,"N64MEM + %X",Addr);
-		MoveX86regByteToVariable(x86Reg,Addr + N64MEM,VarName); 
+		MoveX86regByteToVariable(&RecompPos,x86Reg,Addr + N64MEM,VarName); 
 		break;
 	default:
 		CPU_Message("Compile_SB_Register\ntrying to store in %X?", Addr);
@@ -510,7 +510,7 @@ BOOL Compile_SH_Const ( WORD Value, DWORD Addr ) {
 	case 0x00600000: 
 	case 0x00700000: 
 		sprintf(VarName,"N64MEM + %X",Addr);
-		MoveConstHalfToVariable(Value,Addr + N64MEM,VarName); 
+		MoveConstHalfToVariable(&RecompPos, Value,Addr + N64MEM,VarName); 
 		break;
 	default:
 		CPU_Message("Compile_SH_Const\ntrying to store in %X?", Addr);
@@ -537,7 +537,7 @@ BOOL Compile_SH_Register ( int x86Reg, DWORD Addr ) {
 	case 0x00600000: 
 	case 0x00700000: 
 		sprintf(VarName,"N64MEM + %X",Addr);
-		MoveX86regHalfToVariable(x86Reg,Addr + N64MEM,VarName); 
+		MoveX86regHalfToVariable(&RecompPos,x86Reg,Addr + N64MEM,VarName); 
 		break;
 	default:
 		CPU_Message("Compile_SH_Register\ntrying to store in %X?", Addr);
@@ -645,29 +645,29 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 	case 0x00600000: 
 	case 0x00700000: 
 		sprintf(VarName,"N64MEM + %X",Addr);
-		MoveConstToVariable(Value,Addr + N64MEM,VarName); 
+		MoveConstToVariable(&RecompPos,Value,Addr + N64MEM,VarName); 
 		break;
 	case 0x03F00000:
-		MoveConstToVariable(Value, &ValueToWriteToRdramRegister, "ValueToWriteToRdramRegister");
-		MoveConstToVariable(Addr & 0x1FFFFFFF, &AddrToWriteToRdramRegister, "AddrToWriteToRdramRegister");
-		Pushad();
-		Call_Direct((void*)&WriteValueToRdramRegister, "WriteValueToRdramRegister");
-		Popad();
+		MoveConstToVariable(&RecompPos, Value, &ValueToWriteToRdramRegister, "ValueToWriteToRdramRegister");
+		MoveConstToVariable(&RecompPos, Addr & 0x1FFFFFFF, &AddrToWriteToRdramRegister, "AddrToWriteToRdramRegister");
+		Pushad(&RecompPos);
+		Call_Direct(&RecompPos, (void*)&WriteValueToRdramRegister, "WriteValueToRdramRegister");
+		Popad(&RecompPos);
 		break;
 	case 0x04000000:
 		if (Addr < 0x04002000) { 
 			sprintf(VarName,"N64MEM + %X",Addr);
-			MoveConstToVariable(Value,Addr + N64MEM,VarName); 
+			MoveConstToVariable(&RecompPos,Value,Addr + N64MEM,VarName); 
 			break;
 		}
 		switch (Addr) {
-		case 0x04040000: MoveConstToVariable(Value,&SP_MEM_ADDR_REGW,"SP_MEM_ADDR_REG"); break;
-		case 0x04040004: MoveConstToVariable(Value,&SP_DRAM_ADDR_REGW,"SP_DRAM_ADDR_REG"); break;
+		case 0x04040000: MoveConstToVariable(&RecompPos,Value,&SP_MEM_ADDR_REGW,"SP_MEM_ADDR_REG"); break;
+		case 0x04040004: MoveConstToVariable(&RecompPos,Value,&SP_DRAM_ADDR_REGW,"SP_DRAM_ADDR_REG"); break;
 		case 0x04040008:
-			MoveConstToVariable(Value,&SP_RD_LEN_REG,"SP_RD_LEN_REG");
-			Pushad();
-			Call_Direct((void*)&SP_DMA_READ,"SP_DMA_READ");
-			Popad();
+			MoveConstToVariable(&RecompPos,Value,&SP_RD_LEN_REG,"SP_RD_LEN_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)&SP_DMA_READ,"SP_DMA_READ");
+			Popad(&RecompPos);
 			break;
 		case 0x04040010: 
 			{
@@ -686,7 +686,7 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 				if ( ( Value & SP_CLR_SIG6 ) != 0 ) { ModValue |= SP_STATUS_SIG6; }
 				if ( ( Value & SP_CLR_SIG7 ) != 0 ) { ModValue |= SP_STATUS_SIG7; }
 				if (ModValue != 0) {
-					AndConstToVariable(~ModValue,&SP_STATUS_REG,"SP_STATUS_REG");
+					AndConstToVariable(&RecompPos,~ModValue,&SP_STATUS_REG,"SP_STATUS_REG");
 				}
 
 				ModValue = 0;
@@ -702,30 +702,30 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 				if ( ( Value & SP_SET_SIG6 ) != 0 ) { ModValue |= SP_STATUS_SIG6; }
 				if ( ( Value & SP_SET_SIG7 ) != 0 ) { ModValue |= SP_STATUS_SIG7; }
 				if (ModValue != 0) {
-					OrConstToVariable(ModValue,&SP_STATUS_REG,"SP_STATUS_REG");
+					OrConstToVariable(&RecompPos,ModValue,&SP_STATUS_REG,"SP_STATUS_REG");
 				}
 				if ( ( Value & SP_SET_SIG0 ) != 0 && AudioSignal ) 
 				{ 
-					OrConstToVariable(MI_INTR_SP,&MI_INTR_REG,"MI_INTR_REG");
-					Pushad();
-					Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
-					Popad();
+					OrConstToVariable(&RecompPos,MI_INTR_SP,&MI_INTR_REG,"MI_INTR_REG");
+					Pushad(&RecompPos);
+					Call_Direct(&RecompPos,(void*)CheckInterrupts,"CheckInterrupts");
+					Popad(&RecompPos);
 				}
 				if ( ( Value & SP_CLR_INTR ) != 0) { 
-					AndConstToVariable((DWORD)~MI_INTR_SP,&MI_INTR_REG,"MI_INTR_REG");
-					Pushad();
-					Call_Direct((void*)RunRsp,"RunRsp");
-					Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
-					Popad();
+					AndConstToVariable(&RecompPos,(DWORD)~MI_INTR_SP,&MI_INTR_REG,"MI_INTR_REG");
+					Pushad(&RecompPos);
+					Call_Direct(&RecompPos,(void*)RunRsp,"RunRsp");
+					Call_Direct(&RecompPos,(void*)CheckInterrupts,"CheckInterrupts");
+					Popad(&RecompPos);
 				} else {
-					Pushad();
-					Call_Direct((void*)RunRsp,"RunRsp");
-					Popad();
+					Pushad(&RecompPos);
+					Call_Direct(&RecompPos,(void*)RunRsp,"RunRsp");
+					Popad(&RecompPos);
 				}
 			}
 			break;
-		case 0x0404001C: MoveConstToVariable(0,&SP_SEMAPHORE_REG,"SP_SEMAPHORE_REG"); break;
-		case 0x04080000: MoveConstToVariable(Value & 0xFFC,&SP_PC_REG,"SP_PC_REG"); break;
+		case 0x0404001C: MoveConstToVariable(&RecompPos,0,&SP_SEMAPHORE_REG,"SP_SEMAPHORE_REG"); break;
+		case 0x04080000: MoveConstToVariable(&RecompPos,Value & 0xFFC,&SP_PC_REG,"SP_PC_REG"); break;
 		default:
 			if (ShowUnhandledMemory) { DisplayError("Compile_SW_Const\ntrying to store %X in %X?",Value,Addr); }
 		}
@@ -740,7 +740,7 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 				if ( ( Value & MI_CLR_EBUS ) != 0 ) { ModValue |= MI_MODE_EBUS; }
 				if ( ( Value & MI_CLR_RDRAM ) != 0 ) { ModValue |= MI_MODE_RDRAM; }
 				if (ModValue != 0) {
-					AndConstToVariable(~ModValue,&MI_MODE_REG,"MI_MODE_REG");
+					AndConstToVariable(&RecompPos,~ModValue,&MI_MODE_REG,"MI_MODE_REG");
 				}
 
 				ModValue = (Value & 0x7F);
@@ -748,10 +748,10 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 				if ( ( Value & MI_SET_EBUS ) != 0 ) { ModValue |= MI_MODE_EBUS; }
 				if ( ( Value & MI_SET_RDRAM ) != 0 ) { ModValue |= MI_MODE_RDRAM; }
 				if (ModValue != 0) {
-					OrConstToVariable(ModValue,&MI_MODE_REG,"MI_MODE_REG");
+					OrConstToVariable(&RecompPos,ModValue,&MI_MODE_REG,"MI_MODE_REG");
 				}
 				if ( ( Value & MI_CLR_DP_INTR ) != 0 ) { 
-					AndConstToVariable((DWORD)~MI_INTR_DP,&MI_INTR_REG,"MI_INTR_REG");
+					AndConstToVariable(&RecompPos,(DWORD)~MI_INTR_DP,&MI_INTR_REG,"MI_INTR_REG");
 				}
 			}
 			break;
@@ -766,7 +766,7 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 				if ( ( Value & MI_INTR_MASK_CLR_PI ) != 0 ) { ModValue |= MI_INTR_MASK_PI; }
 				if ( ( Value & MI_INTR_MASK_CLR_DP ) != 0 ) { ModValue |= MI_INTR_MASK_DP; }
 				if (ModValue != 0) {
-					AndConstToVariable(~ModValue,&MI_INTR_MASK_REG,"MI_INTR_MASK_REG");
+					AndConstToVariable(&RecompPos,~ModValue,&MI_INTR_MASK_REG,"MI_INTR_MASK_REG");
 				}
 
 				ModValue = 0;
@@ -777,7 +777,7 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 				if ( ( Value & MI_INTR_MASK_SET_PI ) != 0 ) { ModValue |= MI_INTR_MASK_PI; }
 				if ( ( Value & MI_INTR_MASK_SET_DP ) != 0 ) { ModValue |= MI_INTR_MASK_DP; }
 				if (ModValue != 0) {
-					OrConstToVariable(ModValue,&MI_INTR_MASK_REG,"MI_INTR_MASK_REG");
+					OrConstToVariable(&RecompPos,ModValue,&MI_INTR_MASK_REG,"MI_INTR_MASK_REG");
 				}
 			}
 			break;
@@ -789,146 +789,146 @@ BOOL Compile_SW_Const ( DWORD Value, DWORD Addr ) {
 		switch (Addr) {
 		case 0x04400000: 
 			if (ViStatusChanged != NULL) {
-				CompConstToVariable(Value,&VI_STATUS_REG,"VI_STATUS_REG");
-				JeLabel8("Continue",0);
+				CompConstToVariable(&RecompPos,Value,&VI_STATUS_REG,"VI_STATUS_REG");
+				JeLabel8(&RecompPos,"Continue",0);
 				Jump = RecompPos - 1;
-				MoveConstToVariable(Value,&VI_STATUS_REG,"VI_STATUS_REG");
-				Pushad();
-				Call_Direct((void*)ViStatusChanged,"ViStatusChanged");
-				Popad();
+				MoveConstToVariable(&RecompPos,Value,&VI_STATUS_REG,"VI_STATUS_REG");
+				Pushad(&RecompPos);
+				Call_Direct(&RecompPos,(void*)ViStatusChanged,"ViStatusChanged");
+				Popad(&RecompPos);
 				CPU_Message("");
 				CPU_Message("      Continue:");
 				*((BYTE *)(Jump))=(BYTE)(RecompPos - Jump - 1);
 			}
 			break;
-		case 0x04400004: MoveConstToVariable((Value & 0xFFFFFF),&VI_ORIGIN_REG,"VI_ORIGIN_REG"); break;
+		case 0x04400004: MoveConstToVariable(&RecompPos,(Value & 0xFFFFFF),&VI_ORIGIN_REG,"VI_ORIGIN_REG"); break;
 		case 0x04400008: 
 			if (ViWidthChanged != NULL) {
-				CompConstToVariable(Value,&VI_WIDTH_REG,"VI_WIDTH_REG");
-				JeLabel8("Continue",0);
+				CompConstToVariable(&RecompPos,Value,&VI_WIDTH_REG,"VI_WIDTH_REG");
+				JeLabel8(&RecompPos,"Continue",0);
 				Jump = RecompPos - 1;
-				MoveConstToVariable(Value,&VI_WIDTH_REG,"VI_WIDTH_REG");
-				Pushad();
-				Call_Direct((void*)ViWidthChanged,"ViWidthChanged");
-				Popad();
+				MoveConstToVariable(&RecompPos,Value,&VI_WIDTH_REG,"VI_WIDTH_REG");
+				Pushad(&RecompPos);
+				Call_Direct(&RecompPos,(void*)ViWidthChanged,"ViWidthChanged");
+				Popad(&RecompPos);
 				CPU_Message("");
 				CPU_Message("      Continue:");
 				*((BYTE *)(Jump))=(BYTE)(RecompPos - Jump - 1);
 			}
 			break;
-		case 0x0440000C: MoveConstToVariable(Value,&VI_INTR_REG,"VI_INTR_REG"); break;
+		case 0x0440000C: MoveConstToVariable(&RecompPos,Value,&VI_INTR_REG,"VI_INTR_REG"); break;
 		case 0x04400010: 
-			AndConstToVariable((DWORD)~MI_INTR_VI,&MI_INTR_REG,"MI_INTR_REG");
-			Pushad();
-			Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
-			Popad();
+			AndConstToVariable(&RecompPos,(DWORD)~MI_INTR_VI,&MI_INTR_REG,"MI_INTR_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)CheckInterrupts,"CheckInterrupts");
+			Popad(&RecompPos);
 			break;
-		case 0x04400014: MoveConstToVariable(Value,&VI_BURST_REG,"VI_BURST_REG"); break;
-		case 0x04400018: MoveConstToVariable(Value,&VI_V_SYNC_REG,"VI_V_SYNC_REG"); break;
-		case 0x0440001C: MoveConstToVariable(Value,&VI_H_SYNC_REG,"VI_H_SYNC_REG"); break;
-		case 0x04400020: MoveConstToVariable(Value,&VI_LEAP_REG,"VI_LEAP_REG"); break;
-		case 0x04400024: MoveConstToVariable(Value,&VI_H_START_REG,"VI_H_START_REG"); break;
-		case 0x04400028: MoveConstToVariable(Value,&VI_V_START_REG,"VI_V_START_REG"); break;
-		case 0x0440002C: MoveConstToVariable(Value,&VI_V_BURST_REG,"VI_V_BURST_REG"); break;
-		case 0x04400030: MoveConstToVariable(Value,&VI_X_SCALE_REG,"VI_X_SCALE_REG"); break;
-		case 0x04400034: MoveConstToVariable(Value,&VI_Y_SCALE_REG,"VI_Y_SCALE_REG"); break;
+		case 0x04400014: MoveConstToVariable(&RecompPos,Value,&VI_BURST_REG,"VI_BURST_REG"); break;
+		case 0x04400018: MoveConstToVariable(&RecompPos,Value,&VI_V_SYNC_REG,"VI_V_SYNC_REG"); break;
+		case 0x0440001C: MoveConstToVariable(&RecompPos,Value,&VI_H_SYNC_REG,"VI_H_SYNC_REG"); break;
+		case 0x04400020: MoveConstToVariable(&RecompPos,Value,&VI_LEAP_REG,"VI_LEAP_REG"); break;
+		case 0x04400024: MoveConstToVariable(&RecompPos,Value,&VI_H_START_REG,"VI_H_START_REG"); break;
+		case 0x04400028: MoveConstToVariable(&RecompPos,Value,&VI_V_START_REG,"VI_V_START_REG"); break;
+		case 0x0440002C: MoveConstToVariable(&RecompPos,Value,&VI_V_BURST_REG,"VI_V_BURST_REG"); break;
+		case 0x04400030: MoveConstToVariable(&RecompPos,Value,&VI_X_SCALE_REG,"VI_X_SCALE_REG"); break;
+		case 0x04400034: MoveConstToVariable(&RecompPos,Value,&VI_Y_SCALE_REG,"VI_Y_SCALE_REG"); break;
 		default:
 			if (ShowUnhandledMemory) { DisplayError("Compile_SW_Const\ntrying to store %X in %X?",Value,Addr); }
 		}
 		break;
 	case 0x04500000: /* AI registers */
 		switch (Addr) {
-		case 0x04500000: MoveConstToVariable(Value,&AI_DRAM_ADDR_REG,"AI_DRAM_ADDR_REG"); break;
+		case 0x04500000: MoveConstToVariable(&RecompPos,Value,&AI_DRAM_ADDR_REG,"AI_DRAM_ADDR_REG"); break;
 		case 0x04500004: 
-			MoveConstToVariable(Value,&AI_LEN_REG,"AI_LEN_REG");
-			Pushad();
-			Call_Direct((void*)AiLenChanged,"AiLenChanged");
-			Popad();
+			MoveConstToVariable(&RecompPos, Value,&AI_LEN_REG,"AI_LEN_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos, (void*)AiLenChanged,"AiLenChanged");
+			Popad(&RecompPos);
 			break;
-		case 0x04500008: MoveConstToVariable((Value & 1),&AI_CONTROL_REG,"AI_CONTROL_REG"); break;
+		case 0x04500008: MoveConstToVariable(&RecompPos,(Value & 1),&AI_CONTROL_REG,"AI_CONTROL_REG"); break;
 		case 0x0450000C:
 			/* Clear Interrupt */; 
-			AndConstToVariable((DWORD)~MI_INTR_AI,&MI_INTR_REG,"MI_INTR_REG");
-			AndConstToVariable((DWORD)~MI_INTR_AI,&AudioIntrReg,"AudioIntrReg");
-			Pushad();
-			Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
-			Popad();
+			AndConstToVariable(&RecompPos,(DWORD)~MI_INTR_AI,&MI_INTR_REG,"MI_INTR_REG");
+			AndConstToVariable(&RecompPos,(DWORD)~MI_INTR_AI,&AudioIntrReg,"AudioIntrReg");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)CheckInterrupts,"CheckInterrupts");
+			Popad(&RecompPos);
 			break;
 		case 0x04500010: 
 			sprintf(VarName,"N64MEM + %X",Addr);
-			MoveConstToVariable(Value,Addr + N64MEM,VarName); 
+			MoveConstToVariable(&RecompPos, Value,Addr + N64MEM,VarName);
 			break;
-		case 0x04500014: MoveConstToVariable(Value,&AI_BITRATE_REG,"AI_BITRATE_REG"); break;
+		case 0x04500014: MoveConstToVariable(&RecompPos,Value,&AI_BITRATE_REG,"AI_BITRATE_REG"); break;
 		default:
 			sprintf(VarName,"N64MEM + %X",Addr);
-			MoveConstToVariable(Value,Addr + N64MEM,VarName); 
+			MoveConstToVariable(&RecompPos, Value,Addr + N64MEM,VarName);
 			if (ShowUnhandledMemory) { DisplayError("Compile_SW_Const\ntrying to store %X in %X?",Value,Addr); }
 		}
 		break;
 	case 0x04600000:
 		switch (Addr) {
-		case 0x04600000: MoveConstToVariable(Value,&PI_DRAM_ADDR_REG,"PI_DRAM_ADDR_REG"); break;
-		case 0x04600004: MoveConstToVariable(Value,&PI_CART_ADDR_REG,"PI_CART_ADDR_REG"); break;
+		case 0x04600000: MoveConstToVariable(&RecompPos,Value,&PI_DRAM_ADDR_REG,"PI_DRAM_ADDR_REG"); break;
+		case 0x04600004: MoveConstToVariable(&RecompPos,Value,&PI_CART_ADDR_REG,"PI_CART_ADDR_REG"); break;
 		case 0x04600008: 
-			MoveConstToVariable(Value,&PI_RD_LEN_REG,"PI_RD_LEN_REG");
-			Pushad();
-			Call_Direct((void*)&PI_DMA_READ,"PI_DMA_READ");
-			Popad();
+			MoveConstToVariable(&RecompPos,Value,&PI_RD_LEN_REG,"PI_RD_LEN_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)&PI_DMA_READ,"PI_DMA_READ");
+			Popad(&RecompPos);
 			break;
 		case 0x0460000C:
-			MoveConstToVariable(Value,&PI_WR_LEN_REG,"PI_WR_LEN_REG");
-			Pushad();
-			Call_Direct((void*)&PI_DMA_WRITE,"PI_DMA_WRITE");
-			Popad();
+			MoveConstToVariable(&RecompPos,Value,&PI_WR_LEN_REG,"PI_WR_LEN_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)&PI_DMA_WRITE,"PI_DMA_WRITE");
+			Popad(&RecompPos);
 			break;
 		case 0x04600010: 
 			if ((Value & PI_CLR_INTR) != 0 ) {
-				AndConstToVariable((DWORD)~MI_INTR_PI,&MI_INTR_REG,"MI_INTR_REG");
-				Pushad();
-				Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
-				Popad();
+				AndConstToVariable(&RecompPos,(DWORD)~MI_INTR_PI,&MI_INTR_REG,"MI_INTR_REG");
+				Pushad(&RecompPos);
+				Call_Direct(&RecompPos,(void*)CheckInterrupts,"CheckInterrupts");
+				Popad(&RecompPos);
 			}
 			break;
-		case 0x04600014: MoveConstToVariable((Value & 0xFF),&PI_DOMAIN1_REG,"PI_DOMAIN1_REG"); break;
-		case 0x04600018: MoveConstToVariable((Value & 0xFF),&PI_BSD_DOM1_PWD_REG,"PI_BSD_DOM1_PWD_REG"); break;
-		case 0x0460001C: MoveConstToVariable((Value & 0xFF),&PI_BSD_DOM1_PGS_REG,"PI_BSD_DOM1_PGS_REG"); break;
-		case 0x04600020: MoveConstToVariable((Value & 0xFF),&PI_BSD_DOM1_RLS_REG,"PI_BSD_DOM1_RLS_REG"); break;
-		case 0x04600024: MoveConstToVariable((Value & 0xFF),&PI_DOMAIN2_REG,"PI_DOMAIN2_REG"); break;
+		case 0x04600014: MoveConstToVariable(&RecompPos,(Value & 0xFF),&PI_DOMAIN1_REG,"PI_DOMAIN1_REG"); break;
+		case 0x04600018: MoveConstToVariable(&RecompPos,(Value & 0xFF),&PI_BSD_DOM1_PWD_REG,"PI_BSD_DOM1_PWD_REG"); break;
+		case 0x0460001C: MoveConstToVariable(&RecompPos,(Value & 0xFF),&PI_BSD_DOM1_PGS_REG,"PI_BSD_DOM1_PGS_REG"); break;
+		case 0x04600020: MoveConstToVariable(&RecompPos,(Value & 0xFF),&PI_BSD_DOM1_RLS_REG,"PI_BSD_DOM1_RLS_REG"); break;
+		case 0x04600024: MoveConstToVariable(&RecompPos,(Value & 0xFF),&PI_DOMAIN2_REG,"PI_DOMAIN2_REG"); break;
 		default:
 			if (ShowUnhandledMemory) { DisplayError("Compile_SW_Const\ntrying to store %X in %X?",Value,Addr); }
 		}
 		break;
 	case 0x04700000:
 		switch (Addr) {
-		case 0x04700000: MoveConstToVariable(Value,&RI_MODE_REG,"RI_MODE_REG"); break;
-		case 0x04700004: MoveConstToVariable(Value,&RI_CONFIG_REG,"RI_CONFIG_REG"); break;
+		case 0x04700000: MoveConstToVariable(&RecompPos,Value,&RI_MODE_REG,"RI_MODE_REG"); break;
+		case 0x04700004: MoveConstToVariable(&RecompPos,Value,&RI_CONFIG_REG,"RI_CONFIG_REG"); break;
 		case 0x04700008: break;
-		case 0x0470000C: MoveConstToVariable(Value,&RI_SELECT_REG,"RI_SELECT_REG"); break;
+		case 0x0470000C: MoveConstToVariable(&RecompPos,Value,&RI_SELECT_REG,"RI_SELECT_REG"); break;
 		default:
 			if (ShowUnhandledMemory) { DisplayError("Compile_SW_Const\ntrying to store %X in %X?",Value,Addr); }
 		}
 		break;
 	case 0x04800000:
 		switch (Addr) {
-		case 0x04800000: MoveConstToVariable(Value,&SI_DRAM_ADDR_REG,"SI_DRAM_ADDR_REG"); break;
+		case 0x04800000: MoveConstToVariable(&RecompPos,Value,&SI_DRAM_ADDR_REG,"SI_DRAM_ADDR_REG"); break;
 		case 0x04800004: 			
-			MoveConstToVariable(Value,&SI_PIF_ADDR_RD64B_REG,"SI_PIF_ADDR_RD64B_REG");		
-			Pushad();
-			Call_Direct((void*)&SI_DMA_READ,"SI_DMA_READ");
-			Popad();
+			MoveConstToVariable(&RecompPos,Value,&SI_PIF_ADDR_RD64B_REG,"SI_PIF_ADDR_RD64B_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)&SI_DMA_READ,"SI_DMA_READ");
+			Popad(&RecompPos);
 			break;
 		case 0x04800010: 
-			MoveConstToVariable(Value,&SI_PIF_ADDR_WR64B_REG,"SI_PIF_ADDR_WR64B_REG");
-			Pushad();
-			Call_Direct((void*)&SI_DMA_WRITE,"SI_DMA_WRITE");
-			Popad();
+			MoveConstToVariable(&RecompPos,Value,&SI_PIF_ADDR_WR64B_REG,"SI_PIF_ADDR_WR64B_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)&SI_DMA_WRITE,"SI_DMA_WRITE");
+			Popad(&RecompPos);
 			break;
 		case 0x04800018: 
-			AndConstToVariable((DWORD)~MI_INTR_SI,&MI_INTR_REG,"MI_INTR_REG");
-			AndConstToVariable((DWORD)~SI_STATUS_INTERRUPT,&SI_STATUS_REG,"SI_STATUS_REG");
-			Pushad();
-			Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
-			Popad();
+			AndConstToVariable(&RecompPos,(DWORD)~MI_INTR_SI,&MI_INTR_REG,"MI_INTR_REG");
+			AndConstToVariable(&RecompPos,(DWORD)~SI_STATUS_INTERRUPT,&SI_STATUS_REG,"SI_STATUS_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)CheckInterrupts,"CheckInterrupts");
+			Popad(&RecompPos);
 			break;
 		default:
 			if (ShowUnhandledMemory) { DisplayError("Compile_SW_Const\ntrying to store %X in %X?",Value,Addr); }
@@ -959,46 +959,46 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 	case 0x00600000: 
 	case 0x00700000: 
 		sprintf(VarName,"N64MEM + %X",Addr);
-		MoveX86regToVariable(x86Reg,Addr + N64MEM,VarName); 
+		MoveX86regToVariable(&RecompPos,x86Reg,Addr + N64MEM,VarName); 
 		break;
 	case 0x03F00000:
-		MoveX86regToVariable(x86Reg, &ValueToWriteToRdramRegister, "ValueToWriteToRdramRegister");
-		MoveConstToVariable(Addr & 0x1FFFFFFF, &AddrToWriteToRdramRegister, "AddrToWriteToRdramRegister");
-		Pushad();
-		Call_Direct((void*)&WriteValueToRdramRegister, "WriteValueToRdramRegister");
-		Popad();
+		MoveX86regToVariable(&RecompPos, x86Reg, &ValueToWriteToRdramRegister, "ValueToWriteToRdramRegister");
+		MoveConstToVariable(&RecompPos, Addr & 0x1FFFFFFF, &AddrToWriteToRdramRegister, "AddrToWriteToRdramRegister");
+		Pushad(&RecompPos);
+		Call_Direct(&RecompPos, (void*)&WriteValueToRdramRegister, "WriteValueToRdramRegister");
+		Popad(&RecompPos);
 		break;
 	case 0x04000000: 
 		switch (Addr) {
-		case 0x04040000: MoveX86regToVariable(x86Reg,&SP_MEM_ADDR_REGW,"SP_MEM_ADDR_REG"); break;
-		case 0x04040004: MoveX86regToVariable(x86Reg,&SP_DRAM_ADDR_REGW,"SP_DRAM_ADDR_REG"); break;
+		case 0x04040000: MoveX86regToVariable(&RecompPos,x86Reg,&SP_MEM_ADDR_REGW,"SP_MEM_ADDR_REG"); break;
+		case 0x04040004: MoveX86regToVariable(&RecompPos,x86Reg,&SP_DRAM_ADDR_REGW,"SP_DRAM_ADDR_REG"); break;
 		case 0x04040008: 
-			MoveX86regToVariable(x86Reg,&SP_RD_LEN_REG,"SP_RD_LEN_REG");
-			Pushad();
-			Call_Direct((void*)&SP_DMA_READ,"SP_DMA_READ");
-			Popad();
+			MoveX86regToVariable(&RecompPos,x86Reg,&SP_RD_LEN_REG,"SP_RD_LEN_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)&SP_DMA_READ,"SP_DMA_READ");
+			Popad(&RecompPos);
 			break;
 		case 0x0404000C: 
-			MoveX86regToVariable(x86Reg,&SP_WR_LEN_REG,"SP_WR_LEN_REG");
-			Pushad();
-			Call_Direct((void*)&SP_DMA_WRITE,"SP_DMA_WRITE");
-			Popad();
+			MoveX86regToVariable(&RecompPos,x86Reg,&SP_WR_LEN_REG,"SP_WR_LEN_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)&SP_DMA_WRITE,"SP_DMA_WRITE");
+			Popad(&RecompPos);
 			break;
 		case 0x04040010: 
-			MoveX86regToVariable(x86Reg,&RegModValue,"RegModValue");
-			Pushad();
-			Call_Direct((void*)ChangeSpStatus,"ChangeSpStatus");
-			Popad();
+			MoveX86regToVariable(&RecompPos,x86Reg,&RegModValue,"RegModValue");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)ChangeSpStatus,"ChangeSpStatus");
+			Popad(&RecompPos);
 			break;
-		case 0x0404001C: MoveConstToVariable(0,&SP_SEMAPHORE_REG,"SP_SEMAPHORE_REG"); break;
+		case 0x0404001C: MoveConstToVariable(&RecompPos,0,&SP_SEMAPHORE_REG,"SP_SEMAPHORE_REG"); break;
 		case 0x04080000: 
-			MoveX86regToVariable(x86Reg,&SP_PC_REG,"SP_PC_REG");
-			AndConstToVariable(0xFFC,&SP_PC_REG,"SP_PC_REG");
+			MoveX86regToVariable(&RecompPos,x86Reg,&SP_PC_REG,"SP_PC_REG");
+			AndConstToVariable(&RecompPos,0xFFC,&SP_PC_REG,"SP_PC_REG");
 			break;
 		default:
 			if (Addr < 0x04002000) {
 				sprintf(VarName,"N64MEM + %X",Addr);
-				MoveX86regToVariable(x86Reg,Addr + N64MEM,VarName); 
+				MoveX86regToVariable(&RecompPos,x86Reg,Addr + N64MEM,VarName);
 			} else {
 				CPU_Message("    Should be moving %s in to %X ?!?",x86_Name(x86Reg),Addr);
 				if (ShowUnhandledMemory) { DisplayError("Compile_SW_Register\ntrying to store at %X?",Addr); }
@@ -1008,15 +1008,15 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 	case 0x04100000: 
 		switch (Addr) { 
 		case 0x0410000C:
-			MoveX86regToVariable(x86Reg,&RegModValue,"RegModValue");
-			Pushad();
-			Call_Direct((void*)ChangeDpcStatus,"ChangeDpcStatus");
-			Popad();
+			MoveX86regToVariable(&RecompPos,x86Reg,&RegModValue,"RegModValue");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)ChangeDpcStatus,"ChangeDpcStatus");
+			Popad(&RecompPos);
 			break;
 		default:
 			CPU_Message("    Should be moving %s in to %X ?!?",x86_Name(x86Reg),Addr);
 			sprintf(VarName,"N64MEM + %X",Addr);
-			MoveX86regToVariable(x86Reg,Addr + N64MEM,VarName); 
+			MoveX86regToVariable(&RecompPos, x86Reg,Addr + N64MEM,VarName);
 			if (ShowUnhandledMemory) { DisplayError("Compile_SW_Register\ntrying to store at %X?",Addr); }
 			break;
 		}
@@ -1024,16 +1024,16 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 	case 0x04300000: 
 		switch (Addr) {
 		case 0x04300000: 
-			MoveX86regToVariable(x86Reg,&RegModValue,"RegModValue");
-			Pushad(); 
-			Call_Direct((void*)ChangeMiModeReg,"ChangeMiModeReg");
-			Popad();
+			MoveX86regToVariable(&RecompPos,x86Reg,&RegModValue,"RegModValue");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)ChangeMiModeReg,"ChangeMiModeReg");
+			Popad(&RecompPos);
 			break;
 		case 0x0430000C: 
-			MoveX86regToVariable(x86Reg,&RegModValue,"RegModValue");
-			Pushad();
-			Call_Direct((void*)ChangeMiIntrMask,"ChangeMiIntrMask");
-			Popad();
+			MoveX86regToVariable(&RecompPos,x86Reg,&RegModValue,"RegModValue");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)ChangeMiIntrMask,"ChangeMiIntrMask");
+			Popad(&RecompPos);
 			break;
 		default:
 			CPU_Message("    Should be moving %s in to %X ?!?",x86_Name(x86Reg),Addr);
@@ -1044,52 +1044,52 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 		switch (Addr) {
 		case 0x04400000: 
 			if (ViStatusChanged != NULL) {
-				CompX86regToVariable(x86Reg,&VI_STATUS_REG,"VI_STATUS_REG");
-				JeLabel8("Continue",0);
+				CompX86regToVariable(&RecompPos, x86Reg,&VI_STATUS_REG,"VI_STATUS_REG");
+				JeLabel8(&RecompPos,"Continue",0);
 				Jump = RecompPos - 1;
-				MoveX86regToVariable(x86Reg,&VI_STATUS_REG,"VI_STATUS_REG");
-				Pushad();
-				Call_Direct((void*)ViStatusChanged,"ViStatusChanged");
-				Popad();
+				MoveX86regToVariable(&RecompPos,x86Reg,&VI_STATUS_REG,"VI_STATUS_REG");
+				Pushad(&RecompPos);
+				Call_Direct(&RecompPos,(void*)ViStatusChanged,"ViStatusChanged");
+				Popad(&RecompPos);
 				CPU_Message("");
 				CPU_Message("      Continue:");
 				*((BYTE *)(Jump))=(BYTE)(RecompPos - Jump - 1);
 			}
 			break;
 		case 0x04400004: 
-			MoveX86regToVariable(x86Reg,&VI_ORIGIN_REG,"VI_ORIGIN_REG"); 
-			AndConstToVariable(0xFFFFFF,&VI_ORIGIN_REG,"VI_ORIGIN_REG"); 
+			MoveX86regToVariable(&RecompPos,x86Reg,&VI_ORIGIN_REG,"VI_ORIGIN_REG");
+			AndConstToVariable(&RecompPos,0xFFFFFF,&VI_ORIGIN_REG,"VI_ORIGIN_REG");
 			break;
 		case 0x04400008: 
 			if (ViWidthChanged != NULL) {
-				CompX86regToVariable(x86Reg,&VI_WIDTH_REG,"VI_WIDTH_REG");
-				JeLabel8("Continue",0);
+				CompX86regToVariable(&RecompPos, x86Reg,&VI_WIDTH_REG,"VI_WIDTH_REG");
+				JeLabel8(&RecompPos,"Continue",0);
 				Jump = RecompPos - 1;
-				MoveX86regToVariable(x86Reg,&VI_WIDTH_REG,"VI_WIDTH_REG");
-				Pushad();
-				Call_Direct((void*)ViWidthChanged,"ViWidthChanged");
-				Popad();
+				MoveX86regToVariable(&RecompPos,x86Reg,&VI_WIDTH_REG,"VI_WIDTH_REG");
+				Pushad(&RecompPos);
+				Call_Direct(&RecompPos,(void*)ViWidthChanged,"ViWidthChanged");
+				Popad(&RecompPos);
 				CPU_Message("");
 				CPU_Message("      Continue:");
 				*((BYTE *)(Jump))=(BYTE)(RecompPos - Jump - 1);
 			}
 			break;
-		case 0x0440000C: MoveX86regToVariable(x86Reg,&VI_INTR_REG,"VI_INTR_REG"); break;
+		case 0x0440000C: MoveX86regToVariable(&RecompPos,x86Reg,&VI_INTR_REG,"VI_INTR_REG"); break;
 		case 0x04400010: 
-			AndConstToVariable((DWORD)~MI_INTR_VI,&MI_INTR_REG,"MI_INTR_REG");
-			Pushad();
-			Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
-			Popad();
+			AndConstToVariable(&RecompPos,(DWORD)~MI_INTR_VI,&MI_INTR_REG,"MI_INTR_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)CheckInterrupts,"CheckInterrupts");
+			Popad(&RecompPos);
 			break;
-		case 0x04400014: MoveX86regToVariable(x86Reg,&VI_BURST_REG,"VI_BURST_REG"); break;
-		case 0x04400018: MoveX86regToVariable(x86Reg,&VI_V_SYNC_REG,"VI_V_SYNC_REG"); break;
-		case 0x0440001C: MoveX86regToVariable(x86Reg,&VI_H_SYNC_REG,"VI_H_SYNC_REG"); break;
-		case 0x04400020: MoveX86regToVariable(x86Reg,&VI_LEAP_REG,"VI_LEAP_REG"); break;
-		case 0x04400024: MoveX86regToVariable(x86Reg,&VI_H_START_REG,"VI_H_START_REG"); break;
-		case 0x04400028: MoveX86regToVariable(x86Reg,&VI_V_START_REG,"VI_V_START_REG"); break;
-		case 0x0440002C: MoveX86regToVariable(x86Reg,&VI_V_BURST_REG,"VI_V_BURST_REG"); break;
-		case 0x04400030: MoveX86regToVariable(x86Reg,&VI_X_SCALE_REG,"VI_X_SCALE_REG"); break;
-		case 0x04400034: MoveX86regToVariable(x86Reg,&VI_Y_SCALE_REG,"VI_Y_SCALE_REG"); break;
+		case 0x04400014: MoveX86regToVariable(&RecompPos,x86Reg,&VI_BURST_REG,"VI_BURST_REG"); break;
+		case 0x04400018: MoveX86regToVariable(&RecompPos,x86Reg,&VI_V_SYNC_REG,"VI_V_SYNC_REG"); break;
+		case 0x0440001C: MoveX86regToVariable(&RecompPos,x86Reg,&VI_H_SYNC_REG,"VI_H_SYNC_REG"); break;
+		case 0x04400020: MoveX86regToVariable(&RecompPos,x86Reg,&VI_LEAP_REG,"VI_LEAP_REG"); break;
+		case 0x04400024: MoveX86regToVariable(&RecompPos,x86Reg,&VI_H_START_REG,"VI_H_START_REG"); break;
+		case 0x04400028: MoveX86regToVariable(&RecompPos,x86Reg,&VI_V_START_REG,"VI_V_START_REG"); break;
+		case 0x0440002C: MoveX86regToVariable(&RecompPos,x86Reg,&VI_V_BURST_REG,"VI_V_BURST_REG"); break;
+		case 0x04400030: MoveX86regToVariable(&RecompPos,x86Reg,&VI_X_SCALE_REG,"VI_X_SCALE_REG"); break;
+		case 0x04400034: MoveX86regToVariable(&RecompPos,x86Reg,&VI_Y_SCALE_REG,"VI_Y_SCALE_REG"); break;
 		default:
 			CPU_Message("    Should be moving %s in to %X ?!?",x86_Name(x86Reg),Addr);
 			if (ShowUnhandledMemory) { DisplayError("Compile_SW_Register\ntrying to store at %X?",Addr); }
@@ -1097,88 +1097,88 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 		break;
 	case 0x04500000: /* AI registers */
 		switch (Addr) {
-		case 0x04500000: MoveX86regToVariable(x86Reg,&AI_DRAM_ADDR_REG,"AI_DRAM_ADDR_REG"); break;
+		case 0x04500000: MoveX86regToVariable(&RecompPos,x86Reg,&AI_DRAM_ADDR_REG,"AI_DRAM_ADDR_REG"); break;
 		case 0x04500004: 
-			MoveX86regToVariable(x86Reg,&AI_LEN_REG,"AI_LEN_REG");
-			Pushad();
-			Call_Direct((void*)AiLenChanged,"AiLenChanged");
-			Popad();
+			MoveX86regToVariable(&RecompPos,x86Reg,&AI_LEN_REG,"AI_LEN_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)AiLenChanged,"AiLenChanged");
+			Popad(&RecompPos);
 			break;
 		case 0x04500008: 
-			MoveX86regToVariable(x86Reg,&AI_CONTROL_REG,"AI_CONTROL_REG");
-			AndConstToVariable(1,&AI_CONTROL_REG,"AI_CONTROL_REG");
+			MoveX86regToVariable(&RecompPos,x86Reg,&AI_CONTROL_REG,"AI_CONTROL_REG");
+			AndConstToVariable(&RecompPos,1,&AI_CONTROL_REG,"AI_CONTROL_REG");
 		case 0x0450000C:
 			/* Clear Interrupt */; 
-			AndConstToVariable((DWORD)~MI_INTR_AI,&MI_INTR_REG,"MI_INTR_REG");
-			AndConstToVariable((DWORD)~MI_INTR_AI,&AudioIntrReg,"AudioIntrReg");
-			Pushad();
-			Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
-			Popad();
+			AndConstToVariable(&RecompPos,(DWORD)~MI_INTR_AI,&MI_INTR_REG,"MI_INTR_REG");
+			AndConstToVariable(&RecompPos,(DWORD)~MI_INTR_AI,&AudioIntrReg,"AudioIntrReg");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)CheckInterrupts,"CheckInterrupts");
+			Popad(&RecompPos);
 			break;
 		case 0x04500010: 
 			sprintf(VarName,"N64MEM + %X",Addr);
-			MoveX86regToVariable(x86Reg,Addr + N64MEM,VarName); 
+			MoveX86regToVariable(&RecompPos, x86Reg,Addr + N64MEM,VarName);
 			break;
-		case 0x04500014: MoveX86regToVariable(x86Reg,&AI_BITRATE_REG,"AI_BITRATE_REG"); break;
+		case 0x04500014: MoveX86regToVariable(&RecompPos,x86Reg,&AI_BITRATE_REG,"AI_BITRATE_REG"); break;
 		default:
 			sprintf(VarName,"N64MEM + %X",Addr);
-			MoveX86regToVariable(x86Reg,Addr + N64MEM,VarName); 
+			MoveX86regToVariable(&RecompPos, x86Reg,Addr + N64MEM,VarName);
 			if (ShowUnhandledMemory) { DisplayError("Compile_SW_Register\ntrying to store at %X?",Addr); }		}
 		break;
 	case 0x04600000:
 		switch (Addr) {
-		case 0x04600000: MoveX86regToVariable(x86Reg,&PI_DRAM_ADDR_REG,"PI_DRAM_ADDR_REG"); break;
-		case 0x04600004: MoveX86regToVariable(x86Reg,&PI_CART_ADDR_REG,"PI_CART_ADDR_REG"); break;
+		case 0x04600000: MoveX86regToVariable(&RecompPos,x86Reg,&PI_DRAM_ADDR_REG,"PI_DRAM_ADDR_REG"); break;
+		case 0x04600004: MoveX86regToVariable(&RecompPos,x86Reg,&PI_CART_ADDR_REG,"PI_CART_ADDR_REG"); break;
 		case 0x04600008:
-			MoveX86regToVariable(x86Reg,&PI_RD_LEN_REG,"PI_RD_LEN_REG");
-			Pushad();
-			Call_Direct((void*)&PI_DMA_READ,"PI_DMA_READ");
-			Popad();
+			MoveX86regToVariable(&RecompPos,x86Reg,&PI_RD_LEN_REG,"PI_RD_LEN_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)&PI_DMA_READ,"PI_DMA_READ");
+			Popad(&RecompPos);
 			break;
 		case 0x0460000C:
-			MoveX86regToVariable(x86Reg,&PI_WR_LEN_REG,"PI_WR_LEN_REG");
-			Pushad();
-			Call_Direct((void*)&PI_DMA_WRITE,"PI_DMA_WRITE");
-			Popad();
+			MoveX86regToVariable(&RecompPos,x86Reg,&PI_WR_LEN_REG,"PI_WR_LEN_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)&PI_DMA_WRITE,"PI_DMA_WRITE");
+			Popad(&RecompPos);
 			break;
 		case 0x04600010: 
 			if (ShowUnhandledMemory) { DisplayError("Compile_SW_Register\ntrying to store at %X?",Addr); }
-			AndConstToVariable((DWORD)~MI_INTR_PI,&MI_INTR_REG,"MI_INTR_REG");
-			Pushad();
-			Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
-			Popad();
+			AndConstToVariable(&RecompPos,(DWORD)~MI_INTR_PI,&MI_INTR_REG,"MI_INTR_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)CheckInterrupts,"CheckInterrupts");
+			Popad(&RecompPos);
 			break;
 		case 0x04600014: 
-			MoveX86regToVariable(x86Reg,&PI_DOMAIN1_REG,"PI_DOMAIN1_REG");
-			AndConstToVariable(0xFF,&PI_DOMAIN1_REG,"PI_DOMAIN1_REG"); 
+			MoveX86regToVariable(&RecompPos,x86Reg,&PI_DOMAIN1_REG,"PI_DOMAIN1_REG");
+			AndConstToVariable(&RecompPos,0xFF,&PI_DOMAIN1_REG,"PI_DOMAIN1_REG");
 			break;
 		case 0x04600018: 
-			MoveX86regToVariable(x86Reg,&PI_BSD_DOM1_PWD_REG,"PI_BSD_DOM1_PWD_REG"); 
-			AndConstToVariable(0xFF,&PI_BSD_DOM1_PWD_REG,"PI_BSD_DOM1_PWD_REG"); 
+			MoveX86regToVariable(&RecompPos,x86Reg,&PI_BSD_DOM1_PWD_REG,"PI_BSD_DOM1_PWD_REG");
+			AndConstToVariable(&RecompPos,0xFF,&PI_BSD_DOM1_PWD_REG,"PI_BSD_DOM1_PWD_REG");
 			break;
 		case 0x0460001C: 
-			MoveX86regToVariable(x86Reg,&PI_BSD_DOM1_PGS_REG,"PI_BSD_DOM1_PGS_REG"); 
-			AndConstToVariable(0xFF,&PI_BSD_DOM1_PGS_REG,"PI_BSD_DOM1_PGS_REG"); 
+			MoveX86regToVariable(&RecompPos,x86Reg,&PI_BSD_DOM1_PGS_REG,"PI_BSD_DOM1_PGS_REG");
+			AndConstToVariable(&RecompPos,0xFF,&PI_BSD_DOM1_PGS_REG,"PI_BSD_DOM1_PGS_REG");
 			break;
 		case 0x04600020: 
-			MoveX86regToVariable(x86Reg,&PI_BSD_DOM1_RLS_REG,"PI_BSD_DOM1_RLS_REG"); 
-			AndConstToVariable(0xFF,&PI_BSD_DOM1_RLS_REG,"PI_BSD_DOM1_RLS_REG"); 
+			MoveX86regToVariable(&RecompPos,x86Reg,&PI_BSD_DOM1_RLS_REG,"PI_BSD_DOM1_RLS_REG");
+			AndConstToVariable(&RecompPos,0xFF,&PI_BSD_DOM1_RLS_REG,"PI_BSD_DOM1_RLS_REG"); 
 			break;
 		case 0x04600024: 
-			MoveX86regToVariable(x86Reg,&PI_DOMAIN2_REG,"PI_DOMAIN2_REG");
-			AndConstToVariable(0xFF,&PI_DOMAIN2_REG,"PI_DOMAIN2_REG"); 
+			MoveX86regToVariable(&RecompPos,x86Reg,&PI_DOMAIN2_REG,"PI_DOMAIN2_REG");
+			AndConstToVariable(&RecompPos,0xFF,&PI_DOMAIN2_REG,"PI_DOMAIN2_REG");
 			break;
 		case 0x04600028:
-			MoveX86regToVariable(x86Reg,&PI_BSD_DOM2_PWD_REG,"PI_BSD_DOM2_PWD_REG"); 
-			AndConstToVariable(0xFF,&PI_BSD_DOM2_PWD_REG,"PI_BSD_DOM2_PWD_REG"); 
+			MoveX86regToVariable(&RecompPos,x86Reg,&PI_BSD_DOM2_PWD_REG,"PI_BSD_DOM2_PWD_REG");
+			AndConstToVariable(&RecompPos,0xFF,&PI_BSD_DOM2_PWD_REG,"PI_BSD_DOM2_PWD_REG");
 			break;
 		case 0x0460002C: 
-			MoveX86regToVariable(x86Reg,&PI_BSD_DOM2_PGS_REG,"PI_BSD_DOM2_PGS_REG"); 
-			AndConstToVariable(0xFF,&PI_BSD_DOM2_PGS_REG,"PI_BSD_DOM2_PGS_REG"); 
+			MoveX86regToVariable(&RecompPos,x86Reg,&PI_BSD_DOM2_PGS_REG,"PI_BSD_DOM2_PGS_REG");
+			AndConstToVariable(&RecompPos,0xFF,&PI_BSD_DOM2_PGS_REG,"PI_BSD_DOM2_PGS_REG");
 			break;
 		case 0x04600030: 
-			MoveX86regToVariable(x86Reg,&PI_BSD_DOM2_RLS_REG,"PI_BSD_DOM2_RLS_REG"); 
-			AndConstToVariable(0xFF,&PI_BSD_DOM2_RLS_REG,"PI_BSD_DOM2_RLS_REG"); 
+			MoveX86regToVariable(&RecompPos,x86Reg,&PI_BSD_DOM2_RLS_REG,"PI_BSD_DOM2_RLS_REG");
+			AndConstToVariable(&RecompPos,0xFF,&PI_BSD_DOM2_RLS_REG,"PI_BSD_DOM2_RLS_REG");
 			break;
 		default:
 			CPU_Message("    Should be moving %s in to %X ?!?",x86_Name(x86Reg),Addr);
@@ -1187,32 +1187,32 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 		break;
 	case 0x04700000:
 		switch (Addr) {
-		case 0x04700010: MoveX86regToVariable(x86Reg,&RI_REFRESH_REG,"RI_REFRESH_REG"); break;
+		case 0x04700010: MoveX86regToVariable(&RecompPos,x86Reg,&RI_REFRESH_REG,"RI_REFRESH_REG"); break;
 		default:
 			if (ShowUnhandledMemory) { DisplayError("Compile_SW_Register\ntrying to store at %X?",Addr); }
 		}
 		break;
 	case 0x04800000:
 		switch (Addr) {
-		case 0x04800000: MoveX86regToVariable(x86Reg,&SI_DRAM_ADDR_REG,"SI_DRAM_ADDR_REG"); break;
+		case 0x04800000: MoveX86regToVariable(&RecompPos,x86Reg,&SI_DRAM_ADDR_REG,"SI_DRAM_ADDR_REG"); break;
 		case 0x04800004: 
-			MoveX86regToVariable(x86Reg,&SI_PIF_ADDR_RD64B_REG,"SI_PIF_ADDR_RD64B_REG"); 
-			Pushad();
-			Call_Direct((void*)&SI_DMA_READ,"SI_DMA_READ");
-			Popad();
+			MoveX86regToVariable(&RecompPos,x86Reg,&SI_PIF_ADDR_RD64B_REG,"SI_PIF_ADDR_RD64B_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)&SI_DMA_READ,"SI_DMA_READ");
+			Popad(&RecompPos);
 			break;
 		case 0x04800010: 
-			MoveX86regToVariable(x86Reg,&SI_PIF_ADDR_WR64B_REG,"SI_PIF_ADDR_WR64B_REG"); 
-			Pushad();
-			Call_Direct((void*)&SI_DMA_WRITE,"SI_DMA_WRITE");
-			Popad();
+			MoveX86regToVariable(&RecompPos,x86Reg,&SI_PIF_ADDR_WR64B_REG,"SI_PIF_ADDR_WR64B_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)&SI_DMA_WRITE,"SI_DMA_WRITE");
+			Popad(&RecompPos);
 			break;
 		case 0x04800018: 
-			AndConstToVariable((DWORD)~MI_INTR_SI,&MI_INTR_REG,"MI_INTR_REG");
-			AndConstToVariable((DWORD)~SI_STATUS_INTERRUPT,&SI_STATUS_REG,"SI_STATUS_REG");
-			Pushad();
-			Call_Direct((void*)CheckInterrupts,"CheckInterrupts");
-			Popad();
+			AndConstToVariable(&RecompPos,(DWORD)~MI_INTR_SI,&MI_INTR_REG,"MI_INTR_REG");
+			AndConstToVariable(&RecompPos,(DWORD)~SI_STATUS_INTERRUPT,&SI_STATUS_REG,"SI_STATUS_REG");
+			Pushad(&RecompPos);
+			Call_Direct(&RecompPos,(void*)CheckInterrupts,"CheckInterrupts");
+			Popad(&RecompPos);
 			break;
 		default:
 			if (ShowUnhandledMemory) { DisplayError("Compile_SW_Register\ntrying to store at %X?",Addr); }
@@ -1220,7 +1220,7 @@ BOOL Compile_SW_Register ( int x86Reg, DWORD Addr ) {
 		break;
 	case 0x1FC00000:
 		sprintf(VarName,"N64MEM + %X",Addr);
-		MoveX86regToVariable(x86Reg,Addr + N64MEM,VarName); 
+		MoveX86regToVariable(&RecompPos, x86Reg,Addr + N64MEM,VarName);
 		break;
 	default:
 		CPU_Message("    Should be moving %s in to %X ?!?",x86_Name(x86Reg),Addr);
@@ -3080,15 +3080,15 @@ void ResetMemoryStack (BLOCK_SECTION * Section) {
 	x86reg = Map_TempReg(Section,x86_Any, 29, FALSE);
 	if (UseTlb) {	
 	    TempReg = Map_TempReg(Section,x86_Any,-1,FALSE);
-		MoveX86RegToX86Reg(x86reg,TempReg);
-		ShiftRightUnsignImmed(TempReg,12);
-		MoveVariableDispToX86Reg(TLB_ReadMap,"TLB_ReadMap",TempReg,TempReg,4);
-		AddX86RegToX86Reg(x86reg,TempReg);
+		MoveX86RegToX86Reg(&RecompPos,x86reg,TempReg);
+		ShiftRightUnsignImmed(&RecompPos,TempReg,12);
+		MoveVariableDispToX86Reg(&RecompPos,TLB_ReadMap,"TLB_ReadMap",TempReg,TempReg,4);
+		AddX86RegToX86Reg(&RecompPos, x86reg,TempReg);
 	} else {
-		AndConstToX86Reg(x86reg,0x1FFFFFFF);
-		AddConstToX86Reg(x86reg,(DWORD)N64MEM);
+		AndConstToX86Reg(&RecompPos,x86reg,0x1FFFFFFF);
+		AddConstToX86Reg(&RecompPos,x86reg,(DWORD)N64MEM);
 	}
-	MoveX86regToVariable(x86reg, &MemoryStack, "MemoryStack");
+	MoveX86regToVariable(&RecompPos, x86reg, &MemoryStack, "MemoryStack");
 }
 
 void ResetRecompCode (void) {

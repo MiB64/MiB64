@@ -34,21 +34,21 @@
 #include "../Main.h"
 
 DWORD NoOfRspMaps, RspMapsCRC[MaxMaps];
-static DWORD Table;
-/*BYTE * RecompCode, * RecompCodeSecondary, * RecompPos;*/
+DWORD RspTable;
+BYTE * RspRecompCode,/* * RecompCodeSecondary,*/ * RspRecompPos;
 BYTE* RspJumpTables;
 void ** RspJumpTable;
 
 int AllocateRspMemory (void) {
-	/*RecompCode=(BYTE *) VirtualAlloc( NULL, 0x00400004, MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-	RecompCode=(BYTE *) VirtualAlloc( RecompCode, 0x00400000, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+	RspRecompCode=(BYTE *) VirtualAlloc( NULL, 0x00400004, MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+	RspRecompCode=(BYTE *) VirtualAlloc( RspRecompCode, 0x00400000, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 	
-	if(RecompCode == NULL) {
+	if(RspRecompCode == NULL) {
 		DisplayError("Not enough memory for RSP RecompCode!");
 		return FALSE;
 	}
 
-	RecompCodeSecondary = (BYTE *)VirtualAlloc( NULL, 0x00200000, MEM_COMMIT, PAGE_EXECUTE_READWRITE );
+	/*RecompCodeSecondary = (BYTE *)VirtualAlloc( NULL, 0x00200000, MEM_COMMIT, PAGE_EXECUTE_READWRITE );
 	if(RecompCodeSecondary == NULL) {
 		DisplayError("Not enough memory for RSP RecompCode Secondary!");
 		return FALSE;
@@ -61,7 +61,7 @@ int AllocateRspMemory (void) {
 	}
 
 	RspJumpTable = (void **)RspJumpTables;
-	/*RecompPos = RecompCode;*/
+	RspRecompPos = RspRecompCode;
 	NoOfRspMaps = 0;
 	return TRUE;
 }
@@ -83,7 +83,7 @@ void SetRspJumpTable (void) {
 	for (DWORD count = 0; count <	NoOfRspMaps; count++ ) {
 		if (CRC == RspMapsCRC[count]) {
 			RspJumpTable = (void **)(RspJumpTables + count * 0x1000);
-			Table = count;
+			RspTable = count;
 			return;
 		}
 	}
@@ -94,7 +94,7 @@ void SetRspJumpTable (void) {
 	}
 	RspMapsCRC[NoOfRspMaps] = CRC;
 	RspJumpTable = (void **)(RspJumpTables + NoOfRspMaps * 0x1000);
-	Table = NoOfRspMaps;
+	RspTable = NoOfRspMaps;
 	NoOfRspMaps += 1;
 }
 

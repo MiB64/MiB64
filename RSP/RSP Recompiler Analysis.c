@@ -26,11 +26,10 @@
  */
 
 #include <windows.h>
-/*#include "rsp.h"
-#include "CPU.h"*/
+/*#include "CPU.h"*/
 #include "RSP Recompiler CPU.h"
 #include "RSP Command.h"
-/*#include "memory.h"*/
+#include "rsp_memory.h"
 #include "RSP_OpCode.h"
 /*#include "log.h"*/
 #include "rsp_config.h"
@@ -39,22 +38,22 @@
 #define RSP_SAFE_ANALYSIS /* makes optimization less risky (dlist useful) */
 
 /************************************************************
-** IsOpcodeNop
+** IsRspOpcodeNop
 **
 ** Output: BOOLean whether opcode at PC is a NOP
 ** Input: PC
 *************************************************************/
 
-/*BOOL IsOpcodeNop(DWORD PC) {
+BOOL IsRspOpcodeNop(DWORD PC) {
 	OPCODE RspOp;
-	RSP_LW_IMEM(PC, &RspOp.Hex);
+	RSP_LW_IMEM(PC, &RspOp.OP.Hex);
 
-	if (RspOp.op == RSP_SPECIAL && RspOp.funct == RSP_SPECIAL_SLL) {
-		return (RspOp.rd == 0) ? TRUE : FALSE;
+	if (RspOp.OP.I.op == RSP_SPECIAL && RspOp.OP.R.funct == RSP_SPECIAL_SLL) {
+		return (RspOp.OP.R.rd == 0) ? TRUE : FALSE;
 	}
 
 	return FALSE;
-}*/
+}
 
 /************************************************************
 ** IsNextInstructionMmx
@@ -945,7 +944,7 @@ BOOL WriteToVectorDest (DWORD DestReg, int PC) {
 }*/
 
 /************************************************************
-** IsRegisterConstant
+** IsRspRegisterConstant
 **
 ** Output:
 **	TRUE: Register is constant throughout
@@ -954,7 +953,7 @@ BOOL WriteToVectorDest (DWORD DestReg, int PC) {
 ** Input: PC, Pointer to constant to fill
 *************************************************************/
 
-/*BOOL IsRegisterConstant (DWORD Reg, DWORD * Constant) {
+BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 	DWORD PC = 0;
 	DWORD References = 0;
 	DWORD Const = 0;
@@ -965,17 +964,17 @@ BOOL WriteToVectorDest (DWORD DestReg, int PC) {
 
 	while (PC < 0x1000) {
 		
-		RSP_LW_IMEM(PC, &RspOp.Hex);
+		RSP_LW_IMEM(PC, &RspOp.OP.Hex);
 		PC += 4;
 
-		switch (RspOp.op) {
-		case RSP_REGIMM:
-			break;
+		switch (RspOp.OP.I.op) {
+		/*case RSP_REGIMM:
+			break;*/
 
 		case RSP_SPECIAL:
-			switch (RspOp.funct) {
+			switch (RspOp.OP.R.funct) {
 			case RSP_SPECIAL_SLL:
-			case RSP_SPECIAL_SRL:
+			/*case RSP_SPECIAL_SRL:
 			case RSP_SPECIAL_SRA:
 			case RSP_SPECIAL_SLLV:
 			case RSP_SPECIAL_SRLV:
@@ -989,22 +988,21 @@ BOOL WriteToVectorDest (DWORD DestReg, int PC) {
 			case RSP_SPECIAL_XOR:
 			case RSP_SPECIAL_NOR:
 			case RSP_SPECIAL_SLT:
-			case RSP_SPECIAL_SLTU:
-				if (RspOp.rd == Reg) { return FALSE; }
+			case RSP_SPECIAL_SLTU:*/
+				if (RspOp.OP.R.rd == Reg) { LogMessage("TODO: Unknown opcode in IsRspRegisterConstant register modified"); return FALSE; }
 				break;
 
 			case RSP_SPECIAL_BREAK:
-			case RSP_SPECIAL_JR:
+			/*case RSP_SPECIAL_JR:*/
 				break;
 
 			default:
-			//	CompilerWarning("Unkown opcode in IsRegisterConstant\n%s",RSPOpcodeName(RspOp.Hex,PC));
-			//	return FALSE;
-				break;
+				RspCompilerWarning("Unkown opcode in IsRspRegisterConstant\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
+				return FALSE;
 			}
 			break;
 
-		case RSP_J:
+		/*case RSP_J:
 		case RSP_JAL:
 		case RSP_BEQ:
 		case RSP_BNE:
@@ -1093,25 +1091,25 @@ BOOL WriteToVectorDest (DWORD DestReg, int PC) {
 		case RSP_LC2:
 			break;
 		case RSP_SC2:
-			break;
+			break;*/
 		default:
-		//	CompilerWarning("Unkown opcode in IsRegisterConstant\n%s",RSPOpcodeName(RspOp.Hex,PC));
-		//	return FALSE;
-			break;
+			RspCompilerWarning("Unkown opcode in IsRspRegisterConstant\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
+			return FALSE;
 		}
 	}
 
 	if (References > 0) {
+		LogMessage("TODO: IsRspRegisterConstant constant found");
 		*Constant = Const;
 		return TRUE;
 	} else {
 		*Constant = 0;
 		return FALSE;
 	}
-}*/
+}
 
 /************************************************************
-** IsOpcodeBranch
+** IsRspOpcodeBranch
 **
 ** Output:
 **	TRUE: opcode is a branch
@@ -1133,11 +1131,11 @@ BOOL IsRspOpcodeBranch(DWORD PC, OPCODE RspOp) {
 			//CompilerWarning("Unknown opcode in IsOpcodeBranch\n%s",RSPOpcodeName(RspOp.Hex,PC));
 			break;
 		}
-		break;
+		break;*/
 	case RSP_SPECIAL:
-		switch (RspOp.funct) {
+		switch (RspOp.OP.R.funct) {
 		case RSP_SPECIAL_SLL:
-		case RSP_SPECIAL_SRL:
+		/*case RSP_SPECIAL_SRL:
 		case RSP_SPECIAL_SRA:
 		case RSP_SPECIAL_SLLV:
 		case RSP_SPECIAL_SRLV:
@@ -1151,20 +1149,20 @@ BOOL IsRspOpcodeBranch(DWORD PC, OPCODE RspOp) {
 		case RSP_SPECIAL_XOR:
 		case RSP_SPECIAL_NOR:
 		case RSP_SPECIAL_SLT:
-		case RSP_SPECIAL_SLTU:
+		case RSP_SPECIAL_SLTU:*/
 		case RSP_SPECIAL_BREAK:
 			break;
 
-		case RSP_SPECIAL_JALR:
+		/*case RSP_SPECIAL_JALR:
 		case RSP_SPECIAL_JR:
-			return TRUE;
+			return TRUE;*/
 
 		default:
-			//CompilerWarning("Unknown opcode in IsOpcodeBranch\n%s",RSPOpcodeName(RspOp.Hex,PC));
+			RspCompilerWarning("Unknown opcode in IsRspOpcodeBranch\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
 			break;
 		}
 		break;
-	case RSP_J:
+	/*case RSP_J:
 	case RSP_JAL:
 	case RSP_BEQ:
 	case RSP_BNE:

@@ -34,9 +34,9 @@ void SetRspJumpTable   ( void );
 extern BYTE* DMEM;
 extern BYTE* IMEM;
 
-/*extern BYTE * RecompCode, * RecompCodeSecondary, * RecompPos;*/
+extern BYTE * RspRecompCode,/* * RecompCodeSecondary,*/ * RspRecompPos;
 extern void ** RspJumpTable;
-/*extern DWORD Table;*/
+extern DWORD RspTable;
 
 void RSP_LB_DMEM  ( DWORD Addr, BYTE * Value );
 void RSP_LBV_DMEM ( DWORD Addr, int vect, int element );

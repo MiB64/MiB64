@@ -190,7 +190,7 @@ BYTE * Compiler4300iBlock(void) {
 	}
 	if (CPU_Type == CPU_SyncCores) {
 		//if ((DWORD)BlockInfo.CompiledLocation == 0x60A7B73B) { BreakPoint(); }
-		MoveConstToVariable((DWORD)BlockInfo.CompiledLocation,&CurrentBlock,"CurrentBlock");
+		MoveConstToVariable(&RecompPos, (DWORD)BlockInfo.CompiledLocation,&CurrentBlock,"CurrentBlock");
 	}
 	
 	if (UseLinking) {
@@ -277,7 +277,7 @@ BYTE * CompileDelaySlot(void) {
 	memcpy(&Section->RegWorking,&Section->RegStart,sizeof(REG_INFO));		
 
 	if (CPU_Type == CPU_SyncCores) {
-		MoveConstToVariable((DWORD)Block,&CurrentBlock,"CurrentBlock");
+		MoveConstToVariable(&RecompPos, (DWORD)Block,&CurrentBlock,"CurrentBlock");
 	}
 
 	BlockCycleCount += CountPerOp;
@@ -494,21 +494,21 @@ BYTE * CompileDelaySlot(void) {
 	
 	WriteBackRegisters(Section);
 	if (BlockCycleCount != 0) { 
-		AddConstToVariable(BlockCycleCount,&CP0[9],Cop0_Name[9]); 
-		SubConstFromVariable(BlockCycleCount,&Timers.Timer,"Timer");
+		AddConstToVariable(&RecompPos,BlockCycleCount,&CP0[9],Cop0_Name[9]); 
+		SubConstFromVariable(&RecompPos,BlockCycleCount,&Timers.Timer,"Timer");
 	}
-	if (BlockRandomModifier != 0) { SubConstFromVariable(BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
+	if (BlockRandomModifier != 0) { SubConstFromVariable(&RecompPos,BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
 	x86Reg = Map_TempReg(Section,x86_Any,-1,FALSE);
-	MoveVariableToX86reg(&JumpToLocation,"JumpToLocation",x86Reg);
-	MoveX86regToVariable(x86Reg,&PROGRAM_COUNTER,"PROGRAM_COUNTER");
-	MoveConstToVariable(NORMAL,&NextInstruction,"NextInstruction");
-	if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
-	Ret();
+	MoveVariableToX86reg(&RecompPos,&JumpToLocation,"JumpToLocation",x86Reg);
+	MoveX86regToVariable(&RecompPos,x86Reg,&PROGRAM_COUNTER,"PROGRAM_COUNTER");
+	MoveConstToVariable(&RecompPos,NORMAL,&NextInstruction,"NextInstruction");
+	if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos, (void*)SyncToPC, "SyncToPC"); }
+	Ret(&RecompPos);
 	CPU_Message("====== End of recompiled code ======");
 	return Block;
 }
 
-void CompileExit (DWORD TargetPC, REG_INFO ExitRegSet, int reason, int CompileNow, void (*x86Jmp)(char * Label, DWORD Value)) {
+void CompileExit (DWORD TargetPC, REG_INFO ExitRegSet, int reason, int CompileNow, void (*x86Jmp)(BYTE** code, char * Label, DWORD Value)) {
 	BLOCK_SECTION Section;
 		
 	if (!CompileNow) {
@@ -524,7 +524,7 @@ void CompileExit (DWORD TargetPC, REG_INFO ExitRegSet, int reason, int CompileNo
 				DisplayError("CompileExit error");
 			ExitThread(0);
 		}
-		x86Jmp(String,0);
+		x86Jmp(&RecompPos, String,0);
 		BlockInfo.ExitInfo[BlockInfo.ExitCount] = malloc(sizeof(EXIT_INFO));
 		BlockInfo.ExitInfo[BlockInfo.ExitCount]->TargetPC = TargetPC;
 		BlockInfo.ExitInfo[BlockInfo.ExitCount]->ExitRegSet = ExitRegSet;
@@ -539,17 +539,17 @@ void CompileExit (DWORD TargetPC, REG_INFO ExitRegSet, int reason, int CompileNo
 	InitilzeSection (&Section, NULL, (DWORD)-1, 0);
 	memcpy(&Section.RegWorking, &ExitRegSet, sizeof(REG_INFO));
 
-	if (TargetPC != (DWORD)-1) { MoveConstToVariable(TargetPC,&PROGRAM_COUNTER,"PROGRAM_COUNTER"); }
+	if (TargetPC != (DWORD)-1) { MoveConstToVariable(&RecompPos,TargetPC,&PROGRAM_COUNTER,"PROGRAM_COUNTER"); }
 	if (ExitRegSet.CycleCount != 0) { 
-		AddConstToVariable(ExitRegSet.CycleCount,&CP0[9],Cop0_Name[9]); 
-		SubConstFromVariable(ExitRegSet.CycleCount,&Timers.Timer,"Timer");
+		AddConstToVariable(&RecompPos,ExitRegSet.CycleCount,&CP0[9],Cop0_Name[9]); 
+		SubConstFromVariable(&RecompPos,ExitRegSet.CycleCount,&Timers.Timer,"Timer");
 	}
-	if (ExitRegSet.RandomModifier != 0) { SubConstFromVariable(ExitRegSet.RandomModifier,&CP0[1],Cop0_Name[1]); }
+	if (ExitRegSet.RandomModifier != 0) { SubConstFromVariable(&RecompPos,ExitRegSet.RandomModifier,&CP0[1],Cop0_Name[1]); }
 	WriteBackRegisters(&Section);
 
 	switch (reason) {
 	case Normal: case Normal_NoSysCheck:
-		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
+		if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos, (void*)SyncToPC, "SyncToPC"); }
 		Section.RegWorking.RandomModifier = 0;
 		Section.RegWorking.CycleCount = 0;
 		if (reason == Normal) { CompileSystemCheck(0,(DWORD)-1,Section.RegWorking);	}
@@ -559,27 +559,27 @@ void CompileExit (DWORD TargetPC, REG_INFO ExitRegSet, int reason, int CompileNo
 			if (TargetPC >= 0x80000000 && TargetPC < 0xC0000000) {
 				DWORD pAddr = TargetPC & 0x1FFFFFFF;
 	
-				MoveVariableToX86reg((BYTE *)N64MEM + pAddr,"N64MEM + pAddr",x86_EAX);
+				MoveVariableToX86reg(&RecompPos,(BYTE *)N64MEM + pAddr,"N64MEM + pAddr",x86_EAX);
 				Jump2 = NULL;
 			} else {				
-				MoveConstToX86reg((TargetPC >> 12),x86_ECX);
-				MoveConstToX86reg(TargetPC,x86_EBX);
-				MoveVariableDispToX86Reg(TLB_ReadMap,"TLB_ReadMap",x86_ECX,x86_ECX,4);
-				TestX86RegToX86Reg(x86_ECX,x86_ECX);
-				JeLabel8("NoTlbEntry",0);
+				MoveConstToX86reg(&RecompPos,(TargetPC >> 12),x86_ECX);
+				MoveConstToX86reg(&RecompPos,TargetPC,x86_EBX);
+				MoveVariableDispToX86Reg(&RecompPos,TLB_ReadMap,"TLB_ReadMap",x86_ECX,x86_ECX,4);
+				TestX86RegToX86Reg(&RecompPos,x86_ECX,x86_ECX);
+				JeLabel8(&RecompPos,"NoTlbEntry",0);
 				Jump2 = RecompPos - 1;
-				MoveX86regPointerToX86reg(x86_ECX, x86_EBX,x86_EAX);
+				MoveX86regPointerToX86reg(&RecompPos, x86_ECX, x86_EBX,x86_EAX);
 			}
-			MoveX86RegToX86Reg(x86_EAX,x86_ECX);
-			AndConstToX86Reg(x86_ECX,0xFFFF0000);
-			CompConstToX86reg(x86_ECX,0x7C7C0000);
-			JneLabel8("NoCode",0);
+			MoveX86RegToX86Reg(&RecompPos,x86_EAX,x86_ECX);
+			AndConstToX86Reg(&RecompPos,x86_ECX,0xFFFF0000);
+			CompConstToX86reg(&RecompPos,x86_ECX,0x7C7C0000);
+			JneLabel8(&RecompPos,"NoCode",0);
 			Jump = RecompPos - 1;
-			AndConstToX86Reg(x86_EAX,0xFFFF);
-			ShiftLeftSignImmed(x86_EAX,4);
-			AddConstToX86Reg(x86_EAX,0xC);
-			MoveVariableDispToX86Reg(OrigMem,"OrigMem",x86_ECX,x86_EAX,1);
-			JmpDirectReg(x86_ECX);
+			AndConstToX86Reg(&RecompPos,x86_EAX,0xFFFF);
+			ShiftLeftSignImmed(&RecompPos, x86_EAX,4);
+			AddConstToX86Reg(&RecompPos,x86_EAX,0xC);
+			MoveVariableDispToX86Reg(&RecompPos,OrigMem,"OrigMem",x86_ECX,x86_EAX,1);
+			JmpDirectReg(&RecompPos, x86_ECX);
 			CPU_Message("      NoCode:");
 			*((BYTE *)(Jump))=(BYTE)(RecompPos - Jump - 1);
 			if (Jump2 != NULL) {
@@ -593,24 +593,24 @@ void CompileExit (DWORD TargetPC, REG_INFO ExitRegSet, int reason, int CompileNo
 			if (TargetPC >= 0x80000000 && TargetPC < 0x90000000) {
 				DWORD pAddr = TargetPC & 0x1FFFFFFF;
 	
-				MoveVariableToX86reg((BYTE *)JumpTable + pAddr,"JumpTable + pAddr",x86_ECX);
+				MoveVariableToX86reg(&RecompPos,(BYTE *)JumpTable + pAddr,"JumpTable + pAddr",x86_ECX);
 				Jump2 = NULL;
 			} else if (TargetPC >= 0x90000000 && TargetPC < 0xC0000000) {
 			} else {				
-				MoveConstToX86reg((TargetPC >> 12),x86_ECX);
-				MoveConstToX86reg(TargetPC,x86_EBX);
-				MoveVariableDispToX86Reg(TLB_ReadMap,"TLB_ReadMap",x86_ECX,x86_ECX,4);
-				TestX86RegToX86Reg(x86_ECX,x86_ECX);
-				JeLabel8("NoTlbEntry",0);
+				MoveConstToX86reg(&RecompPos,(TargetPC >> 12),x86_ECX);
+				MoveConstToX86reg(&RecompPos,TargetPC,x86_EBX);
+				MoveVariableDispToX86Reg(&RecompPos,TLB_ReadMap,"TLB_ReadMap",x86_ECX,x86_ECX,4);
+				TestX86RegToX86Reg(&RecompPos,x86_ECX,x86_ECX);
+				JeLabel8(&RecompPos,"NoTlbEntry",0);
 				Jump2 = RecompPos - 1;
-				AddConstToX86Reg(x86_ECX,(DWORD)JumpTable - (DWORD)N64MEM);
-				MoveX86regPointerToX86reg(x86_ECX, x86_EBX,x86_ECX);
+				AddConstToX86Reg(&RecompPos,x86_ECX,(DWORD)JumpTable - (DWORD)N64MEM);
+				MoveX86regPointerToX86reg(&RecompPos,x86_ECX, x86_EBX,x86_ECX);
 			}
 			if (TargetPC < 0x90000000 || TargetPC >= 0xC0000000)
 			{
-				JecxzLabel8("NullPointer",0);
+				JecxzLabel8(&RecompPos, "NullPointer",0);
 				Jump = RecompPos - 1;
-				JmpDirectReg(x86_ECX);
+				JmpDirectReg(&RecompPos, x86_ECX);
 				CPU_Message("      NullPointer:");
 				*((BYTE *)(Jump))=(BYTE)(RecompPos - Jump - 1);
 				if (Jump2 != NULL) {
@@ -619,79 +619,79 @@ void CompileExit (DWORD TargetPC, REG_INFO ExitRegSet, int reason, int CompileNo
 				}
 			}
 		}
-		Ret();
+		Ret(&RecompPos);
 #else
 		Ret();
 #endif
 		break;
 	case DoCPU_Action:
-		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
-		Call_Direct((void*)DoSomething,"DoSomething");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
-		Ret();
+		if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos, (void*)SyncToPC, "SyncToPC"); }
+		Call_Direct(&RecompPos,(void*)DoSomething,"DoSomething");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos,(void*)SyncToPC, "SyncToPC"); }
+		Ret(&RecompPos);
 		break;
 	case DoSysCall:
-		MoveConstToX86reg(NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
-		Call_Direct((void*)DoSysCallException, "DoSysCallException");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
-		Ret();
+		MoveConstToX86reg(&RecompPos, NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
+		Call_Direct(&RecompPos, (void*)DoSysCallException, "DoSysCallException");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos, (void*)SyncToPC, "SyncToPC"); }
+		Ret(&RecompPos);
 		break;
 	case DoIlleaglOp:
-		MoveConstToX86reg(NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
-		Call_Direct((void*)DoIllegalInstructionException, "DoIllegalInstructionException");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
-		Ret();
+		MoveConstToX86reg(&RecompPos, NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
+		Call_Direct(&RecompPos, (void*)DoIllegalInstructionException, "DoIllegalInstructionException");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos, (void*)SyncToPC, "SyncToPC"); }
+		Ret(&RecompPos);
 		break;
 	case DoBreak:
-		MoveConstToX86reg(NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
-		Call_Direct((void*)DoBreakException, "DoBreakException");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
-		Ret();
+		MoveConstToX86reg(&RecompPos, NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
+		Call_Direct(&RecompPos, (void*)DoBreakException, "DoBreakException");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos, (void*)SyncToPC, "SyncToPC"); }
+		Ret(&RecompPos);
 		break;
 	case DoTrap:
-		MoveConstToX86reg(NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
-		Call_Direct((void*)DoTrapException, "DoTrapException");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
-		Ret();
+		MoveConstToX86reg(&RecompPos, NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
+		Call_Direct(&RecompPos, (void*)DoTrapException, "DoTrapException");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos, (void*)SyncToPC, "SyncToPC"); }
+		Ret(&RecompPos);
 		break;
 	case COP1_Unuseable:
-		MoveConstToX86reg(NextInstruction == JUMP || NextInstruction == DELAY_SLOT,x86_ECX);		
-		MoveConstToX86reg(1,x86_EDX);
-		Call_Direct((void*)DoCopUnusableException,"DoCopUnusableException");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
-		Ret();
+		MoveConstToX86reg(&RecompPos, NextInstruction == JUMP || NextInstruction == DELAY_SLOT,x86_ECX);
+		MoveConstToX86reg(&RecompPos,1,x86_EDX);
+		Call_Direct(&RecompPos,(void*)DoCopUnusableException,"DoCopUnusableException");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos, (void*)SyncToPC, "SyncToPC"); }
+		Ret(&RecompPos);
 		break;
 	case ExitResetRecompCode:
 		if (NextInstruction == JUMP || NextInstruction == DELAY_SLOT) {
-			BreakPoint();
+			BreakPoint(&RecompPos);
 		}
-		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
-		Call_Direct((void*)ResetRecompCode, "ResetRecompCode");
-		Ret();
+		if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos, (void*)SyncToPC, "SyncToPC"); }
+		Call_Direct(&RecompPos, (void*)ResetRecompCode, "ResetRecompCode");
+		Ret(&RecompPos);
 		break;
 	case TLBReadMiss:
-		MoveVariableToX86reg(&TLBLoadAddress, "TLBLoadAddress", x86_EDX);
-		MoveX86RegToX86Reg(x86_EDX, x86_ECX);
-		ShiftRightSignImmed(x86_ECX, 31);
-		Push(x86_ECX);
-		Push(x86_EDX);
-		MoveConstToX86reg(NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
-		MoveConstToX86reg(1, x86_EDX);
-		Call_Direct((void*)DoTLBMiss, "DoTLBMiss");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
-		Ret();
+		MoveVariableToX86reg(&RecompPos, &TLBLoadAddress, "TLBLoadAddress", x86_EDX);
+		MoveX86RegToX86Reg(&RecompPos, x86_EDX, x86_ECX);
+		ShiftRightSignImmed(&RecompPos, x86_ECX, 31);
+		Push(&RecompPos, x86_ECX);
+		Push(&RecompPos, x86_EDX);
+		MoveConstToX86reg(&RecompPos, NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
+		MoveConstToX86reg(&RecompPos, 1, x86_EDX);
+		Call_Direct(&RecompPos, (void*)DoTLBMiss, "DoTLBMiss");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos, (void*)SyncToPC, "SyncToPC"); }
+		Ret(&RecompPos);
 		break;
 	case TLBWriteMiss:
-		MoveVariableToX86reg(&TLBLoadAddress, "TLBLoadAddress", x86_EDX);
-		MoveX86RegToX86Reg(x86_EDX, x86_ECX);
-		ShiftRightSignImmed(x86_ECX, 31);
-		Push(x86_ECX);
-		Push(x86_EDX);
-		MoveConstToX86reg(NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
-		MoveConstToX86reg(0, x86_EDX);
-		Call_Direct((void*)DoTLBMiss, "DoTLBMiss");
-		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
-		Ret();
+		MoveVariableToX86reg(&RecompPos, &TLBLoadAddress, "TLBLoadAddress", x86_EDX);
+		MoveX86RegToX86Reg(&RecompPos, x86_EDX, x86_ECX);
+		ShiftRightSignImmed(&RecompPos, x86_ECX, 31);
+		Push(&RecompPos, x86_ECX);
+		Push(&RecompPos, x86_EDX);
+		MoveConstToX86reg(&RecompPos, NextInstruction == JUMP || NextInstruction == DELAY_SLOT, x86_ECX);
+		MoveConstToX86reg(&RecompPos, 0, x86_EDX);
+		Call_Direct(&RecompPos, (void*)DoTLBMiss, "DoTLBMiss");
+		if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos, (void*)SyncToPC, "SyncToPC"); }
+		Ret(&RecompPos);
 		break;
 	default:
 		if (ShowDebugMessages)
@@ -705,42 +705,42 @@ void CompileSystemCheck (DWORD TimerModifier, DWORD TargetPC, REG_INFO RegSet) {
 
 	// Timer
 	if (TimerModifier != 0) {
-		SubConstFromVariable(TimerModifier,&Timers.Timer,"Timer");
+		SubConstFromVariable(&RecompPos,TimerModifier,&Timers.Timer,"Timer");
 	} else {
-		CompConstToVariable(0,&Timers.Timer,"Timer");
+		CompConstToVariable(&RecompPos, 0,&Timers.Timer,"Timer");
 	}
-	JnsLabel32("Continue_From_Timer_Test",0);
+	JnsLabel32(&RecompPos, "Continue_From_Timer_Test",0);
 	Jump = RecompPos - 4;
-	Pushad();
-	if (TargetPC != (DWORD)-1) { MoveConstToVariable(TargetPC,&PROGRAM_COUNTER,"PROGRAM_COUNTER"); }
+	Pushad(&RecompPos);
+	if (TargetPC != (DWORD)-1) { MoveConstToVariable(&RecompPos, TargetPC,&PROGRAM_COUNTER,"PROGRAM_COUNTER"); }
 	InitilzeSection (&Section, NULL, (DWORD)-1, 0);
 	memcpy(&Section.RegWorking, &RegSet, sizeof(REG_INFO));
 	WriteBackRegisters(&Section);
-	if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
-	Call_Direct((void*)TimerDone,"TimerDone");
-	if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
-	Popad();
+	if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos, (void*)SyncToPC, "SyncToPC"); }
+	Call_Direct(&RecompPos, (void*)TimerDone,"TimerDone");
+	if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos, (void*)SyncToPC, "SyncToPC"); }
+	Popad(&RecompPos);
 
 	//Interrupt
-	CompConstToVariable(0,&CPU_Action.DoSomething,"CPU_Action.DoSomething");
-	JeLabel32("Continue_From_Interrupt_Test",0);
+	CompConstToVariable(&RecompPos, 0,&CPU_Action.DoSomething,"CPU_Action.DoSomething");
+	JeLabel32(&RecompPos, "Continue_From_Interrupt_Test",0);
 	Jump2 = RecompPos - 4;
 	CompileExit((DWORD)-1,Section.RegWorking,DoCPU_Action,TRUE,NULL);
 
 	CPU_Message("");
 	CPU_Message("      $Continue_From_Interrupt_Test:");
 	SetJump32(Jump2,RecompPos);	
-	Ret();
+	Ret(&RecompPos);
 	
 	CPU_Message("");
 	CPU_Message("      $Continue_From_Timer_Test:");
 	SetJump32(Jump,RecompPos);
 
 	//Interrupt 2
-	CompConstToVariable(0,&CPU_Action.DoSomething,"CPU_Action.DoSomething");
-	JeLabel32("Continue_From_Interrupt_Test",0);
+	CompConstToVariable(&RecompPos, 0,&CPU_Action.DoSomething,"CPU_Action.DoSomething");
+	JeLabel32(&RecompPos, "Continue_From_Interrupt_Test",0);
 	Jump = RecompPos - 4;
-	if (TargetPC != (DWORD)-1) { MoveConstToVariable(TargetPC,&PROGRAM_COUNTER,"PROGRAM_COUNTER"); }
+	if (TargetPC != (DWORD)-1) { MoveConstToVariable(&RecompPos, TargetPC,&PROGRAM_COUNTER,"PROGRAM_COUNTER"); }
 	InitilzeSection (&Section, NULL, (DWORD)-1, 0);
 	memcpy(&Section.RegWorking, &RegSet, sizeof(REG_INFO));
 	WriteBackRegisters(&Section);		
@@ -1842,9 +1842,9 @@ void GenerateSectionLinkage (BLOCK_SECTION * Section) {
 					JumpInfo[count]->LinkLocation2 = NULL;
 				}
 			}
-			MoveConstToVariable(JumpInfo[count]->TargetPC,&JumpToLocation,"JumpToLocation");
+			MoveConstToVariable(&RecompPos, JumpInfo[count]->TargetPC,&JumpToLocation,"JumpToLocation");
 			if (JumpInfo[(count + 1) & 1]->LinkLocation == NULL) { break; }
-			JmpLabel8("FinishBlock",0);
+			JmpLabel8(&RecompPos, "FinishBlock",0);
 			Jump = RecompPos - 1;
 		}		
 		for (count = 0; count < 2; count ++) {
@@ -1858,25 +1858,25 @@ void GenerateSectionLinkage (BLOCK_SECTION * Section) {
 					JumpInfo[count]->LinkLocation2 = NULL;
 				}
 			}
-			MoveConstToVariable(JumpInfo[count]->TargetPC,&JumpToLocation,"JumpToLocation");
+			MoveConstToVariable(&RecompPos, JumpInfo[count]->TargetPC,&JumpToLocation,"JumpToLocation");
 			if (JumpInfo[(count + 1) & 1]->LinkLocation == NULL) { break; }
-			JmpLabel8("FinishBlock",0);
+			JmpLabel8(&RecompPos, "FinishBlock",0);
 			Jump = RecompPos - 1;
 		}
 		if (Jump != NULL) {
 			CPU_Message("      $FinishBlock:");
 			SetJump8(Jump,RecompPos);
 		}
-		MoveConstToVariable(Section->CompilePC + 4,&PROGRAM_COUNTER,"PROGRAM_COUNTER");
+		MoveConstToVariable(&RecompPos, Section->CompilePC + 4,&PROGRAM_COUNTER,"PROGRAM_COUNTER");
 		if (BlockCycleCount != 0) { 
-			AddConstToVariable(BlockCycleCount,&CP0[9],Cop0_Name[9]); 
-			SubConstFromVariable(BlockCycleCount,&Timers.Timer,"Timer");
+			AddConstToVariable(&RecompPos, BlockCycleCount,&CP0[9],Cop0_Name[9]);
+			SubConstFromVariable(&RecompPos, BlockCycleCount,&Timers.Timer,"Timer");
 		}
-		if (BlockRandomModifier != 0) { SubConstFromVariable(BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
+		if (BlockRandomModifier != 0) { SubConstFromVariable(&RecompPos, BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
 		WriteBackRegisters(Section);
-		if (CPU_Type == CPU_SyncCores) { Call_Direct((void*)SyncToPC, "SyncToPC"); }
-		MoveConstToVariable(DELAY_SLOT,&NextInstruction,"NextInstruction");
-		Ret();
+		if (CPU_Type == CPU_SyncCores) { Call_Direct(&RecompPos, (void*)SyncToPC, "SyncToPC"); }
+		MoveConstToVariable(&RecompPos, DELAY_SLOT,&NextInstruction,"NextInstruction");
+		Ret(&RecompPos);
 		return;
 	}
 	if (!UseLinking) {  
@@ -1886,7 +1886,7 @@ void GenerateSectionLinkage (BLOCK_SECTION * Section) {
 			if (!DelaySlotEffectsJump(CompilePC)) {
 				WriteBackRegisters(Section); 
 				memcpy(&Section->Jump.RegSet,&Section->RegWorking, sizeof(REG_INFO));
-				Call_Direct((void*)InPermLoop,"InPermLoop");
+				Call_Direct(&RecompPos, (void*)InPermLoop,"InPermLoop");
 			}
 		}
 	}
@@ -1952,11 +1952,11 @@ void GenerateSectionLinkage (BLOCK_SECTION * Section) {
 				}
 			}
 			if (JumpInfo[count]->RegSet.RandomModifier != 0) {
-				SubConstFromVariable(JumpInfo[count]->RegSet.RandomModifier,&CP0[1],Cop0_Name[1]);
+				SubConstFromVariable(&RecompPos, JumpInfo[count]->RegSet.RandomModifier,&CP0[1],Cop0_Name[1]);
 				JumpInfo[count]->RegSet.RandomModifier = 0;
 			}
 			if (JumpInfo[count]->RegSet.CycleCount != 0) {
-				AddConstToVariable(JumpInfo[count]->RegSet.CycleCount,&CP0[9],Cop0_Name[9]);
+				AddConstToVariable(&RecompPos, JumpInfo[count]->RegSet.CycleCount,&CP0[9],Cop0_Name[9]);
 			}
 			if (JumpInfo[count]->TargetPC <= Section->CompilePC) {
 				DWORD CycleCount = JumpInfo[count]->RegSet.CycleCount;
@@ -1964,21 +1964,21 @@ void GenerateSectionLinkage (BLOCK_SECTION * Section) {
 
 CPU_Message("PermLoop ***");
 				if (JumpInfo[count]->PermLoop) {
-					MoveConstToVariable(JumpInfo[count]->TargetPC,&PROGRAM_COUNTER,"PROGRAM_COUNTER");
-					Call_Direct((void*)InPermLoop,"InPermLoop");
+					MoveConstToVariable(&RecompPos, JumpInfo[count]->TargetPC,&PROGRAM_COUNTER,"PROGRAM_COUNTER");
+					Call_Direct(&RecompPos, (void*)InPermLoop,"InPermLoop");
 					CompileSystemCheck(0,(DWORD)-1,JumpInfo[count]->RegSet);
 				} else {
 					CompileSystemCheck(CycleCount,JumpInfo[count]->TargetPC,JumpInfo[count]->RegSet);
 				}
 			} else {
 				if (JumpInfo[count]->RegSet.CycleCount != 0) {
-					SubConstFromVariable(JumpInfo[count]->RegSet.CycleCount,&Timers.Timer,"Timer");
+					SubConstFromVariable(&RecompPos, JumpInfo[count]->RegSet.CycleCount,&Timers.Timer,"Timer");
 					JumpInfo[count]->RegSet.CycleCount = 0;
 				}
 			}
 			memcpy(&Section->RegWorking, &JumpInfo[count]->RegSet,sizeof(REG_INFO));
 			SyncRegState(Section,&TargetSection[count]->RegStart);						
-			JmpLabel32(Label,0);
+			JmpLabel32(&RecompPos, Label,0);
 			SetJump32((DWORD *)RecompPos - 1,TargetSection[count]->CompiledLocation);
 		}
 	}
@@ -1996,7 +1996,7 @@ CPU_Message("PermLoop ***");
 			if (Parent->CompiledLocation != NULL) { continue; }
 			if (JumpInfo[count]->FallThrough) { 
 				JumpInfo[count]->FallThrough = FALSE;
-				JmpLabel32(JumpInfo[count]->BranchLabel,0);
+				JmpLabel32(&RecompPos, JumpInfo[count]->BranchLabel,0);
 				JumpInfo[count]->LinkLocation = RecompPos - 4;
 			}
 		}
@@ -2008,11 +2008,11 @@ CPU_Message("PermLoop ***");
 				DWORD CycleCount = JumpInfo[count]->RegSet.CycleCount;;
 
 				if (JumpInfo[count]->RegSet.RandomModifier != 0) {
-					SubConstFromVariable(JumpInfo[count]->RegSet.RandomModifier,&CP0[1],Cop0_Name[1]);
+					SubConstFromVariable(&RecompPos, JumpInfo[count]->RegSet.RandomModifier,&CP0[1],Cop0_Name[1]);
 					JumpInfo[count]->RegSet.RandomModifier = 0;
 				}
 				if (JumpInfo[count]->RegSet.CycleCount != 0) {
-					AddConstToVariable(JumpInfo[count]->RegSet.CycleCount,&CP0[9],Cop0_Name[9]);
+					AddConstToVariable(&RecompPos, JumpInfo[count]->RegSet.CycleCount,&CP0[9],Cop0_Name[9]);
 				}
 				JumpInfo[count]->RegSet.CycleCount = 0;
 
@@ -2062,11 +2062,11 @@ CPU_Message("PermLoop ***");
 			}			
 			memcpy(&Section->RegWorking,&JumpInfo[count]->RegSet,sizeof(REG_INFO));
 			if (JumpInfo[count]->RegSet.RandomModifier != 0) {
-				SubConstFromVariable(JumpInfo[count]->RegSet.RandomModifier,&CP0[1],Cop0_Name[1]);
+				SubConstFromVariable(&RecompPos, JumpInfo[count]->RegSet.RandomModifier,&CP0[1],Cop0_Name[1]);
 				JumpInfo[count]->RegSet.RandomModifier = 0;
 			}
 			if (JumpInfo[count]->RegSet.CycleCount != 0) {
-				AddConstToVariable(JumpInfo[count]->RegSet.CycleCount,&CP0[9],Cop0_Name[9]);
+				AddConstToVariable(&RecompPos, JumpInfo[count]->RegSet.CycleCount,&CP0[9],Cop0_Name[9]);
 			}
 			if (JumpInfo[count]->TargetPC <= Section->CompilePC) {
 				DWORD CycleCount = JumpInfo[count]->RegSet.CycleCount;
@@ -2074,21 +2074,21 @@ CPU_Message("PermLoop ***");
 
 CPU_Message("PermLoop ***");
 				if (JumpInfo[count]->PermLoop) {
-					MoveConstToVariable(JumpInfo[count]->TargetPC,&PROGRAM_COUNTER,"PROGRAM_COUNTER");
-					Call_Direct((void*)InPermLoop,"InPermLoop");
+					MoveConstToVariable(&RecompPos, JumpInfo[count]->TargetPC,&PROGRAM_COUNTER,"PROGRAM_COUNTER");
+					Call_Direct(&RecompPos, (void*)InPermLoop,"InPermLoop");
 					CompileSystemCheck(0,(DWORD)-1,JumpInfo[count]->RegSet);
 				} else {
 					CompileSystemCheck(CycleCount,JumpInfo[count]->TargetPC,JumpInfo[count]->RegSet);
 				}
 			} else {
 				if (JumpInfo[count]->RegSet.CycleCount != 0) {
-					SubConstFromVariable(JumpInfo[count]->RegSet.CycleCount,&Timers.Timer,"Timer");
+					SubConstFromVariable(&RecompPos, JumpInfo[count]->RegSet.CycleCount,&Timers.Timer,"Timer");
 					JumpInfo[count]->RegSet.CycleCount = 0;
 				}
 			}
 			memcpy(&Section->RegWorking, &JumpInfo[count]->RegSet,sizeof(REG_INFO));
 			SyncRegState(Section,&TargetSection[count]->RegStart);						
-			JmpLabel32(Label,0);
+			JmpLabel32(&RecompPos, Label,0);
 			SetJump32((DWORD *)RecompPos - 1,TargetSection[count]->CompiledLocation);
 		}
 	}
@@ -2745,10 +2745,10 @@ BOOL InheritParentInfo (BLOCK_SECTION * Section) {
 			JumpInfo->LinkLocation2  = NULL;
 		}
 	}
-	if (BlockRandomModifier != 0) { SubConstFromVariable(BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
+	if (BlockRandomModifier != 0) { SubConstFromVariable(&RecompPos, BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
 	if (BlockCycleCount != 0) { 
-		AddConstToVariable(BlockCycleCount,&CP0[9],Cop0_Name[9]); 
-		SubConstFromVariable(BlockCycleCount,&Timers.Timer,"Timer");
+		AddConstToVariable(&RecompPos, BlockCycleCount,&CP0[9],Cop0_Name[9]);
+		SubConstFromVariable(&RecompPos, BlockCycleCount,&Timers.Timer,"Timer");
 	}
 	JumpInfo->FallThrough   = FALSE;
 
@@ -2890,7 +2890,7 @@ BOOL InheritParentInfo (BLOCK_SECTION * Section) {
 		if (NeedSync == FALSE) { continue; }
 		Parent   = SectionParents[CurrentParent].Parent;
 		JumpInfo = SectionParents[CurrentParent].JumpInfo; 
-		JmpLabel32(Label,0);		
+		JmpLabel32(&RecompPos, Label,0);
 		JumpInfo->LinkLocation  = RecompPos - 4;
 		JumpInfo->LinkLocation2 = NULL;
 
@@ -2907,10 +2907,10 @@ BOOL InheritParentInfo (BLOCK_SECTION * Section) {
 			}
 		}
 		memcpy(&Section->RegWorking,&JumpInfo->RegSet,sizeof(REG_INFO));
-		if (BlockRandomModifier != 0) { SubConstFromVariable(BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
+		if (BlockRandomModifier != 0) { SubConstFromVariable(&RecompPos, BlockRandomModifier,&CP0[1],Cop0_Name[1]); }
 		if (BlockCycleCount != 0) { 
-			AddConstToVariable(BlockCycleCount,&CP0[9],Cop0_Name[9]); 
-			SubConstFromVariable(BlockCycleCount,&Timers.Timer,"Timer");
+			AddConstToVariable(&RecompPos, BlockCycleCount,&CP0[9],Cop0_Name[9]);
+			SubConstFromVariable(&RecompPos, BlockCycleCount,&Timers.Timer,"Timer");
 		}
 		SyncRegState(Section,&Section->RegStart); 		//Sync				
 		memcpy(&Section->RegStart,&Section->RegWorking,sizeof(REG_INFO));
@@ -3351,12 +3351,12 @@ void SyncRegState (BLOCK_SECTION * Section, REG_INFO * SyncTo) {
 			UnMap_X86reg(Section,x86Reg);
 			for (count = 1; count < 10; count ++) {
 				if (SyncTo->x86reg_MappedTo[count] == Stack_Mapped) {
-					MoveX86RegToX86Reg(count,x86Reg); 
+					MoveX86RegToX86Reg(&RecompPos, count,x86Reg);
 					changed = TRUE;
 				}
 			}
 			if (!changed) {
-				MoveVariableToX86reg(&MemoryStack,"MemoryStack",x86Reg);
+				MoveVariableToX86reg(&RecompPos, &MemoryStack,"MemoryStack",x86Reg);
 			}
 			changed = TRUE;
 		}
@@ -3411,33 +3411,33 @@ void SyncRegState (BLOCK_SECTION * Section, REG_INFO * SyncTo) {
 			UnMap_X86reg(Section, x86RegHi);
 			switch (MipsRegState(count)) {
 			case STATE_UNKNOWN:
-				MoveVariableToX86reg(&GPR[count].UW[0], GPR_NameLo[count], x86Reg);
-				MoveVariableToX86reg(&GPR[count].UW[1], GPR_NameHi[count], x86RegHi);
+				MoveVariableToX86reg(&RecompPos, &GPR[count].UW[0], GPR_NameLo[count], x86Reg);
+				MoveVariableToX86reg(&RecompPos, &GPR[count].UW[1], GPR_NameHi[count], x86RegHi);
 				break;
 			case STATE_MAPPED_64:
-				MoveX86RegToX86Reg(MipsRegLo(count), x86Reg);
+				MoveX86RegToX86Reg(&RecompPos, MipsRegLo(count), x86Reg);
 				x86Mapped(MipsRegLo(count)) = NotMapped;
-				MoveX86RegToX86Reg(MipsRegHi(count), x86RegHi);
+				MoveX86RegToX86Reg(&RecompPos, MipsRegHi(count), x86RegHi);
 				x86Mapped(MipsRegHi(count)) = NotMapped;
 				break;
 			case STATE_MAPPED_32_SIGN:
-				MoveX86RegToX86Reg(MipsRegLo(count), x86RegHi);
-				ShiftRightSignImmed(x86RegHi, 31);
-				MoveX86RegToX86Reg(MipsRegLo(count), x86Reg);
+				MoveX86RegToX86Reg(&RecompPos, MipsRegLo(count), x86RegHi);
+				ShiftRightSignImmed(&RecompPos, x86RegHi, 31);
+				MoveX86RegToX86Reg(&RecompPos, MipsRegLo(count), x86Reg);
 				x86Mapped(MipsRegLo(count)) = NotMapped;
 				break;
 			case STATE_MAPPED_32_ZERO:
-				XorX86RegToX86Reg(x86RegHi, x86RegHi);
-				MoveX86RegToX86Reg(MipsRegLo(count), x86Reg);
+				XorX86RegToX86Reg(&RecompPos, x86RegHi, x86RegHi);
+				MoveX86RegToX86Reg(&RecompPos, MipsRegLo(count), x86Reg);
 				x86Mapped(MipsRegLo(count)) = NotMapped;
 				break;
 			case STATE_CONST_64:
-				MoveConstToX86reg(MipsRegHi(count), x86RegHi);
-				MoveConstToX86reg(MipsRegLo(count), x86Reg);
+				MoveConstToX86reg(&RecompPos, MipsRegHi(count), x86RegHi);
+				MoveConstToX86reg(&RecompPos, MipsRegLo(count), x86Reg);
 				break;
 			case STATE_CONST_32:
-				MoveConstToX86reg(MipsRegLo_S(count) >> 31, x86RegHi);
-				MoveConstToX86reg(MipsRegLo(count), x86Reg);
+				MoveConstToX86reg(&RecompPos, MipsRegLo_S(count) >> 31, x86RegHi);
+				MoveConstToX86reg(&RecompPos, MipsRegLo(count), x86Reg);
 				break;
 			default:
 				if (ShowDebugMessages) {
@@ -3458,20 +3458,20 @@ void SyncRegState (BLOCK_SECTION * Section, REG_INFO * SyncTo) {
 			x86Reg = SyncTo->MIPS_RegVal[count].UW[0];
 			UnMap_X86reg(Section, x86Reg);
 			switch (MipsRegState(count)) {
-			case STATE_UNKNOWN: MoveVariableToX86reg(&GPR[count].UW[0], GPR_NameLo[count], x86Reg); break;
-			case STATE_CONST_32: MoveConstToX86reg(MipsRegLo(count), x86Reg); break;
+			case STATE_UNKNOWN: MoveVariableToX86reg(&RecompPos, &GPR[count].UW[0], GPR_NameLo[count], x86Reg); break;
+			case STATE_CONST_32: MoveConstToX86reg(&RecompPos, MipsRegLo(count), x86Reg); break;
 			case STATE_MAPPED_32_SIGN:
-				MoveX86RegToX86Reg(MipsRegLo(count), x86Reg);
+				MoveX86RegToX86Reg(&RecompPos, MipsRegLo(count), x86Reg);
 				x86Mapped(MipsRegLo(count)) = NotMapped;
 				break;
 			case STATE_MAPPED_32_ZERO:
 				if (MipsRegLo(count) != (DWORD)x86Reg) {
-					MoveX86RegToX86Reg(MipsRegLo(count), x86Reg);
+					MoveX86RegToX86Reg(&RecompPos, MipsRegLo(count), x86Reg);
 					x86Mapped(MipsRegLo(count)) = NotMapped;
 				}
 				break;
 			case STATE_MAPPED_64:
-				MoveX86RegToX86Reg(MipsRegLo(count), x86Reg);
+				MoveX86RegToX86Reg(&RecompPos, MipsRegLo(count), x86Reg);
 				x86Mapped(MipsRegLo(count)) = NotMapped;
 				x86Mapped(MipsRegHi(count)) = NotMapped;
 				break;
@@ -3495,10 +3495,10 @@ void SyncRegState (BLOCK_SECTION * Section, REG_INFO * SyncTo) {
 			switch (MipsRegState(count)) {
 			case STATE_MAPPED_64:
 			case STATE_UNKNOWN:
-				MoveVariableToX86reg(&GPR[count].UW[0], GPR_NameLo[count], x86Reg);
+				MoveVariableToX86reg(&RecompPos, &GPR[count].UW[0], GPR_NameLo[count], x86Reg);
 				break;
 			case STATE_MAPPED_32_ZERO:
-				MoveX86RegToX86Reg(MipsRegLo(count), x86Reg);
+				MoveX86RegToX86Reg(&RecompPos, MipsRegLo(count), x86Reg);
 				x86Mapped(MipsRegLo(count)) = NotMapped;
 				break;
 			case STATE_CONST_32:
@@ -3508,7 +3508,7 @@ void SyncRegState (BLOCK_SECTION * Section, REG_INFO * SyncTo) {
 					if (ShowDebugMessages)
 						DisplayError("Sign Problems in SyncRegState\nSTATE_MAPPED_32_ZERO");
 				}
-				MoveConstToX86reg(MipsRegLo(count), x86Reg);
+				MoveConstToX86reg(&RecompPos, MipsRegLo(count), x86Reg);
 				break;
 			default:
 				if (ShowDebugMessages) {
