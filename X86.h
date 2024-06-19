@@ -88,20 +88,20 @@ void JeLabel32                       ( BYTE** code, char * Label, DWORD Value );
 void JgeLabel32                      ( BYTE** code, char * Label, DWORD Value );
 void JgLabel8                        ( BYTE** code, char * Label, BYTE Value );
 void JgLabel32                       ( BYTE** code, char * Label, DWORD Value );
-/*void JleLabel8                       ( char * Label, BYTE Value );*/
+void JleLabel8                       ( BYTE** code, char * Label, BYTE Value );
 void JleLabel32                      ( BYTE** code, char * Label, DWORD Value );
 void JlLabel8                        ( BYTE** code, char * Label, BYTE Value );
 void JlLabel32                       ( BYTE** code, char * Label, DWORD Value );
 void JmpDirectReg                    ( BYTE** code, int x86reg );
-/*void JmpIndirectLabel32              ( char * Label, DWORD location );
-void JmpIndirectReg                  ( int x86reg );*/
+void JmpIndirectLabel32              ( BYTE** code, char * Label, DWORD location );
+void JmpIndirectReg                  ( BYTE** code, int x86reg );
 void JmpLabel8                       ( BYTE** code, char * Label, BYTE Value );
 void JmpLabel32                      ( BYTE** code, char * Label, DWORD Value );
 void JneLabel8                       ( BYTE** code, char * Label, BYTE Value );
 void JneLabel32                      ( BYTE** code, char * Label, DWORD Value );
-/*void JnsLabel8                       ( char * Label, BYTE Value );*/
+void JnsLabel8                       ( BYTE** code, char * Label, BYTE Value );
 void JnsLabel32                      ( BYTE** code, char * Label, DWORD Value );
-/*void JsLabel32                       ( char * Label, DWORD Value );*/
+void JsLabel32                       ( BYTE** code, char * Label, DWORD Value );
 void LeaRegReg                       ( BYTE** code, int x86RegDest, int x86RegSrc, int multiplier );
 void LeaSourceAndOffset              ( BYTE** code, int x86DestReg, int x86SourceReg, int offset );
 void MoveConstByteToN64Mem           ( BYTE** code, BYTE Const, int AddrReg );
@@ -119,8 +119,8 @@ void MoveConstToX86reg               ( BYTE** code, DWORD Const, int x86reg );
 void MoveConstToX86regPointer        ( BYTE** code, DWORD Const, int AddrReg1, int AddrReg2 );
 void MoveN64MemDispToX86reg          ( BYTE** code, int x86reg, int AddrReg, BYTE Disp );
 void MoveN64MemToX86reg              ( BYTE** code, int x86reg, int AddrReg );
-/*void MoveN64MemToX86regByte          ( int x86reg, int AddrReg );
-void MoveN64MemToX86regHalf          ( int x86reg, int AddrReg );*/
+void MoveN64MemToX86regByte          ( BYTE** code, int x86reg, int AddrReg );
+void MoveN64MemToX86regHalf          ( BYTE** code, int x86reg, int AddrReg );
 void MoveSxByteX86regPointerToX86reg ( BYTE** code, int AddrReg1, int AddrReg2, int x86reg );
 void MoveSxHalfX86regPointerToX86reg ( BYTE** code, int AddrReg1, int AddrReg2, int x86reg );
 void MoveSxN64MemToX86regByte        ( BYTE** code, int x86reg, int AddrReg );
@@ -129,8 +129,8 @@ void MoveSxVariableToX86regByte      ( BYTE** code, void *Variable, char *Variab
 void MoveSxVariableToX86regHalf      ( BYTE** code, void *Variable, char *VariableName, int x86reg );
 void MoveVariableDispToX86Reg        ( BYTE** code, void *Variable, char *VariableName, int x86Reg, int AddrReg, int Multiplier );
 void MoveVariableToX86reg            ( BYTE** code, void *Variable, char *VariableName, int x86reg );
-/*void MoveVariableToX86regByte        ( void *Variable, char *VariableName, int x86reg );
-void MoveVariableToX86regHalf        ( void *Variable, char *VariableName, int x86reg );*/
+void MoveVariableToX86regByte        ( BYTE** code, void *Variable, char *VariableName, int x86reg );
+void MoveVariableToX86regHalf        ( BYTE** code, void *Variable, char *VariableName, int x86reg );
 void MoveX86PointerToX86reg          ( BYTE** code, int x86reg, int X86Pointer );
 void MoveX86regByteToN64Mem          ( BYTE** code, int x86reg, int AddrReg );
 void MoveX86regByteToVariable        ( BYTE** code, int x86reg, void * Variable, char * VariableName );
@@ -164,12 +164,12 @@ void Popad                           ( BYTE** code );
 void Pushad                          ( BYTE** code );
 void Push					         ( BYTE** code, int x86reg );
 void Pop					         ( BYTE** code, int x86reg );
-/*void PushImm32                       ( char * String, DWORD Value );*/
+void PushImm32                       ( BYTE** code, char * String, DWORD Value );
 void Ret                             ( BYTE** code );
-/*void Seta                            ( int x86reg );
-void Setae                           ( int x86reg );*/
+void Seta                            ( BYTE** code, int x86reg );
+void Setae                           ( BYTE** code, int x86reg );
 void SetaVariable                    ( BYTE** code, void * Variable, char * VariableName );
-/*void Setb                            ( int x86reg );*/
+void Setb                            ( BYTE** code, int x86reg );
 void SetbVariable                    ( BYTE** code, void * Variable, char * VariableName );
 void Setg                            ( BYTE** code, int x86reg );
 void SetgVariable                    ( BYTE** code, void * Variable, char * VariableName );
@@ -203,66 +203,65 @@ void XorVariableToX86reg             ( BYTE** code, void *Variable, char *Variab
 
 
 void fpuAbs					         ( BYTE** code );
-/*void fpuAddDword			         ( void *Variable, char *VariableName );*/
+void fpuAddDword			         ( BYTE** code, void *Variable, char *VariableName );
 void fpuAddDwordRegPointer           ( BYTE** code, int x86Pointer );
-/*void fpuAddQword			         ( void *Variable, char *VariableName );*/
+void fpuAddQword			         ( BYTE** code, void *Variable, char *VariableName );
 void fpuAddQwordRegPointer           ( BYTE** code, int x86Pointer );
 void fpuAddReg				         ( BYTE** code, int x86reg );
-/*void fpuAddRegPop			         ( int * StackPos, int x86reg );
-void fpuComDword			         ( void *Variable, char *VariableName, BOOL Pop );*/
+void fpuAddRegPop			         ( BYTE** code, int * StackPos, int x86reg );
+void fpuComDword			         ( BYTE** code, void *Variable, char *VariableName, BOOL Pop );
 void fpuComDwordRegPointer           ( BYTE** code, int x86Pointer, BOOL Pop );
-/*void fpuComQword			         ( void *Variable, char *VariableName, BOOL Pop );*/
+void fpuComQword			         ( BYTE** code, void *Variable, char *VariableName, BOOL Pop );
 void fpuComQwordRegPointer           ( BYTE** code, int x86Pointer, BOOL Pop );
 void fpuComReg                       ( BYTE** code, int x86reg, BOOL Pop );
-/*void fpuDivDword			         ( void *Variable, char *VariableName );*/
+void fpuDivDword			         ( BYTE** code, void *Variable, char *VariableName );
 void fpuDivDwordRegPointer           ( BYTE** code, int x86Pointer );
-/*void fpuDivQword			         ( void *Variable, char *VariableName );*/
+void fpuDivQword			         ( BYTE** code, void *Variable, char *VariableName );
 void fpuDivQwordRegPointer           ( BYTE** code, int x86Pointer );
 void fpuDivReg                       ( BYTE** code, int Reg );
-/*void fpuDivRegPop			         ( int x86reg );*/
+void fpuDivRegPop			         ( BYTE** code, int x86reg );
 void fpuExchange                     ( BYTE** code, int Reg );
 void fpuFree                         ( BYTE** code, int Reg );
-/*void fpuDecStack                     ( int * StackPos );*/
+void fpuDecStack                     ( BYTE** code, int * StackPos );
 void fpuIncStack                     ( BYTE** code, int * StackPos );
 void fpuLoadControl			         ( BYTE** code, void *Variable, char *VariableName );
-/*void fpuLoadDword			         ( int * StackPos, void *Variable, char *VariableName );*/
+void fpuLoadDword			         ( BYTE** code, int * StackPos, void *Variable, char *VariableName );
 void fpuLoadDwordFromX86Reg          ( BYTE** code, int * StackPos, int x86reg );
-/*void fpuLoadDwordFromN64Mem          ( int * StackPos, int x86reg );
-void fpuLoadInt32bFromN64Mem         ( int * StackPos, int x86reg );
-void fpuLoadIntegerDword	         ( int * StackPos, void *Variable, char *VariableName );*/
+void fpuLoadDwordFromN64Mem          ( BYTE** code, int * StackPos, int x86reg );
+void fpuLoadInt32bFromN64Mem         ( BYTE** code, int * StackPos, int x86reg );
+void fpuLoadIntegerDword	         ( BYTE** code, int * StackPos, void *Variable, char *VariableName );
 void fpuLoadIntegerDwordFromX86Reg   ( BYTE** code, int * StackPos,int x86Reg );
-/*void fpuLoadIntegerQword	         ( int * StackPos, void *Variable, char *VariableName );*/
+void fpuLoadIntegerQword	         ( BYTE** code, int * StackPos, void *Variable, char *VariableName );
 void fpuLoadIntegerQwordFromX86Reg   ( BYTE** code, int * StackPos,int x86Reg );
-/*void fpuLoadQword			         ( int * StackPos, void *Variable, char *VariableName );*/
+void fpuLoadQword			         ( BYTE** code, int * StackPos, void *Variable, char *VariableName );
 void fpuLoadQwordFromX86Reg          ( BYTE** code, int * StackPos, int x86Reg );
-/*void fpuLoadQwordFromN64Mem          ( int * StackPos, int x86reg );*/
+void fpuLoadQwordFromN64Mem          ( BYTE** code, int * StackPos, int x86reg );
 void fpuLoadReg                      ( BYTE** code, int * StackPos, int Reg );
-/*void fpuMulDword                     ( void *Variable, char *VariableName);*/
+void fpuMulDword                     ( BYTE** code, void *Variable, char *VariableName);
 void fpuMulDwordRegPointer           ( BYTE** code, int x86Pointer );
-/*void fpuMulQword                     ( void *Variable, char *VariableName);*/
+void fpuMulQword                     ( BYTE** code, void *Variable, char *VariableName);
 void fpuMulQwordRegPointer           ( BYTE** code, int x86Pointer );
 void fpuMulReg                       ( BYTE** code, int x86reg );
-/*void fpuMulRegPop                    ( int x86reg );*/
+void fpuMulRegPop                    ( BYTE** code, int x86reg );
 void fpuNeg					         ( BYTE** code );
-/*void fpuRound				         ( void );*/
+void fpuRound				         ( BYTE** code );
 void fpuSqrt				         ( BYTE** code );
 void fpuStoreControl		         ( BYTE** code, void *Variable, char *VariableName );
-/*void fpuStoreDword			         ( int * StackPos, void *Variable, char *VariableName, BOOL pop );*/
+void fpuStoreDword			         ( BYTE** code, int * StackPos, void *Variable, char *VariableName, BOOL pop );
 void fpuStoreDwordFromX86Reg         ( BYTE** code, int * StackPos,int x86Reg, BOOL pop );
-/*void fpuStoreDwordToN64Mem	         ( int * StackPos, int x86reg, BOOL Pop );
-void fpuStoreIntegerDword            ( int * StackPos, void *Variable, char *VariableName, BOOL pop );*/
+void fpuStoreDwordToN64Mem	         ( BYTE** code, int * StackPos, int x86reg, BOOL Pop );
+void fpuStoreIntegerDword            ( BYTE** code, int * StackPos, void *Variable, char *VariableName, BOOL pop );
 void fpuStoreIntegerDwordFromX86Reg  ( BYTE** code, int * StackPos,int x86Reg, BOOL pop );
-/*void fpuStoreIntegerQword            ( int * StackPos, void *Variable, char *VariableName, BOOL pop );*/
+void fpuStoreIntegerQword            ( BYTE** code, int * StackPos, void *Variable, char *VariableName, BOOL pop );
 void fpuStoreIntegerQwordFromX86Reg  ( BYTE** code, int * StackPos, int x86Reg, BOOL pop );
-/*void fpuStoreQword			         ( int * StackPos, void *Variable, char *VariableName, BOOL pop );*/
 void fpuStoreQwordFromX86Reg         ( BYTE** code, int * StackPos, int x86Reg, BOOL pop );
 void fpuStoreStatus			         ( BYTE** code );
-/*void fpuSubDword			         ( void *Variable, char *VariableName );*/
+void fpuSubDword			         ( BYTE** code, void *Variable, char *VariableName );
 void fpuSubDwordRegPointer           ( BYTE** code, int x86Pointer );
-/*void fpuSubDwordReverse              ( void *Variable, char *VariableName );
-void fpuSubQword			         ( void *Variable, char *VariableName );*/
+void fpuSubDwordReverse              ( BYTE** code, void *Variable, char *VariableName );
+void fpuSubQword			         ( BYTE** code, void *Variable, char *VariableName );
 void fpuSubQwordRegPointer           ( BYTE** code, int x86Pointer );
-/*void fpuSubQwordReverse              ( void *Variable, char *VariableName );*/
+void fpuSubQwordReverse              ( BYTE** code, void *Variable, char *VariableName );
 void fpuSubReg				         ( BYTE** code, int x86reg );
-/*void fpuSubRegPop			         ( int x86reg );*/
+void fpuSubRegPop			         ( BYTE** code, int x86reg );
 
