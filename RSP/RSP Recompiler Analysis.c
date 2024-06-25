@@ -959,7 +959,7 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 	DWORD Const = 0;
 	OPCODE RspOp;
 
-	if (Compiler.bGPRConstants == FALSE) 
+	if (RspCompiler.bGPRConstants == FALSE) 
 		return FALSE;
 
 	while (PC < 0x1000) {
@@ -1003,29 +1003,31 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 			break;
 
 		/*case RSP_J:
-		case RSP_JAL:
+		case RSP_JAL:*/
 		case RSP_BEQ:
 		case RSP_BNE:
-		case RSP_BLEZ:
+		/*case RSP_BLEZ:*/
 		case RSP_BGTZ:
 			break;
 		
-		case RSP_ADDI:
+		/*case RSP_ADDI:*/
 		case RSP_ADDIU:
-			if (RspOp.rt == Reg) {
-				if (!RspOp.rs) {
-					if (References > 0) { return FALSE; }
-					Const = (short)RspOp.immediate;
-					References++;
+			if (RspOp.OP.I.rt == Reg) {
+				if (!RspOp.OP.I.rs) {
+					if (References > 0) { /*return FALSE;*/LogMessage("TODO: IsRspRegisterConstant, ADDIU, targetting watched reg, src is r0, already referenced"); }
+					/*Const = (short)RspOp.immediate;
+					References++;*/
+					LogMessage("TODO: IsRspRegisterConstant, ADDIU, targetting watched reg, src is r0");
 				} else
 					return FALSE;
 			}
 			break;
 		case RSP_ORI:
-			if (RspOp.rt == Reg) {
-				if (!RspOp.rs) {
-					if (References > 0) { return FALSE; }
-					Const = (WORD)RspOp.immediate;
+			if (RspOp.OP.I.rt == Reg) {
+				if (!RspOp.OP.I.rs) {
+					if (References > 0) { /*return FALSE;*/ LogMessage("TODO: IsRspRegisterConstant, ORI, targetting watched reg, src is r0, already referenced");
+					}
+					Const = (WORD)(short)RspOp.OP.I.immediate;
 					References++;
 				} else
 					return FALSE;
@@ -1033,30 +1035,30 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 			break;
 
 		case RSP_LUI:
-			if (RspOp.rt == Reg) {
-				if (References > 0) { return FALSE; }
-				Const = (short)RspOp.offset << 16;
+			if (RspOp.OP.I.rt == Reg) {
+				if (References > 0) { /*return FALSE;*/ LogMessage("TODO: IsRspRegisterConstant, LUI, targetting watched reg, already referenced"); }
+				Const = (short)RspOp.OP.I.immediate << 16;
 				References++;
 			}
 			break;
 
 		case RSP_ANDI:
-		case RSP_XORI:
+		/*case RSP_XORI:
 		case RSP_SLTI:
-		case RSP_SLTIU:
-			if (RspOp.rt == Reg) { return FALSE; }
+		case RSP_SLTIU:*/
+			if (RspOp.OP.I.rt == Reg) { return FALSE; }
 			break;
 
 		case RSP_CP0:
-			switch (RspOp.rs) {
+			switch (RspOp.OP.I.rs) {
 			case RSP_COP0_MF:
-				if (RspOp.rt == Reg) { return FALSE; }
+				if (RspOp.OP.I.rt == Reg) { return FALSE; }
 			case RSP_COP0_MT:
 				break;
 			}			
 			break;
 
-		case RSP_CP2:
+		/*case RSP_CP2:
 			if ((RspOp.rs & 0x10) == 0) {
 				switch (RspOp.rs) {
 				case RSP_COP2_CT:
@@ -1085,10 +1087,10 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 			break;
 
 		case RSP_SB:
-		case RSP_SH:
+		case RSP_SH:*/
 		case RSP_SW:
 			break;
-		case RSP_LC2:
+		/*case RSP_LC2:
 			break;
 		case RSP_SC2:
 			break;*/
@@ -1099,7 +1101,6 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 	}
 
 	if (References > 0) {
-		LogMessage("TODO: IsRspRegisterConstant constant found");
 		*Constant = Const;
 		return TRUE;
 	} else {
@@ -1163,37 +1164,37 @@ BOOL IsRspOpcodeBranch(DWORD PC, OPCODE RspOp) {
 		}
 		break;
 	/*case RSP_J:
-	case RSP_JAL:
+	case RSP_JAL:*/
 	case RSP_BEQ:
 	case RSP_BNE:
-	case RSP_BLEZ:
+	/*case RSP_BLEZ:*/
 	case RSP_BGTZ:
 		return TRUE;
 
-	case RSP_ADDI:
+	/*case RSP_ADDI:*/
 	case RSP_ADDIU:
-	case RSP_SLTI:
-	case RSP_SLTIU:
+	/*case RSP_SLTI:
+	case RSP_SLTIU:*/
 	case RSP_ANDI:
 	case RSP_ORI:
-	case RSP_XORI:
+	/*case RSP_XORI:*/
 	case RSP_LUI:
 
 	case RSP_CP0:
-	case RSP_CP2:
+	/*case RSP_CP2:*/
 		break;
 
-	case RSP_LB:
+	/*case RSP_LB:
 	case RSP_LH:
 	case RSP_LW:
 	case RSP_LBU:
 	case RSP_LHU:
 	case RSP_SB:
-	case RSP_SH:
+	case RSP_SH:*/
 	case RSP_SW:
 		break;
 
-	case RSP_LC2:
+	/*case RSP_LC2:
 	case RSP_SC2:
 		break;*/
 
@@ -1576,15 +1577,15 @@ void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 ** Input: PC
 *************************************************************/
 
-/*BOOL DelaySlotAffectBranch(DWORD PC) {
-	OPCODE Branch, Delay;
-	OPCODE_INFO infoBranch, infoDelay;
+BOOL RspDelaySlotAffectBranch(DWORD PC) {
+	/*OPCODE Branch, Delay;
+	OPCODE_INFO infoBranch, infoDelay;*/
 
-	if (IsOpcodeNop(PC + 4) == TRUE) { 
+	if (IsRspOpcodeNop(PC + 4) == TRUE) {
 		return FALSE;
 	}
 
-	RSP_LW_IMEM(PC, &Branch.Hex);
+	/*RSP_LW_IMEM(PC, &Branch.Hex);
 	RSP_LW_IMEM(PC+4, &Delay.Hex);
 
 	memset(&infoDelay,0,sizeof(infoDelay));
@@ -1598,10 +1599,11 @@ void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 	}
 
 	if (infoBranch.SourceReg0 == infoDelay.DestReg) { return TRUE; }
-	if (infoBranch.SourceReg1 == infoDelay.DestReg) { return TRUE; }
+	if (infoBranch.SourceReg1 == infoDelay.DestReg) { return TRUE; }*/
+	LogMessage("TODO: RspDelaySlotAffectBranch");
 
 	return FALSE;
-}*/
+}
 
 /************************************************************
 ** CompareInstructions

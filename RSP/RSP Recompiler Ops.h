@@ -28,45 +28,45 @@
 #pragma once
 
 /************************* OpCode functions *************************/
-/*void Compile_SPECIAL       ( void );
-void Compile_REGIMM        ( void );
+void CompileRsp_SPECIAL       ( void );
+/*void Compile_REGIMM        ( void );
 void Compile_J             ( void );
-void Compile_JAL           ( void );
-void Compile_BEQ           ( void );
-void Compile_BNE           ( void );
-void Compile_BLEZ          ( void );
-void Compile_BGTZ          ( void );
-void Compile_ADDI          ( void );
-void Compile_ADDIU         ( void );
-void Compile_SLTI          ( void );
-void Compile_SLTIU         ( void );
-void Compile_ANDI          ( void );
-void Compile_ORI           ( void );
-void Compile_XORI          ( void );
-void Compile_LUI           ( void );
-void Compile_COP0          ( void );
-void Compile_COP2          ( void );
+void Compile_JAL           ( void );*/
+void CompileRsp_BEQ           ( void );
+void CompileRsp_BNE           ( void );
+/*void Compile_BLEZ          ( void );*/
+void CompileRsp_BGTZ          ( void );
+/*void Compile_ADDI          ( void );*/
+void CompileRsp_ADDIU         ( void );
+/*void Compile_SLTI          ( void );
+void Compile_SLTIU         ( void );*/
+void CompileRsp_ANDI          ( void );
+void CompileRsp_ORI           ( void );
+/*void Compile_XORI          ( void );*/
+void CompileRsp_LUI           ( void );
+void CompileRsp_COP0          ( void );
+/*void Compile_COP2          ( void );
 void Compile_LB            ( void );
 void Compile_LH            ( void );
 void Compile_LW            ( void );
 void Compile_LBU           ( void );
 void Compile_LHU           ( void );
 void Compile_SB            ( void );
-void Compile_SH            ( void );
-void Compile_SW            ( void );
-void Compile_LC2           ( void );
+void Compile_SH            ( void );*/
+void CompileRsp_SW            ( void );
+/*void Compile_LC2           ( void );
 void Compile_SC2           ( void );*/
 /********************** R4300i OpCodes: Special **********************/
-/*void Compile_Special_SLL   ( void );
-void Compile_Special_SRL   ( void );
+void CompileRsp_Special_SLL   ( void );
+/*void Compile_Special_SRL   ( void );
 void Compile_Special_SRA   ( void );
 void Compile_Special_SLLV  ( void );
 void Compile_Special_SRLV  ( void );
 void Compile_Special_SRAV  ( void );
 void Compile_Special_JR    ( void );
-void Compile_Special_JALR  ( void );
-void Compile_Special_BREAK ( void );
-void Compile_Special_ADD   ( void );
+void Compile_Special_JALR  ( void );*/
+void CompileRsp_Special_BREAK ( void );
+/*void Compile_Special_ADD   ( void );
 void Compile_Special_ADDU  ( void );
 void Compile_Special_SUB   ( void );
 void Compile_Special_SUBU  ( void );
@@ -82,8 +82,8 @@ void Compile_RegImm_BGEZ   ( void );
 void Compile_RegImm_BLTZAL ( void );
 void Compile_RegImm_BGEZAL ( void );*/
 /************************** Cop0 functions *************************/
-/*void Compile_Cop0_MF       ( void );
-void Compile_Cop0_MT       ( void );*/
+void CompileRsp_Cop0_MF       ( void );
+void CompileRsp_Cop0_MT       ( void );
 /************************** Cop2 functions *************************/
 /*void Compile_Cop2_MF       ( void );
 void Compile_Cop2_CF       ( void );
@@ -159,3 +159,8 @@ void Compile_Opcode_SWV    ( void );
 void Compile_Opcode_STV    ( void );*/
 /************************** Other functions **************************/
 void CompileRsp_UnknownOpcode (void);
+
+void CompileRsp_WrapToBeginOfImem(void);
+void CompileRsp_CheckRspIsRunning(void);
+void CompileRsp_SaveBeginOfSubBlock(void);
+void CompileRsp_UpdateCycleCounts(void);

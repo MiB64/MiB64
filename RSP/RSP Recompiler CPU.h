@@ -29,14 +29,14 @@
 
 #include "RSP_OpCode.h"
 
-#define NORMAL				0
-/*#define DO_DELAY_SLOT 		1
-#define DELAY_SLOT 			2
-#define DELAY_SLOT_DONE		3*/
-#define FINISH_BLOCK		4
-/*#define FINISH_SUB_BLOCK	5*/
+#define NORMAL							0
+#define DO_DELAY_SLOT 					1
+#define DELAY_SLOT 						2
+#define DELAY_SLOT_DONE					3
+#define FINISH_BLOCK					4
+#define FINISH_SUB_BLOCK				5
 
-extern DWORD RspCompilePC, RSP_NextInstruction;
+extern DWORD RspCompilePC, RSP_NextInstruction, RemainingRspCycles;
 
 #define RspCompilerWarning if (RspShowErrors) DisplayError
 
@@ -47,10 +47,10 @@ extern DWORD RspCompilePC, RSP_NextInstruction;
 
 BOOL WriteToAccum (int Location, int PC);
 BOOL WriteToVectorDest (DWORD DestReg, int PC);
-BOOL UseRspFlags (int PC);
+BOOL UseRspFlags (int PC);*/
 
-BOOL DelaySlotAffectBranch(DWORD PC);
-BOOL CompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom);*/
+BOOL RspDelaySlotAffectBranch(DWORD PC);
+/*BOOL CompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom);*/
 BOOL IsRspOpcodeBranch(DWORD PC, OPCODE RspOp);
 BOOL IsRspOpcodeNop(DWORD PC);
 
@@ -73,23 +73,23 @@ BOOL RSP_DoSections(void);
 typedef struct {
 	DWORD StartPC, CurrPC;		/* block start */
 	
-/*	struct {
-		DWORD TargetPC;*/			/* Target for this unknown branch */
-/*		DWORD * X86JumpLoc;*/		/* Our x86 dword to fill */
-/*	} BranchesToResolve[200];*/	/* Branches inside or outside block */
+	struct {
+		DWORD TargetPC;			/* Target for this unknown branch */
+		DWORD * X86JumpLoc;		/* Our x86 dword to fill */
+	} BranchesToResolve[200];	/* Branches inside or outside block */
 	
-/*	DWORD ResolveCount;*/			/* Branches with NULL jump table */
+	DWORD ResolveCount;			/* Branches with NULL jump table */
 	BYTE IMEM[0x1000];			/* Saved off for re-order */
 } RSP_BLOCK;
 
-/*extern RSP_BLOCK CurrentBlock;*/
+extern RSP_BLOCK RspCurrentBlock;
 
 typedef struct {
 	BOOL bIsRegConst[32];		/* BOOLean toggle for constant */
 	DWORD MipsRegConst[32];		/* Value of register 32-bit */
-/*	DWORD BranchLabels[200];*/
+	DWORD BranchLabels[200];
 	DWORD LabelCount;
-/*	DWORD BranchLocations[200];*/
+	DWORD BranchLocations[200];
 	DWORD BranchCount;
 } RSP_CODE;
 
@@ -110,7 +110,7 @@ typedef struct {
 /*	BOOL bAlignGPR;*/			/* Align known gpr loads */
 } RSP_COMPILER;
 
-extern RSP_COMPILER Compiler;
+extern RSP_COMPILER RspCompiler;
 
 /*#define IsMmxEnabled	(Compiler.mmx)
 #define IsMmx2Enabled	(Compiler.mmx2)

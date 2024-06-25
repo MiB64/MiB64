@@ -157,7 +157,6 @@ void RSP_Opcode_COP0 (void) {
 }
 
 void RSP_Opcode_COP2 (void) {
-	//LogMessage("COP2:%d", RSPOpC.OP.I.rs);
 	((void (*)()) RSP_Cop2[ RSPOpC.OP.I.rs ])();
 }
 

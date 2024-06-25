@@ -37,10 +37,12 @@
 #include "rsp_log.h"
 #include "../x86.h"
 #include "rsp_config.h"
+#include "../Main.h"
 
 /*U_WORD Recp, RecpResult, SQroot, SQrootResult;
 DWORD ESP_RegSave = 0, EBP_RegSave = 0;
 DWORD BranchCompare = 0;*/
+DWORD BeginOfCurrentSubBlock = 0;
 
 /* align option affects: sw, lh, sh */
 /* align option affects: lrv, ssv, lsv */
@@ -94,44 +96,44 @@ DWORD BranchCompare = 0;*/
 /*#	define CompileLsv*/		/* Verified 12/17/2000 - Jabo */
 /*#	define CompileLlv*/		/* Verified 12/17/2000 - Jabo */
 /*#	define CompileSlv
-#endif
+#endif*/
 
-void Branch_AddRef(DWORD Target, DWORD * X86Loc) {
-	if (CurrentBlock.ResolveCount >= 150) {
-		CompilerWarning("Out of branch reference space");
+static void Branch_AddRef(DWORD Target, DWORD * X86Loc) {
+	if (RspCurrentBlock.ResolveCount >= 150) {
+		RspCompilerWarning("Out of branch reference space");
 	} else {
-		BYTE * KnownCode = *(JumpTable + (Target >> 2));
+		BYTE * KnownCode = *(RspJumpTable + (Target >> 2));
 
 		if (KnownCode == NULL) {
-			DWORD i = CurrentBlock.ResolveCount;
-			CurrentBlock.BranchesToResolve[i].TargetPC = Target;
-			CurrentBlock.BranchesToResolve[i].X86JumpLoc = X86Loc;
-			CurrentBlock.ResolveCount += 1;
+			DWORD i = RspCurrentBlock.ResolveCount;
+			RspCurrentBlock.BranchesToResolve[i].TargetPC = Target;
+			RspCurrentBlock.BranchesToResolve[i].X86JumpLoc = X86Loc;
+			RspCurrentBlock.ResolveCount += 1;
 		} else {
-			CPU_Message("      (static jump to %X)", KnownCode);
+			RSP_CPU_Message("      (static jump to %X)", KnownCode);
 			x86_SetBranch32b((DWORD*)X86Loc, (DWORD*)KnownCode);
 		}
 	}
 }
 
-void Cheat_r4300iOpcode ( void * FunctAddress, char * FunctName) {
-	CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
-	MoveConstToVariable(RSPOpC.Hex, &RSPOpC.Hex, "RSPOpC.Hex" );
-	Call_Direct(FunctAddress, FunctName);
+static void InterpreterFallback ( void * FunctAddress, char * FunctName) {
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
+	MoveConstToVariable(&RspRecompPos, RSPOpC.OP.Hex, &RSPOpC.OP.Hex, "RSPOpC.Hex" );
+	Call_Direct(&RspRecompPos, FunctAddress, FunctName);
 }
 
-void Cheat_r4300iOpcodeNoMessage( void * FunctAddress, char * FunctName) {
+/*void Cheat_r4300iOpcodeNoMessage( void * FunctAddress, char * FunctName) {
 	MoveConstToVariable(RSPOpC.Hex, &RSPOpC.Hex, "RSPOpC.Hex" );
 	Call_Direct(FunctAddress, FunctName);
-}
+}*/
 
-void x86_SetBranch8b(void * JumpByte, void * Destination) {*/
+void x86_SetBranch8b(void * JumpByte, void * Destination) {
 	/* calculate 32-bit relative offset */
-/*	signed int n = (BYTE*)Destination - ((BYTE*)JumpByte + 1);*/
+	signed int n = (BYTE*)Destination - ((BYTE*)JumpByte + 1);
 
 	/* check limits, no pun intended */
-/*	if (n > 0x80 || n < -0x7F) {
-		CompilerWarning("FATAL: Jump out of 8b range %i (PC = %04X)", n, CompilePC);
+	if (n > 0x80 || n < -0x7F) {
+		RspCompilerWarning("FATAL: Jump out of 8b range %i (PC = %04X)", n, RspCompilePC);
 	} else
 		*(BYTE*)(JumpByte) = (BYTE)n;
 }
@@ -140,17 +142,17 @@ void x86_SetBranch32b(void * JumpByte, void * Destination) {
 	*(DWORD*)(JumpByte) = (DWORD)((BYTE*)Destination - (BYTE*)((DWORD*)JumpByte + 1));
 }
 
-void BreakPoint() {
+/*void BreakPoint() {
 	CPU_Message("      int 3");
 	*(RecompPos++) = 0xCC;
 }*/
 
 /************************* OpCode functions *************************/
-/*void Compile_SPECIAL ( void ) {
-	((void (*)()) RSP_Special[ RSPOpC.funct ])();
+void CompileRsp_SPECIAL ( void ) {
+	((void (*)()) RSP_Special[ RSPOpC.OP.R.funct ])();
 }
 
-void Compile_REGIMM ( void ) {
+/*void Compile_REGIMM ( void ) {
 	((void (*)()) RSP_RegImm[ RSPOpC.rt ])();
 }
 
@@ -181,18 +183,18 @@ void Compile_JAL ( void ) {
 		CompilerWarning("J error\nWeird Delay Slot.\n\nNextInstruction = %X\nEmulation will now stop", NextInstruction);
 		BreakPoint();
 	}
-}
+}*/
 
-void Compile_BEQ ( void ) {
+void CompileRsp_BEQ ( void ) {
 	static BOOL bDelayAffect;
 
-	if ( NextInstruction == NORMAL ) {
-		CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
-		if (RSPOpC.rs == 0 && RSPOpC.rt == 0) {
-			NextInstruction = DO_DELAY_SLOT;			
+	if ( RSP_NextInstruction == NORMAL ) {
+		RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
+		if (RSPOpC.OP.B.rs == 0 && RSPOpC.OP.B.rt == 0) {
+			RSP_NextInstruction = DO_DELAY_SLOT;			
 			return;
 		}
-		bDelayAffect = DelaySlotAffectBranch(CompilePC);
+		/*bDelayAffect = DelaySlotAffectBranch(CompilePC);
 		if (FALSE == bDelayAffect) {
 			NextInstruction = DO_DELAY_SLOT;
 			return;
@@ -206,17 +208,18 @@ void Compile_BEQ ( void ) {
 			CompX86regToVariable(x86_EAX,&RSP_GPR[RSPOpC.rs].W,GPR_Name(RSPOpC.rs));
 		}
 		SetzVariable(&BranchCompare, "BranchCompare");
-		NextInstruction = DO_DELAY_SLOT;	
-	} else if ( NextInstruction == DELAY_SLOT_DONE ) {
-		DWORD Target = (CompilePC + ((short)RSPOpC.offset << 2) + 4) & 0xFFC;
+		NextInstruction = DO_DELAY_SLOT;	*/
+		LogMessage("TODO: CompileRsp_BEQ, before delay slot");
+	} else if ( RSP_NextInstruction == DELAY_SLOT_DONE ) {
+		DWORD Target = (RspCompilePC + ((short)RSPOpC.OP.B.offset << 2) + 4) & 0xFFC;
 		
-		if (RSPOpC.rs == 0 && RSPOpC.rt == 0) {
-			JmpLabel32 ( "BranchToJump", 0 );
-			Branch_AddRef(Target, (DWORD*)(RecompPos - 4));
-			NextInstruction = FINISH_SUB_BLOCK;
+		if (RSPOpC.OP.B.rs == 0 && RSPOpC.OP.B.rt == 0) {
+			JmpLabel32 (&RspRecompPos, "BranchToJump", 0 );
+			Branch_AddRef(Target, (DWORD*)(RspRecompPos - 4));
+			RSP_NextInstruction = FINISH_SUB_BLOCK;
 			return;
 		}
-		if (FALSE == bDelayAffect) {
+		/*if (FALSE == bDelayAffect) {
 			if (RSPOpC.rt == 0) {
 				CompConstToVariable(0,&RSP_GPR[RSPOpC.rs].W,GPR_Name(RSPOpC.rs));
 			} else if (RSPOpC.rs == 0) {			
@@ -232,29 +235,31 @@ void Compile_BEQ ( void ) {
 			JeLabel32("BranchEqual", 0);
 		}
 		Branch_AddRef(Target, (DWORD*)(RecompPos - 4));
-		NextInstruction = FINISH_SUB_BLOCK;
-	} else {
-		CompilerWarning("BEQ error\nWeird Delay Slot.\n\nNextInstruction = %X\nEmulation will now stop", NextInstruction);
-		BreakPoint();
+		NextInstruction = FINISH_SUB_BLOCK;*/
+		LogMessage("TODO: CompileRSP_BEQ: after delay slot");
+	}
+	else {
+		RspCompilerWarning("BEQ error\nWeird Delay Slot.\n\nNextInstruction = %X\nEmulation will now stop", RSP_NextInstruction);
+		BreakPoint(&RspRecompPos);
 	}
 }
 
-void Compile_BNE ( void ) {
+void CompileRsp_BNE ( void ) {
 	static BOOL bDelayAffect;
 
-	if ( NextInstruction == NORMAL ) {
-		CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
-		if (RSPOpC.rs == 0 && RSPOpC.rt == 0) {
-			NextInstruction = DO_DELAY_SLOT;
+	if ( RSP_NextInstruction == NORMAL ) {
+		RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
+		if (RSPOpC.OP.B.rs == 0 && RSPOpC.OP.B.rt == 0) {
+			RSP_NextInstruction = DO_DELAY_SLOT;
 			return;
 		}
 
-		bDelayAffect = DelaySlotAffectBranch(CompilePC);
+		bDelayAffect = RspDelaySlotAffectBranch(RspCompilePC);
 		if (FALSE == bDelayAffect) {
-			NextInstruction = DO_DELAY_SLOT;
+			RSP_NextInstruction = DO_DELAY_SLOT;
 			return;
 		}
-		if (RSPOpC.rt == 0) {			
+		/*if (RSPOpC.rt == 0) {			
 			CompConstToVariable(0,&RSP_GPR[RSPOpC.rs].W,GPR_Name(RSPOpC.rs));
 		} else if (RSPOpC.rs == 0) {			
 			CompConstToVariable(0,&RSP_GPR[RSPOpC.rt].W,GPR_Name(RSPOpC.rt));
@@ -263,39 +268,44 @@ void Compile_BNE ( void ) {
 			CompX86regToVariable(x86_EAX,&RSP_GPR[RSPOpC.rs].W,GPR_Name(RSPOpC.rs));
 		}
 		SetnzVariable(&BranchCompare, "BranchCompare");
-		NextInstruction = DO_DELAY_SLOT;	
-	} else if ( NextInstruction == DELAY_SLOT_DONE ) {
-		DWORD Target = (CompilePC + ((short)RSPOpC.offset << 2) + 4) & 0xFFC;
+		NextInstruction = DO_DELAY_SLOT;	*/
+		LogMessage("TODO: Compile_BNE: before delay slot");
+	} else if ( RSP_NextInstruction == DELAY_SLOT_DONE ) {
+		DWORD Target = (RspCompilePC + ((short)RSPOpC.OP.B.offset << 2) + 4) & 0xFFC;
 		
-		if (RSPOpC.rs == 0 && RSPOpC.rt == 0) {			
-			NextInstruction = FINISH_SUB_BLOCK;
+		if (RSPOpC.OP.B.rs == 0 && RSPOpC.OP.B.rt == 0) {			
+			RSP_NextInstruction = FINISH_SUB_BLOCK;
 			return;
 		}
 
 		if (FALSE == bDelayAffect) {
-			if (RSPOpC.rt == 0) {			
-				CompConstToVariable(0,&RSP_GPR[RSPOpC.rs].W,GPR_Name(RSPOpC.rs));
-			} else if (RSPOpC.rs == 0) {			
-				CompConstToVariable(0,&RSP_GPR[RSPOpC.rt].W,GPR_Name(RSPOpC.rt));
+			if (RSPOpC.OP.B.rt == 0) {			
+				/*CompConstToVariable(0,&RSP_GPR[RSPOpC.rs].W,GPR_Name(RSPOpC.rs));*/
+				LogMessage("TODO: Compile_BNE: after delay slot, delay slot does not affect compare, rt is r0");
+			} else if (RSPOpC.OP.B.rs == 0) {
+				CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rt].W,RspGPR_Name(RSPOpC.OP.B.rt));
 			} else {
-				MoveVariableToX86reg(&RSP_GPR[RSPOpC.rt].W,GPR_Name(RSPOpC.rt),x86_EAX);
-				CompX86regToVariable(x86_EAX,&RSP_GPR[RSPOpC.rs].W,GPR_Name(RSPOpC.rs));
+				/*MoveVariableToX86reg(&RSP_GPR[RSPOpC.rt].W,GPR_Name(RSPOpC.rt),x86_EAX);
+				CompX86regToVariable(x86_EAX,&RSP_GPR[RSPOpC.rs].W,GPR_Name(RSPOpC.rs));*/
+				LogMessage("TODO: Compile_BNE: after delay slot, delay slot does not affect compare, no r0");
 			}
-			JneLabel32("BranchNotEqual", 0);
-		} else {*/
+			JneLabel32(&RspRecompPos, "BranchNotEqual", 0);
+		} else {
 			/* take a look at the branch compare variable */
 /*			CompConstToVariable(TRUE, &BranchCompare, "BranchCompare");
-			JeLabel32("BranchNotEqual", 0);
+			JeLabel32("BranchNotEqual", 0);*/
+			LogMessage("TODO: Compile_BNE: after delay slot, delay slot affect compare");
 		}
-		Branch_AddRef(Target, (DWORD*)(RecompPos - 4));
-		NextInstruction = FINISH_SUB_BLOCK;
-	} else {
-		CompilerWarning("BNE error\nWeird Delay Slot.\n\nNextInstruction = %X\nEmulation will now stop", NextInstruction);
-		BreakPoint();
+		Branch_AddRef(Target, (DWORD*)(RspRecompPos - 4));
+		RSP_NextInstruction = FINISH_SUB_BLOCK;
+	}
+	else {
+		RspCompilerWarning("BNE error\nWeird Delay Slot.\n\nNextInstruction = %X\nEmulation will now stop", RSP_NextInstruction);
+		BreakPoint(&RspRecompPos);
 	}
 }
 
-void Compile_BLEZ ( void ) {
+/*void Compile_BLEZ ( void ) {
 	static BOOL bDelayAffect;
 
 	if ( NextInstruction == NORMAL ) {
@@ -336,49 +346,53 @@ void Compile_BLEZ ( void ) {
 		CompilerWarning("BLEZ error\nWeird Delay Slot.\n\nNextInstruction = %X\nEmulation will now stop", NextInstruction);
 		BreakPoint();
 	}
-}
+}*/
 
-void Compile_BGTZ ( void ) {
+void CompileRsp_BGTZ ( void ) {
 	static BOOL bDelayAffect;
 
-	if ( NextInstruction == NORMAL ) {
-		CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
-		if (RSPOpC.rs == 0) {
-			NextInstruction = DO_DELAY_SLOT;			
-			return;
+	if ( RSP_NextInstruction == NORMAL ) {
+		RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
+		if (RSPOpC.OP.B.rs == 0) {
+			/*NextInstruction = DO_DELAY_SLOT;			
+			return;*/
+			LogMessage("CompileRsp_BGTZ before delay slot, r0");
 		}
-		bDelayAffect = DelaySlotAffectBranch(CompilePC);
+		bDelayAffect = RspDelaySlotAffectBranch(RspCompilePC);
 		if (FALSE == bDelayAffect) {
-			NextInstruction = DO_DELAY_SLOT;
+			RSP_NextInstruction = DO_DELAY_SLOT;
 			return;
 		}
-		CompConstToVariable(0,&RSP_GPR[RSPOpC.rs].W,GPR_Name(RSPOpC.rs));
+		/*CompConstToVariable(0,&RSP_GPR[RSPOpC.rs].W,GPR_Name(RSPOpC.rs));
 		SetgVariable(&BranchCompare, "BranchCompare");
-		NextInstruction = DO_DELAY_SLOT;	
-	} else if ( NextInstruction == DELAY_SLOT_DONE ) {
-		DWORD Target = (CompilePC + ((short)RSPOpC.offset << 2) + 4) & 0xFFC;
+		NextInstruction = DO_DELAY_SLOT;*/
+		LogMessage("CompileRsp_BGTZ before delay slot");
+	} else if ( RSP_NextInstruction == DELAY_SLOT_DONE ) {
+		DWORD Target = (RspCompilePC + ((short)RSPOpC.OP.B.offset << 2) + 4) & 0xFFC;
 		
-		if (RSPOpC.rs == 0) {			
-			NextInstruction = FINISH_SUB_BLOCK;
-			return;
+		if (RSPOpC.OP.B.rs == 0) {			
+			/*NextInstruction = FINISH_SUB_BLOCK;
+			return;*/
+			LogMessage("CompileRsp_BGTZ after delay slot r0");
 		}
 		if (FALSE == bDelayAffect) {
-			CompConstToVariable(0,&RSP_GPR[RSPOpC.rs].W,GPR_Name(RSPOpC.rs));
-			JgLabel32("BranchGreater", 0);
-		} else {*/
+			CompConstToVariable(&RspRecompPos,0,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
+			JgLabel32(&RspRecompPos, "BranchGreater", 0);
+		} else {
 			/* take a look at the branch compare variable */
 /*			CompConstToVariable(TRUE, &BranchCompare, "BranchCompare");
-			JeLabel32("BranchGreater", 0);
+			JeLabel32("BranchGreater", 0);*/
+			LogMessage("CompileRsp_BGTZ after delay slot, comparisons affected by delay slot");
 		}
-		Branch_AddRef(Target, (DWORD*)(RecompPos - 4));
-		NextInstruction = FINISH_SUB_BLOCK;
+		Branch_AddRef(Target, (DWORD*)(RspRecompPos - 4));
+		RSP_NextInstruction = FINISH_SUB_BLOCK;
 	} else {
-		CompilerWarning("BGTZ error\nWeird Delay Slot.\n\nNextInstruction = %X\nEmulation will now stop", NextInstruction);
-		BreakPoint();
+		RspCompilerWarning("BGTZ error\nWeird Delay Slot.\n\nNextInstruction = %X\nEmulation will now stop", RSP_NextInstruction);
+		BreakPoint(&RspRecompPos);
 	}
 }
 
-void Compile_ADDI ( void ) {
+/*void Compile_ADDI ( void ) {
 	int Immediate = (short)RSPOpC.immediate;
 
 	#ifndef Compile_Immediates
@@ -400,16 +414,16 @@ void Compile_ADDI ( void ) {
 		}
 		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
 	}
-}
+}*/
 
-void Compile_ADDIU ( void ) {
-	int Immediate = (short)RSPOpC.immediate;
+void CompileRsp_ADDIU ( void ) {
+	/*int Immediate = (short)RSPOpC.immediate;*/
 
 	#ifndef Compile_Immediates
-	Cheat_r4300iOpcode(RSP_Opcode_ADDIU,"RSP_Opcode_ADDIU"); return;
+	InterpreterFallback((void*)RSP_Opcode_ADDIU,"RSP_Opcode_ADDIU"); return;
 	#endif
 
-	CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
 
 	if (RSPOpC.rt == 0) return;
 
@@ -421,25 +435,26 @@ void Compile_ADDIU ( void ) {
 		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rs].UW, GPR_Name(RSPOpC.rs), x86_EAX);
 		AddConstToX86Reg(x86_EAX, Immediate);
 		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
-	}
+	}*/
+	LogMessage("TODO: CompileRsp_ADDIU");
 }
 
-void Compile_SLTI ( void ) {
+/*void Compile_SLTI ( void ) {
 	Cheat_r4300iOpcode(RSP_Opcode_SLTI,"RSP_Opcode_SLTI");
 }
 
 void Compile_SLTIU ( void ) {
 	Cheat_r4300iOpcode(RSP_Opcode_SLTIU,"RSP_Opcode_SLTIU");
-}
+}*/
 
-void Compile_ANDI ( void ) {
-	int Immediate = (unsigned short)RSPOpC.immediate;
+void CompileRsp_ANDI ( void ) {
+	/*int Immediate = (unsigned short)RSPOpC.immediate;*/
 
 	#ifndef Compile_Immediates
-	Cheat_r4300iOpcode(RSP_Opcode_ANDI,"RSP_Opcode_ANDI"); return;
+	InterpreterFallback((void*)RSP_Opcode_ANDI,"RSP_Opcode_ANDI"); return;
 	#endif
 
-	CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
 
 	if (RSPOpC.rt == 0) return;
 
@@ -451,17 +466,18 @@ void Compile_ANDI ( void ) {
 		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rs].UW, GPR_Name(RSPOpC.rs), x86_EAX);
 		AndConstToX86Reg(x86_EAX, Immediate);
 		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
-	}
+	}*/
+	LogMessage("TODO: CompileRsp_ANDI");
 }
 
-void Compile_ORI ( void ) {
-	int Immediate = (unsigned short)RSPOpC.immediate;
+void CompileRsp_ORI ( void ) {
+	/*int Immediate = (unsigned short)RSPOpC.immediate;*/
 
 	#ifndef Compile_Immediates
-	Cheat_r4300iOpcode(RSP_Opcode_ORI,"RSP_Opcode_ORI"); return;
+	InterpreterFallback((void*)RSP_Opcode_ORI,"RSP_Opcode_ORI"); return;
 	#endif
 
-	CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
 
 	if (RSPOpC.rt == 0) return;
 
@@ -475,10 +491,11 @@ void Compile_ORI ( void ) {
 			OrConstToX86Reg(Immediate, x86_EAX);
 		}
 		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
-	}
+	}*/
+	LogMessage("TODO: CompileRsp_ORI");
 }
 
-void Compile_XORI ( void ) {
+/*void Compile_XORI ( void ) {
 	int Immediate = (unsigned short)RSPOpC.immediate;
 
 	#ifndef Compile_Immediates
@@ -500,26 +517,27 @@ void Compile_XORI ( void ) {
 		}
 		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
 	}
-}
+}*/
 
-void Compile_LUI ( void ) {
-	int n = (short)RSPOpC.offset << 16;
+void CompileRsp_LUI ( void ) {
+	/*int n = (short)RSPOpC.offset << 16;*/
 
 	#ifndef Compile_Immediates
-	Cheat_r4300iOpcode(RSP_Opcode_LUI,"RSP_Opcode_LUI"); return;
+	InterpreterFallback((void*)RSP_Opcode_LUI,"RSP_Opcode_LUI"); return;
 	#endif
 
-	CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
 
 	if (RSPOpC.rt == 0) return;
-	MoveConstToVariable(n, &RSP_GPR[RSPOpC.rt].W, GPR_Name(RSPOpC.rt));
+	MoveConstToVariable(n, &RSP_GPR[RSPOpC.rt].W, GPR_Name(RSPOpC.rt));*/
+	LogMessage("TODO: CompileRsp_LUI");
 }
 
-void Compile_COP0 (void) {
-	((void (*)()) RSP_Cop0[ RSPOpC.rs ])();
+void CompileRsp_COP0 (void) {
+	((void (*)()) RSP_Cop0[ RSPOpC.OP.I.rs ])();
 }
 
-void Compile_COP2 (void) {
+/*void Compile_COP2 (void) {
 	((void (*)()) RSP_Cop2[ RSPOpC.rs ])();
 }
 
@@ -819,17 +837,17 @@ void Compile_SH ( void ) {
 		CPU_Message("   Done:");
 		x86_SetBranch32b(Jump[1], RecompPos);
 	}
-}
+}*/
 
-void Compile_SW ( void ) {
-	int Offset = (short)RSPOpC.offset;
-	BYTE * Jump[2];
+void CompileRsp_SW ( void ) {
+	/*int Offset = (short)RSPOpC.offset;
+	BYTE * Jump[2];*/
 
 	#ifndef Compile_GPRStores
-	Cheat_r4300iOpcode(RSP_Opcode_SW,"RSP_Opcode_SW"); return;
+	InterpreterFallback((void*)RSP_Opcode_SW,"RSP_Opcode_SW"); return;
 	#endif
 
-	CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
 
 	if (IsRegConst(RSPOpC.base) == TRUE) {
 		DWORD Addr = (MipsRegConst(RSPOpC.base) + Offset) & 0xfff;
@@ -874,10 +892,11 @@ void Compile_SW ( void ) {
 	if (Compiler.bAlignGPR == FALSE) {
 		CPU_Message("   Done:");
 		x86_SetBranch32b(Jump[1], RecompPos);
-	}
+	}*/
+	LogMessage("TODO: CompileRsp_SW");
 }
 
-void Compile_LC2 (void) {
+/*void Compile_LC2 (void) {
 	((void (*)()) RSP_Lc2 [ RSPOpC.rd ])();
 }
 
@@ -886,12 +905,12 @@ void Compile_SC2 (void) {
 }*/
 /********************** R4300i OpCodes: Special **********************/
 
-/*void Compile_Special_SLL ( void ) {
+void CompileRsp_Special_SLL ( void ) {
 	#ifndef Compile_Special
-	Cheat_r4300iOpcode(RSP_Special_SLL,"RSP_Special_SLL"); return;
+	InterpreterFallback((void*)RSP_Special_SLL,"RSP_Special_SLL"); return;
 	#endif
 
-	CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
 	if (RSPOpC.rd == 0) return;
 
 	if (RSPOpC.rd == RSPOpC.rt) {
@@ -900,10 +919,11 @@ void Compile_SC2 (void) {
 		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rt].W, GPR_Name(RSPOpC.rt), x86_EAX);
 		ShiftLeftSignImmed(x86_EAX, (BYTE)RSPOpC.sa);
 		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rd].W, GPR_Name(RSPOpC.rd));
-	}
+	}*/
+	LogMessage("TODO: Compile_Special_SLL");
 }
 
-void Compile_Special_SRL ( void ) {
+/*void Compile_Special_SRL ( void ) {
 	#ifndef Compile_Special
 	Cheat_r4300iOpcode(RSP_Special_SRL,"RSP_Special_SRL"); return;
 	#endif
@@ -1019,19 +1039,22 @@ void Compile_Special_JALR ( void ) {
 		CompilerWarning("WTF\n\nJALR\nNextInstruction = %X", NextInstruction);
 		BreakPoint();
 	}
-}
+}*/
 
-void Compile_Special_BREAK ( void ) {
-	Cheat_r4300iOpcode(RSP_Special_BREAK,"RSP_Special_BREAK");
-	if (NextInstruction != NORMAL) {
+void CompileRsp_Special_BREAK ( void ) {
+	InterpreterFallback((void*)RSP_Special_BREAK,"RSP_Special_BREAK");
+	if (RSP_NextInstruction != NORMAL && RSP_NextInstruction != DELAY_SLOT) {
 		DisplayError("Compile_Special_BREAK: problem");
 	}
-	MoveConstToVariable(CompilePC + 4,PrgCount,"RSP PC");
-	Ret();
-	NextInstruction = FINISH_BLOCK;
+	if (RSP_NextInstruction == DELAY_SLOT) {
+		return;
+	}
+	MoveConstToVariable(&RspRecompPos, (RspCompilePC + 4) & 0xFFF,&SP_PC_REG,"RSP PC");
+	Ret(&RspRecompPos);
+	RSP_NextInstruction = FINISH_BLOCK;
 }
 
-void Compile_Special_ADD ( void ) {
+/*void Compile_Special_ADD ( void ) {
 	#ifndef Compile_Special
 	Cheat_r4300iOpcode(RSP_Special_ADD,"RSP_Special_ADD"); return;
 	#endif
@@ -1409,12 +1432,12 @@ void Compile_RegImm_BGEZAL ( void ) {
 
 /************************** Cop0 functions *************************/
 
-/*void Compile_Cop0_MF ( void ) {
+void CompileRsp_Cop0_MF ( void ) {
 	#ifndef Compile_Cop0
-	Cheat_r4300iOpcode(RSP_Cop0_MF,"RSP_Cop0_MF"); return;
+	InterpreterFallback((void*)RSP_Cop0_MF,"RSP_Cop0_MF"); return;
 	#endif
 
-	CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
 
 	switch (RSPOpC.rd) {
 	case 4: 
@@ -1456,14 +1479,15 @@ void Compile_RegImm_BGEZAL ( void ) {
 
 	default:
 		CompilerWarning("have not implemented RSP MF CP0 reg %s (%d)",COP0_Name(RSPOpC.rd),RSPOpC.rd);
-	}
+	}*/
+	LogMessage("TODO: CompileRsp_Cop0_MF");
 }
 
-void Compile_Cop0_MT ( void ) {
+void CompileRsp_Cop0_MT ( void ) {
 #ifndef Compile_Cop0
-	Cheat_r4300iOpcode(RSP_Cop0_MT,"RSP_Cop0_MT");
+	InterpreterFallback((void*)RSP_Cop0_MT,"RSP_Cop0_MT");
 #else
-	CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
 
 	switch (RSPOpC.rd) {
 	case 0:
@@ -1507,10 +1531,11 @@ void Compile_Cop0_MT ( void ) {
 	default:
 		Cheat_r4300iOpcode(RSP_Cop0_MT,"RSP_Cop0_MT");
 		break;
-	}
+	}*/
+	LogMessage("TODO: CompileRsp_Cop0_MT");
 #endif
-	if (RSPOpC.rd == 2) {
-		BYTE * Jump;
+	if (RSPOpC.OP.R.rd == 2) {
+		/*BYTE * Jump;
 
 		TestConstToVariable(0x1000, RSPInfo.SP_MEM_ADDR_REG, "RSPInfo.SP_MEM_ADDR_REG");
 		JeLabel8("DontExit", 0);
@@ -1520,9 +1545,10 @@ void Compile_Cop0_MT ( void ) {
 		Ret();
 
 		CPU_Message("DontExit:");
-		x86_SetBranch8b(Jump, RecompPos);
+		x86_SetBranch8b(Jump, RecompPos);*/
+		LogMessage("TODO: CompileRsp_Cop0_MT imem may change");
 	}
-}*/
+}
 /************************** Cop2 functions *************************/
 
 /*void Compile_Cop2_MF ( void ) {
@@ -4544,6 +4570,38 @@ void Compile_Opcode_SWV ( void ) {
 }*/
 
 /************************** Other functions **************************/
+
+void CompileRsp_WrapToBeginOfImem() {
+	JmpLabel32(&RspRecompPos, "BranchToBegin", 0);
+	Branch_AddRef(0, (DWORD*)(RspRecompPos - 4));
+}
+
+void CompileRsp_CheckRspIsRunning() {
+	CompConstToVariable(&RspRecompPos, 0, &RSP_Running, "RSP_Running");
+	JneLabel8(&RspRecompPos, "RSP_Running", 0);
+	BYTE* pos = RspRecompPos - 1;
+	MoveConstToVariable(&RspRecompPos, RspCompilePC, &SP_PC_REG, "RSP PC");
+	Ret(&RspRecompPos);
+	x86_SetBranch8b(pos, RspRecompPos);
+}
+
+void CompileRsp_SaveBeginOfSubBlock() {
+	MoveConstToVariable(&RspRecompPos, RspCompilePC, &BeginOfCurrentSubBlock, "BeginOfCurentSubBlock");
+}
+
+void CompileRsp_UpdateCycleCounts() {
+	MoveConstToX86reg(&RspRecompPos, RspCompilePC, x86_EAX);
+	SubVariableFromX86reg(&RspRecompPos, x86_EAX, &BeginOfCurrentSubBlock, "BeginOfcurrentSubBlock");
+	ShiftRightUnsignImmed(&RspRecompPos, x86_EAX, 2);
+	MoveVariableToX86reg(&RspRecompPos, &RemainingRspCycles, "RemainingRspCycles", x86_EBX);
+	SubX86RegToX86Reg(&RspRecompPos, x86_EBX, x86_EAX);
+	MoveX86regToVariable(&RspRecompPos, x86_EBX, &RemainingRspCycles, "RemainingRspCycles");
+	CompConstToX86reg(&RspRecompPos, x86_EBX, 0);
+	JgLabel8(&RspRecompPos, "NotYeyFinished", 0);
+	BYTE* pos = RspRecompPos - 1;
+	MoveConstToVariable(&RspRecompPos, 0, &RSP_Running, "RSP_Running");
+	x86_SetBranch8b(pos, RspRecompPos);
+}
 
 void CompileRsp_UnknownOpcode (void) {
 	RSP_CPU_Message("  %X Unhandled Opcode: %s",RspCompilePC, RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC) );	

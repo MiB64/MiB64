@@ -33,18 +33,6 @@
 #include "RSP/rsp_log.h"
 
 #if defined(Log_x86Code) || defined(RspLog_x86Code)
-/*void CPU_OR_RSP_Message(BYTE* code, char* Message, ...) {
-	va_list ap;
-
-	va_start(ap, Message);
-	if (code == RecompPos) {
-		CPU_Message(Message, ap);
-	}
-	else {
-		RSP_CPU_Message(Message, ap);
-	}
-	va_end(ap);
-}*/
 #define CPU_OR_RSP_Message(code, Message, ...) { \
 	if(code == RecompPos) { \
 		CPU_Message(Message, __VA_ARGS__); \

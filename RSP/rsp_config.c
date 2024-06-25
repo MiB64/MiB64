@@ -48,7 +48,7 @@ BOOL RspShowErrors = FALSE;
 HANDLE hRspConfigMutex = NULL;
 HMENU hRSPMenu = NULL;
 
-RSP_COMPILER Compiler;
+RSP_COMPILER RspCompiler;
 
 BOOL GetBooleanCheck(HWND hDlg, DWORD DialogID) {
 	return (IsDlgButtonChecked(hDlg, DialogID) == BST_CHECKED) ? TRUE : FALSE;
@@ -120,16 +120,16 @@ void __cdecl rspConfig(HWND hWnd) {
 }
 
 void InitiateInternalRSP() {
-	memset(&Compiler, 0, sizeof(Compiler));
+	memset(&RspCompiler, 0, sizeof(RspCompiler));
 
 	/*Compiler.bAlignGPR = TRUE;
 	Compiler.bAlignVector = TRUE;
 	Compiler.bFlags = TRUE;*/
-	Compiler.bReOrdering = TRUE;
-	Compiler.bSections = TRUE;
+	RspCompiler.bReOrdering = TRUE;
+	RspCompiler.bSections = TRUE;
 	/*Compiler.bDest = TRUE;
 	Compiler.bAccum = TRUE;*/
-	Compiler.bGPRConstants = TRUE;
+	RspCompiler.bGPRConstants = TRUE;
 
 	/*DetectCpuSpecs();*/
 	hRspConfigMutex = CreateMutex(NULL, FALSE, NULL);
@@ -164,11 +164,11 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 		if (Compiler.bAlignVector == TRUE)
 			CheckDlgButton(hDlg, IDC_COMPILER_ALIGNVEC, BST_CHECKED);*/
 
-		if (Compiler.bSections == TRUE)
+		if (RspCompiler.bSections == TRUE)
 			CheckDlgButton(hDlg, IDC_COMPILER_SECTIONS, BST_CHECKED);
-		if (Compiler.bGPRConstants == TRUE)
+		if (RspCompiler.bGPRConstants == TRUE)
 			CheckDlgButton(hDlg, IDC_COMPILER_GPRCONSTANTS, BST_CHECKED);
-		if (Compiler.bReOrdering == TRUE)
+		if (RspCompiler.bReOrdering == TRUE)
 			CheckDlgButton(hDlg, IDC_COMPILER_REORDER, BST_CHECKED);
 		/*if (Compiler.bFlags == TRUE)
 			CheckDlgButton(hDlg, IDC_COMPILER_FLAGS, BST_CHECKED);
@@ -193,9 +193,9 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 			/*Compiler.mmx = GetBooleanCheck(hDlg, IDC_CHECK_MMX);
 			Compiler.mmx2 = GetBooleanCheck(hDlg, IDC_CHECK_MMX2);
 			Compiler.sse = GetBooleanCheck(hDlg, IDC_CHECK_SSE);*/
-			Compiler.bSections = GetBooleanCheck(hDlg, IDC_COMPILER_SECTIONS);
-			Compiler.bReOrdering = GetBooleanCheck(hDlg, IDC_COMPILER_REORDER);
-			Compiler.bGPRConstants = GetBooleanCheck(hDlg, IDC_COMPILER_GPRCONSTANTS);
+			RspCompiler.bSections = GetBooleanCheck(hDlg, IDC_COMPILER_SECTIONS);
+			RspCompiler.bReOrdering = GetBooleanCheck(hDlg, IDC_COMPILER_REORDER);
+			RspCompiler.bGPRConstants = GetBooleanCheck(hDlg, IDC_COMPILER_GPRCONSTANTS);
 			/*Compiler.bFlags = GetBooleanCheck(hDlg, IDC_COMPILER_FLAGS);
 			Compiler.bAccum = GetBooleanCheck(hDlg, IDC_COMPILER_ACCUM);
 			Compiler.bDest = GetBooleanCheck(hDlg, IDC_COMPILER_DEST);

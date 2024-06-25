@@ -31,7 +31,6 @@
 #include "rsp_registers.h"
 #include "RSP_Profiling.h"
 #include "RSP Recompiler CPU.h"
-#include "RSP Interpreter CPU.h"
 #include "../Plugin.h"
 #include "../mi_registers.h"
 #include "../rdp_registers.h"
@@ -39,6 +38,8 @@
 #include "../exception.h"
 
 void __cdecl LogMessage(char* Message, ...);
+
+DWORD RunInterpreterRspCPU(DWORD Cycles);
 
 DWORD __cdecl InternalDoRspCycles(DWORD numberOfCycles) {
 	DWORD TaskType = *(DWORD*)(DMEM + 0xFC0);

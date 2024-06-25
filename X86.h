@@ -265,3 +265,4 @@ void fpuSubQwordReverse              ( BYTE** code, void *Variable, char *Variab
 void fpuSubReg				         ( BYTE** code, int x86reg );
 void fpuSubRegPop			         ( BYTE** code, int x86reg );
 
+void x86_SetBranch32b(void* JumpByte, void* Destination);
