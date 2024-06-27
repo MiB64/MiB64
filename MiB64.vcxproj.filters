@@ -70,17 +70,23 @@
     <Filter Include="Header Files\Compression Headers">
       <UniqueIdentifier>{31849a03-28d6-477f-bb84-61ef4162340f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\RSP Souce">
-      <UniqueIdentifier>{110d04af-1cae-40a6-8d15-0796ee4dde46}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\RSP Headers">
       <UniqueIdentifier>{047f0822-bf8f-4d02-8ff0-b890a893242e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\RSP Headers\RSP Debugger Headers">
       <UniqueIdentifier>{4d3b6c5f-5ce9-4105-85a5-51c21ec42def}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\RSP Souce\RSP Debugger Source">
+    <Filter Include="Header Files\Hash Header">
+      <UniqueIdentifier>{34a407d0-fce9-407a-b456-63a685a308ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RSP Source">
+      <UniqueIdentifier>{110d04af-1cae-40a6-8d15-0796ee4dde46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RSP Source\RSP Debugger Source">
       <UniqueIdentifier>{84d26b56-ebab-40f3-928d-b1603719bf91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Hash Source">
+      <UniqueIdentifier>{b65cd306-751a-4576-b6a1-10ba7580ffdd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -295,49 +301,58 @@
       <Filter>Source Files\General Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\rsp_config.c">
-      <Filter>Source Files\RSP Souce</Filter>
+      <Filter>Source Files\RSP Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\rsp_Cpu.c">
-      <Filter>Source Files\RSP Souce</Filter>
+      <Filter>Source Files\RSP Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\RSP Interpreter CPU.c">
-      <Filter>Source Files\RSP Souce</Filter>
+      <Filter>Source Files\RSP Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\rsp_main.c">
-      <Filter>Source Files\RSP Souce</Filter>
+      <Filter>Source Files\RSP Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\RSP Recompiler CPU.c">
-      <Filter>Source Files\RSP Souce</Filter>
+      <Filter>Source Files\RSP Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\RSP_breakpoint.c">
-      <Filter>Source Files\RSP Souce\RSP Debugger Source</Filter>
+      <Filter>Source Files\RSP Source\RSP Debugger Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\RSP_Profiling.c">
-      <Filter>Source Files\RSP Souce</Filter>
+      <Filter>Source Files\RSP Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\RSP Command.c">
-      <Filter>Source Files\RSP Souce\RSP Debugger Source</Filter>
+      <Filter>Source Files\RSP Source\RSP Debugger Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\rsp_memory.c">
-      <Filter>Source Files\RSP Souce</Filter>
+      <Filter>Source Files\RSP Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\RSP Interpreter Ops.c">
-      <Filter>Source Files\RSP Souce</Filter>
+      <Filter>Source Files\RSP Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\RSP Register.c">
-      <Filter>Source Files\RSP Souce</Filter>
+      <Filter>Source Files\RSP Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\RSP Recompiler Ops.c">
-      <Filter>Source Files\RSP Souce</Filter>
+      <Filter>Source Files\RSP Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\RSP Recompiler Analysis.c">
-      <Filter>Source Files\RSP Souce</Filter>
+      <Filter>Source Files\RSP Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\rsp_log.c">
-      <Filter>Source Files\RSP Souce\RSP Debugger Source</Filter>
+      <Filter>Source Files\RSP Source\RSP Debugger Source</Filter>
     </ClCompile>
     <ClCompile Include="RSP\RSP Recompiler Sections.c">
-      <Filter>Source Files\RSP Souce</Filter>
+      <Filter>Source Files\RSP Source</Filter>
+    </ClCompile>
+    <ClCompile Include="RSP\rsp_jumptables.cpp">
+      <Filter>Source Files\RSP Source</Filter>
+    </ClCompile>
+    <ClCompile Include="hash\xxh_x86dispatch.c">
+      <Filter>Source Files\Hash Source</Filter>
+    </ClCompile>
+    <ClCompile Include="hash\xxhash.c">
+      <Filter>Source Files\Hash Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -610,6 +625,12 @@
     </ClInclude>
     <ClInclude Include="RSP\rsp_log.h">
       <Filter>Header Files\RSP Headers\RSP Debugger Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="hash\xxh_x86dispatch.h">
+      <Filter>Header Files\Hash Header</Filter>
+    </ClInclude>
+    <ClInclude Include="hash\xxhash.h">
+      <Filter>Header Files\Hash Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

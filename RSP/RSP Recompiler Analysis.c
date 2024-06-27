@@ -989,7 +989,7 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 			case RSP_SPECIAL_NOR:
 			case RSP_SPECIAL_SLT:
 			case RSP_SPECIAL_SLTU:*/
-				if (RspOp.OP.R.rd == Reg) { LogMessage("TODO: Unknown opcode in IsRspRegisterConstant register modified"); return FALSE; }
+				if (RspOp.OP.R.rd == Reg) { return FALSE; }
 				break;
 
 			case RSP_SPECIAL_BREAK:
@@ -1025,8 +1025,7 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 		case RSP_ORI:
 			if (RspOp.OP.I.rt == Reg) {
 				if (!RspOp.OP.I.rs) {
-					if (References > 0) { /*return FALSE;*/ LogMessage("TODO: IsRspRegisterConstant, ORI, targetting watched reg, src is r0, already referenced");
-					}
+					if (References > 0) { return FALSE;	}
 					Const = (WORD)(short)RspOp.OP.I.immediate;
 					References++;
 				} else
@@ -1217,9 +1216,9 @@ BOOL IsRspOpcodeBranch(DWORD PC, OPCODE RspOp) {
 *************************************************************/
 
 /* 3 possible values, GPR, VEC, VEC & GPR, NOOP is zero */
-/*#define GPR_Instruction		0x0001*/ /* GPR Instruction flag */
-/*#define VEC_Instruction		0x0002 *//* Vec Instruction flag */
-/*#define Instruction_Mask	(GPR_Instruction | VEC_Instruction)*/
+#define GPR_Instruction		0x0001 /* GPR Instruction flag */
+#define VEC_Instruction		0x0002 /* Vec Instruction flag */
+#define Instruction_Mask	(GPR_Instruction | VEC_Instruction)
 
 /* 3 possible values, one flag must be set only */
 /*#define Load_Operation		0x0004*/ /* Load Instruction flag */
@@ -1232,24 +1231,24 @@ BOOL IsRspOpcodeBranch(DWORD PC, OPCODE RspOp) {
 /*#define VEC_ResetAccum		0x0000*/ /* Vector op resets acc */
 /*#define VEC_Accumulate		0x0020*/ /* Vector op accumulates */
 
-/*#define InvalidOpcode		0x0040
+#define InvalidOpcode		0x0040
 
 typedef struct {
 	union {
 		DWORD DestReg;
-		DWORD StoredReg;
-	};
+		/*DWORD StoredReg;*/
+	} DS;
 	union {
 		DWORD SourceReg0;
-		DWORD IndexReg;
-	};
+		/*DWORD IndexReg;*/
+	} S0;
 	DWORD SourceReg1;
 	DWORD flags;
 } OPCODE_INFO;
 
-void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
-	switch (RspOp->op) {
-	case RSP_REGIMM:
+static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
+	switch (RspOp->OP.I.op) {
+	/*case RSP_REGIMM:
 		switch (RspOp->rt) {
 		case RSP_REGIMM_BLTZ:
 		case RSP_REGIMM_BLTZAL:
@@ -1265,25 +1264,25 @@ void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 			info->flags = InvalidOpcode;
 			break;
 		}
-		break;
+		break;*/
 	case RSP_SPECIAL:
-		switch (RspOp->funct) {
-		case RSP_SPECIAL_BREAK:
+		switch (RspOp->OP.R.funct) {
+		/*case RSP_SPECIAL_BREAK:
 			info->DestReg = -1;
 			info->SourceReg0 = -1;
 			info->SourceReg1 = -1;
 			info->flags = GPR_Instruction;
-			break;
+			break;*/
 
 		case RSP_SPECIAL_SLL:
-		case RSP_SPECIAL_SRL:
-		case RSP_SPECIAL_SRA:
-			info->DestReg = RspOp->rd;
-			info->SourceReg0 = RspOp->rt;
-			info->SourceReg1 = -1;
+		/*case RSP_SPECIAL_SRL:
+		case RSP_SPECIAL_SRA:*/
+			info->DS.DestReg = RspOp->OP.R.rd;
+			info->S0.SourceReg0 = RspOp->OP.R.rt;
+			info->SourceReg1 = (DWORD)-1;
 			info->flags = GPR_Instruction;
 			break;
-		case RSP_SPECIAL_SLLV:
+		/*case RSP_SPECIAL_SLLV:
 		case RSP_SPECIAL_SRLV:
 		case RSP_SPECIAL_SRAV:
 		case RSP_SPECIAL_ADD:
@@ -1306,54 +1305,54 @@ void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 			info->flags = InvalidOpcode;
 			info->SourceReg0 = -1;
 			info->SourceReg1 = -1;
-			break;
+			break;*/
 
 		default:
-			CompilerWarning("Unkown opcode in GetInstructionInfo\n%s",RSPOpcodeName(RspOp->Hex,PC));
+			RspCompilerWarning("Unkown opcode in GetInstructionInfo\n%s",RSPOpcodeName(RspOp->OP.Hex,PC));
 			info->flags = InvalidOpcode;
 			break;
 		}
 		break;
-	case RSP_J:
+	/*case RSP_J:
 	case RSP_JAL:
 		info->flags = InvalidOpcode;
 		info->SourceReg0 = -1;
 		info->SourceReg1 = -1;
-		break;
+		break;*/
 	case RSP_BEQ:
 	case RSP_BNE:
 		info->flags = InvalidOpcode;
-		info->SourceReg0 = RspOp->rt;
-		info->SourceReg1 = RspOp->rs;
+		info->S0.SourceReg0 = RspOp->OP.B.rt;
+		info->SourceReg1 = RspOp->OP.B.rs;
 		break;
-	case RSP_BLEZ:
+	/*case RSP_BLEZ:*/
 	case RSP_BGTZ:
 		info->flags = InvalidOpcode;
-		info->SourceReg0 = RspOp->rs;
-		info->SourceReg1 = -1;
+		info->S0.SourceReg0 = RspOp->OP.B.rs;
+		info->SourceReg1 = (DWORD)-1;
 		break;
 		
-	case RSP_ADDI:
+	/*case RSP_ADDI:*/
 	case RSP_ADDIU:
-	case RSP_SLTI:
+	/*case RSP_SLTI:
 	case RSP_SLTIU:
-	case RSP_ANDI:
+	case RSP_ANDI:*/
 	case RSP_ORI:
-	case RSP_XORI:
-		info->DestReg = RspOp->rt;
-		info->SourceReg0 = RspOp->rs;
-		info->SourceReg1 = -1;
+	/*case RSP_XORI:*/
+		info->DS.DestReg = RspOp->OP.I.rt;
+		info->S0.SourceReg0 = RspOp->OP.I.rs;
+		info->SourceReg1 = (DWORD)-1;
 		info->flags = GPR_Instruction;
 		break;
 
 	case RSP_LUI:
-		info->DestReg = RspOp->rt;
-		info->SourceReg0 = -1;
-		info->SourceReg1 = -1;
+		info->DS.DestReg = RspOp->OP.I.rt;
+		info->S0.SourceReg0 = (DWORD)-1;
+		info->SourceReg1 = (DWORD)-1;
 		info->flags = GPR_Instruction;
 		break;
 
-	case RSP_CP0:
+	/*case RSP_CP0:
 		switch (RspOp->rs) {
 		case RSP_COP0_MF:			
 			info->DestReg = RspOp->rt;
@@ -1559,13 +1558,13 @@ void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 			info->flags = InvalidOpcode;
 			break;
 		}
-		break;
-	default:*/
-	/*	CompilerWarning("Unkown opcode in GetInstructionInfo\n%s",RSPOpcodeName(RspOp->Hex,PC));
-	*/	/*info->flags = InvalidOpcode;
+		break;*/
+	default:
+		RspCompilerWarning("Unkown opcode in GetInstructionInfo\n%s",RSPOpcodeName(RspOp->OP.Hex,PC));
+		info->flags = InvalidOpcode;
 		break;
 	}
-}*/
+}
 
 /************************************************************
 ** DelaySlotAffectBranch
@@ -1578,35 +1577,35 @@ void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 *************************************************************/
 
 BOOL RspDelaySlotAffectBranch(DWORD PC) {
-	/*OPCODE Branch, Delay;
-	OPCODE_INFO infoBranch, infoDelay;*/
+	OPCODE Branch, Delay;
+	OPCODE_INFO infoBranch, infoDelay;
 
-	if (IsRspOpcodeNop(PC + 4) == TRUE) {
+	if (IsRspOpcodeNop((PC + 4) & 0xFFC) == TRUE) {
 		return FALSE;
 	}
 
-	/*RSP_LW_IMEM(PC, &Branch.Hex);
-	RSP_LW_IMEM(PC+4, &Delay.Hex);
+	RSP_LW_IMEM(PC, &Branch.OP.Hex);
+	RSP_LW_IMEM((PC+4)&0xFFC, &Delay.OP.Hex);
 
 	memset(&infoDelay,0,sizeof(infoDelay));
 	memset(&infoBranch,0,sizeof(infoBranch));
 	
 	GetInstructionInfo(PC, &Branch, &infoBranch);
-	GetInstructionInfo(PC+4, &Delay, &infoDelay);
+	GetInstructionInfo((PC+4)&0xFFC, &Delay, &infoDelay);
 
 	if ((infoDelay.flags & Instruction_Mask) == VEC_Instruction) {
-		return FALSE;
+		/*return FALSE;*/
+		LogMessage("TODO: RspDelaySlotAffectBranch, vector in delay");
 	}
 
-	if (infoBranch.SourceReg0 == infoDelay.DestReg) { return TRUE; }
-	if (infoBranch.SourceReg1 == infoDelay.DestReg) { return TRUE; }*/
-	LogMessage("TODO: RspDelaySlotAffectBranch");
-
+	if (infoBranch.S0.SourceReg0 == infoDelay.DS.DestReg) { /*return TRUE;*/ LogMessage("TODO: RspDelaySlotAffectBranch, source0 is written in delay slot"); }
+	if (infoBranch.SourceReg1 == infoDelay.DS.DestReg) { /*return TRUE;*/LogMessage("TODO: RspDelaySlotAffectBranch, source1 is written in delay slot"); }
+	
 	return FALSE;
 }
 
 /************************************************************
-** CompareInstructions
+** RspCompareInstructions
 **
 ** Output:
 **	TRUE: The opcodes are fine, no dependency
@@ -1617,24 +1616,23 @@ BOOL RspDelaySlotAffectBranch(DWORD PC) {
 **	Bottom: the current opcode for re-ordering bubble style
 *************************************************************/
 
-/*BOOL CompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom) {
+BOOL RspCompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom) {
 
 	OPCODE_INFO info0, info1;
 	DWORD InstructionType;
 
 	GetInstructionInfo(PC - 4, Top, &info0);
-	GetInstructionInfo(PC, Bottom, &info1);*/
+	GetInstructionInfo(PC, Bottom, &info1);
 
 	/* usually branches and such */
-/*	if ((info0.flags & InvalidOpcode) != 0) return FALSE;
-	if ((info1.flags & InvalidOpcode) != 0) return FALSE;
+	if ((info0.flags & InvalidOpcode) != 0) /*return FALSE;*/LogMessage("TODO RspCompareInstructions: invalid top");
+	if ((info1.flags & InvalidOpcode) != 0) /*return FALSE;*/LogMessage("TODO RspCompareInstructions: invalid bottom");
 
 	InstructionType = (info0.flags & Instruction_Mask) << 2;
 	InstructionType |= info1.flags & Instruction_Mask;
-	InstructionType &= 0x0F;*/ /* Paranoia */
 
 	/* 4 bit range, 16 possible combinations */
-/*	switch (InstructionType) {*/
+	switch (InstructionType) {
 	/*
 	** Detect noop instruction, 7 cases, (see flags) */
 /*	case 0x01: case 0x02: case 0x03:*/ /* First is a noop */
@@ -1739,15 +1737,15 @@ BOOL RspDelaySlotAffectBranch(DWORD PC) {
 		** this is where the bias comes into play, otherwise
 		** we can sit here all day swapping these 2 types
 		***********/
-/*		return FALSE;
+/*		return FALSE;*/
 
-	case 0x05:*/ /* GPR than GPR - 01,01 */
+	case 0x05: /* GPR than GPR - 01,01 */
 /*	case 0x07:*/ /* GPR than Cop2 - 01, 11 */
 /*	case 0x0D:*/ /* Cop2 than GPR - 11, 01 */
 /*	case 0x0F:*/ /* Cop2 than Cop2 - 11, 11 */
-/*		return FALSE;
+		return FALSE;
 
-	case 0x0B:*/ /* Vector than Cop2 - 10, 11 */
+/*	case 0x0B:*/ /* Vector than Cop2 - 10, 11 */
 /*		if (info1.flags & Load_Operation) {*/
 			/* Move To Cop2 (dest) from GPR (source) */
 /*			if (info1.DestReg == info0.DestReg) { return FALSE; }
@@ -1779,11 +1777,10 @@ BOOL RspDelaySlotAffectBranch(DWORD PC) {
 			CompilerWarning("ReOrder: Unhandled Cop2 than Vector");
 		}
 		// we want this at the top
-		return TRUE;
+		return TRUE;*/
 
 	default:
-		CompilerWarning("ReOrder: Unhandled instruction type: %i", InstructionType);
+		RspCompilerWarning("ReOrder: Unhandled instruction type: %i", InstructionType);
 	}
-
 	return FALSE;
-}*/
+}

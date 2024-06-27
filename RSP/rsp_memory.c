@@ -25,19 +25,13 @@
  *
  */
 
-#define MaxMaps	32
-
 #include <windows.h>
 #include "rsp_config.h"
 #include "rsp_memory.h"
 #include "rsp_registers.h"
 #include "../Main.h"
 
-DWORD NoOfRspMaps, RspMapsCRC[MaxMaps];
-DWORD RspTable;
 BYTE * RspRecompCode,/* * RecompCodeSecondary,*/ * RspRecompPos;
-BYTE* RspJumpTables;
-void ** RspJumpTable;
 
 int AllocateRspMemory (void) {
 	RspRecompCode=(BYTE *) VirtualAlloc( NULL, 0x00400004, MEM_RESERVE, PAGE_EXECUTE_READWRITE);
@@ -54,15 +48,9 @@ int AllocateRspMemory (void) {
 		return FALSE;
 	}*/
 
-	RspJumpTables = (BYTE *)VirtualAlloc( NULL, 0x1000 * MaxMaps, MEM_COMMIT, PAGE_READWRITE );
-	if( RspJumpTables == NULL ) {  
-		DisplayError("Not enough memory for Jump Table!");
-		return FALSE;
-	}
+	ClearJumpTables();
 
-	RspJumpTable = (void **)RspJumpTables;
 	RspRecompPos = RspRecompCode;
-	NoOfRspMaps = 0;
 	return TRUE;
 }
 
@@ -71,32 +59,6 @@ int AllocateRspMemory (void) {
 	VirtualFree( JumpTable, 0 , MEM_RELEASE);
 	VirtualFree( RecompCodeSecondary, 0 , MEM_RELEASE);
 }*/
-
-void SetRspJumpTable (void) {
-	DWORD CRC;
-
-	CRC = 0;
-	for (DWORD count = 0; count < 0x800; count += 0x40) {
-		CRC += *(DWORD *)(IMEM + count);		
-	}
-
-	for (DWORD count = 0; count <	NoOfRspMaps; count++ ) {
-		if (CRC == RspMapsCRC[count]) {
-			RspJumpTable = (void **)(RspJumpTables + count * 0x1000);
-			RspTable = count;
-			return;
-		}
-	}
-	
-	if (NoOfRspMaps == MaxMaps) {
-		DisplayError("Used up all the Jump tables in the rsp");
-		ExitThread(0);
-	}
-	RspMapsCRC[NoOfRspMaps] = CRC;
-	RspJumpTable = (void **)(RspJumpTables + NoOfRspMaps * 0x1000);
-	RspTable = NoOfRspMaps;
-	NoOfRspMaps += 1;
-}
 
 void RSP_LB_DMEM ( DWORD Addr, BYTE * Value ) {
 	* Value = *(BYTE *)(DMEM + ((Addr ^ 3) & 0xFFF)) ;

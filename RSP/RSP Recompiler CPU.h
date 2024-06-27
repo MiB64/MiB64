@@ -50,7 +50,7 @@ BOOL WriteToVectorDest (DWORD DestReg, int PC);
 BOOL UseRspFlags (int PC);*/
 
 BOOL RspDelaySlotAffectBranch(DWORD PC);
-/*BOOL CompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom);*/
+BOOL RspCompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom);
 BOOL IsRspOpcodeBranch(DWORD PC, OPCODE RspOp);
 BOOL IsRspOpcodeNop(DWORD PC);
 

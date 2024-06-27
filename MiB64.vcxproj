@@ -330,6 +330,10 @@
     </ClCompile>
     <ClCompile Include="CPU Log.c" />
     <ClCompile Include="EmulateAI.c" />
+    <ClCompile Include="hash\xxhash.c" />
+    <ClCompile Include="hash\xxh_x86dispatch.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
     <ClCompile Include="Logging.c" />
     <ClCompile Include="mapping.c" />
     <ClCompile Include="MemDump.c" />
@@ -351,6 +355,7 @@
     <ClCompile Include="RSP\RSP_breakpoint.c" />
     <ClCompile Include="RSP\rsp_Cpu.c" />
     <ClCompile Include="RSP\rsp_config.c" />
+    <ClCompile Include="RSP\rsp_jumptables.cpp" />
     <ClCompile Include="RSP\rsp_log.c" />
     <ClCompile Include="RSP\rsp_main.c" />
     <ClCompile Include="RSP\rsp_memory.c" />
@@ -416,6 +421,8 @@
     <ClInclude Include="CPU Log.h" />
     <ClInclude Include="Debugger.h" />
     <ClInclude Include="EmulateAI.h" />
+    <ClInclude Include="hash\xxhash.h" />
+    <ClInclude Include="hash\xxh_x86dispatch.h" />
     <ClInclude Include="Logging.h" />
     <ClInclude Include="Mapping.h" />
     <ClInclude Include="MemDump.h" />

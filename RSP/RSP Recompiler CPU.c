@@ -32,7 +32,7 @@
 #include "RSP Recompiler CPU.h"
 #include "RSP Recompiler Ops.h"
 #include "rsp_registers.h"
-/*#include "RSP Command.h"*/
+#include "RSP Command.h"
 #include "rsp_config.h"
 #include "rsp_memory.h"
 /*#include "opcode.h"*/
@@ -52,6 +52,7 @@ static DWORD BlockID = 0;
 
 RSP_BLOCK RspCurrentBlock;
 static RSP_CODE RspCode;
+static DWORD maxRecompiledOpcode;
 
 /*BYTE * pLastSecondary = NULL, * pLastPrimary = NULL;*/
 
@@ -421,7 +422,7 @@ void BuildRecompilerRspCPU ( void ) {
 	RSP_Sc2[30] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Sc2[31] = (void*)CompileRsp_UnknownOpcode;
 	
-	/*BlockID = 0;*/
+	BlockID = 0;
 #ifdef RspLog_x86Code
 	RSP_Start_x86_Log();
 #endif
@@ -439,8 +440,8 @@ void BuildRecompilerRspCPU ( void ) {
 
 static void ReOrderInstructions(DWORD StartPC, DWORD EndPC) {
 	DWORD InstructionCount = EndPC - StartPC;
-	/*DWORD Count, ReorderedOps, CurrentPC;*/
-	OPCODE PreviousOp/*, CurrentOp, RspOp*/;
+	DWORD Count, ReorderedOps, CurrentPC;
+	OPCODE PreviousOp, CurrentOp, RspOp;
 
 	PreviousOp.OP.Hex = *(DWORD*)(IMEM + StartPC);
 
@@ -458,24 +459,26 @@ static void ReOrderInstructions(DWORD StartPC, DWORD EndPC) {
 
 	if (InstructionCount < 0x0010) { return; }
 	if (InstructionCount > 0x0A00) { return; }
-	
-/*	CPU_Message(" Before:");
+
+#ifdef RspLog_x86Code
+	RSP_CPU_Message(" Before:");
 	for (Count = StartPC; Count < EndPC; Count += 4) {
-		RSP_LW_IMEM(Count, &RspOp.Hex);
-		CPU_Message("  %X %s",Count,RSPOpcodeName(RspOp.Hex,Count));
+		RSP_LW_IMEM(Count, &RspOp.OP.Hex);
+		RSP_CPU_Message("  %X %s",Count,RSPOpcodeName(RspOp.OP.Hex,Count));
 	}
+#endif
 
 	for (Count = 0; Count < InstructionCount; Count += 4) {
 		CurrentPC = StartPC;
-		PreviousOp.Hex = *(DWORD*)(RSPInfo.IMEM + CurrentPC);
+		PreviousOp.OP.Hex = *(DWORD*)(IMEM + CurrentPC);
 		ReorderedOps = 0;
 
 		for (;;) {
 			CurrentPC += 4;
 			if (CurrentPC >= EndPC) { break; }
-			CurrentOp.Hex = *(DWORD*)(RSPInfo.IMEM + CurrentPC);
+			CurrentOp.OP.Hex = *(DWORD*)(IMEM + CurrentPC);
 
-			if (TRUE == CompareInstructions(CurrentPC, &PreviousOp, &CurrentOp)) {*/
+			if (TRUE == RspCompareInstructions(CurrentPC, &PreviousOp, &CurrentOp)) {
 				/* Move current opcode up */	
 /*				*(DWORD*)(RSPInfo.IMEM + CurrentPC - 4) = CurrentOp.Hex;
 			 	*(DWORD*)(RSPInfo.IMEM + CurrentPC) = PreviousOp.Hex;
@@ -483,11 +486,12 @@ static void ReOrderInstructions(DWORD StartPC, DWORD EndPC) {
 				ReorderedOps++;
 				#ifdef REORDER_BLOCK_VERBOSE
 				CPU_Message("Swapped %X and %X", CurrentPC - 4, CurrentPC);
-				#endif
+				#endif*/
+				LogMessage("TODO: ReOrderInstructions loop, bubble loop, found a possible exchange");
 			}
-			PreviousOp.Hex = *(DWORD*)(RSPInfo.IMEM + CurrentPC);
+			PreviousOp.OP.Hex = *(DWORD*)(IMEM + CurrentPC);
 
-			if (IsOpcodeNop(CurrentPC) && IsOpcodeNop(CurrentPC + 4) && IsOpcodeNop(CurrentPC + 8)) {
+			if (IsRspOpcodeNop(CurrentPC) && IsRspOpcodeNop(CurrentPC + 4) && IsRspOpcodeNop(CurrentPC + 8)) {
 				CurrentPC = EndPC;
 			}
 		}
@@ -497,13 +501,14 @@ static void ReOrderInstructions(DWORD StartPC, DWORD EndPC) {
 		}
 	}
 
-	CPU_Message(" After:");
+#ifdef RspLog_x86Code
+	RSP_CPU_Message(" After:");
 	for (Count = StartPC; Count < EndPC; Count += 4) {
-		RSP_LW_IMEM(Count, &RspOp.Hex);
-		CPU_Message("  %X %s",Count,RSPOpcodeName(RspOp.Hex,Count));
+		RSP_LW_IMEM(Count, &RspOp.OP.Hex);
+		RSP_CPU_Message("  %X %s",Count,RSPOpcodeName(RspOp.OP.Hex,Count));
 	}
-	CPU_Message("");*/
-	LogMessage("TODO: ReOrderInstructions");
+	RSP_CPU_Message("");
+#endif
 }
 
 static void ReOrderSubBlock(RSP_BLOCK * Block) {
@@ -610,12 +615,7 @@ static void DetectGPRConstants(RSP_CODE * code) {
 }*/
 
 static void ClearAllx86Code (void) {
-	extern DWORD NoOfRspMaps, RspMapsCRC[32];
-	extern BYTE *RspJumpTables;
-
-	memset(&RspMapsCRC, 0, sizeof(DWORD) * 0x20);
-	NoOfRspMaps = 0;
-	memset(RspJumpTables,0,0x1000*32);
+	ClearJumpTables();
 
 	RspRecompPos = RspRecompCode;
 
@@ -836,6 +836,10 @@ static void CompilerRSPBlock ( void ) {
 
 		((void (*)()) RSP_Opcode[ RSPOpC.OP.I.op ])();
 
+		if (RspCompilePC > maxRecompiledOpcode) {
+			maxRecompiledOpcode = RspCompilePC;
+		}
+
 		switch (RSP_NextInstruction) {
 		case NORMAL: 
 			RspCompilePC += 4;
@@ -843,11 +847,13 @@ static void CompilerRSPBlock ( void ) {
 		case DO_DELAY_SLOT:
 			RSP_NextInstruction = DELAY_SLOT;
 			RspCompilePC += 4;
+			RspCompilePC &= 0xFFF;
 			break;
 		case DELAY_SLOT:
 			CompileRsp_UpdateCycleCounts();
 			RSP_NextInstruction = DELAY_SLOT_DONE;
 			RspCompilePC -= 4;
+			RspCompilePC &= 0xFFF;
 			break;
 		case FINISH_SUB_BLOCK:
 			RSP_NextInstruction = NORMAL;
@@ -878,7 +884,7 @@ static void CompilerRSPBlock ( void ) {
 		}
 	} while ( RSP_NextInstruction != FINISH_BLOCK && RspCompilePC < 0x1000);
 
-	if (RspCompilePC == 0x1000) {
+	if (RspCompilePC >= 0x1000) {
 		CompileRsp_UpdateCycleCounts();
 		CompileRsp_WrapToBeginOfImem();
 	}
@@ -900,6 +906,8 @@ DWORD RunRecompilerRspCPU ( DWORD Cycles ) {
 		SetRspJumpTable();
 		IMEMIsUpdated = FALSE;
 	}
+
+	maxRecompiledOpcode = GetMaxRecompiledOpcode();
 
 	while (RSP_Running) {
 		Block = *(RspJumpTable + (SP_PC_REG >> 2));
@@ -928,7 +936,7 @@ DWORD RunRecompilerRspCPU ( DWORD Cycles ) {
 		}
 
 	#if !defined(EXTERNAL_RELEASE)
-		if (RspProfiling && IndvidualRspBlock) {
+		if (RspProfiling && IndividualRspBlock) {
 			char Label[100];
 			sprintf(Label,"RSP PC: %03X",SP_PC_REG);
 			StartTimer(Label);
@@ -940,7 +948,7 @@ DWORD RunRecompilerRspCPU ( DWORD Cycles ) {
 			popad
 		}		
 	#if !defined(EXTERNAL_RELEASE)
-		if (RspProfiling && IndvidualRspBlock) {
+		if (RspProfiling && IndividualRspBlock) {
 			StopTimer();
 		}
 	#endif
@@ -950,5 +958,8 @@ DWORD RunRecompilerRspCPU ( DWORD Cycles ) {
 	/*if (IsMmxEnabled == TRUE) {
 		_asm emms
 	}*/
+
+	UpdateJumpTableHash(maxRecompiledOpcode);
+
 	return Cycles;
 }
