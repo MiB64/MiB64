@@ -29,6 +29,10 @@
 
 #include "RSP_OpCode.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define NORMAL							0
 #define DO_DELAY_SLOT 					1
 #define DELAY_SLOT 						2
@@ -36,84 +40,88 @@
 #define FINISH_BLOCK					4
 #define FINISH_SUB_BLOCK				5
 
-extern DWORD RspCompilePC, RSP_NextInstruction, RemainingRspCycles;
+	extern DWORD RspCompilePC, RSP_NextInstruction, RemainingRspCycles;
 
 #define RspCompilerWarning if (RspShowErrors) DisplayError
 
-/*#define High16BitAccum		1
-#define Middle16BitAccum	2
-#define Low16BitAccum		4
-#define EntireAccum			(Low16BitAccum|Middle16BitAccum|High16BitAccum)
+	/*#define High16BitAccum		1
+	#define Middle16BitAccum	2
+	#define Low16BitAccum		4
+	#define EntireAccum			(Low16BitAccum|Middle16BitAccum|High16BitAccum)
 
-BOOL WriteToAccum (int Location, int PC);
-BOOL WriteToVectorDest (DWORD DestReg, int PC);
-BOOL UseRspFlags (int PC);*/
+	BOOL WriteToAccum (int Location, int PC);
+	BOOL WriteToVectorDest (DWORD DestReg, int PC);
+	BOOL UseRspFlags (int PC);*/
 
-BOOL RspDelaySlotAffectBranch(DWORD PC);
-BOOL RspCompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom);
-BOOL IsRspOpcodeBranch(DWORD PC, OPCODE RspOp);
-BOOL IsRspOpcodeNop(DWORD PC);
+	BOOL RspDelaySlotAffectBranch(DWORD PC);
+	BOOL RspCompareInstructions(DWORD PC, OPCODE* Top, OPCODE* Bottom);
+	BOOL IsRspOpcodeBranch(DWORD PC, OPCODE RspOp);
+	BOOL IsRspOpcodeNop(DWORD PC);
 
-/*BOOL IsNextInstructionMmx(DWORD PC);*/
-BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant);
+	/*BOOL IsNextInstructionMmx(DWORD PC);*/
+	BOOL IsRspRegisterConstant(DWORD Reg, DWORD* Constant);
 
-/*void RSP_Element2Mmx(int MmxReg);
-void RSP_MultiElement2Mmx(int MmxReg1, int MmxReg2);
+	/*void RSP_Element2Mmx(int MmxReg);
+	void RSP_MultiElement2Mmx(int MmxReg1, int MmxReg2);
 
-#define MainBuffer			0
-#define SecondaryBuffer		1*/
+	#define MainBuffer			0
+	#define SecondaryBuffer		1*/
 
-DWORD RunRecompilerRspCPU ( DWORD Cycles );
-void BuildRecompilerCPU ( void );
+	DWORD RunRecompilerRspCPU(DWORD Cycles);
+	void BuildRecompilerCPU(void);
 
-/*void CompilerRSPBlock ( void );
-void CompilerToggleBuffer (void);*/
-BOOL RSP_DoSections(void);
+	/*void CompilerRSPBlock ( void );
+	void CompilerToggleBuffer (void);*/
+	BOOL RSP_DoSections(void);
 
-typedef struct {
-	DWORD StartPC, CurrPC;		/* block start */
-	
-	struct {
-		DWORD TargetPC;			/* Target for this unknown branch */
-		DWORD * X86JumpLoc;		/* Our x86 dword to fill */
-	} BranchesToResolve[200];	/* Branches inside or outside block */
-	
-	DWORD ResolveCount;			/* Branches with NULL jump table */
-	BYTE IMEM[0x1000];			/* Saved off for re-order */
-} RSP_BLOCK;
+	typedef struct {
+		DWORD StartPC, CurrPC;		/* block start */
 
-extern RSP_BLOCK RspCurrentBlock;
+		struct {
+			DWORD TargetPC;			/* Target for this unknown branch */
+			DWORD* X86JumpLoc;		/* Our x86 dword to fill */
+		} BranchesToResolve[200];	/* Branches inside or outside block */
 
-typedef struct {
-	BOOL bIsRegConst[32];		/* BOOLean toggle for constant */
-	DWORD MipsRegConst[32];		/* Value of register 32-bit */
-	DWORD BranchLabels[200];
-	DWORD LabelCount;
-	DWORD BranchLocations[200];
-	DWORD BranchCount;
-} RSP_CODE;
+		DWORD ResolveCount;			/* Branches with NULL jump table */
+		BYTE IMEM[0x1000];			/* Saved off for re-order */
+	} RSP_BLOCK;
 
-/*extern RSP_CODE RspCode;
+	extern RSP_BLOCK RspCurrentBlock;
 
-#define IsRegConst(i)	(RspCode.bIsRegConst[i])
-#define MipsRegConst(i) (RspCode.MipsRegConst[i])*/
+	typedef struct {
+		BOOL bIsRegConst[32];		/* BOOLean toggle for constant */
+		DWORD MipsRegConst[32];		/* Value of register 32-bit */
+		DWORD BranchLabels[200];
+		DWORD LabelCount;
+		DWORD BranchLocations[200];
+		DWORD BranchCount;
+	} RSP_CODE;
 
-typedef struct {
-/*	BOOL mmx, mmx2, sse;*/	/* CPU specs and compiling */
-/*	BOOL bFlags;*/			/* RSP Flag Analysis */
-	BOOL bReOrdering;		/* Instruction reordering */
-	BOOL bSections;			/* Microcode sections */
-/*	BOOL bDest;*/				/* Vector destionation toggle */
-/*	BOOL bAccum;*/			/* Accumulator toggle */
-	BOOL bGPRConstants;		/* Analyze GPR constants */
-/*	BOOL bAlignVector;*/		/* Align known vector loads */
-/*	BOOL bAlignGPR;*/			/* Align known gpr loads */
-} RSP_COMPILER;
+	/*extern RSP_CODE RspCode;
 
-extern RSP_COMPILER RspCompiler;
+	#define IsRegConst(i)	(RspCode.bIsRegConst[i])
+	#define MipsRegConst(i) (RspCode.MipsRegConst[i])*/
 
-/*#define IsMmxEnabled	(Compiler.mmx)
-#define IsMmx2Enabled	(Compiler.mmx2)
-#define IsSseEnabled	(Compiler.sse)*/
+	typedef struct {
+		/*	BOOL mmx, mmx2, sse;*/	/* CPU specs and compiling */
+		/*	BOOL bFlags;*/			/* RSP Flag Analysis */
+		BOOL bReOrdering;		/* Instruction reordering */
+		BOOL bSections;			/* Microcode sections */
+	/*	BOOL bDest;*/				/* Vector destionation toggle */
+	/*	BOOL bAccum;*/			/* Accumulator toggle */
+		BOOL bGPRConstants;		/* Analyze GPR constants */
+	/*	BOOL bAlignVector;*/		/* Align known vector loads */
+	/*	BOOL bAlignGPR;*/			/* Align known gpr loads */
+	} RSP_COMPILER;
 
-extern BOOL IMEMIsUpdated;
+	extern RSP_COMPILER RspCompiler;
+
+	/*#define IsMmxEnabled	(Compiler.mmx)
+	#define IsMmx2Enabled	(Compiler.mmx2)
+	#define IsSseEnabled	(Compiler.sse)*/
+
+	extern BOOL IMEMIsUpdated;
+
+#ifdef __cplusplus
+}
+#endif

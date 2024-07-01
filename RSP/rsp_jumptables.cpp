@@ -31,6 +31,7 @@
 #include <vector>
 
 #include "rsp_memory.h"
+#include "RSP Recompiler CPU.h"
 #include "../hash/xxhash.h"
 #include "../hash/xxh_x86dispatch.h"
 
@@ -122,6 +123,8 @@ extern "C" {
 }
 
 void SetRspJumpTable(void) {
+	IMEMIsUpdated = FALSE;
+
 	DWORD currentLength = 0;
 	XXH3_state_t* state = XXH3_createState();
 	XXH3_64bits_reset(state);

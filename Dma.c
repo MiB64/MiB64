@@ -511,9 +511,9 @@ void SP_DMA_READ(void) {
 			for (int ix = 0; ix < length; ix++)
 			{
 				IMEM[(SP_MEM_ADDR_REG + ix) & 0xFFF] = N64MEM[(SP_DRAM_ADDR_REG + ix)];
-				if (InternalRSP) {
-					notifyRSPOfIMEMChange();
-				}
+			}
+			if (InternalRSP && length > 0) {
+				notifyRSPOfIMEMChange();
 			}
 		}
 		else
