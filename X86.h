@@ -176,7 +176,9 @@ void SetgVariable                    ( BYTE** code, void * Variable, char * Vari
 void Setl                            ( BYTE** code, int x86reg );
 void SetlVariable                    ( BYTE** code, void * Variable, char * VariableName );
 void Setz					         ( BYTE** code, int x86reg );
+void SetzVariable					 ( BYTE** code, void * Variable, char * VariableName );
 void Setnz					         ( BYTE** code, int x86reg );
+void SetnzVariable					 ( BYTE** code, void * Variable, char * VariableName );
 void ShiftLeftDouble                 ( BYTE** code, int Destination, int Source );
 void ShiftLeftDoubleImmed            ( BYTE** code, int Destination, int Source, BYTE Immediate );
 void ShiftLeftSign                   ( BYTE** code, int x86reg );

@@ -57,6 +57,7 @@ extern "C" {
 	BOOL RspCompareInstructions(DWORD PC, OPCODE* Top, OPCODE* Bottom);
 	BOOL IsRspOpcodeBranch(DWORD PC, OPCODE RspOp);
 	BOOL IsRspOpcodeNop(DWORD PC);
+	BOOL IsRspDelaySlotBranch(DWORD PC);
 
 	/*BOOL IsNextInstructionMmx(DWORD PC);*/
 	BOOL IsRspRegisterConstant(DWORD Reg, DWORD* Constant);

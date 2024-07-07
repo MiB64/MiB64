@@ -63,7 +63,7 @@ static void CompilerRSPBlock(void);
 
 void BuildRecompilerRspCPU ( void ) {
 	RSP_Opcode[ 0] = (void*)CompileRsp_SPECIAL;
-	RSP_Opcode[ 1] = /*Compile_REGIMM*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Opcode[ 1] = (void*)CompileRsp_REGIMM;
 	RSP_Opcode[ 2] = (void*)CompileRsp_J;
 	RSP_Opcode[ 3] = (void*)CompileRsp_JAL;
 	RSP_Opcode[ 4] = (void*)CompileRsp_BEQ;
@@ -94,11 +94,11 @@ void BuildRecompilerRspCPU ( void ) {
 	RSP_Opcode[29] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Opcode[30] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Opcode[31] = (void*)CompileRsp_UnknownOpcode;
-	RSP_Opcode[32] = /*Compile_LB*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Opcode[32] = (void*)CompileRsp_LB;
 	RSP_Opcode[33] = (void*)CompileRsp_LH;
 	RSP_Opcode[34] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Opcode[35] = (void*)CompileRsp_LW;
-	RSP_Opcode[36] = /*Compile_LBU*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Opcode[36] = (void*)CompileRsp_LBU;
 	RSP_Opcode[37] = (void*)CompileRsp_LHU;
 	RSP_Opcode[38] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Opcode[39] = (void*)CompileRsp_UnknownOpcode;
@@ -130,13 +130,13 @@ void BuildRecompilerRspCPU ( void ) {
 	RSP_Special[ 0] = (void*)CompileRsp_Special_SLL;
 	RSP_Special[ 1] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Special[ 2] = (void*)CompileRsp_Special_SRL;
-	RSP_Special[ 3] = /*Compile_Special_SRA*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Special[ 3] = (void*)CompileRsp_Special_SRA;
 	RSP_Special[ 4] = /*Compile_Special_SLLV*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Special[ 5] = (void*)CompileRsp_UnknownOpcode;
-	RSP_Special[ 6] = /*Compile_Special_SRLV*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Special[ 6] = (void*)CompileRsp_Special_SRLV;
 	RSP_Special[ 7] = /*Compile_Special_SRAV*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Special[ 8] = (void*)CompileRsp_Special_JR;
-	RSP_Special[ 9] = /*Compile_Special_JALR*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Special[ 9] = (void*)CompileRsp_Special_JALR;
 	RSP_Special[10] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Special[11] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Special[12] = (void*)CompileRsp_UnknownOpcode;
@@ -161,7 +161,7 @@ void BuildRecompilerRspCPU ( void ) {
 	RSP_Special[31] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Special[32] = (void*)CompileRsp_Special_ADD;
 	RSP_Special[33] = /*Compile_Special_ADDU*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Special[34] = /*Compile_Special_SUB*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Special[34] = (void*)CompileRsp_Special_SUB;
 	RSP_Special[35] = /*Compile_Special_SUBU*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Special[36] = (void*)CompileRsp_Special_AND;
 	RSP_Special[37] = /*Compile_Special_OR*/(void*)CompileRsp_UnknownOpcode;
@@ -192,8 +192,8 @@ void BuildRecompilerRspCPU ( void ) {
 	RSP_Special[62] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Special[63] = (void*)CompileRsp_UnknownOpcode;
 
-	RSP_RegImm[ 0] = /*Compile_RegImm_BLTZ*/(void*)CompileRsp_UnknownOpcode;
-	RSP_RegImm[ 1] = /*Compile_RegImm_BGEZ*/(void*)CompileRsp_UnknownOpcode;
+	RSP_RegImm[ 0] = (void*)CompileRsp_RegImm_BLTZ;
+	RSP_RegImm[ 1] = (void*)CompileRsp_RegImm_BGEZ;
 	RSP_RegImm[ 2] = (void*)CompileRsp_UnknownOpcode;
 	RSP_RegImm[ 3] = (void*)CompileRsp_UnknownOpcode;
 	RSP_RegImm[ 4] = (void*)CompileRsp_UnknownOpcode;
@@ -258,11 +258,11 @@ void BuildRecompilerRspCPU ( void ) {
 	RSP_Cop0[30] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Cop0[31] = (void*)CompileRsp_UnknownOpcode;
 	
-	RSP_Cop2[ 0] = /*Compile_Cop2_MF*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Cop2[ 0] = (void*)CompileRsp_Cop2_MF;
 	RSP_Cop2[ 1] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Cop2[ 2] = (void*)CompileRsp_Cop2_CF;
 	RSP_Cop2[ 3] = (void*)CompileRsp_UnknownOpcode;
-	RSP_Cop2[ 4] = /*Compile_Cop2_MT*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Cop2[ 4] = (void*)CompileRsp_Cop2_MT;
 	RSP_Cop2[ 5] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Cop2[ 6] = (void*)CompileRsp_Cop2_CT;
 	RSP_Cop2[ 7] = (void*)CompileRsp_UnknownOpcode;
@@ -295,24 +295,24 @@ void BuildRecompilerRspCPU ( void ) {
 	RSP_Vector[ 1] = /*Compile_Vector_VMULU*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[ 2] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[ 3] = (void*)CompileRsp_UnknownOpcode;
-	RSP_Vector[ 4] = /*Compile_Vector_VMUDL*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Vector[ 5] = /*Compile_Vector_VMUDM*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Vector[ 6] = /*Compile_Vector_VMUDN*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Vector[ 4] = (void*)CompileRsp_Vector_VMUDL;
+	RSP_Vector[ 5] = (void*)CompileRsp_Vector_VMUDM;
+	RSP_Vector[ 6] = (void*)CompileRsp_Vector_VMUDN;
 	RSP_Vector[ 7] = (void*)CompileRsp_Vector_VMUDH;
-	RSP_Vector[ 8] = /*Compile_Vector_VMACF*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Vector[ 8] = (void*)CompileRsp_Vector_VMACF;
 	RSP_Vector[ 9] = /*Compile_Vector_VMACU*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[10] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[11] = /*Compile_Vector_VMACQ*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[12] = /*Compile_Vector_VMADL*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Vector[13] = /*Compile_Vector_VMADM*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Vector[13] = (void*)CompileRsp_Vector_VMADM;
 	RSP_Vector[14] = (void*)CompileRsp_Vector_VMADN;
-	RSP_Vector[15] = /*Compile_Vector_VMADH*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Vector[16] = /*Compile_Vector_VADD*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Vector[17] = /*Compile_Vector_VSUB*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Vector[15] = (void*)CompileRsp_Vector_VMADH;
+	RSP_Vector[16] = (void*)CompileRsp_Vector_VADD;
+	RSP_Vector[17] = (void*)CompileRsp_Vector_VSUB;
 	RSP_Vector[18] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[19] = /*Compile_Vector_VABS*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[20] = /*Compile_Vector_VADDC*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Vector[21] = /*Compile_Vector_VSUBC*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Vector[21] = (void*)CompileRsp_Vector_VSUBC;
 	RSP_Vector[22] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[23] = (void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[24] = (void*)CompileRsp_UnknownOpcode;
@@ -326,12 +326,12 @@ void BuildRecompilerRspCPU ( void ) {
 	RSP_Vector[32] = /*Compile_Vector_VLT*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[33] = /*Compile_Vector_VEQ*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[34] = /*Compile_Vector_VNE*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Vector[35] = /*Compile_Vector_VGE*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Vector[36] = /*Compile_Vector_VCL*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Vector[35] = (void*)CompileRsp_Vector_VGE;
+	RSP_Vector[36] = (void*)CompileRsp_Vector_VCL;
 	RSP_Vector[37] = /*Compile_Vector_VCH*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[38] = /*Compile_Vector_VCR*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[39] = /*Compile_Vector_VMRG*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Vector[40] = /*Compile_Vector_VAND*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Vector[40] = (void*)CompileRsp_Vector_VAND;
 	RSP_Vector[41] = /*Compile_Vector_VNAND*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[42] = /*Compile_Vector_VOR*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Vector[43] = /*Compile_Vector_VNOR*/(void*)CompileRsp_UnknownOpcode;
@@ -357,11 +357,11 @@ void BuildRecompilerRspCPU ( void ) {
 	RSP_Vector[63] = (void*)CompileRsp_UnknownOpcode;
 
 	RSP_Lc2[ 0] = /*Compile_Opcode_LBV*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Lc2[ 1] = /*Compile_Opcode_LSV*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Lc2[ 1] = (void*)CompileRsp_Opcode_LSV;
 	RSP_Lc2[ 2] = /*Compile_Opcode_LLV*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Lc2[ 3] = /*Compile_Opcode_LDV*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Lc2[ 3] = (void*)CompileRsp_Opcode_LDV;
 	RSP_Lc2[ 4] = (void*)CompileRsp_Opcode_LQV;
-	RSP_Lc2[ 5] = /*Compile_Opcode_LRV*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Lc2[ 5] = (void*)CompileRsp_Opcode_LRV;
 	RSP_Lc2[ 6] = /*Compile_Opcode_LPV*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Lc2[ 7] = /*Compile_Opcode_LUV*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Lc2[ 8] = (void*)CompileRsp_UnknownOpcode;
@@ -390,9 +390,9 @@ void BuildRecompilerRspCPU ( void ) {
 	RSP_Lc2[31] = (void*)CompileRsp_UnknownOpcode;
 
 	RSP_Sc2[ 0] = /*Compile_Opcode_SBV*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Sc2[ 1] = /*Compile_Opcode_SSV*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Sc2[ 2] = /*Compile_Opcode_SLV*/(void*)CompileRsp_UnknownOpcode;
-	RSP_Sc2[ 3] = /*Compile_Opcode_SDV*/(void*)CompileRsp_UnknownOpcode;
+	RSP_Sc2[ 1] = (void*)CompileRsp_Opcode_SSV;
+	RSP_Sc2[ 2] = (void*)CompileRsp_Opcode_SLV;
+	RSP_Sc2[ 3] = (void*)CompileRsp_Opcode_SDV;
 	RSP_Sc2[ 4] = (void*)CompileRsp_Opcode_SQV;
 	RSP_Sc2[ 5] = /*Compile_Opcode_SRV*/(void*)CompileRsp_UnknownOpcode;
 	RSP_Sc2[ 6] = /*Compile_Opcode_SPV*/(void*)CompileRsp_UnknownOpcode;
@@ -742,15 +742,14 @@ static BOOL IsJumpLabel(DWORD PC) {
 }
 
 static void CompilerLinkBlocks(void) {
-	/*BYTE * KnownCode = *(JumpTable + (CompilePC >> 2));
+	BYTE * KnownCode = *(RspJumpTable + (RspCompilePC >> 2));
 
-	CPU_Message("***** Linking block to X86: %08X *****", KnownCode);
-	NextInstruction = FINISH_BLOCK;*/
+	RSP_CPU_Message("***** Linking block to X86: %08X *****", KnownCode);
+	RSP_NextInstruction = FINISH_BLOCK;
 
-	/* block linking scenario */				
-/*	JmpLabel32("Linked block", 0);
-	x86_SetBranch32b(RecompPos - 4, KnownCode);*/
-	LogMessage("TODO: CompilerLinkBlocks");
+	/* block linking scenario */
+	JmpLabel32(&RspRecompPos, "Linked block", 0);
+	x86_SetBranch32b(RspRecompPos - 4, KnownCode);
 }
 
 static void CompilerRSPBlock ( void ) {
@@ -758,6 +757,7 @@ static void CompilerRSPBlock ( void ) {
 
 	RSP_NextInstruction = NORMAL;
 	RspCompilePC = SP_PC_REG;
+	maxRecompiledOpcode = GetMaxRecompiledOpcode();
 	
 	memset(&RspCurrentBlock, 0, sizeof(RspCurrentBlock));
 	RspCurrentBlock.StartPC = RspCompilePC;
@@ -891,6 +891,7 @@ static void CompilerRSPBlock ( void ) {
 	if (RspCompiler.bReOrdering == TRUE) {
 		memcpy(IMEM, &RspCurrentBlock.IMEM[0], 0x1000);
 	}
+	UpdateJumpTableHash(maxRecompiledOpcode);
 }
 
 DWORD RunRecompilerRspCPU ( DWORD Cycles ) {
@@ -903,8 +904,6 @@ DWORD RunRecompilerRspCPU ( DWORD Cycles ) {
 		SetRspJumpTable();
 		IMEMIsUpdated = FALSE;
 	}
-
-	maxRecompiledOpcode = GetMaxRecompiledOpcode();
 
 	while (RSP_Running) {
 		Block = *(RspJumpTable + (SP_PC_REG >> 2));
@@ -955,8 +954,6 @@ DWORD RunRecompilerRspCPU ( DWORD Cycles ) {
 	/*if (IsMmxEnabled == TRUE) {
 		_asm emms
 	}*/
-
-	UpdateJumpTableHash(maxRecompiledOpcode);
 
 	return Cycles;
 }

@@ -968,27 +968,28 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 		PC += 4;
 
 		switch (RspOp.OP.I.op) {
-		/*case RSP_REGIMM:
-			break;*/
+		case RSP_REGIMM:
+			break;
 
 		case RSP_SPECIAL:
 			switch (RspOp.OP.R.funct) {
 			case RSP_SPECIAL_SLL:
 			case RSP_SPECIAL_SRL:
-			/*case RSP_SPECIAL_SRA:
+			case RSP_SPECIAL_SRA:
 			case RSP_SPECIAL_SLLV:
 			case RSP_SPECIAL_SRLV:
-			case RSP_SPECIAL_SRAV:*/
+			case RSP_SPECIAL_SRAV:
+			case RSP_SPECIAL_JALR:
 			case RSP_SPECIAL_ADD:
-			/*case RSP_SPECIAL_ADDU:
+			case RSP_SPECIAL_ADDU:
 			case RSP_SPECIAL_SUB:
-			case RSP_SPECIAL_SUBU:*/
+			case RSP_SPECIAL_SUBU:
 			case RSP_SPECIAL_AND:
-			/*case RSP_SPECIAL_OR:
+			case RSP_SPECIAL_OR:
 			case RSP_SPECIAL_XOR:
 			case RSP_SPECIAL_NOR:
 			case RSP_SPECIAL_SLT:
-			case RSP_SPECIAL_SLTU:*/
+			case RSP_SPECIAL_SLTU:
 				if (RspOp.OP.R.rd == Reg) { return FALSE; }
 				break;
 
@@ -997,8 +998,9 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 				break;
 
 			default:
-				RspCompilerWarning("Unkown opcode in IsRspRegisterConstant\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
-				return FALSE;
+				//RspCompilerWarning("Unkown opcode in IsRspRegisterConstant\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
+				//return FALSE;
+				break;
 			}
 			break;
 
@@ -1014,7 +1016,7 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 		case RSP_ADDIU:
 			if (RspOp.OP.I.rt == Reg) {
 				if (!RspOp.OP.I.rs) {
-					if (References > 0) { /*return FALSE;*/LogMessage("TODO: IsRspRegisterConstant, ADDIU, targetting watched reg, src is r0, already referenced"); }
+					if (References > 0) { return FALSE; }
 					Const = (short)RspOp.OP.I.immediate;
 					References++;
 				} else
@@ -1041,9 +1043,9 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 			break;
 
 		case RSP_ANDI:
-		/*case RSP_XORI:
+		case RSP_XORI:
 		case RSP_SLTI:
-		case RSP_SLTIU:*/
+		case RSP_SLTIU:
 			if (RspOp.OP.I.rt == Reg) { return FALSE; }
 			break;
 
@@ -1060,12 +1062,12 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 			if ((RspOp.OP.I.rs & 0x10) == 0) {
 				switch (RspOp.OP.I.rs) {
 				case RSP_COP2_CT:
-					/*case RSP_COP2_MT:*/
+				case RSP_COP2_MT:
 					break;
 
 				case RSP_COP2_CF:
-					/*case RSP_COP2_MF:*/
-						if (RspOp.OP.R.rt == Reg) { return FALSE; }
+				case RSP_COP2_MF:
+					if (RspOp.OP.R.rt == Reg) { return FALSE; }
 					break;
 
 				default:
@@ -1075,15 +1077,16 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 			}
 			break;
 
-		/*case RSP_LB:*/
+		case RSP_LB:
 		case RSP_LH:
 		case RSP_LW:
-		/*case RSP_LBU:*/
+		case RSP_LBU:
 		case RSP_LHU:
+		case RSP_LWU:
 			if (RspOp.OP.LS.rt == Reg) { return FALSE; }
 			break;
 
-		/*case RSP_SB:*/
+		case RSP_SB:
 		case RSP_SH:
 		case RSP_SW:
 			break;
@@ -1092,8 +1095,9 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 		case RSP_SC2:
 			break;
 		default:
-			RspCompilerWarning("Unkown opcode in IsRspRegisterConstant\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
-			return FALSE;
+			//RspCompilerWarning("Unkown opcode in IsRspRegisterConstant\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
+			//return FALSE;
+			break;
 		}
 	}
 
@@ -1118,45 +1122,46 @@ BOOL IsRspRegisterConstant (DWORD Reg, DWORD * Constant) {
 
 BOOL IsRspOpcodeBranch(DWORD PC, OPCODE RspOp) {
 	switch (RspOp.OP.I.op) {
-	/*case RSP_REGIMM:
-		switch (RspOp.rt) {
+	case RSP_REGIMM:
+		switch (RspOp.OP.B.rt) {
 		case RSP_REGIMM_BLTZ:
 		case RSP_REGIMM_BGEZ:
-		case RSP_REGIMM_BLTZAL:
-		case RSP_REGIMM_BGEZAL:		
+		/*case RSP_REGIMM_BLTZAL:
+		case RSP_REGIMM_BGEZAL:*/
 			return TRUE;
 		default:
-			//CompilerWarning("Unknown opcode in IsOpcodeBranch\n%s",RSPOpcodeName(RspOp.Hex,PC));
+			RspCompilerWarning("Unknown opcode in IsRspOpcodeBranch\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
+			LogMessage("Unknown opcode in IsRspOpcodeBranch REGIMM:%d", RspOp.OP.B.rt);
 			break;
 		}
-		break;*/
+		break;
 	case RSP_SPECIAL:
 		switch (RspOp.OP.R.funct) {
 		case RSP_SPECIAL_SLL:
 		case RSP_SPECIAL_SRL:
-		/*case RSP_SPECIAL_SRA:
+		case RSP_SPECIAL_SRA:
 		case RSP_SPECIAL_SLLV:
 		case RSP_SPECIAL_SRLV:
-		case RSP_SPECIAL_SRAV:*/
+		case RSP_SPECIAL_SRAV:
 		case RSP_SPECIAL_ADD:
-		/*case RSP_SPECIAL_ADDU:
+		case RSP_SPECIAL_ADDU:
 		case RSP_SPECIAL_SUB:
-		case RSP_SPECIAL_SUBU:*/
+		case RSP_SPECIAL_SUBU:
 		case RSP_SPECIAL_AND:
-		/*case RSP_SPECIAL_OR:
+		case RSP_SPECIAL_OR:
 		case RSP_SPECIAL_XOR:
 		case RSP_SPECIAL_NOR:
 		case RSP_SPECIAL_SLT:
-		case RSP_SPECIAL_SLTU:*/
+		case RSP_SPECIAL_SLTU:
 		case RSP_SPECIAL_BREAK:
 			break;
 
-		/*case RSP_SPECIAL_JALR:*/
+		case RSP_SPECIAL_JALR:
 		case RSP_SPECIAL_JR:
 			return TRUE;
 
 		default:
-			RspCompilerWarning("Unknown opcode in IsRspOpcodeBranch\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
+			//RspCompilerWarning("Unknown opcode in IsRspOpcodeBranch\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
 			break;
 		}
 		break;
@@ -1170,23 +1175,24 @@ BOOL IsRspOpcodeBranch(DWORD PC, OPCODE RspOp) {
 
 	case RSP_ADDI:
 	case RSP_ADDIU:
-	/*case RSP_SLTI:
-	case RSP_SLTIU:*/
+	case RSP_SLTI:
+	case RSP_SLTIU:
 	case RSP_ANDI:
 	case RSP_ORI:
-	/*case RSP_XORI:*/
+	case RSP_XORI:
 	case RSP_LUI:
 
 	case RSP_CP0:
 	case RSP_CP2:
 		break;
 
-	/*case RSP_LB:*/
+	case RSP_LB:
 	case RSP_LH:
 	case RSP_LW:
-	/*case RSP_LBU:*/
+	case RSP_LBU:
 	case RSP_LHU:
-	/*case RSP_SB:*/
+	case RSP_LWU:
+	case RSP_SB:
 	case RSP_SH:
 	case RSP_SW:
 		break;
@@ -1196,11 +1202,28 @@ BOOL IsRspOpcodeBranch(DWORD PC, OPCODE RspOp) {
 		break;
 
 	default:
-		RspCompilerWarning("Unknown opcode in IsRspOpcodeBranch\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
+		//RspCompilerWarning("Unknown opcode in IsRspOpcodeBranch\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
 		break;
 	}
 
 	return FALSE;
+}
+
+/************************************************************
+** IsRspDelaySlotBranch
+**
+** Output:
+**	TRUE: next opcode is a branch
+**	FALSE: next opcode is not a branch
+**
+** Input: branch PC
+*************************************************************/
+
+BOOL IsRspDelaySlotBranch(DWORD PC) {
+	DWORD delaySlotPC = (PC + 4) & 0xFFC;
+	OPCODE opcode;
+	RSP_LW_IMEM(delaySlotPC, &opcode.OP.Hex);
+	return IsRspOpcodeBranch(delaySlotPC, opcode);
 }
 
 /************************************************************
@@ -1246,23 +1269,23 @@ typedef struct {
 
 static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 	switch (RspOp->OP.I.op) {
-	/*case RSP_REGIMM:
-		switch (RspOp->rt) {
+	case RSP_REGIMM:
+		switch (RspOp->OP.B.rt) {
 		case RSP_REGIMM_BLTZ:
-		case RSP_REGIMM_BLTZAL:
+		/*case RSP_REGIMM_BLTZAL:*/
 		case RSP_REGIMM_BGEZ:
-		case RSP_REGIMM_BGEZAL:
+		/*case RSP_REGIMM_BGEZAL:*/
 			info->flags = InvalidOpcode;
-			info->SourceReg0 = RspOp->rs;
-			info->SourceReg1 = -1;
+			info->S0.SourceReg0 = RspOp->OP.B.rs;
+			info->SourceReg1 = (DWORD)-1;
 			break;
 
 		default:
-			CompilerWarning("Unkown opcode in GetInstructionInfo\n%s",RSPOpcodeName(RspOp->Hex,PC));
+			RspCompilerWarning("Unkown opcode in GetInstructionInfo\n%s",RSPOpcodeName(RspOp->OP.Hex,PC));
 			info->flags = InvalidOpcode;
 			break;
 		}
-		break;*/
+		break;
 	case RSP_SPECIAL:
 		switch (RspOp->OP.R.funct) {
 		case RSP_SPECIAL_BREAK:
@@ -1273,33 +1296,33 @@ static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 			break;
 
 		case RSP_SPECIAL_SLL:
-		/*case RSP_SPECIAL_SRL:
-		case RSP_SPECIAL_SRA:*/
+		case RSP_SPECIAL_SRL:
+		/*case RSP_SPECIAL_SRA:*/
 			info->DS.DestReg = RspOp->OP.R.rd;
 			info->S0.SourceReg0 = RspOp->OP.R.rt;
 			info->SourceReg1 = (DWORD)-1;
 			info->flags = GPR_Instruction;
 			break;
-		/*case RSP_SPECIAL_SLLV:
+		/*case RSP_SPECIAL_SLLV:*/
 		case RSP_SPECIAL_SRLV:
-		case RSP_SPECIAL_SRAV:
+		/*case RSP_SPECIAL_SRAV:*/
 		case RSP_SPECIAL_ADD:
-		case RSP_SPECIAL_ADDU:
+		/*case RSP_SPECIAL_ADDU:*/
 		case RSP_SPECIAL_SUB:
-		case RSP_SPECIAL_SUBU:
+		/*case RSP_SPECIAL_SUBU:*/
 		case RSP_SPECIAL_AND:
-		case RSP_SPECIAL_OR:
+		/*case RSP_SPECIAL_OR:
 		case RSP_SPECIAL_XOR:
 		case RSP_SPECIAL_NOR:
 		case RSP_SPECIAL_SLT:
-		case RSP_SPECIAL_SLTU:
-			info->DestReg = RspOp->rd;
-			info->SourceReg0 = RspOp->rs;
-			info->SourceReg1 = RspOp->rt;
+		case RSP_SPECIAL_SLTU:*/
+			info->DS.DestReg = RspOp->OP.R.rd;
+			info->S0.SourceReg0 = RspOp->OP.R.rs;
+			info->SourceReg1 = RspOp->OP.R.rt;
 			info->flags = GPR_Instruction;
 			break;
 
-		case RSP_SPECIAL_JR:
+		/*case RSP_SPECIAL_JR:
 			info->flags = InvalidOpcode;
 			info->SourceReg0 = -1;
 			info->SourceReg1 = -1;
@@ -1333,8 +1356,8 @@ static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 	case RSP_ADDI:
 	case RSP_ADDIU:
 	/*case RSP_SLTI:
-	case RSP_SLTIU:
-	case RSP_ANDI:*/
+	case RSP_SLTIU:*/
+	case RSP_ANDI:
 	case RSP_ORI:
 	/*case RSP_XORI:*/
 		info->DS.DestReg = RspOp->OP.I.rt;
@@ -1353,11 +1376,10 @@ static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 	case RSP_CP0:
 		switch (RspOp->OP.I.rs) {
 		case RSP_COP0_MF:			
-			/*info->DestReg = RspOp->rt;
-			info->SourceReg0 = -1;
-			info->SourceReg1 = -1;
-			info->flags = GPR_Instruction | Load_Operation;*/
-			LogMessage("TODO: GetInstructionInfo MFC0");
+			info->DS.DestReg = RspOp->OP.R.rt;
+			info->S0.SourceReg0 = (DWORD)-1;
+			info->SourceReg1 = (DWORD)-1;
+			info->flags = GPR_Instruction | Load_Operation;
 			break;
 
 		case RSP_COP0_MT:
@@ -1380,52 +1402,52 @@ static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 				break;*/
 
 			case RSP_VECTOR_VMULF:
-			/*case RSP_VECTOR_VMUDL:
+			case RSP_VECTOR_VMUDL:
 			case RSP_VECTOR_VMUDM:
-			case RSP_VECTOR_VMUDN:*/
+			case RSP_VECTOR_VMUDN:
 			case RSP_VECTOR_VMUDH:
 				info->DS.DestReg = RspOp->OP.V.vd;
 				info->S0.SourceReg0 = RspOp->OP.V.vs;
 				info->SourceReg1 = RspOp->OP.V.vt;
 				info->flags = VEC_Instruction | VEC_ResetAccum | Accum_Operation;
 				break;
-			/*case RSP_VECTOR_VMACF:
-			case RSP_VECTOR_VMADL:
+			case RSP_VECTOR_VMACF:
+			/*case RSP_VECTOR_VMADL:*/
 			case RSP_VECTOR_VMADM:
 			case RSP_VECTOR_VMADN:
 			case RSP_VECTOR_VMADH:
-				info->DestReg = RspOp->sa;
-				info->SourceReg0 = RspOp->rd;
-				info->SourceReg1 = RspOp->rt;
+				info->DS.DestReg = RspOp->OP.V.vd;
+				info->S0.SourceReg0 = RspOp->OP.V.vs;
+				info->SourceReg1 = RspOp->OP.V.vt;
 				info->flags = VEC_Instruction | VEC_Accumulate | Accum_Operation;
 				break;
-			case RSP_VECTOR_VABS:
+			/*case RSP_VECTOR_VABS:*/
 			case RSP_VECTOR_VADD:
-			case RSP_VECTOR_VADDC:
+			/*case RSP_VECTOR_VADDC:*/
 			case RSP_VECTOR_VSUB:
 			case RSP_VECTOR_VSUBC:
 			case RSP_VECTOR_VAND:
-			case RSP_VECTOR_VOR:
+			/*case RSP_VECTOR_VOR:*/
 			case RSP_VECTOR_VXOR:
-			case RSP_VECTOR_VNXOR:
+			/*case RSP_VECTOR_VNXOR:
 			case RSP_VECTOR_VCR:
-			case RSP_VECTOR_VCH:
+			case RSP_VECTOR_VCH:*/
 			case RSP_VECTOR_VCL:
-			case RSP_VECTOR_VRCP:
+			/*case RSP_VECTOR_VRCP:
 			case RSP_VECTOR_VRCPL:
 			case RSP_VECTOR_VRCPH:
 			case RSP_VECTOR_VRSQL:
 			case RSP_VECTOR_VRSQH:
 			case RSP_VECTOR_VLT:
-			case RSP_VECTOR_VEQ:
+			case RSP_VECTOR_VEQ:*/
 			case RSP_VECTOR_VGE:
-				info->DestReg = RspOp->sa;
-				info->SourceReg0 = RspOp->rd;
-				info->SourceReg1 = RspOp->rt;
+				info->DS.DestReg = RspOp->OP.V.vd;
+				info->S0.SourceReg0 = RspOp->OP.V.vs;
+				info->SourceReg1 = RspOp->OP.V.vt;
 				info->flags = VEC_Instruction | VEC_ResetAccum | Accum_Operation;
 				break;
 
-			case RSP_VECTOR_VMOV:
+			/*case RSP_VECTOR_VMOV:
 				info->flags = InvalidOpcode;*/
 			/*	info->DestReg = RspOp->sa;
 				info->SourceReg0 = RspOp->rt;
@@ -1454,8 +1476,8 @@ static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 				break;
 			}
 		} else {
-			/*switch (RspOp->rs) {				
-			case RSP_COP2_CT:
+			switch (RspOp->OP.I.rs) {				
+			/*case RSP_COP2_CT:
 				info->StoredReg = RspOp->rt;
 				info->SourceReg0 = -1;
 				info->SourceReg1 = -1;
@@ -1469,49 +1491,48 @@ static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 				break;*/
 
 			/* RD is always the vector register, RT is always GPR */
-/*			case RSP_COP2_MT:
-				info->DestReg = RspOp->rd;
-				info->SourceReg0 = RspOp->rt;
-				info->SourceReg1 = -1;
+			case RSP_COP2_MT:
+				info->DS.DestReg = RspOp->OP.MV.vs;
+				info->S0.SourceReg0 = RspOp->OP.MV.rt;
+				info->SourceReg1 = (DWORD)-1;
 				info->flags = VEC_Instruction | GPR_Instruction | Load_Operation;
 				break;
 			case RSP_COP2_MF:
-				info->DestReg = RspOp->rt;
-				info->SourceReg0 = RspOp->rd;
-				info->SourceReg1 = -1;
+				info->DS.DestReg = RspOp->OP.R.rt;
+				info->S0.SourceReg0 = RspOp->OP.R.rd;
+				info->SourceReg1 = (DWORD)-1;
 				info->flags = VEC_Instruction | GPR_Instruction | Store_Operation;
 				break;
 			default:
-				CompilerWarning("Unkown opcode in GetInstructionInfo\n%s",RSPOpcodeName(RspOp->Hex,PC));
+				RspCompilerWarning("Unkown opcode in GetInstructionInfo\n%s",RSPOpcodeName(RspOp->OP.Hex,PC));
 				info->flags = InvalidOpcode;
 				break;
-			}*/
-			LogMessage("TODO: GetInstructionInfo: cp2 notvector");
+			}
 		}
 		break;
-	/*case RSP_LB:
-	case RSP_LH:*/
+	case RSP_LB:
+	case RSP_LH:
 	case RSP_LW:
-	/*case RSP_LBU:
-	case RSP_LHU:*/
+	case RSP_LBU:
+	case RSP_LHU:
 		info->DS.DestReg = RspOp->OP.LS.rt;
 		info->S0.IndexReg = RspOp->OP.LS.base;
 		info->SourceReg1 = (DWORD)-1;
 		info->flags = Load_Operation | GPR_Instruction;
 		break;
-	/*case RSP_SB:
+	/*case RSP_SB:*/
 	case RSP_SH:
 	case RSP_SW:
-		info->StoredReg = RspOp->rt;
-		info->IndexReg = RspOp->base;
-		info->SourceReg1 = -1;
+		info->DS.StoredReg = RspOp->OP.LS.rt;
+		info->S0.IndexReg = RspOp->OP.LS.base;
+		info->SourceReg1 = (DWORD)-1;
 		info->flags = Store_Operation | GPR_Instruction;		
-		break;*/
+		break;
 	case RSP_LC2:
 		switch (RspOp->OP.R.rd) {
-		/*case RSP_LSC2_SV:
+		case RSP_LSC2_SV:
 		case RSP_LSC2_DV:
-		case RSP_LSC2_RV:*/
+		case RSP_LSC2_RV:
 		case RSP_LSC2_QV:
 		/*case RSP_LSC2_LV:
 		case RSP_LSC2_UV:
@@ -1533,10 +1554,10 @@ static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 		break;
 	case RSP_SC2:
 		switch (RspOp->OP.R.rd) {
-		/*case RSP_LSC2_BV:
+		/*case RSP_LSC2_BV:*/
 		case RSP_LSC2_SV:
 		case RSP_LSC2_LV:
-		case RSP_LSC2_DV:*/
+		case RSP_LSC2_DV:
 		case RSP_LSC2_QV:
 		/*case RSP_LSC2_RV:
 		case RSP_LSC2_PV:
@@ -1566,7 +1587,7 @@ static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 }
 
 /************************************************************
-** DelaySlotAffectBranch
+** RspDelaySlotAffectBranch
 **
 ** Output:
 **	TRUE: Delay slot does affect the branch
@@ -1593,12 +1614,11 @@ BOOL RspDelaySlotAffectBranch(DWORD PC) {
 	GetInstructionInfo((PC+4)&0xFFC, &Delay, &infoDelay);
 
 	if ((infoDelay.flags & Instruction_Mask) == VEC_Instruction) {
-		/*return FALSE;*/
-		LogMessage("TODO: RspDelaySlotAffectBranch, vector in delay");
+		return FALSE;
 	}
 
-	if (infoBranch.S0.SourceReg0 == infoDelay.DS.DestReg) { /*return TRUE;*/ LogMessage("TODO: RspDelaySlotAffectBranch, source0 is written in delay slot"); }
-	if (infoBranch.SourceReg1 == infoDelay.DS.DestReg) { /*return TRUE;*/LogMessage("TODO: RspDelaySlotAffectBranch, source1 is written in delay slot"); }
+	if (infoBranch.S0.SourceReg0 == infoDelay.DS.DestReg) { return TRUE; }
+	if (infoBranch.SourceReg1 == infoDelay.DS.DestReg) { return TRUE; }
 	
 	return FALSE;
 }
@@ -1638,22 +1658,22 @@ BOOL RspCompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom) {
 /*		return TRUE;
 	case 0x00:*/						 /* Both ??? */
 /*	case 0x10: case 0x20: case 0x30:*/ /* Second is a noop */
-/*		return FALSE;
+/*		return FALSE;*/
 
-	case 0x06:*/ /* GPR than Vector - 01,10 */
-/*		if ((info0.flags & MemOperation_Mask) != 0 && (info1.flags & MemOperation_Mask) != 0) {*/
+	case 0x06: /* GPR than Vector - 01,10 */
+		if ((info0.flags & MemOperation_Mask) != 0 && (info1.flags & MemOperation_Mask) != 0) {
 			/* TODO: We have a vector & GPR memory operation */
-/*			return FALSE;
-		} else if ((info1.flags & MemOperation_Mask) != 0) {*/
+			return FALSE;
+		} else if ((info1.flags & MemOperation_Mask) != 0) {
 			/* We have a vector memory operation */
-/*			return (info1.IndexReg == info0.DestReg) ? FALSE : TRUE;
-		} else {*/
+			return (info1.S0.IndexReg == info0.DS.DestReg) ? FALSE : TRUE;
+		} else {
 			/* We could have memory or normal gpr instruction here
 			** paired with some kind of vector operation
 			*/
-/*			return TRUE;
+			return TRUE;
 		}
-		return FALSE;*/
+		break;
 
 	case 0x0A: /* Vector than Vector - 10,10 */
 
@@ -1683,31 +1703,27 @@ BOOL RspCompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom) {
 			if (info0.DS.DestReg == info1.DS.DestReg) { return FALSE; }
 
 			if (info1.flags & Load_Operation) {
-/*				if (info0.SourceReg0 == info1.DestReg) { return FALSE; }
-				if (info0.SourceReg1 == info1.DestReg) { return FALSE; }*/
-				LogMessage("TODO:RspCompareInstructions vec and vec, 2nd is mem, load");
+				if (info0.S0.SourceReg0 == info1.DS.DestReg) { return FALSE; }
+				if (info0.SourceReg1 == info1.DS.DestReg) { /*return FALSE;*/LogMessage("TODO:RspCompareInstructions vec and vec, 2nd is mem, load, src1 is dest of load"); }
 			} else if (info1.flags & Store_Operation) {
 				/* It can store source regs */
 				return TRUE;
 			}
 
-/*			return TRUE;*/
-			LogMessage("TODO:RspCompareInstructions vec and vec, 2nd is mem");
+			return TRUE;
 		} else if ((info0.flags & MemOperation_Mask) != 0) {
 			/* Remember stored reg & loaded reg are the same */
 			if (info0.DS.DestReg == info1.DS.DestReg) { /*return FALSE;*/LogMessage("TODO:RspCompareInstructions vec and vec, 1st is mem"); }
 
 			if (info0.flags & Load_Operation) {
-/*				if (info1.SourceReg0 == info0.DestReg) { return FALSE; }
-				if (info1.SourceReg1 == info0.DestReg) { return FALSE; }*/
-				LogMessage("TODO:RspCompareInstructions vec and vec, 1st is mem, load");
+				if (info1.S0.SourceReg0 == info0.DS.DestReg) { /*return FALSE;*/LogMessage("TODO:RspCompareInstructions vec and vec, 1st is mem, load, src0 is dest of load"); }
+				if (info1.SourceReg1 == info0.DS.DestReg) { /*return FALSE;*/LogMessage("TODO:RspCompareInstructions vec and vec, 1st is mem, load, src1 is dest of load"); }
 			} else if (info0.flags & Store_Operation) {
 				/* It can store source regs */
 				return TRUE;
 			}
 
-			/*return TRUE;*/
-			LogMessage("TODO:RspCompareInstructions vec and vec, 1st is mem");
+			return TRUE;
 		} else if ((info0.flags & VEC_Accumulate) != 0) {
 			/*
 			** Example:
@@ -1743,44 +1759,46 @@ BOOL RspCompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom) {
 		return FALSE;
 
 	case 0x05: /* GPR than GPR - 01,01 */
-/*	case 0x07:*/ /* GPR than Cop2 - 01, 11 */
-/*	case 0x0D:*/ /* Cop2 than GPR - 11, 01 */
-/*	case 0x0F:*/ /* Cop2 than Cop2 - 11, 11 */
+	case 0x07: /* GPR than Cop2 - 01, 11 */
+	case 0x0D: /* Cop2 than GPR - 11, 01 */
+	case 0x0F: /* Cop2 than Cop2 - 11, 11 */
 		return FALSE;
 
-/*	case 0x0B:*/ /* Vector than Cop2 - 10, 11 */
-/*		if (info1.flags & Load_Operation) {*/
+	case 0x0B: /* Vector than Cop2 - 10, 11 */
+		if (info1.flags & Load_Operation) {
 			/* Move To Cop2 (dest) from GPR (source) */
-/*			if (info1.DestReg == info0.DestReg) { return FALSE; }
-			if (info1.DestReg == info0.SourceReg0) { return FALSE; }
-			if (info1.DestReg == info0.SourceReg1) { return FALSE; }
-		} else if (info1.flags & Store_Operation) {*/
+			if (info1.DS.DestReg == info0.DS.DestReg) { /*return FALSE;*/ LogMessage("TODO:RspCompareInstructions vec and cop2, load, same destination"); }
+			if (info1.DS.DestReg == info0.S0.SourceReg0) { /*return FALSE;*/ LogMessage("TODO:RspCompareInstructions vec and cop2, load, dest is source0 of vec"); }
+			if (info1.DS.DestReg == info0.SourceReg1) { /*return FALSE;*/ LogMessage("TODO:RspCompareInstructions vec and cop2, load, dest is source1 of vec"); }
+		} else if (info1.flags & Store_Operation) {
 			/* Move From Cop2 (source) to GPR (dest) */
 /*			if (info1.SourceReg0 == info0.DestReg) { return FALSE; }
 			if (info1.SourceReg0 == info0.SourceReg0) { return FALSE; }
-			if (info1.SourceReg0 == info0.SourceReg1) { return FALSE; }
+			if (info1.SourceReg0 == info0.SourceReg1) { return FALSE; }*/
+			LogMessage("TODO:RspCompareInstructions vec and cop2, store");
 		} else {
-			CompilerWarning("ReOrder: Unhandled Vector than Cop2");
+			RspCompilerWarning("ReOrder: Unhandled Vector than Cop2");
 		}
 		// we want vectors on top
 		return FALSE;
 
-	case 0x0E:*/ /* Cop2 than Vector - 11, 10 */
-/*		if (info0.flags & Load_Operation) {*/
+	case 0x0E: /* Cop2 than Vector - 11, 10 */
+		if (info0.flags & Load_Operation) {
 			/* Move To Cop2 (dest) from GPR (source) */
-/*			if (info0.DestReg == info1.DestReg) { return FALSE; }
-			if (info0.DestReg == info1.SourceReg0) { return FALSE; }
-			if (info0.DestReg == info1.SourceReg1) { return FALSE; }
-		} else if (info0.flags & Store_Operation) {*/
+			if (info0.DS.DestReg == info1.DS.DestReg) { /*return FALSE;*/ LogMessage("TODO:RspCompareInstructions cop2 and vec, load, same destination"); }
+			if (info0.DS.DestReg == info1.S0.SourceReg0) { /*return FALSE;*/ LogMessage("TODO:RspCompareInstructions cop2 and vec, load, dest is source0 of vec"); }
+			if (info0.DS.DestReg == info1.SourceReg1) { /*return FALSE;*/ LogMessage("TODO:RspCompareInstructions cop2 and vec, load, dest is source0 of vec"); }
+		} else if (info0.flags & Store_Operation) {
 			/* Move From Cop2 (source) to GPR (dest) */
 /*			if (info0.SourceReg0 == info1.DestReg) { return FALSE; }
 			if (info0.SourceReg0 == info1.SourceReg0) { return FALSE; }
-			if (info0.SourceReg0 == info1.SourceReg1) { return FALSE; }
+			if (info0.SourceReg0 == info1.SourceReg1) { return FALSE; }*/
+			LogMessage("TODO:RspCompareInstructions cop2 and vec, store");
 		} else {
-			CompilerWarning("ReOrder: Unhandled Cop2 than Vector");
+			RspCompilerWarning("ReOrder: Unhandled Cop2 than Vector");
 		}
 		// we want this at the top
-		return TRUE;*/
+		return TRUE;
 
 	default:
 		RspCompilerWarning("ReOrder: Unhandled instruction type: %x", InstructionType);

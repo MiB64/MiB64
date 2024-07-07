@@ -2426,6 +2426,13 @@ void Setz(BYTE** code, int x86reg) {
 	}
 }
 
+void SetzVariable(BYTE** code, void* Variable, char* VariableName) {
+	CPU_OR_RSP_Message(*code, "      setz byte ptr [%s]", VariableName);
+	PUTDST16(*code, 0x940F);
+	PUTDST8(*code, 0x05);
+	PUTDST32(*code, Variable);
+}
+
 void Setnz(BYTE** code, int x86reg) {
 	CPU_OR_RSP_Message(*code, "      setnz %s",x86Byte_Name(x86reg));
 	PUTDST16(*code,0x950F);
@@ -2437,6 +2444,13 @@ void Setnz(BYTE** code, int x86reg) {
 	default:
 		DisplayError("Setnz\nUnknown x86 Register");
 	}
+}
+
+void SetnzVariable(BYTE** code, void* Variable, char* VariableName) {
+	CPU_OR_RSP_Message(*code, "      setnz byte ptr [%s]", VariableName);
+	PUTDST16(*code, 0x950F);
+	PUTDST8(*code, 0x05);
+	PUTDST32(*code, Variable);
 }
 
 void ShiftLeftDouble(BYTE** code, int Destination, int Source) {
