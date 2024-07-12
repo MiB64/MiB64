@@ -31,11 +31,13 @@
 #include "rsp_registers.h"
 #include "../Main.h"
 
-BYTE * RspRecompCode,/* * RecompCodeSecondary,*/ * RspRecompPos;
+BYTE * RspRecompCode = NULL,/* * RecompCodeSecondary,*/ * RspRecompPos;
 
 int AllocateRspMemory (void) {
-	RspRecompCode=(BYTE *) VirtualAlloc( NULL, 0x00400004, MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-	RspRecompCode=(BYTE *) VirtualAlloc( RspRecompCode, 0x00400000, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+	if (RspRecompCode == NULL) {
+		RspRecompCode = (BYTE*)VirtualAlloc(NULL, 0x01600004, MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+		RspRecompCode = (BYTE*)VirtualAlloc(RspRecompCode, 0x01600000, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+	}
 	
 	if(RspRecompCode == NULL) {
 		DisplayError("Not enough memory for RSP RecompCode!");

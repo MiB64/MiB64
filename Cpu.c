@@ -54,6 +54,8 @@ HANDLE hCPU;
 BOOL inFullScreen, CPURunning, SPHack;
 DWORD MemoryStack;
 static unsigned int firstFrameWithInterruptsDisabled = 0;
+int RSPisRunning = 0;
+int CheckRSPInterrupt = 0;
 
 #ifdef CFB_READ
 DWORD CFBStart = 0, CFBEnd = 0;
@@ -686,6 +688,10 @@ void Reset_CPU(void) {
 		StopLog();
 		StartLog();
 	}
+
+	RSPisRunning = 0;
+	CheckRSPInterrupt = 0;
+
 	return;
 }
 
@@ -1391,8 +1397,6 @@ void RefreshScreen (void ){
 
 #define NUMCYCLES 200
 #define RSP_TIMER_INC 100
-int RSPisRunning = 0;
-int CheckRSPInterrupt = 0;
 
 void RunRsp (void) {
 	if (Timers.Active[RspTimer]) return;

@@ -2392,6 +2392,13 @@ void SetgVariable(BYTE** code, void * Variable, char * VariableName) {
 	PUTDST32(*code,Variable);
 }
 
+void SetgeVariable(BYTE** code, void * Variable, char * VariableName) {
+	CPU_OR_RSP_Message(*code, "      setge byte ptr [%s]", VariableName);
+	PUTDST16(*code, 0x9D0F);
+	PUTDST8(*code, 0x05);
+	PUTDST32(*code, Variable);
+}
+
 void Setl(BYTE** code, int x86reg) {
 	CPU_OR_RSP_Message(*code, "      setl %s",x86Byte_Name(x86reg));
 	PUTDST16(*code,0x9C0F);
@@ -2412,6 +2419,12 @@ void SetlVariable(BYTE** code, void * Variable, char * VariableName) {
 	PUTDST32(*code,Variable);
 }
 
+void SetleVariable(BYTE** code, void* Variable, char* VariableName) {
+	CPU_OR_RSP_Message(*code, "      setle byte ptr [%s]", VariableName);
+	PUTDST16(*code, 0x9E0F);
+	PUTDST8(*code, 0x05);
+	PUTDST32(*code, Variable);
+}
 
 void Setz(BYTE** code, int x86reg) {
 	CPU_OR_RSP_Message(*code, "      setz %s",x86Byte_Name(x86reg));

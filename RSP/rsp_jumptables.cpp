@@ -74,6 +74,7 @@ public:
 private:
 	DWORD _maxRecompiledOpcode = 0;
 	XXH64_hash_t _hash = 0;
+public:
 	std::vector<BYTE> _IMEM;
 	std::vector<BYTE> _jumpTable;
 };
@@ -115,8 +116,8 @@ extern "C" {
 			JumpTablesMap[jumpTable.getHash()] = RspTable;
 
 			IMEMLengths.clear();
-			for (auto& jt : JumpTables) {
-				IMEMLengths.insert(jt.getMaxRecompiledOpcode() + 4);
+			for(size_t i = 0; i < NoOfRspMaps; ++i) {
+				IMEMLengths.insert(JumpTables[i].getMaxRecompiledOpcode() + 4);
 			}
 		}
 	}
@@ -138,6 +139,7 @@ void SetRspJumpTable(void) {
 
 		auto it = JumpTablesMap.find(currentHash);
 		if (it != JumpTablesMap.end()) {
+			XXH3_freeState(state);
 			RspTable = it->second;
 			RspJumpTable = JumpTables[RspTable].getJumpTable();
 			return;
