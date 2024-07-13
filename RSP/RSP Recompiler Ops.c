@@ -227,9 +227,8 @@ void CompileRsp_BEQ ( void ) {
 		} else if (RSPOpC.OP.B.rs == 0) {			
 			CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rt].W,RspGPR_Name(RSPOpC.OP.B.rt));
 		} else {
-			/*MoveVariableToX86reg(&RSP_GPR[RSPOpC.rt].W,GPR_Name(RSPOpC.rt),x86_EAX);
-			CompX86regToVariable(x86_EAX,&RSP_GPR[RSPOpC.rs].W,GPR_Name(RSPOpC.rs));*/
-			LogMessage("TODO: CompileRsp_BEQ, before delay slot, no r0");
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.B.rt].W,RspGPR_Name(RSPOpC.OP.B.rt),x86_EAX);
+			CompX86regToVariable(&RspRecompPos, x86_EAX,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
 		}
 		SetzVariable(&RspRecompPos, &BranchCompare, "BranchCompare");
 		RSP_NextInstruction = DO_DELAY_SLOT;
@@ -289,8 +288,7 @@ void CompileRsp_BNE ( void ) {
 		if (RSPOpC.OP.B.rt == 0) {			
 			CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
 		} else if (RSPOpC.OP.B.rs == 0) {			
-			/*CompConstToVariable(0,&RSP_GPR[RSPOpC.rt].W,GPR_Name(RSPOpC.rt));*/
-			LogMessage("TODO: Compile_BNE: before delay slot, rs is r0");
+			CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rt].W,RspGPR_Name(RSPOpC.OP.B.rt));
 		} else {
 			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.B.rt].W,RspGPR_Name(RSPOpC.OP.B.rt),x86_EAX);
 			CompX86regToVariable(&RspRecompPos, x86_EAX,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
