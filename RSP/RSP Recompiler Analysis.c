@@ -1901,13 +1901,13 @@ BOOL RspCompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom) {
 	case 0x0E: /* Cop2 than Vector - 11, 10 */
 		if (info0.flags & Load_Operation) {
 			/* Move To Cop2 (dest) from GPR (source) */
-			if (info0.DS.DestReg == info1.DS.DestReg) { /*return FALSE;*/ LogMessage("TODO:RspCompareInstructions cop2 and vec, load, same destination"); }
+			if (info0.DS.DestReg == info1.DS.DestReg) { return FALSE; }
 			if (info0.DS.DestReg == info1.S0.SourceReg0) { /*return FALSE;*/ LogMessage("TODO:RspCompareInstructions cop2 and vec, load, dest is source0 of vec"); }
 			if (info0.DS.DestReg == info1.SourceReg1) { return FALSE; }
 		} else if (info0.flags & Store_Operation) {
 			/* Move From Cop2 (source) to GPR (dest) */
-			if (info0.S0.SourceReg0 == info1.DS.DestReg) { /*return FALSE;*/LogMessage("TODO:RspCompareInstructions cop2 and vec, store, src0 of store is the same dest of vec");}
-			if (info0.S0.SourceReg0 == info1.S0.SourceReg0) { /*return FALSE;*/LogMessage("TODO:RspCompareInstructions cop2 and vec, store, both have the same src0");}
+			if (info0.S0.SourceReg0 == info1.DS.DestReg) { return FALSE; }
+			if (info0.S0.SourceReg0 == info1.S0.SourceReg0) { return FALSE; }
 			if (info0.S0.SourceReg0 == info1.SourceReg1) { return FALSE; }
 		} else {
 			RspCompilerWarning("ReOrder: Unhandled Cop2 than Vector");

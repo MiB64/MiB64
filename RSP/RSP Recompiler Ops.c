@@ -119,14 +119,9 @@ static void Branch_AddRef(DWORD Target, DWORD * X86Loc) {
 	}
 }
 
-static void dump() {
-	LogMessage("DEBUG:PC=%x", SP_PC_REG);
-}
-
 static void InterpreterFallback ( void * FunctAddress, char * FunctName) {
 	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 	MoveConstToVariable(&RspRecompPos, RSPOpC.OP.Hex, &RSPOpC.OP.Hex, "RSPOpC.Hex" );
-	//Call_Direct(&RspRecompPos, (void*)dump, FunctName);
 	Call_Direct(&RspRecompPos, FunctAddress, FunctName);
 }
 
@@ -1025,6 +1020,7 @@ void CompileRsp_Special_SRAV ( void ) {
 }
 
 void CompileRsp_Special_JR (void) {
+	static DWORD Target = 0;
 	BYTE * Jump;
 
 	if (IsRspDelaySlotBranch(RspCompilePC)) {
@@ -1032,15 +1028,16 @@ void CompileRsp_Special_JR (void) {
 		return;
 	}
 
-	if ( RSP_NextInstruction == NORMAL ) {		
+	if ( RSP_NextInstruction == NORMAL ) {
 		RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 		/* transfer destination to location pointed to by PrgCount */
 		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W,RspGPR_Name(RSPOpC.OP.R.rs),x86_EAX);
 		AndConstToX86Reg(&RspRecompPos, x86_EAX,0xFFC);
-		MoveX86regToVariable(&RspRecompPos, x86_EAX,&SP_PC_REG,"RSP PC");
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &Target, "Target");
 		RSP_NextInstruction = DO_DELAY_SLOT;
 	} else if ( RSP_NextInstruction == DELAY_SLOT_DONE ) {
-		MoveVariableToX86reg(&RspRecompPos, &SP_PC_REG,"RSP PC", x86_EAX);
+		MoveVariableToX86reg(&RspRecompPos, &Target,"Target", x86_EAX);
+		MoveX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EBX);
 		AddVariableToX86reg(&RspRecompPos, x86_EAX, &RspJumpTable, "RspJumpTable");
 		MoveX86PointerToX86reg(&RspRecompPos, x86_EAX, x86_EAX);
 
@@ -1051,6 +1048,7 @@ void CompileRsp_Special_JR (void) {
 
 		x86_SetBranch8b(Jump, RspRecompPos);
 		RSP_CPU_Message(" Null:");
+		MoveX86regToVariable(&RspRecompPos, x86_EBX, &SP_PC_REG, "RSP PC");
 		Ret(&RspRecompPos);
 		RSP_NextInstruction = FINISH_BLOCK;
 	} else {
@@ -1060,18 +1058,25 @@ void CompileRsp_Special_JR (void) {
 }
 
 void CompileRsp_Special_JALR ( void ) {
+	static DWORD Target = 0;
 	BYTE * Jump;
 	DWORD Const = (RspCompilePC + 8) & 0xFFC;
+
+	if (IsRspDelaySlotBranch(RspCompilePC)) {
+		CompileRsp_ConsecutiveDelaySlots();
+		return;
+	}
 
 	if (RSP_NextInstruction == NORMAL) {
 		RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W,RspGPR_Name(RSPOpC.OP.R.rs),x86_EAX);
 		AndConstToX86Reg(&RspRecompPos, x86_EAX,0xFFC);
-		MoveX86regToVariable(&RspRecompPos, x86_EAX,&SP_PC_REG,"RSP PC");
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &Target, "Target");
 		MoveConstToVariable(&RspRecompPos, Const, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
 		RSP_NextInstruction = DO_DELAY_SLOT;
 	} else if (RSP_NextInstruction == DELAY_SLOT_DONE) {
-		MoveVariableToX86reg(&RspRecompPos, &SP_PC_REG,"RSP PC", x86_EAX);
+		MoveVariableToX86reg(&RspRecompPos, &Target, "Target", x86_EAX);
+		MoveX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EBX);
 		AddVariableToX86reg(&RspRecompPos, x86_EAX, &RspJumpTable, "JumpTable");
 		MoveX86PointerToX86reg(&RspRecompPos, x86_EAX, x86_EAX);
 
@@ -1082,6 +1087,7 @@ void CompileRsp_Special_JALR ( void ) {
 
 		x86_SetBranch8b(Jump, RspRecompPos);
 		RSP_CPU_Message(" Null:");
+		MoveX86regToVariable(&RspRecompPos, x86_EBX, &SP_PC_REG, "RSP PC");
 		Ret(&RspRecompPos);
 		RSP_NextInstruction = FINISH_SUB_BLOCK;
 	} else {
@@ -1380,6 +1386,11 @@ void CompileRsp_RegImm_BLTZ ( void ) {
 void CompileRsp_RegImm_BGEZ ( void ) {
 	static BOOL bDelayAffect;
 
+	if (IsRspDelaySlotBranch(RspCompilePC)) {
+		CompileRsp_ConsecutiveDelaySlots();
+		return;
+	}
+
 	if ( RSP_NextInstruction == NORMAL ) {
 		RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 		if (RSPOpC.OP.B.rs == 0) {
@@ -1420,6 +1431,11 @@ void CompileRsp_RegImm_BGEZ ( void ) {
 }
 
 void CompileRsp_RegImm_BLTZAL ( void ) {
+	if (IsRspDelaySlotBranch(RspCompilePC)) {
+		CompileRsp_ConsecutiveDelaySlots();
+		return;
+	}
+
 	if ( RSP_NextInstruction == NORMAL ) {
 		RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 		if (RSPOpC.OP.B.rs == 0) {
@@ -1452,6 +1468,11 @@ void CompileRsp_RegImm_BLTZAL ( void ) {
 
 void CompileRsp_RegImm_BGEZAL ( void ) {
 	static BOOL bDelayAffect;
+
+	if (IsRspDelaySlotBranch(RspCompilePC)) {
+		CompileRsp_ConsecutiveDelaySlots();
+		return;
+	}
 
 	if ( RSP_NextInstruction == NORMAL ) {
 		RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
@@ -1551,11 +1572,16 @@ void CompileRsp_Cop0_MF ( void ) {
 void CompileRsp_Cop0_MT ( void ) {
 #ifndef Compile_Cop0
 	InterpreterFallback((void*)RSP_Cop0_MT,"RSP_Cop0_MT");
-	RspCompilePC += 4;
-	RspCompilePC &= 0xFFC;
-	CompileRsp_CheckRspIsRunning();
-	RspCompilePC -= 4;
-	RspCompilePC &= 0xFFC;
+	if (RSPOpC.OP.R.rd == 4 && RSP_NextInstruction != DELAY_SLOT) {
+		CompileRsp_UpdateCycleCounts();
+		RspCompilePC += 4;
+		RspCompilePC &= 0xFFC;
+		CompileRsp_CheckRspIsRunning();
+		CompileRsp_SaveBeginOfSubBlock();
+		RspCompilePC -= 4;
+		RspCompilePC &= 0xFFC;
+		return;
+	}
 #else
 	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
 
@@ -1611,9 +1637,18 @@ void CompileRsp_Cop0_MT ( void ) {
 		JeLabel8(&RspRecompPos, "DontExit", 0);
 		Jump = RspRecompPos - 1;
 
-		MoveConstToVariable(&RspRecompPos, (RspCompilePC + 4)&0xFFC,&SP_PC_REG,"RSP PC");
-		Call_Direct(&RspRecompPos, (void*)SetRspJumpTable, "SetRspJumpTable");
-		Ret(&RspRecompPos);
+		CompileRsp_UpdateCycleCounts();
+
+		if (RSP_NextInstruction == DELAY_SLOT) {
+			LogMessage("SPECIAL_MTC0_IN_DELAY_SLOT");
+			MoveConstToVariable(&RspRecompPos, 0, &RSP_Running, "RSP_Running");
+			Call_Direct(&RspRecompPos, (void*)SetRspJumpTable, "SetRspJumpTable");
+		}
+		else {
+			MoveConstToVariable(&RspRecompPos, (RspCompilePC + 4) & 0xFFC, &SP_PC_REG, "RSP PC");
+			Call_Direct(&RspRecompPos, (void*)SetRspJumpTable, "SetRspJumpTable");
+			Ret(&RspRecompPos);
+		}
 
 		RSP_CPU_Message("DontExit:");
 		x86_SetBranch8b(Jump, RspRecompPos);
@@ -4789,7 +4824,7 @@ void CompileRsp_SaveBeginOfSubBlock() {
 }
 
 void CompileRsp_UpdateCycleCounts() {
-	MoveConstToX86reg(&RspRecompPos, RspCompilePC, x86_EAX);
+	MoveConstToX86reg(&RspRecompPos, RspCompilePC+4, x86_EAX);
 	SubVariableFromX86reg(&RspRecompPos, x86_EAX, &BeginOfCurrentSubBlock, "BeginOfcurrentSubBlock");
 	ShiftRightUnsignImmed(&RspRecompPos, x86_EAX, 2);
 	MoveVariableToX86reg(&RspRecompPos, &RemainingRspCycles, "RemainingRspCycles", x86_EBX);

@@ -960,5 +960,5 @@ DWORD RunRecompilerRspCPU ( DWORD Cycles ) {
 		_asm emms
 	}*/
 
-	return Cycles;
+	return Cycles - RemainingRspCycles;
 }

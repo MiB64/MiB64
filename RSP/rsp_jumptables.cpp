@@ -54,6 +54,12 @@ public:
 		}
 	}
 
+	void updateUncompiledIMEM() {
+		for (size_t i = _maxRecompiledOpcode + 4; i < 0x1000; ++i) {
+			_IMEM[i] = IMEM[i];
+		}
+	}
+
 	auto getMaxRecompiledOpcode() const->DWORD {
 		return _maxRecompiledOpcode;
 	}
@@ -130,7 +136,6 @@ void SetRspJumpTable(void) {
 	XXH3_state_t* state = XXH3_createState();
 	XXH3_64bits_reset(state);
 
-
 	for (auto length : IMEMLengths) {
 		DWORD delta = length - currentLength;
 		XXH3_64bits_update(state, IMEM + currentLength, delta);
@@ -142,6 +147,7 @@ void SetRspJumpTable(void) {
 			XXH3_freeState(state);
 			RspTable = it->second;
 			RspJumpTable = JumpTables[RspTable].getJumpTable();
+			JumpTables[RspTable].updateUncompiledIMEM();
 			return;
 		}
 	}
