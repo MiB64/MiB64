@@ -1296,13 +1296,21 @@ BOOL IsRspDelaySlotBranch(DWORD PC) {
 #define Store_Operation		0x0008 /* Store Instruction flag */
 #define Accum_Operation		0x0010 /* Vector op uses accum - loads & stores dont */
 #define MemOperation_Mask	(Load_Operation | Store_Operation)
-/*#define Operation_Mask		(MemOperation_Mask | Accum_Operation)*/
+#define Operation_Mask		(MemOperation_Mask | Accum_Operation)
 
 /* Per situation basis flags */
 #define VEC_ResetAccum		0x0000 /* Vector op resets acc */
 #define VEC_Accumulate		0x0020 /* Vector op accumulates */
 
 #define InvalidOpcode		0x0040
+
+#define WriteVCO			0x0080
+#define WriteVCC			0x0100
+#define WriteVCE			0x0200
+#define ReadVCO				0x0400
+#define ReadVCC				0x0800
+#define ReadVCE				0x1000
+#define DivOp				0x2000
 
 typedef struct {
 	union {
@@ -1494,7 +1502,6 @@ static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 			case RSP_VECTOR_VMACF:
 			case RSP_VECTOR_VMACU:
 			case RSP_VECTOR_VRNDN:
-			case RSP_VECTOR_VMACQ:
 			case RSP_VECTOR_VMADL:
 			case RSP_VECTOR_VMADM:
 			case RSP_VECTOR_VMADN:
@@ -1504,12 +1511,21 @@ static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 				info->SourceReg1 = RspOp->OP.V.vt;
 				info->flags = VEC_Instruction | VEC_Accumulate | Accum_Operation;
 				break;
+			case RSP_VECTOR_VMACQ:
+				info->DS.DestReg = RspOp->OP.V.vd;
+				info->S0.SourceReg0 = (DWORD)-1;
+				info->SourceReg1 = (DWORD)-1;
+				info->flags = VEC_Instruction | VEC_Accumulate | Accum_Operation;
+				break;
 			case RSP_VECTOR_VADD:
 			case RSP_VECTOR_VSUB:
+				info->DS.DestReg = RspOp->OP.V.vd;
+				info->S0.SourceReg0 = RspOp->OP.V.vs;
+				info->SourceReg1 = RspOp->OP.V.vt;
+				info->flags = VEC_Instruction | VEC_ResetAccum | Accum_Operation | WriteVCO | ReadVCO;
+				break;
 			case RSP_VECTOR_VSUT:
 			case RSP_VECTOR_VABS:
-			case RSP_VECTOR_VADDC:
-			case RSP_VECTOR_VSUBC:
 			case RSP_VECTOR_VADDB:
 			case RSP_VECTOR_VSUBB:
 			case RSP_VECTOR_VACCB:
@@ -1519,26 +1535,14 @@ static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 			case RSP_VECTOR_VSUM:
 			case RSP_VECTOR_V30:
 			case RSP_VECTOR_V31:
-			case RSP_VECTOR_VLT:
-			case RSP_VECTOR_VEQ:
-			case RSP_VECTOR_VNE:
-			case RSP_VECTOR_VGE:
-			case RSP_VECTOR_VCH:
-			case RSP_VECTOR_VCL:
-			case RSP_VECTOR_VCR:
 			case RSP_VECTOR_VAND:
+			case RSP_VECTOR_VNAND:
 			case RSP_VECTOR_VOR:
 			case RSP_VECTOR_VNOR:
 			case RSP_VECTOR_VXOR:
 			case RSP_VECTOR_VNXOR:
 			case RSP_VECTOR_V46:
 			case RSP_VECTOR_V47:
-			case RSP_VECTOR_VRCP:
-			case RSP_VECTOR_VRCPL:
-			case RSP_VECTOR_VRCPH:
-			case RSP_VECTOR_VRSQ:
-			case RSP_VECTOR_VRSQL:
-			case RSP_VECTOR_VRSQH:
 			case RSP_VECTOR_VEXTT:
 			case RSP_VECTOR_VEXTQ:
 			case RSP_VECTOR_VEXTN:
@@ -1552,12 +1556,57 @@ static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 				info->flags = VEC_Instruction | VEC_ResetAccum | Accum_Operation;
 				break;
 
+			case RSP_VECTOR_VADDC:
+			case RSP_VECTOR_VSUBC:
+				info->DS.DestReg = RspOp->OP.V.vd;
+				info->S0.SourceReg0 = RspOp->OP.V.vs;
+				info->SourceReg1 = RspOp->OP.V.vt;
+				info->flags = VEC_Instruction | VEC_ResetAccum | Accum_Operation | WriteVCO;
+				break;
+
+			case RSP_VECTOR_VLT:
+			case RSP_VECTOR_VEQ:
+			case RSP_VECTOR_VNE:
+			case RSP_VECTOR_VGE:
+				info->DS.DestReg = RspOp->OP.V.vd;
+				info->S0.SourceReg0 = RspOp->OP.V.vs;
+				info->SourceReg1 = RspOp->OP.V.vt;
+				info->flags = VEC_Instruction | VEC_ResetAccum | Accum_Operation | WriteVCO | ReadVCO | WriteVCC;
+				break;
+
+			case RSP_VECTOR_VCL:
+				info->DS.DestReg = RspOp->OP.V.vd;
+				info->S0.SourceReg0 = RspOp->OP.V.vs;
+				info->SourceReg1 = RspOp->OP.V.vt;
+				info->flags = VEC_Instruction | VEC_ResetAccum | Accum_Operation | WriteVCO | ReadVCO | WriteVCC | ReadVCC | WriteVCE | ReadVCE;
+				break;
+
+			case RSP_VECTOR_VCH:
+			case RSP_VECTOR_VCR:
+				info->DS.DestReg = RspOp->OP.V.vd;
+				info->S0.SourceReg0 = RspOp->OP.V.vs;
+				info->SourceReg1 = RspOp->OP.V.vt;
+				info->flags = VEC_Instruction | VEC_ResetAccum | Accum_Operation | WriteVCO | WriteVCC | WriteVCE;
+				break;
+
+			case RSP_VECTOR_VRCP:
+			case RSP_VECTOR_VRCPL:
+			case RSP_VECTOR_VRCPH:
+			case RSP_VECTOR_VRSQ:
+			case RSP_VECTOR_VRSQL:
+			case RSP_VECTOR_VRSQH:
+				info->DS.DestReg = RspOp->OP.V.vd;
+				info->S0.SourceReg0 = RspOp->OP.V.vt;
+				info->SourceReg1 = (DWORD)-1;
+				info->flags = VEC_Instruction | VEC_ResetAccum | Accum_Operation | DivOp;
+				break;
+
 			case RSP_VECTOR_VMOV:
 				info->flags = InvalidOpcode;
 				info->DS.DestReg = RspOp->OP.V.vd;
 				info->S0.SourceReg0 = RspOp->OP.V.vt;
 				info->SourceReg1 = (DWORD)-1;
-				info->flags = VEC_Instruction | VEC_ResetAccum | Accum_Operation; /* Assume reset? */
+				info->flags = VEC_Instruction | VEC_ResetAccum | Accum_Operation;
 				break;
 
 			case RSP_VECTOR_VMRG:
@@ -1565,7 +1614,7 @@ static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 				info->DS.DestReg = RspOp->OP.V.vd;
 				info->S0.SourceReg0 = RspOp->OP.V.vt;
 				info->SourceReg1 = RspOp->OP.V.vs;
-				info->flags = VEC_Instruction | VEC_ResetAccum | Accum_Operation; /* Assum reset? */
+				info->flags = VEC_Instruction | VEC_ResetAccum | Accum_Operation | WriteVCO | ReadVCC;
 				break;
 
 			case RSP_VECTOR_VSAR:
@@ -1587,12 +1636,24 @@ static void GetInstructionInfo(DWORD PC, OPCODE * RspOp, OPCODE_INFO * info) {
 				info->S0.SourceReg0 = (DWORD)-1;
 				info->SourceReg1 = (DWORD)-1;
 				info->flags = GPR_Instruction | Store_Operation;
+				switch ((RspOp->OP.R.rd & 0x03)) {
+				case 0: info->flags |= WriteVCO; break;
+				case 1: info->flags |= WriteVCC; break;
+				case 2:
+				case 3: info->flags |= WriteVCE; break;
+				}
 				break;
 			case RSP_COP2_CF:
 				info->DS.DestReg = RspOp->OP.R.rt;
 				info->S0.SourceReg0 = (DWORD)-1;
 				info->SourceReg1 = (DWORD)-1;
 				info->flags = GPR_Instruction | Load_Operation;
+				switch ((RspOp->OP.R.rd & 0x03)) {
+				case 0: info->flags |= ReadVCO; break;
+				case 1: info->flags |= ReadVCC; break;
+				case 2:
+				case 3: info->flags |= ReadVCE; break;
+				}
 				break;
 
 			/* RD is always the vector register, RT is always GPR */
@@ -1757,27 +1818,34 @@ BOOL RspCompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom) {
 	OPCODE_INFO info0, info1;
 	DWORD InstructionType;
 
-	GetInstructionInfo(PC - 4, Top, &info0);
+	GetInstructionInfo((PC - 4) & 0xFFC, Top, &info0);
 	GetInstructionInfo(PC, Bottom, &info1);
 
 	/* usually branches and such */
 	if ((info0.flags & InvalidOpcode) != 0) return FALSE;
 	if ((info1.flags & InvalidOpcode) != 0) return FALSE;
 
-	InstructionType = (info0.flags & Instruction_Mask) << 2;
-	InstructionType |= info1.flags & Instruction_Mask;
+	InstructionType = IsRspOpcodeNop((PC - 4) & 0xFFC) ?  0 : (info0.flags & Instruction_Mask) << 2;
+	InstructionType |= IsRspOpcodeNop(PC) ? 0 : info1.flags & Instruction_Mask;
 
 	/* 4 bit range, 16 possible combinations */
 	switch (InstructionType) {
 	/*
 	** Detect noop instruction, 7 cases, (see flags) */
-/*	case 0x01: case 0x02: case 0x03:*/ /* First is a noop */
-/*		return TRUE;
-	case 0x00:*/						 /* Both ??? */
-/*	case 0x10: case 0x20: case 0x30:*/ /* Second is a noop */
-/*		return FALSE;*/
+	case 0x01: case 0x02: case 0x03: /* First is a noop */
+		return TRUE;
+	case 0x00:						 /* Both ??? */
+	case 0x04: case 0x08: case 0x0C: /* Second is a noop */
+		return FALSE;
 
 	case 0x06: /* GPR than Vector - 01,10 */
+		if ((info0.flags & WriteVCO) != 0 && (info1.flags & (WriteVCO | ReadVCO)) != 0) { return FALSE; }
+		if ((info1.flags & WriteVCO) != 0 && (info0.flags & (WriteVCO | ReadVCO)) != 0) { return FALSE; }
+		if ((info0.flags & WriteVCC) != 0 && (info1.flags & (WriteVCC | ReadVCC)) != 0) { return FALSE; }
+		if ((info1.flags & WriteVCC) != 0 && (info0.flags & (WriteVCC | ReadVCC)) != 0) { return FALSE; }
+		if ((info0.flags & WriteVCE) != 0 && (info1.flags & (WriteVCE | ReadVCE)) != 0) { return FALSE; }
+		if ((info1.flags & WriteVCE) != 0 && (info0.flags & (WriteVCE | ReadVCE)) != 0) { return FALSE; }
+
 		if ((info0.flags & MemOperation_Mask) != 0 && (info1.flags & MemOperation_Mask) != 0) {
 			/* TODO: We have a vector & GPR memory operation */
 			return FALSE;
@@ -1810,6 +1878,17 @@ BOOL RspCompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom) {
 		if ((info0.flags & Load_Operation) != 0 && (info1.flags & Accum_Operation) != 0
 			&& !(info1.flags & VEC_Accumulate)) { return FALSE; }
 
+		if ((info0.flags & DivOp) != 0 && (info1.flags & DivOp) != 0) {
+			return FALSE;
+		}
+
+		if ((info0.flags & WriteVCO) != 0 && (info1.flags & (WriteVCO | ReadVCO)) != 0) { return FALSE; }
+		if ((info1.flags & WriteVCO) != 0 && (info0.flags & (WriteVCO | ReadVCO)) != 0) { return FALSE; }
+		if ((info0.flags & WriteVCC) != 0 && (info1.flags & (WriteVCC | ReadVCC)) != 0) { return FALSE; }
+		if ((info1.flags & WriteVCC) != 0 && (info0.flags & (WriteVCC | ReadVCC)) != 0) { return FALSE; }
+		if ((info0.flags & WriteVCE) != 0 && (info1.flags & (WriteVCE | ReadVCE)) != 0) { return FALSE; }
+		if ((info1.flags & WriteVCE) != 0 && (info0.flags & (WriteVCE | ReadVCE)) != 0) { return FALSE; }
+
 		if ((info0.flags & MemOperation_Mask) != 0 && (info1.flags & MemOperation_Mask) != 0) {
 			/*
 			** TODO: This is a bitch, its best to leave it alone
@@ -1834,7 +1913,7 @@ BOOL RspCompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom) {
 
 			if (info0.flags & Load_Operation) {
 				if (info1.S0.SourceReg0 == info0.DS.DestReg) { return FALSE; }
-				if (info1.SourceReg1 == info0.DS.DestReg) { /*return FALSE;*/LogMessage("TODO:RspCompareInstructions vec and vec, 1st is mem, load, src1 is dest of load"); }
+				if (info1.SourceReg1 == info0.DS.DestReg) { return FALSE; }
 			} else if (info0.flags & Store_Operation) {
 				/* It can store source regs */
 				return TRUE;
@@ -1884,14 +1963,14 @@ BOOL RspCompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom) {
 	case 0x0B: /* Vector than Cop2 - 10, 11 */
 		if (info1.flags & Load_Operation) {
 			/* Move To Cop2 (dest) from GPR (source) */
-			if (info1.DS.DestReg == info0.DS.DestReg) { /*return FALSE;*/ LogMessage("TODO:RspCompareInstructions vec and cop2, load, same destination"); }
-			if (info1.DS.DestReg == info0.S0.SourceReg0) { /*return FALSE;*/ LogMessage("TODO:RspCompareInstructions vec and cop2, load, dest is source0 of vec"); }
-			if (info1.DS.DestReg == info0.SourceReg1) { /*return FALSE;*/ LogMessage("TODO:RspCompareInstructions vec and cop2, load, dest is source1 of vec"); }
+			if (info1.DS.DestReg == info0.DS.DestReg) { return FALSE; }
+			if (info1.DS.DestReg == info0.S0.SourceReg0) { return FALSE; }
+			if (info1.DS.DestReg == info0.SourceReg1) { return FALSE; }
 		} else if (info1.flags & Store_Operation) {
 			/* Move From Cop2 (source) to GPR (dest) */
 			if (info1.S0.SourceReg0 == info0.DS.DestReg) { return FALSE; }
-			if (info1.S0.SourceReg0 == info0.S0.SourceReg0) { /*return FALSE;*/ LogMessage("TODO:RspCompareInstructions vec and cop2, store, both have the same source vec src0"); }
-			if (info1.S0.SourceReg0 == info0.SourceReg1) { /*return FALSE;*/ LogMessage("TODO:RspCompareInstructions vec and cop2, store, both have the same source vec src1");}
+			if (info1.S0.SourceReg0 == info0.S0.SourceReg0) { return FALSE; }
+			if (info1.S0.SourceReg0 == info0.SourceReg1) { return FALSE; }
 		} else {
 			RspCompilerWarning("ReOrder: Unhandled Vector than Cop2");
 		}
@@ -1899,10 +1978,17 @@ BOOL RspCompareInstructions(DWORD PC, OPCODE * Top, OPCODE * Bottom) {
 		return FALSE;
 
 	case 0x0E: /* Cop2 than Vector - 11, 10 */
+		if ((info0.flags & WriteVCO) != 0 && (info1.flags & (WriteVCO | ReadVCO)) != 0) { return FALSE; }
+		if ((info1.flags & WriteVCO) != 0 && (info0.flags & (WriteVCO | ReadVCO)) != 0) { return FALSE; }
+		if ((info0.flags & WriteVCC) != 0 && (info1.flags & (WriteVCC | ReadVCC)) != 0) { return FALSE; }
+		if ((info1.flags & WriteVCC) != 0 && (info0.flags & (WriteVCC | ReadVCC)) != 0) { return FALSE; }
+		if ((info0.flags & WriteVCE) != 0 && (info1.flags & (WriteVCE | ReadVCE)) != 0) { return FALSE; }
+		if ((info1.flags & WriteVCE) != 0 && (info0.flags & (WriteVCE | ReadVCE)) != 0) { return FALSE; }
+
 		if (info0.flags & Load_Operation) {
 			/* Move To Cop2 (dest) from GPR (source) */
 			if (info0.DS.DestReg == info1.DS.DestReg) { return FALSE; }
-			if (info0.DS.DestReg == info1.S0.SourceReg0) { /*return FALSE;*/ LogMessage("TODO:RspCompareInstructions cop2 and vec, load, dest is source0 of vec"); }
+			if (info0.DS.DestReg == info1.S0.SourceReg0) { return FALSE; }
 			if (info0.DS.DestReg == info1.SourceReg1) { return FALSE; }
 		} else if (info0.flags & Store_Operation) {
 			/* Move From Cop2 (source) to GPR (dest) */
