@@ -27,7 +27,7 @@
 
 #pragma once
 
-#define RspLog_x86Code
+//#define RspLog_x86Code
 
 #ifdef RspLog_x86Code
 void RSP_CPU_Message(char* Message, ...);

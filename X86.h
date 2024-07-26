@@ -62,6 +62,7 @@ void AndConstToVariable              ( BYTE** code, DWORD Const, void *Variable,
 void AndConstToX86Reg                ( BYTE** code, int x86Reg, DWORD Const );
 void AndVariableToX86Reg             ( BYTE** code, void * Variable, char * VariableName, int x86Reg );
 void AndVariableDispToX86Reg         ( BYTE** code, void * Variable, char * VariableName, int x86Reg, int AddrReg, int Multiplier);
+void AndX86RegToVariable             ( BYTE** code, void * Variable, char * VariableName, int x86Reg );
 void AndX86RegToX86Reg               ( BYTE** code, int Destination, int Source );
 void BreakPoint                      ( BYTE** code );
 void Call_Direct                     ( BYTE** code, void * FunctAddress, char * FunctName );
@@ -185,12 +186,15 @@ void ShiftLeftDouble                 ( BYTE** code, int Destination, int Source 
 void ShiftLeftDoubleImmed            ( BYTE** code, int Destination, int Source, BYTE Immediate );
 void ShiftLeftSign                   ( BYTE** code, int x86reg );
 void ShiftLeftSignImmed              ( BYTE** code, int x86reg, BYTE Immediate );
+void ShiftLeftSignVariableImmed      ( BYTE** code, void * Variable, char * VariableName, BYTE Immediate );
 void ShiftRightDouble                ( BYTE** code, int Destination, int Source );
 void ShiftRightDoubleImmed           ( BYTE** code, int Destination, int Source, BYTE Immediate );
 void ShiftRightSign                  ( BYTE** code, int x86reg );
 void ShiftRightSignImmed             ( BYTE** code, int x86reg, BYTE Immediate );
+void ShiftRightSignVariableImmed     ( BYTE** code, void * Variable, char * VariableName, BYTE Immediate );
 void ShiftRightUnsign                ( BYTE** code, int x86reg );
 void ShiftRightUnsignImmed           ( BYTE** code, int x86reg, BYTE Immediate );
+void ShiftRightUnsignVariableImmed   ( BYTE** code, void * Variable, char * VariableName, BYTE Immediate );
 void SbbConstFromX86Reg              ( BYTE** code, int x86Reg, DWORD Const );
 void SbbVariableFromX86reg           ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void SbbX86RegToX86Reg               ( BYTE** code, int Destination, int Source );
@@ -198,12 +202,14 @@ void SubConstFromVariable            ( BYTE** code, DWORD Const, void *Variable,
 void SubConstFromX86Reg              ( BYTE** code, int x86Reg, DWORD Const );
 void SubVariableFromX86reg           ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void SubX86RegToX86Reg               ( BYTE** code, int Destination, int Source );
+void SubX86regFromVariable           ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void TestConstToX86Reg               ( BYTE** code, DWORD Const, int x86reg );
 void TestVariable                    ( BYTE** code, DWORD Const, void * Variable, char * VariableName );
 void TestX86RegToX86Reg              ( BYTE** code, int Destination, int Source );
 void XorConstToX86Reg                ( BYTE** code, int x86Reg, DWORD Const );
 void XorX86RegToX86Reg               ( BYTE** code, int Source, int Destination );
-void XorVariableToX86reg             ( BYTE** code, void *Variable, char *VariableName, int x86reg );
+void XorVariableToX86reg             ( BYTE** code, void * Variable, char * VariableName, int x86reg );
+void XorX86RegToVariable             ( BYTE** code, void * Variable, char * VariableName, int x86reg );
 
 
 void fpuAbs					         ( BYTE** code );

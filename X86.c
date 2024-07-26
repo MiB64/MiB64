@@ -336,6 +336,21 @@ void AndVariableToX86Reg(BYTE** code, void * Variable, char * VariableName, int 
 	PUTDST32(*code,Variable);
 }
 
+void AndX86RegToVariable(BYTE** code, void* Variable, char* VariableName, int x86Reg) {
+	CPU_OR_RSP_Message(*code, "      and dword ptr [%s], %s", VariableName, x86_Name(x86Reg));
+	switch (x86Reg) {
+	case x86_EAX: PUTDST16(*code, 0x0521); break;
+	case x86_EBX: PUTDST16(*code, 0x1D21); break;
+	case x86_ECX: PUTDST16(*code, 0x0D21); break;
+	case x86_EDX: PUTDST16(*code, 0x1521); break;
+	case x86_ESI: PUTDST16(*code, 0x3521); break;
+	case x86_EDI: PUTDST16(*code, 0x3D21); break;
+	case x86_ESP: PUTDST16(*code, 0x2521); break;
+	case x86_EBP: PUTDST16(*code, 0x2D21); break;
+	}
+	PUTDST32(*code, Variable);
+}
+
 void AndX86RegToX86Reg(BYTE** code, int Destination, int Source) {
 	WORD x86Command = 0x0;
 
@@ -2558,6 +2573,14 @@ void ShiftLeftSignImmed(BYTE** code, int x86reg, BYTE Immediate) {
 	PUTDST8(*code,Immediate);
 }
 
+void ShiftLeftSignVariableImmed(BYTE** code, void* Variable, char* VariableName, BYTE Immediate) {
+	CPU_OR_RSP_Message(*code, "      shl dword ptr [%s], %Xh", VariableName, Immediate);
+
+	PUTDST16(*code, 0x25C1)
+	PUTDST32(*code, Variable);
+	PUTDST8(*code, Immediate);
+}
+
 void ShiftRightSign(BYTE** code, int x86reg) {
 	CPU_OR_RSP_Message(*code, "      sar %s, cl",x86_Name(x86reg));
 	switch (x86reg) {
@@ -2587,6 +2610,14 @@ void ShiftRightSignImmed(BYTE** code, int x86reg, BYTE Immediate) {
 		DisplayError("ShiftRightSignImmed\nUnknown x86 Register");
 	}
 	PUTDST8(*code,Immediate);
+}
+
+void ShiftRightSignVariableImmed(BYTE** code, void* Variable, char* VariableName, BYTE Immediate) {
+	CPU_OR_RSP_Message(*code, "      sar dword ptr [%s], %Xh", VariableName, Immediate);
+
+	PUTDST16(*code, 0x3DC1)
+	PUTDST32(*code, Variable);
+	PUTDST8(*code, Immediate);
 }
 
 void ShiftRightUnsign(BYTE** code, int x86reg) {
@@ -2679,6 +2710,14 @@ void ShiftRightUnsignImmed(BYTE** code, int x86reg, BYTE Immediate) {
 	case x86_EBP: PUTDST16(*code,0xEDC1); break;
 	}
 	PUTDST8(*code,Immediate);
+}
+
+void ShiftRightUnsignVariableImmed(BYTE** code, void* Variable, char* VariableName, BYTE Immediate) {
+	CPU_OR_RSP_Message(*code, "      shr dword ptr [%s], %Xh", VariableName, Immediate);
+
+	PUTDST16(*code, 0x2DC1)
+	PUTDST32(*code, Variable);
+	PUTDST8(*code, Immediate);
 }
 
 void SbbConstFromX86Reg (BYTE** code, int x86Reg, DWORD Const) {
@@ -2832,6 +2871,23 @@ void SubX86RegToX86Reg(BYTE** code, int Destination, int Source) {
 	PUTDST16(*code,x86Command);
 }
 
+void SubX86regFromVariable(BYTE** code, int x86reg, void* Variable, char* VariableName) {
+	CPU_OR_RSP_Message(*code, "      sub dword ptr [%s], %s", VariableName, x86_Name(x86reg));
+	switch (x86reg) {
+	case x86_EAX: PUTDST16(*code, 0x0529); break;
+	case x86_EBX: PUTDST16(*code, 0x1D29); break;
+	case x86_ECX: PUTDST16(*code, 0x0D29); break;
+	case x86_EDX: PUTDST16(*code, 0x1529); break;
+	case x86_ESI: PUTDST16(*code, 0x3529); break;
+	case x86_EDI: PUTDST16(*code, 0x3D29); break;
+	case x86_ESP: PUTDST16(*code, 0x2529); break;
+	case x86_EBP: PUTDST16(*code, 0x2D29); break;
+	default:
+		DisplayError("SubX86regFromVariable\nUnknown x86 Register");
+	}
+	PUTDST32(*code, Variable);
+}
+
 void TestConstToX86Reg(BYTE** code, DWORD Const, int x86reg) {
 	CPU_OR_RSP_Message(*code, "      test %s, 0x%X",x86_Name(x86reg), Const);
 	
@@ -2952,4 +3008,20 @@ void XorVariableToX86reg(BYTE** code, void *Variable, char *VariableName, int x8
 	default: DisplayError("XorVariableToX86reg\nUnknown x86 Register");
 	}
     PUTDST32(*code,Variable);
+}
+
+void XorX86RegToVariable(BYTE** code, void* Variable, char* VariableName, int x86reg) {
+	CPU_OR_RSP_Message(*code, "      xor dword ptr [%s], %s", VariableName, x86_Name(x86reg));
+	switch (x86reg) {
+	case x86_EAX: PUTDST16(*code, 0x0531); break;
+	case x86_EBX: PUTDST16(*code, 0x1D31); break;
+	case x86_ECX: PUTDST16(*code, 0x0D31); break;
+	case x86_EDX: PUTDST16(*code, 0x1531); break;
+	case x86_ESI: PUTDST16(*code, 0x3531); break;
+	case x86_EDI: PUTDST16(*code, 0x3D31); break;
+	case x86_ESP: PUTDST16(*code, 0x2531); break;
+	case x86_EBP: PUTDST16(*code, 0x2D31); break;
+	default: DisplayError("XorX86RegToVariable\nUnknown x86 Register");
+	}
+	PUTDST32(*code, Variable);
 }
