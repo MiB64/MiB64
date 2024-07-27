@@ -53,6 +53,8 @@ DWORD BeginOfCurrentSubBlock = 0;
 /*#define Compile_GPRStores*/	/* SB, SH, SW */
 #define Compile_Special		/* SLL, SRL, SRA, SRLV */
 							/* XOR, OR, AND, SUB, SUBU, ADDU, ADD, SLT */
+#define Compile_SLTI
+#define Compile_SLTIU
 /*#define Compile_Cop0
 #define Compile_Cop2
 
@@ -464,11 +466,53 @@ void CompileRsp_ADDIU ( void ) {
 }
 
 void CompileRsp_SLTI ( void ) {
+	int Immediate = (short)RSPOpC.OP.I.immediate;
+
+#ifndef Compile_SLTI
 	InterpreterFallback((void*)RSP_Opcode_SLTI,"RSP_Opcode_SLTI");
+#endif
+	RSP_CPU_Message("  %X %s", RspCompilePC, RSPOpcodeName(RSPOpC.OP.Hex, RspCompilePC));
+	if (RSPOpC.OP.I.rt == 0) { return; }
+
+	if (RSPOpC.OP.I.rs == 0) {
+		if (Immediate > 0) {
+			MoveConstToVariable(&RspRecompPos, 1, &RSP_GPR[RSPOpC.OP.I.rt], RspGPR_Name(RSPOpC.OP.I.rt));
+		}
+		else {
+			MoveConstToVariable(&RspRecompPos, 0, &RSP_GPR[RSPOpC.OP.I.rt], RspGPR_Name(RSPOpC.OP.I.rt));
+		}
+	}
+	else {
+		XorX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EAX);
+		CompConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs));
+		Setl(&RspRecompPos, x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	}
 }
 
 void CompileRsp_SLTIU ( void ) {
+	int Immediate = (short)RSPOpC.OP.I.immediate;
+
+#ifndef Compile_SLTIU
 	InterpreterFallback((void*)RSP_Opcode_SLTIU,"RSP_Opcode_SLTIU");
+#endif
+	RSP_CPU_Message("  %X %s", RspCompilePC, RSPOpcodeName(RSPOpC.OP.Hex, RspCompilePC));
+	if (RSPOpC.OP.I.rt == 0) { return; }
+
+	if (RSPOpC.OP.I.rs == 0) {
+		if (Immediate > 0) {
+			MoveConstToVariable(&RspRecompPos, 1, &RSP_GPR[RSPOpC.OP.I.rt], RspGPR_Name(RSPOpC.OP.I.rt));
+		}
+		else {
+			MoveConstToVariable(&RspRecompPos, 0, &RSP_GPR[RSPOpC.OP.I.rt], RspGPR_Name(RSPOpC.OP.I.rt));
+		}
+	}
+	else {
+		XorX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EAX);
+		CompConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs));
+		Setb(&RspRecompPos, x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	}
 }
 
 void CompileRsp_ANDI ( void ) {
