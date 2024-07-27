@@ -48,7 +48,7 @@ DWORD BeginOfCurrentSubBlock = 0;
 /* align option affects: sw, lh, sh */
 /* align option affects: lrv, ssv, lsv */
 
-/*#define Compile_Immediates*/	/* ADDI, ADDIU, ANDI, ORI, XORI, LUI */
+#define Compile_Immediates	/* ADDI, ADDIU, ANDI, ORI, XORI, LUI */
 /*#define Compile_GPRLoads*/	/* LB, LH, LW, LBU, LHU */
 /*#define Compile_GPRStores*/	/* SB, SH, SW */
 #define Compile_Special		/* SLL, SRL, SRA, SRLV */
@@ -416,51 +416,51 @@ void CompileRsp_BGTZ ( void ) {
 }
 
 void CompileRsp_ADDI ( void ) {
-	/*int Immediate = (short)RSPOpC.immediate;*/
+	int Immediate = (short)RSPOpC.OP.I.immediate;
 
 	#ifndef Compile_Immediates
 	InterpreterFallback((void*)RSP_Opcode_ADDI,"RSP_Opcode_ADDI"); return;
 	#endif
 
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
-	if (RSPOpC.rt == 0) return;
+	if (RSPOpC.OP.I.rt == 0) return;
 
-	if (RSPOpC.rt == RSPOpC.rs) {
-		AddConstToVariable(Immediate, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
-	} else if (RSPOpC.rs == 0) {
-		MoveConstToVariable(Immediate, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
+	if (RSPOpC.OP.I.rt == RSPOpC.OP.I.rs) {
+		AddConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	} else if (RSPOpC.OP.I.rs == 0) {
+		MoveConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else {
-		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rs].UW, GPR_Name(RSPOpC.rs), x86_EAX);
+		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs), x86_EAX);
 		if (Immediate != 0) {
-			AddConstToX86Reg(x86_EAX, Immediate);
+			AddConstToX86Reg(&RspRecompPos, x86_EAX, Immediate);
 		}
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
-	}*/
-	LogMessage("TODO: CompileRsp_ADDI");
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	}
 }
 
 void CompileRsp_ADDIU ( void ) {
-	/*int Immediate = (short)RSPOpC.immediate;*/
+	int Immediate = (short)RSPOpC.OP.I.immediate;
 
 	#ifndef Compile_Immediates
 	InterpreterFallback((void*)RSP_Opcode_ADDIU,"RSP_Opcode_ADDIU"); return;
 	#endif
 
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
-	if (RSPOpC.rt == 0) return;
+	if (RSPOpC.OP.I.rt == 0) return;
 
-	if (RSPOpC.rt == RSPOpC.rs) {
-		AddConstToVariable(Immediate, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
-	} else if (RSPOpC.rs == 0) {
-		MoveConstToVariable(Immediate, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
+	if (RSPOpC.OP.I.rt == RSPOpC.OP.I.rs) {
+		AddConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	} else if (RSPOpC.OP.I.rs == 0) {
+		MoveConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else {
-		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rs].UW, GPR_Name(RSPOpC.rs), x86_EAX);
-		AddConstToX86Reg(x86_EAX, Immediate);
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
-	}*/
-	LogMessage("TODO: CompileRsp_ADDIU");
+		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs), x86_EAX);
+		if (Immediate != 0) {
+			AddConstToX86Reg(&RspRecompPos, x86_EAX, Immediate);
+		}
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	}
 }
 
 void CompileRsp_SLTI ( void ) {
@@ -472,90 +472,86 @@ void CompileRsp_SLTIU ( void ) {
 }
 
 void CompileRsp_ANDI ( void ) {
-	/*int Immediate = (unsigned short)RSPOpC.immediate;*/
+	int Immediate = (unsigned short)RSPOpC.OP.I.immediate;
 
 	#ifndef Compile_Immediates
 	InterpreterFallback((void*)RSP_Opcode_ANDI,"RSP_Opcode_ANDI"); return;
 	#endif
 
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
-	if (RSPOpC.rt == 0) return;
+	if (RSPOpC.OP.I.rt == 0) return;
 
-	if (RSPOpC.rt == RSPOpC.rs) {
-		AndConstToVariable(Immediate, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
-	} else if (RSPOpC.rs == 0) {
-		MoveConstToVariable(0, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
+	if (RSPOpC.OP.I.rt == RSPOpC.OP.I.rs) {
+		AndConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	} else if (RSPOpC.OP.I.rs == 0) {
+		MoveConstToVariable(&RspRecompPos, 0, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else {
-		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rs].UW, GPR_Name(RSPOpC.rs), x86_EAX);
-		AndConstToX86Reg(x86_EAX, Immediate);
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
-	}*/
-	LogMessage("TODO: CompileRsp_ANDI");
+		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs), x86_EAX);
+		AndConstToX86Reg(&RspRecompPos, x86_EAX, Immediate);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	}
 }
 
 void CompileRsp_ORI ( void ) {
-	/*int Immediate = (unsigned short)RSPOpC.immediate;*/
+	int Immediate = (unsigned short)RSPOpC.OP.I.immediate;
 
 	#ifndef Compile_Immediates
 	InterpreterFallback((void*)RSP_Opcode_ORI,"RSP_Opcode_ORI"); return;
 	#endif
 
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
-	if (RSPOpC.rt == 0) return;
+	if (RSPOpC.OP.I.rt == 0) return;
 
-	if (RSPOpC.rt == RSPOpC.rs) {
-		OrConstToVariable(Immediate, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
-	} else if (RSPOpC.rs == 0) {
-		MoveConstToVariable(Immediate, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
+	if (RSPOpC.OP.I.rt == RSPOpC.OP.I.rs) {
+		OrConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	} else if (RSPOpC.OP.I.rs == 0) {
+		MoveConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else {
-		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rs].UW, GPR_Name(RSPOpC.rs), x86_EAX);
+		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs), x86_EAX);
 		if (Immediate != 0) {
-			OrConstToX86Reg(Immediate, x86_EAX);
+			OrConstToX86Reg(&RspRecompPos, Immediate, x86_EAX);
 		}
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
-	}*/
-	LogMessage("TODO: CompileRsp_ORI");
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	}
 }
 
 void CompileRsp_XORI ( void ) {
-	/*int Immediate = (unsigned short)RSPOpC.immediate;*/
+	int Immediate = (unsigned short)RSPOpC.OP.I.immediate;
 
 	#ifndef Compile_Immediates
 	InterpreterFallback((void*)RSP_Opcode_XORI,"RSP_Opcode_XORI"); return;
 	#endif
 
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
-	if (RSPOpC.rt == 0) return;
+	if (RSPOpC.OP.I.rt == 0) return;
 
-	if (RSPOpC.rt == RSPOpC.rs) {
-		XorConstToVariable(&RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt), Immediate);
-	} else if (RSPOpC.rs == 0) {
-		MoveConstToVariable(Immediate, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
+	if (RSPOpC.OP.I.rt == RSPOpC.OP.I.rs) {
+		XorConstToVariable(&RspRecompPos, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt), Immediate);
+	} else if (RSPOpC.OP.I.rs == 0) {
+		MoveConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else {
-		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rs].UW, GPR_Name(RSPOpC.rs), x86_EAX);
+		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs), x86_EAX);
 		if (Immediate != 0) {
-			XorConstToX86Reg(x86_EAX, Immediate);
+			XorConstToX86Reg(&RspRecompPos, x86_EAX, Immediate);
 		}
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
-	}*/
-	LogMessage("TODO: CompileRsp_XORI");
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	}
 }
 
 void CompileRsp_LUI ( void ) {
-	/*int n = (short)RSPOpC.offset << 16;*/
+	int n = (short)RSPOpC.OP.I.immediate << 16;
 
 	#ifndef Compile_Immediates
 	InterpreterFallback((void*)RSP_Opcode_LUI,"RSP_Opcode_LUI"); return;
 	#endif
 
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
-	if (RSPOpC.rt == 0) return;
-	MoveConstToVariable(n, &RSP_GPR[RSPOpC.rt].W, GPR_Name(RSPOpC.rt));*/
-	LogMessage("TODO: CompileRsp_LUI");
+	if (RSPOpC.OP.I.rt == 0) return;
+	MoveConstToVariable(&RspRecompPos, n, &RSP_GPR[RSPOpC.OP.I.rt].W, RspGPR_Name(RSPOpC.OP.I.rt));
 }
 
 void CompileRsp_COP0 (void) {

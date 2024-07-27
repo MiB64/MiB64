@@ -35,8 +35,8 @@ BYTE * RspRecompCode = NULL,/* * RecompCodeSecondary,*/ * RspRecompPos;
 
 int AllocateRspMemory (void) {
 	if (RspRecompCode == NULL) {
-		RspRecompCode = (BYTE*)VirtualAlloc(NULL, 0x01600004, MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-		RspRecompCode = (BYTE*)VirtualAlloc(RspRecompCode, 0x01600000, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+		RspRecompCode = (BYTE*)VirtualAlloc(NULL, 0x01500004, MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+		RspRecompCode = (BYTE*)VirtualAlloc(RspRecompCode, 0x01500000, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 	}
 	
 	if(RspRecompCode == NULL) {

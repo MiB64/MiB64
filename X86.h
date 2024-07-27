@@ -210,6 +210,7 @@ void XorConstToX86Reg                ( BYTE** code, int x86Reg, DWORD Const );
 void XorX86RegToX86Reg               ( BYTE** code, int Source, int Destination );
 void XorVariableToX86reg             ( BYTE** code, void * Variable, char * VariableName, int x86reg );
 void XorX86RegToVariable             ( BYTE** code, void * Variable, char * VariableName, int x86reg );
+void XorConstToVariable              ( BYTE** code, void * Variable, char * VariableName, DWORD Const );
 
 
 void fpuAbs					         ( BYTE** code );

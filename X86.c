@@ -3025,3 +3025,12 @@ void XorX86RegToVariable(BYTE** code, void* Variable, char* VariableName, int x8
 	}
 	PUTDST32(*code, Variable);
 }
+
+void XorConstToVariable(BYTE** code, void* Variable, char* VariableName, DWORD Const) {
+
+	CPU_OR_RSP_Message(*code, "      xor dword ptr [%s], 0x%X", VariableName, Const);
+
+	PUTDST16(*code, 0x3581);
+	PUTDST32(*code, Variable);
+	PUTDST32(*code, Const);
+}
