@@ -122,8 +122,8 @@ void __cdecl rspConfig(HWND hWnd) {
 void InitiateInternalRSP() {
 	memset(&RspCompiler, 0, sizeof(RspCompiler));
 
-	/*Compiler.bAlignGPR = TRUE;
-	Compiler.bAlignVector = TRUE;
+	RspCompiler.bAlignGPR = FALSE;
+	/*Compiler.bAlignVector = TRUE;
 	Compiler.bFlags = TRUE;*/
 	RspCompiler.bReOrdering = TRUE;
 	RspCompiler.bSections = TRUE;
@@ -145,7 +145,7 @@ void InitiateInternalRSP() {
 }
 
 static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	/*extern BYTE* pLastSecondary;*/
+	extern BYTE* pLastRspSecondary;
 	char Buffer[256];
 
 	UNREFERENCED_PARAMETER(lParam);
@@ -157,11 +157,11 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 		if (Compiler.mmx2 == TRUE)
 			CheckDlgButton(hDlg, IDC_CHECK_MMX2, BST_CHECKED);
 		if (Compiler.sse == TRUE)
-			CheckDlgButton(hDlg, IDC_CHECK_SSE, BST_CHECKED);
+			CheckDlgButton(hDlg, IDC_CHECK_SSE, BST_CHECKED);*/
 
-		if (Compiler.bAlignGPR == TRUE)
+		if (RspCompiler.bAlignGPR == TRUE)
 			CheckDlgButton(hDlg, IDC_COMPILER_ALIGNGPR, BST_CHECKED);
-		if (Compiler.bAlignVector == TRUE)
+		/*if (Compiler.bAlignVector == TRUE)
 			CheckDlgButton(hDlg, IDC_COMPILER_ALIGNVEC, BST_CHECKED);*/
 
 		if (RspCompiler.bSections == TRUE)
@@ -182,7 +182,7 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 
 	case WM_TIMER:
 		sprintf(Buffer, "x86: %2.2f KB / %2.2f KB", (float)(RspRecompPos - RspRecompCode) / 1024.0F,
-			/*pLastSecondary ? (float)((pLastSecondary - RecompCodeSecondary) / 1024.0F) :*/ 0.0F);
+			pLastRspSecondary ? (float)((pLastRspSecondary - RspRecompCodeSecondary) / 1024.0F) : 0.0F);
 
 		SetDlgItemText(hDlg, IDC_COMPILER_BUFFERS, Buffer);
 		break;
@@ -198,9 +198,9 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 			RspCompiler.bGPRConstants = GetBooleanCheck(hDlg, IDC_COMPILER_GPRCONSTANTS);
 			/*Compiler.bFlags = GetBooleanCheck(hDlg, IDC_COMPILER_FLAGS);
 			Compiler.bAccum = GetBooleanCheck(hDlg, IDC_COMPILER_ACCUM);
-			Compiler.bDest = GetBooleanCheck(hDlg, IDC_COMPILER_DEST);
-			Compiler.bAlignGPR = GetBooleanCheck(hDlg, IDC_COMPILER_ALIGNGPR);
-			Compiler.bAlignVector = GetBooleanCheck(hDlg, IDC_COMPILER_ALIGNVEC);*/
+			Compiler.bDest = GetBooleanCheck(hDlg, IDC_COMPILER_DEST);*/
+			RspCompiler.bAlignGPR = GetBooleanCheck(hDlg, IDC_COMPILER_ALIGNGPR);
+			/*Compiler.bAlignVector = GetBooleanCheck(hDlg, IDC_COMPILER_ALIGNVEC);*/
 			KillTimer(hDlg, 1);
 			EndDialog(hDlg, TRUE);
 			break;

@@ -31,7 +31,7 @@
 #include "rsp_registers.h"
 #include "../Main.h"
 
-BYTE * RspRecompCode = NULL,/* * RecompCodeSecondary,*/ * RspRecompPos;
+BYTE * RspRecompCode = NULL, * RspRecompCodeSecondary, * RspRecompPos;
 
 int AllocateRspMemory (void) {
 	if (RspRecompCode == NULL) {
@@ -44,11 +44,11 @@ int AllocateRspMemory (void) {
 		return FALSE;
 	}
 
-	/*RecompCodeSecondary = (BYTE *)VirtualAlloc( NULL, 0x00200000, MEM_COMMIT, PAGE_EXECUTE_READWRITE );
-	if(RecompCodeSecondary == NULL) {
+	RspRecompCodeSecondary = (BYTE *)VirtualAlloc( NULL, 0x00200000, MEM_COMMIT, PAGE_EXECUTE_READWRITE );
+	if(RspRecompCodeSecondary == NULL) {
 		DisplayError("Not enough memory for RSP RecompCode Secondary!");
 		return FALSE;
-	}*/
+	}
 
 	ClearJumpTables();
 

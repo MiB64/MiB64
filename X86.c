@@ -1142,6 +1142,35 @@ void MoveN64MemToX86reg(BYTE** code, int x86reg, int AddrReg) {
 	PUTDST16(*code,x86Command);
 	PUTDST32(*code,N64MEM);
 }
+
+void MoveDMemToX86reg(BYTE** code, int x86reg, int AddrReg) {
+	WORD x86Command = 0x0;
+
+	CPU_OR_RSP_Message(*code, "      mov %s, dword ptr [%s+N64mem]", x86_Name(x86reg), x86_Name(AddrReg));
+
+	switch (AddrReg) {
+	case x86_EAX: x86Command = 0x008B; break;
+	case x86_EBX: x86Command = 0x038B; break;
+	case x86_ECX: x86Command = 0x018B; break;
+	case x86_EDX: x86Command = 0x028B; break;
+	case x86_ESI: x86Command = 0x068B; break;
+	case x86_EDI: x86Command = 0x078B; break;
+	case x86_ESP: x86Command = 0x048B; break;
+	case x86_EBP: x86Command = 0x058B; break;
+	}
+	switch (x86reg) {
+	case x86_EAX: x86Command += 0x8000; break;
+	case x86_EBX: x86Command += 0x9800; break;
+	case x86_ECX: x86Command += 0x8800; break;
+	case x86_EDX: x86Command += 0x9000; break;
+	case x86_ESI: x86Command += 0xB000; break;
+	case x86_EDI: x86Command += 0xB800; break;
+	case x86_ESP: x86Command += 0xA000; break;
+	case x86_EBP: x86Command += 0xA800; break;
+	}
+	PUTDST16(*code, x86Command);
+	PUTDST32(*code, DMEM);
+}
 	
 void MoveN64MemToX86regByte(BYTE** code, int x86reg, int AddrReg) {
 	WORD x86Command = 0x0;
@@ -1171,6 +1200,36 @@ void MoveN64MemToX86regByte(BYTE** code, int x86reg, int AddrReg) {
 	}
 	PUTDST16(*code,x86Command);
 	PUTDST32(*code,N64MEM);
+}
+
+void MoveDMemToX86regByte(BYTE** code, int x86reg, int AddrReg) {
+	WORD x86Command = 0x0;
+
+	CPU_OR_RSP_Message(*code, "      mov %s, byte ptr [%s+N64mem]", x86Byte_Name(x86reg), x86_Name(AddrReg));
+	switch (AddrReg) {
+	case x86_EAX: x86Command = 0x008A; break;
+	case x86_EBX: x86Command = 0x038A; break;
+	case x86_ECX: x86Command = 0x018A; break;
+	case x86_EDX: x86Command = 0x028A; break;
+	case x86_ESI: x86Command = 0x068A; break;
+	case x86_EDI: x86Command = 0x078A; break;
+	case x86_ESP: x86Command = 0x048A; break;
+	case x86_EBP: x86Command = 0x058A; break;
+	}
+	switch (x86reg) {
+	case x86_EAX: x86Command += 0x8000; break;
+	case x86_EBX: x86Command += 0x9800; break;
+	case x86_ECX: x86Command += 0x8800; break;
+	case x86_EDX: x86Command += 0x9000; break;
+		/*	case x86_ESI: x86Command += 0xB000; break; */
+		/*	case x86_EDI: x86Command += 0xB800; break; */
+		/*	case x86_ESP: case x86_EBP: */
+	default:
+		DisplayError("MoveN64MemToX86regByte\nInvalid x86 Register");
+		break;
+	}
+	PUTDST16(*code, x86Command);
+	PUTDST32(*code, DMEM);
 }
 
 void MoveN64MemToX86regHalf(BYTE** code, int x86reg, int AddrReg) {
@@ -1354,6 +1413,69 @@ void MoveSxN64MemToX86regHalf(BYTE** code, int x86reg, int AddrReg) {
 	PUTDST8(*code, 0x0f);
 	PUTDST16(*code,x86Command);
 	PUTDST32(*code,N64MEM);
+}
+
+void MoveSxDMemToX86regByte(BYTE** code, int x86reg, int AddrReg) {
+	WORD x86Command = 0x0;
+
+	CPU_OR_RSP_Message(*code, "      movsx %s, byte ptr [%s+Dmem]", x86_Name(x86reg), x86_Name(AddrReg));
+	switch (AddrReg) {
+	case x86_EAX: x86Command = 0x00BE; break;
+	case x86_EBX: x86Command = 0x03BE; break;
+	case x86_ECX: x86Command = 0x01BE; break;
+	case x86_EDX: x86Command = 0x02BE; break;
+	case x86_ESI: x86Command = 0x06BE; break;
+	case x86_EDI: x86Command = 0x07BE; break;
+	case x86_ESP: x86Command = 0x04BE; break;
+	case x86_EBP: x86Command = 0x05BE; break;
+	}
+	switch (x86reg) {
+	case x86_EAX: x86Command += 0x8000; break;
+	case x86_EBX: x86Command += 0x9800; break;
+	case x86_ECX: x86Command += 0x8800; break;
+	case x86_EDX: x86Command += 0x9000; break;
+	case x86_ESI: x86Command += 0xB000; break;
+	case x86_EDI: x86Command += 0xB800; break;
+	case x86_ESP: x86Command += 0xA000; break;
+	case x86_EBP: x86Command += 0xA800; break;
+	default:
+		DisplayError("MoveSxN64MemToX86regByte\nInvalid x86 Register");
+		break;
+	}
+	PUTDST8(*code, 0x0f);
+	PUTDST16(*code, x86Command);
+	PUTDST32(*code, DMEM);
+}
+
+void MoveSxDMemToX86regHalf(BYTE** code, int x86reg, int AddrReg) {
+	WORD x86Command = 0x0;
+
+	CPU_OR_RSP_Message(*code, "      movsx %s, word ptr [%s+Dmem]", x86_Name(x86reg), x86_Name(AddrReg));
+
+	switch (AddrReg) {
+	case x86_EAX: x86Command = 0x00BF; break;
+	case x86_EBX: x86Command = 0x03BF; break;
+	case x86_ECX: x86Command = 0x01BF; break;
+	case x86_EDX: x86Command = 0x02BF; break;
+	case x86_ESI: x86Command = 0x06BF; break;
+	case x86_EDI: x86Command = 0x07BF; break;
+	case x86_ESP: x86Command = 0x04BF; break;
+	case x86_EBP: x86Command = 0x05BF; break;
+	}
+	switch (x86reg) {
+	case x86_EAX: x86Command += 0x8000; break;
+	case x86_EBX: x86Command += 0x9800; break;
+	case x86_ECX: x86Command += 0x8800; break;
+	case x86_EDX: x86Command += 0x9000; break;
+	case x86_ESI: x86Command += 0xB000; break;
+	case x86_EDI: x86Command += 0xB800; break;
+	case x86_ESP: x86Command += 0xA000; break;
+	case x86_EBP: x86Command += 0xA800; break;
+	}
+
+	PUTDST8(*code, 0x0f);
+	PUTDST16(*code, x86Command);
+	PUTDST32(*code, DMEM);
 }
 
 void MoveSxVariableToX86regByte(BYTE** code, void *Variable, char *VariableName, int x86reg) {
@@ -2120,6 +2242,37 @@ void MoveZxN64MemToX86regHalf(BYTE** code, int x86reg, int AddrReg) {
 	PUTDST8(*code, 0x0f);
 	PUTDST16(*code,x86Command);
 	PUTDST32(*code,N64MEM);
+}
+
+void MoveZxDMemToX86regHalf(BYTE** code, int x86reg, int AddrReg) {
+	WORD x86Command = 0x0;
+
+	CPU_OR_RSP_Message(*code, "      movzx %s, word ptr [%s+N64MEM]", x86_Name(x86reg), x86_Name(AddrReg));
+
+	switch (AddrReg) {
+	case x86_EAX: x86Command = 0x00B7; break;
+	case x86_EBX: x86Command = 0x03B7; break;
+	case x86_ECX: x86Command = 0x01B7; break;
+	case x86_EDX: x86Command = 0x02B7; break;
+	case x86_ESI: x86Command = 0x06B7; break;
+	case x86_EDI: x86Command = 0x07B7; break;
+	case x86_ESP: x86Command = 0x04B7; break;
+	case x86_EBP: x86Command = 0x05B7; break;
+	}
+	switch (x86reg) {
+	case x86_EAX: x86Command += 0x8000; break;
+	case x86_EBX: x86Command += 0x9800; break;
+	case x86_ECX: x86Command += 0x8800; break;
+	case x86_EDX: x86Command += 0x9000; break;
+	case x86_ESI: x86Command += 0xB000; break;
+	case x86_EDI: x86Command += 0xB800; break;
+	case x86_ESP: x86Command += 0xA000; break;
+	case x86_EBP: x86Command += 0xA800; break;
+	}
+
+	PUTDST8(*code, 0x0f);
+	PUTDST16(*code, x86Command);
+	PUTDST32(*code, DMEM);
 }
 
 void MoveZxVariableToX86regByte(BYTE** code, void *Variable, char *VariableName, int x86reg) {

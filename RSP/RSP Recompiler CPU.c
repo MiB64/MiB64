@@ -48,13 +48,14 @@
 
 DWORD RspCompilePC;
 static DWORD BlockID = 0;
-/*DWORD dwBuffer = MainBuffer;*/
+static DWORD dwBuffer = MainBuffer;
 
 RSP_BLOCK RspCurrentBlock;
-static RSP_CODE RspCode;
+RSP_CODE RspCode;
 static DWORD maxRecompiledOpcode;
 
-/*BYTE * pLastSecondary = NULL, * pLastPrimary = NULL;*/
+BYTE* pLastRspSecondary = NULL;
+static BYTE* pLastPrimary = NULL;
 
 BOOL IMEMIsUpdated = TRUE;
 DWORD RemainingRspCycles = 0;
@@ -428,6 +429,7 @@ void BuildRecompilerRspCPU ( void ) {
 #endif
 	RSP_NextInstruction = NORMAL;
 	IMEMIsUpdated = TRUE;
+	dwBuffer = MainBuffer;
 }
 
 /******************************************************
@@ -584,7 +586,7 @@ static void DetectGPRConstants(RSP_CODE * code) {
 }
 
 /******************************************************
-** CompilerToggleBuffer and ClearX86Code
+** RspCompilerToggleBuffer and ClearX86Code
 **
 ** Desc:
 **  1> toggles the compiler buffer, useful for poorly
@@ -594,29 +596,29 @@ static void DetectGPRConstants(RSP_CODE * code) {
 **
 ********************************************************/
 
-/*void CompilerToggleBuffer(void) {
+void RspCompilerToggleBuffer(void) {
 	if (dwBuffer == MainBuffer) {
 		dwBuffer = SecondaryBuffer;
-		pLastPrimary = RecompPos;
+		pLastPrimary = RspRecompPos;
 
-		if (pLastSecondary == NULL) {
-			pLastSecondary = RecompCodeSecondary;
+		if (pLastRspSecondary == NULL) {
+			pLastRspSecondary = RspRecompCodeSecondary;
 		}
 
-		RecompPos = pLastSecondary;
-		CPU_Message("   (Secondary Buffer Active 0x%08X)", pLastSecondary);
+		RspRecompPos = pLastRspSecondary;
+		RSP_CPU_Message("   (Secondary Buffer Active 0x%08X)", pLastRspSecondary);
 	} else {
 		dwBuffer = MainBuffer;
-		pLastSecondary = RecompPos;
+		pLastRspSecondary = RspRecompPos;
 
 		if (pLastPrimary == NULL) {
-			pLastPrimary = RecompCode;
+			pLastPrimary = RspRecompCode;
 		}
 	
-		RecompPos = pLastPrimary;
-		CPU_Message("   (Primary Buffer Active 0x%08X)", pLastPrimary);
+		RspRecompPos = pLastPrimary;
+		RSP_CPU_Message("   (Primary Buffer Active 0x%08X)", pLastPrimary);
 	}
-}*/
+}
 
 static void ClearAllx86Code (void) {
 	ClearJumpTables();

@@ -63,16 +63,16 @@ extern "C" {
 	BOOL IsRspRegisterConstant(DWORD Reg, DWORD* Constant);
 
 	/*void RSP_Element2Mmx(int MmxReg);
-	void RSP_MultiElement2Mmx(int MmxReg1, int MmxReg2);
+	void RSP_MultiElement2Mmx(int MmxReg1, int MmxReg2);*/
 
 	#define MainBuffer			0
-	#define SecondaryBuffer		1*/
+	#define SecondaryBuffer		1
 
 	DWORD RunRecompilerRspCPU(DWORD Cycles);
 	void BuildRecompilerCPU(void);
 
-	/*void CompilerRSPBlock ( void );
-	void CompilerToggleBuffer (void);*/
+	/*void CompilerRSPBlock ( void );*/
+	void RspCompilerToggleBuffer (void);
 	BOOL RSP_DoSections(void);
 
 	typedef struct {
@@ -98,10 +98,10 @@ extern "C" {
 		DWORD BranchCount;
 	} RSP_CODE;
 
-	/*extern RSP_CODE RspCode;
+	extern RSP_CODE RspCode;
 
-	#define IsRegConst(i)	(RspCode.bIsRegConst[i])
-	#define MipsRegConst(i) (RspCode.MipsRegConst[i])*/
+	#define IsRspRegConst(i)	(RspCode.bIsRegConst[i])
+	#define MipsRspRegConst(i)  (RspCode.MipsRegConst[i])
 
 	typedef struct {
 		/*	BOOL mmx, mmx2, sse;*/	/* CPU specs and compiling */
@@ -112,7 +112,7 @@ extern "C" {
 	/*	BOOL bAccum;*/			/* Accumulator toggle */
 		BOOL bGPRConstants;		/* Analyze GPR constants */
 	/*	BOOL bAlignVector;*/		/* Align known vector loads */
-	/*	BOOL bAlignGPR;*/			/* Align known gpr loads */
+		BOOL bAlignGPR;			/* Align known gpr loads */
 	} RSP_COMPILER;
 
 	extern RSP_COMPILER RspCompiler;

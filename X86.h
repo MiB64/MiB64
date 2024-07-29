@@ -122,10 +122,14 @@ void MoveN64MemDispToX86reg          ( BYTE** code, int x86reg, int AddrReg, BYT
 void MoveN64MemToX86reg              ( BYTE** code, int x86reg, int AddrReg );
 void MoveN64MemToX86regByte          ( BYTE** code, int x86reg, int AddrReg );
 void MoveN64MemToX86regHalf          ( BYTE** code, int x86reg, int AddrReg );
+void MoveDMemToX86reg                ( BYTE** code, int x86reg, int AddrReg );
+void MoveDMemToX86regByte            ( BYTE** code, int x86reg, int AddrReg );
 void MoveSxByteX86regPointerToX86reg ( BYTE** code, int AddrReg1, int AddrReg2, int x86reg );
 void MoveSxHalfX86regPointerToX86reg ( BYTE** code, int AddrReg1, int AddrReg2, int x86reg );
 void MoveSxN64MemToX86regByte        ( BYTE** code, int x86reg, int AddrReg );
 void MoveSxN64MemToX86regHalf        ( BYTE** code, int x86reg, int AddrReg );
+void MoveSxDMemToX86regByte          ( BYTE** code, int x86reg, int AddrReg );
+void MoveSxDMemToX86regHalf          ( BYTE** code, int x86reg, int AddrReg );
 void MoveSxVariableToX86regByte      ( BYTE** code, void *Variable, char *VariableName, int x86reg );
 void MoveSxVariableToX86regHalf      ( BYTE** code, void *Variable, char *VariableName, int x86reg );
 void MoveVariableDispToX86Reg        ( BYTE** code, void *Variable, char *VariableName, int x86Reg, int AddrReg, int Multiplier );
@@ -152,6 +156,7 @@ void MoveZxByteX86regPointerToX86reg ( BYTE** code, int AddrReg1, int AddrReg2, 
 void MoveZxHalfX86regPointerToX86reg ( BYTE** code, int AddrReg1, int AddrReg2, int x86reg );
 void MoveZxN64MemToX86regByte        ( BYTE** code, int x86reg, int AddrReg );
 void MoveZxN64MemToX86regHalf        ( BYTE** code, int x86reg, int AddrReg );
+void MoveZxDMemToX86regHalf          ( BYTE** code, int x86reg, int AddrReg );
 void MoveZxVariableToX86regByte      ( BYTE** code, void *Variable, char *VariableName, int x86reg );
 void MoveZxVariableToX86regHalf      ( BYTE** code, void *Variable, char *VariableName, int x86reg );
 void MulX86reg                       ( BYTE** code, int x86reg );

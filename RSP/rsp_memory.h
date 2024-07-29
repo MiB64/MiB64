@@ -41,7 +41,7 @@ extern "C" {
 	extern BYTE* DMEM;
 	extern BYTE* IMEM;
 
-	extern BYTE* RspRecompCode,/* * RecompCodeSecondary,*/* RspRecompPos;
+	extern BYTE* RspRecompCode, * RspRecompCodeSecondary,* RspRecompPos;
 	extern void** RspJumpTable;
 	extern DWORD RspTable;
 
