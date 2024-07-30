@@ -546,6 +546,10 @@ void CompileRsp_SLTI ( void ) {
 		else {
 			MoveConstToVariable(&RspRecompPos, 0, &RSP_GPR[RSPOpC.OP.I.rt], RspGPR_Name(RSPOpC.OP.I.rt));
 		}
+	} if (Immediate == 0) {
+		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs), x86_EAX);
+		ShiftRightUnsignImmed(&RspRecompPos, x86_EAX, 31);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else {
 		XorX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EAX);
 		CompConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs));
@@ -693,12 +697,18 @@ void CompileRsp_LB ( void ) {
 
 	if (RSPOpC.OP.LS.rt == 0) return;
 
-	if (RSPOpC.OP.LS.base == 0) {
-		XorX86RegToX86Reg(&RspRecompPos, x86_EBX, x86_EBX);
+	if (IsRspRegConst(RSPOpC.OP.LS.base) == TRUE) {
+		DWORD Addr = (MipsRspRegConst(RSPOpC.OP.LS.base) + Offset) ^ 3;
+		Addr &= 0xfff;
+
+		char Address[32];
+		sprintf(Address, "Dmem + %Xh", Addr);
+		MoveSxVariableToX86regByte(&RspRecompPos, DMEM + Addr, Address, x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt));
+		return;
 	}
-	else {
-		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.base].UW, RspGPR_Name(RSPOpC.OP.LS.base), x86_EBX);
-	}
+
+	MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.base].UW, RspGPR_Name(RSPOpC.OP.LS.base), x86_EBX);
 	if (Offset != 0) AddConstToX86Reg(&RspRecompPos, x86_EBX, Offset);
 	XorConstToX86Reg(&RspRecompPos, x86_EBX, 3);
 	AndConstToX86Reg(&RspRecompPos, x86_EBX, 0x0fff);
