@@ -223,6 +223,10 @@ void CompileRsp_BEQ ( void ) {
 			CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
 		} else if (RSPOpC.OP.B.rs == 0) {			
 			CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rt].W,RspGPR_Name(RSPOpC.OP.B.rt));
+		} else if (IsRspRegConst(RSPOpC.OP.B.rt)) {
+			CompConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.B.rt), &RSP_GPR[RSPOpC.OP.B.rs].W, RspGPR_Name(RSPOpC.OP.B.rs));
+		} else if (IsRspRegConst(RSPOpC.OP.B.rs)) {
+			CompConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.B.rs), &RSP_GPR[RSPOpC.OP.B.rt].W, RspGPR_Name(RSPOpC.OP.B.rt));
 		} else {
 			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.B.rt].W,RspGPR_Name(RSPOpC.OP.B.rt),x86_EAX);
 			CompX86regToVariable(&RspRecompPos, x86_EAX,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
@@ -239,10 +243,23 @@ void CompileRsp_BEQ ( void ) {
 			return;
 		}
 		if (FALSE == bDelayAffect) {
-			if (RSPOpC.OP.B.rt == 0) {
+			if (IsRspRegConst(RSPOpC.OP.B.rt) && IsRspRegConst(RSPOpC.OP.B.rs)) {
+				if (MipsRspRegConst(RSPOpC.OP.B.rt) == MipsRspRegConst(RSPOpC.OP.B.rs)) {
+					JmpLabel32(&RspRecompPos, "BranchEqual", 0);
+					Branch_AddRef(Target, (DWORD*)(RspRecompPos - 4));
+					RSP_NextInstruction = FINISH_BLOCK;
+					return;
+				}
+				RSP_NextInstruction = FINISH_SUB_BLOCK;
+				return;
+			} else if (RSPOpC.OP.B.rt == 0) {
 				CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
 			} else if (RSPOpC.OP.B.rs == 0) {			
 				CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rt].W,RspGPR_Name(RSPOpC.OP.B.rt));
+			} else if (IsRspRegConst(RSPOpC.OP.B.rt)) {
+				CompConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.B.rt), &RSP_GPR[RSPOpC.OP.B.rs].W, RspGPR_Name(RSPOpC.OP.B.rs));
+			} else if (IsRspRegConst(RSPOpC.OP.B.rs)) {
+				CompConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.B.rs), &RSP_GPR[RSPOpC.OP.B.rt].W, RspGPR_Name(RSPOpC.OP.B.rt));
 			} else {
 				MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.B.rt].W,RspGPR_Name(RSPOpC.OP.B.rt),x86_EAX);
 				CompX86regToVariable(&RspRecompPos, x86_EAX,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
@@ -286,6 +303,10 @@ void CompileRsp_BNE ( void ) {
 			CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
 		} else if (RSPOpC.OP.B.rs == 0) {			
 			CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rt].W,RspGPR_Name(RSPOpC.OP.B.rt));
+		} else if (IsRspRegConst(RSPOpC.OP.B.rt)) {
+			CompConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.B.rt), &RSP_GPR[RSPOpC.OP.B.rs].W, RspGPR_Name(RSPOpC.OP.B.rs));
+		} else if (IsRspRegConst(RSPOpC.OP.B.rs)) {
+			CompConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.B.rs), &RSP_GPR[RSPOpC.OP.B.rt].W, RspGPR_Name(RSPOpC.OP.B.rt));
 		} else {
 			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.B.rt].W,RspGPR_Name(RSPOpC.OP.B.rt),x86_EAX);
 			CompX86regToVariable(&RspRecompPos, x86_EAX,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
@@ -301,10 +322,23 @@ void CompileRsp_BNE ( void ) {
 		}
 
 		if (FALSE == bDelayAffect) {
-			if (RSPOpC.OP.B.rt == 0) {			
+			if (IsRspRegConst(RSPOpC.OP.B.rt) && IsRspRegConst(RSPOpC.OP.B.rs)) {
+				if (MipsRspRegConst(RSPOpC.OP.B.rt) != MipsRspRegConst(RSPOpC.OP.B.rs)) {
+					JmpLabel32(&RspRecompPos, "BranchEqual", 0);
+					Branch_AddRef(Target, (DWORD*)(RspRecompPos - 4));
+					RSP_NextInstruction = FINISH_BLOCK;
+					return;
+				}
+				RSP_NextInstruction = FINISH_SUB_BLOCK;
+				return;
+			} else if (RSPOpC.OP.B.rt == 0) {			
 				CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
 			} else if (RSPOpC.OP.B.rs == 0) {
 				CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rt].W,RspGPR_Name(RSPOpC.OP.B.rt));
+			} else if (IsRspRegConst(RSPOpC.OP.B.rt)) {
+				CompConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.B.rt), &RSP_GPR[RSPOpC.OP.B.rs].W, RspGPR_Name(RSPOpC.OP.B.rs));
+			} else if (IsRspRegConst(RSPOpC.OP.B.rs)) {
+				CompConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.B.rs), &RSP_GPR[RSPOpC.OP.B.rt].W, RspGPR_Name(RSPOpC.OP.B.rt));
 			} else {
 				MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.B.rt].W,RspGPR_Name(RSPOpC.OP.B.rt),x86_EAX);
 				CompX86regToVariable(&RspRecompPos, x86_EAX,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
@@ -355,6 +389,16 @@ void CompileRsp_BLEZ ( void ) {
 			RSP_NextInstruction = FINISH_BLOCK;
 			return;
 		}
+		if (IsRspRegConst(RSPOpC.OP.B.rs)) {
+			if ((long)MipsRspRegConst(RSPOpC.OP.B.rs) <= 0) {
+				JmpLabel32(&RspRecompPos, "BranchToJump", 0);
+				Branch_AddRef(Target, (DWORD*)(RspRecompPos - 4));
+				RSP_NextInstruction = FINISH_BLOCK;
+				return;
+			}
+			RSP_NextInstruction = FINISH_SUB_BLOCK;
+			return;
+		}
 		if (FALSE == bDelayAffect) {
 			CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
 			JleLabel32(&RspRecompPos, "BranchLessEqual", 0);
@@ -401,6 +445,16 @@ void CompileRsp_BGTZ ( void ) {
 			RSP_NextInstruction = FINISH_SUB_BLOCK;
 			return;
 		}
+		if (IsRspRegConst(RSPOpC.OP.B.rs)) {
+			if ((long)MipsRspRegConst(RSPOpC.OP.B.rs) > 0) {
+				JmpLabel32(&RspRecompPos, "BranchToJump", 0);
+				Branch_AddRef(Target, (DWORD*)(RspRecompPos - 4));
+				RSP_NextInstruction = FINISH_BLOCK;
+				return;
+			}
+			RSP_NextInstruction = FINISH_SUB_BLOCK;
+			return;
+		}
 		if (FALSE == bDelayAffect) {
 			CompConstToVariable(&RspRecompPos,0,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
 			JgLabel32(&RspRecompPos, "BranchGreater", 0);
@@ -432,6 +486,8 @@ void CompileRsp_ADDI ( void ) {
 		AddConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else if (RSPOpC.OP.I.rs == 0) {
 		MoveConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	} else if (IsRspRegConst(RSPOpC.OP.I.rs)) {
+		MoveConstToVariable(&RspRecompPos, (long)MipsRspRegConst(RSPOpC.OP.I.rs) + Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else {
 		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs), x86_EAX);
 		if (Immediate != 0) {
@@ -456,6 +512,8 @@ void CompileRsp_ADDIU ( void ) {
 		AddConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else if (RSPOpC.OP.I.rs == 0) {
 		MoveConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	} else if (IsRspRegConst(RSPOpC.OP.I.rs)) {
+		MoveConstToVariable(&RspRecompPos, (long)MipsRspRegConst(RSPOpC.OP.I.rs) + Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else {
 		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs), x86_EAX);
 		if (Immediate != 0) {
@@ -481,8 +539,14 @@ void CompileRsp_SLTI ( void ) {
 		else {
 			MoveConstToVariable(&RspRecompPos, 0, &RSP_GPR[RSPOpC.OP.I.rt], RspGPR_Name(RSPOpC.OP.I.rt));
 		}
-	}
-	else {
+	} else if (IsRspRegConst(RSPOpC.OP.I.rs)) {
+		if ((long)MipsRspRegConst(RSPOpC.OP.I.rs) < Immediate) {
+			MoveConstToVariable(&RspRecompPos, 1, &RSP_GPR[RSPOpC.OP.I.rt], RspGPR_Name(RSPOpC.OP.I.rt));
+		}
+		else {
+			MoveConstToVariable(&RspRecompPos, 0, &RSP_GPR[RSPOpC.OP.I.rt], RspGPR_Name(RSPOpC.OP.I.rt));
+		}
+	} else {
 		XorX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EAX);
 		CompConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs));
 		Setl(&RspRecompPos, x86_EAX);
@@ -506,8 +570,14 @@ void CompileRsp_SLTIU ( void ) {
 		else {
 			MoveConstToVariable(&RspRecompPos, 0, &RSP_GPR[RSPOpC.OP.I.rt], RspGPR_Name(RSPOpC.OP.I.rt));
 		}
-	}
-	else {
+	} else if (IsRspRegConst(RSPOpC.OP.I.rs)) {
+		if ((unsigned long)MipsRspRegConst(RSPOpC.OP.I.rs) < (unsigned long)Immediate) {
+			MoveConstToVariable(&RspRecompPos, 1, &RSP_GPR[RSPOpC.OP.I.rt], RspGPR_Name(RSPOpC.OP.I.rt));
+		}
+		else {
+			MoveConstToVariable(&RspRecompPos, 0, &RSP_GPR[RSPOpC.OP.I.rt], RspGPR_Name(RSPOpC.OP.I.rt));
+		}
+	} else {
 		XorX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EAX);
 		CompConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs));
 		Setb(&RspRecompPos, x86_EAX);
@@ -530,6 +600,8 @@ void CompileRsp_ANDI ( void ) {
 		AndConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else if (RSPOpC.OP.I.rs == 0) {
 		MoveConstToVariable(&RspRecompPos, 0, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	} else if (IsRspRegConst(RSPOpC.OP.I.rs)) {
+		MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.I.rs) & Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else {
 		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs), x86_EAX);
 		AndConstToX86Reg(&RspRecompPos, x86_EAX, Immediate);
@@ -552,6 +624,8 @@ void CompileRsp_ORI ( void ) {
 		OrConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else if (RSPOpC.OP.I.rs == 0) {
 		MoveConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	} else if (IsRspRegConst(RSPOpC.OP.I.rs)) {
+		MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.I.rs) | Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else {
 		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs), x86_EAX);
 		if (Immediate != 0) {
@@ -576,6 +650,8 @@ void CompileRsp_XORI ( void ) {
 		XorConstToVariable(&RspRecompPos, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt), Immediate);
 	} else if (RSPOpC.OP.I.rs == 0) {
 		MoveConstToVariable(&RspRecompPos, Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
+	} else if (IsRspRegConst(RSPOpC.OP.I.rs)) {
+		MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.I.rs) ^ Immediate, &RSP_GPR[RSPOpC.OP.I.rt].UW, RspGPR_Name(RSPOpC.OP.I.rt));
 	} else {
 		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.I.rs].UW, RspGPR_Name(RSPOpC.OP.I.rs), x86_EAX);
 		if (Immediate != 0) {
@@ -1682,7 +1758,6 @@ void CompileRsp_Cop0_MT ( void ) {
 		CompileRsp_UpdateCycleCounts();
 
 		if (RSP_NextInstruction == DELAY_SLOT) {
-			LogMessage("SPECIAL_MTC0_IN_DELAY_SLOT");
 			MoveConstToVariable(&RspRecompPos, 0, &RSP_Running, "RSP_Running");
 			Call_Direct(&RspRecompPos, (void*)SetRspJumpTable, "SetRspJumpTable");
 		}
