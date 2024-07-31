@@ -817,7 +817,23 @@ void CompileRsp_LW ( void ) {
 
 		if ((Addr & 3) != 0) {
 			//RspCompilerWarning("Unaligned LW at constant address PC = %04X", RspCompilePC);
-			InterpreterFallbackNoMessage((void*)RSP_Opcode_LW,"RSP_Opcode_LW");
+			
+			char Address[32];
+			sprintf(Address, "Dmem + %Xh", (Addr & 0xFFF));
+			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + ((Addr & 0xFFF) ^ 3), Address, x86_EAX);
+			sprintf(Address, "Dmem + %Xh", ((Addr & 0xFFF) + 1));
+			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + (((Addr + 1) & 0xFFF) ^ 3), Address, x86_EBX);
+			sprintf(Address, "Dmem + %Xh", ((Addr & 0xFFF) + 2));
+			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + (((Addr + 2) & 0xFFF) ^ 3), Address, x86_ECX);
+			sprintf(Address, "Dmem + %Xh", ((Addr & 0xFFF) + 3));
+			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + (((Addr + 3) & 0xFFF) ^ 3), Address, x86_EDX);
+			ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 8);
+			OrX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EBX);
+			ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 8);
+			OrX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_ECX);
+			ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 8);
+			OrX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EDX);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt));
 			return;
 		} else {
 			char Address[32];			
@@ -885,6 +901,17 @@ void CompileRsp_LBU ( void ) {
 
 	if (RSPOpC.OP.LS.rt == 0) return;
 
+	if (IsRspRegConst(RSPOpC.OP.LS.base) == TRUE) {
+		DWORD Addr = (MipsRspRegConst(RSPOpC.OP.LS.base) + Offset) ^ 3;
+		Addr &= 0xfff;
+
+		char Address[32];
+		sprintf(Address, "Dmem + %Xh", Addr);
+		MoveZxVariableToX86regByte(&RspRecompPos, DMEM + Addr, Address, x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt));
+		return;
+	}
+
 	MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.base].UW, RspGPR_Name(RSPOpC.OP.LS.base), x86_EBX);
 	XorX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EAX);
 
@@ -909,14 +936,24 @@ void CompileRsp_LHU ( void ) {
 	if (RSPOpC.OP.LS.rt == 0) return;
 
 	if (IsRspRegConst(RSPOpC.OP.LS.base) == TRUE) {
-		DWORD Addr = (MipsRspRegConst(RSPOpC.OP.LS.base) + Offset) ^ 2;
-		Addr &= 0xfff;
+		DWORD Addr = (MipsRspRegConst(RSPOpC.OP.LS.base) + Offset);
 
 		if ((Addr & 1) != 0) {
 			//RspCompilerWarning("Unaligned LHU at constant address PC = %04X", RspCompilePC);
-			InterpreterFallbackNoMessage((void*)RSP_Opcode_LHU,"RSP_Opcode_LHU");
+
+			char Address[32];
+			sprintf(Address, "Dmem + %Xh", (Addr & 0xFFF));
+			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + ((Addr & 0xFFF) ^ 3), Address, x86_EAX);
+			sprintf(Address, "Dmem + %Xh", ((Addr & 0xFFF) + 1));
+			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + (((Addr + 1) & 0xFFF) ^ 3), Address, x86_EBX);
+			ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 8);
+			OrX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EBX);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt));
 			return;
 		} else {
+			Addr ^= 2;
+			Addr &= 0xfff;
+
 			char Address[32];			
 			sprintf(Address, "Dmem + %Xh", Addr);
 			MoveZxVariableToX86regHalf(&RspRecompPos, DMEM + Addr, Address, x86_ECX);
@@ -939,7 +976,21 @@ void CompileRsp_LHU ( void ) {
 	RspCompilerToggleBuffer();
 	RSP_CPU_Message("   Unaligned:");
 	x86_SetBranch32b(Jump[0], RspRecompPos);
-	InterpreterFallbackNoMessage((void*)RSP_Opcode_LHU,"RSP_Opcode_LHU");
+
+	MoveX86RegToX86Reg(&RspRecompPos, x86_EBX, x86_EAX);
+	AddConstToX86Reg(&RspRecompPos, x86_EBX, 1);
+
+	AndConstToX86Reg(&RspRecompPos, x86_EAX, 0xFFF);
+	AndConstToX86Reg(&RspRecompPos, x86_EBX, 0xFFF);
+	XorConstToX86Reg(&RspRecompPos, x86_EAX, 3);
+	XorConstToX86Reg(&RspRecompPos, x86_EBX, 3);
+	MoveZxDMemToX86regByte(&RspRecompPos, x86_EAX, x86_EAX);
+	MoveZxDMemToX86regByte(&RspRecompPos, x86_EBX, x86_EBX);
+	ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 8);
+	OrX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EBX);
+	MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt));
+
+	//InterpreterFallbackNoMessage((void*)RSP_Opcode_LHU,"RSP_Opcode_LHU");
 	JmpLabel32(&RspRecompPos, "Done", 0);
 	Jump[1] = RspRecompPos - 4;
 	RspCompilerToggleBuffer();
@@ -954,7 +1005,7 @@ void CompileRsp_LHU ( void ) {
 }
 
 void CompileRsp_LWU(void) {
-	InterpreterFallback((void*)RSP_Opcode_LWU, "RSP_Opcode_LWU");
+	CompileRsp_LW();
 }
 
 void CompileRsp_SB ( void ) {
