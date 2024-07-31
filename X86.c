@@ -2091,10 +2091,10 @@ void MoveZxHalfX86regPointerToX86reg(BYTE** code, int AddrReg1, int AddrReg2, in
 	PUTDST8(*code,Param);
 }
 
-void MoveZxN64MemToX86regByte(BYTE** code, int x86reg, int AddrReg) {
+static void MoveZxBaseMemToX86regByte(BYTE** code, int x86reg, int AddrReg, BYTE* base, char* baseName) {
 	WORD x86Command = 0x0;
 
-	CPU_OR_RSP_Message(*code, "      movzx %s, byte ptr [%s+N64MEM]",x86_Name(x86reg),x86_Name(AddrReg));
+	CPU_OR_RSP_Message(*code, "      movzx %s, byte ptr [%s+%s]", x86_Name(x86reg), x86_Name(AddrReg), baseName);
 	switch (AddrReg) {
 	case x86_EAX: x86Command = 0x00B6; break;
 	case x86_EBX: x86Command = 0x03B6; break;
@@ -2118,9 +2118,17 @@ void MoveZxN64MemToX86regByte(BYTE** code, int x86reg, int AddrReg) {
 		DisplayError("MoveZxN64MemToX86regByte\nInvalid x86 Register");
 		break;
 	}
-	PUTDST8(*code,0x0f);
-	PUTDST16(*code,x86Command);
-	PUTDST32(*code,N64MEM);
+	PUTDST8(*code, 0x0f);
+	PUTDST16(*code, x86Command);
+	PUTDST32(*code, base);
+}
+
+void MoveZxN64MemToX86regByte(BYTE** code, int x86reg, int AddrReg) {
+	MoveZxBaseMemToX86regByte(code, x86reg, AddrReg, N64MEM, "N64MEM");
+}
+
+void MoveZxDMemToX86regByte(BYTE** code, int x86reg, int AddrReg) {
+	MoveZxBaseMemToX86regByte(code, x86reg, AddrReg, DMEM, "DMEM");
 }
 
 static void MoveZxBaseMemToX86regHalf(BYTE** code, int x86reg, int AddrReg, BYTE* base, char* baseName) {

@@ -730,14 +730,24 @@ void CompileRsp_LH ( void ) {
 	if (RSPOpC.OP.LS.rt == 0) return;
 
 	if (IsRspRegConst(RSPOpC.OP.LS.base) == TRUE) {
-		DWORD Addr = (MipsRspRegConst(RSPOpC.OP.LS.base) + Offset) ^ 2;
-		Addr &= 0xfff;
+		DWORD Addr = (MipsRspRegConst(RSPOpC.OP.LS.base) + Offset);
 
 		if ((Addr & 1) != 0) {
 			//RspCompilerWarning("Unaligned LH at constant address PC = %04X", RspCompilePC);
-			InterpreterFallbackNoMessage((void*)RSP_Opcode_LH,"RSP_Opcode_LH");
+
+			char Address[32];
+			sprintf(Address, "Dmem + %Xh", (Addr & 0xFFF));
+			MoveSxVariableToX86regByte(&RspRecompPos, DMEM + ((Addr & 0xFFF) ^ 3), Address, x86_EAX);
+			sprintf(Address, "Dmem + %Xh", ((Addr & 0xFFF) + 1));
+			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + (((Addr+1) & 0xFFF) ^ 3), Address, x86_EBX);
+			ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 8);
+			OrX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EBX);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt));
 			return;
 		} else {
+			Addr ^= 2;
+			Addr &= 0xfff;
+
 			char Address[32];			
 			sprintf(Address, "Dmem + %Xh", Addr);
 			MoveSxVariableToX86regHalf(&RspRecompPos, DMEM + Addr, Address, x86_EAX);
@@ -759,7 +769,19 @@ void CompileRsp_LH ( void ) {
 		RSP_CPU_Message("   Unaligned:");
 		x86_SetBranch32b(Jump[0], RspRecompPos);
 
-		InterpreterFallbackNoMessage((void*)RSP_Opcode_LH,"RSP_Opcode_LH");
+		MoveX86RegToX86Reg(&RspRecompPos, x86_EBX, x86_EAX);
+		AddConstToX86Reg(&RspRecompPos, x86_EBX, 1);
+
+		AndConstToX86Reg(&RspRecompPos, x86_EAX, 0xFFF);
+		AndConstToX86Reg(&RspRecompPos, x86_EBX, 0xFFF);
+		XorConstToX86Reg(&RspRecompPos, x86_EAX, 3);
+		XorConstToX86Reg(&RspRecompPos, x86_EBX, 3);
+		MoveSxDMemToX86regByte(&RspRecompPos, x86_EAX, x86_EAX);
+		MoveZxDMemToX86regByte(&RspRecompPos, x86_EBX, x86_EBX);
+		ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 8);
+		OrX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EBX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt));
+
 		JmpLabel32(&RspRecompPos, "Done", 0);
 		Jump[1] = RspRecompPos - 4;
 

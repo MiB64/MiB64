@@ -155,6 +155,7 @@ void MoveX86regToX86regPointer       ( BYTE** code, int x86reg, int AddrReg1, in
 void MoveZxByteX86regPointerToX86reg ( BYTE** code, int AddrReg1, int AddrReg2, int x86reg );
 void MoveZxHalfX86regPointerToX86reg ( BYTE** code, int AddrReg1, int AddrReg2, int x86reg );
 void MoveZxN64MemToX86regByte        ( BYTE** code, int x86reg, int AddrReg );
+void MoveZxDMemToX86regByte			 ( BYTE** code, int x86reg, int AddrReg );
 void MoveZxN64MemToX86regHalf        ( BYTE** code, int x86reg, int AddrReg );
 void MoveZxDMemToX86regHalf          ( BYTE** code, int x86reg, int AddrReg );
 void MoveZxVariableToX86regByte      ( BYTE** code, void *Variable, char *VariableName, int x86reg );
