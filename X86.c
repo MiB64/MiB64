@@ -1512,11 +1512,11 @@ void MoveVariableToX86regHalf(BYTE** code, void *Variable, char *VariableName, i
     PUTDST32(*code,Variable);
 }
 
-void MoveX86regByteToN64Mem(BYTE** code, int x86reg, int AddrReg) {
+static void MoveX86regByteToBaseMem(BYTE** code, int x86reg, int AddrReg, BYTE* base, char* baseName) {
 	WORD x86Command = 0x0;
 
-	CPU_OR_RSP_Message(*code, "      mov byte ptr [%s+N64mem], %s",x86_Name(AddrReg),x86Byte_Name(x86reg));
-	
+	CPU_OR_RSP_Message(*code, "      mov byte ptr [%s+%s], %s", x86_Name(AddrReg), baseName, x86Byte_Name(x86reg));
+
 	switch (AddrReg) {
 	case x86_EAX: x86Command = 0x0088; break;
 	case x86_EBX: x86Command = 0x0388; break;
@@ -1531,8 +1531,16 @@ void MoveX86regByteToN64Mem(BYTE** code, int x86reg, int AddrReg) {
 	case x86_ECX: x86Command += 0x8800; break;
 	case x86_EDX: x86Command += 0x9000; break;
 	}
-	PUTDST16(*code,x86Command);
-	PUTDST32(*code,N64MEM);
+	PUTDST16(*code, x86Command);
+	PUTDST32(*code, base);
+}
+
+void MoveX86regByteToN64Mem(BYTE** code, int x86reg, int AddrReg) {
+	MoveX86regByteToBaseMem(code, x86reg, AddrReg, N64MEM, "N64MEM");
+}
+
+void MoveX86regByteToDMem(BYTE** code, int x86reg, int AddrReg) {
+	MoveX86regByteToBaseMem(code, x86reg, AddrReg, DMEM, "DMEM");
 }
 
 void MoveX86regByteToVariable(BYTE** code, int x86reg, void * Variable, char * VariableName) {
@@ -1592,11 +1600,11 @@ void MoveX86regByteToX86regPointer(BYTE** code, int x86reg, int AddrReg1, int Ad
 	PUTDST8(*code,Param);
 }
 
-void MoveX86regHalfToN64Mem(BYTE** code, int x86reg, int AddrReg) {
+static void MoveX86regHalfToBaseMem(BYTE** code, int x86reg, int AddrReg, BYTE* base, char* baseName) {
 	WORD x86Command = 0x0;
 
-	CPU_OR_RSP_Message(*code, "      mov word ptr [%s+N64mem], %s",x86_Name(AddrReg),x86Half_Name(x86reg));\
-	PUTDST8(*code,0x66);
+	CPU_OR_RSP_Message(*code, "      mov word ptr [%s+%s], %s", x86_Name(AddrReg), baseName, x86Half_Name(x86reg)); \
+	PUTDST8(*code, 0x66);
 	switch (AddrReg) {
 	case x86_EAX: x86Command = 0x0089; break;
 	case x86_EBX: x86Command = 0x0389; break;
@@ -1617,8 +1625,16 @@ void MoveX86regHalfToN64Mem(BYTE** code, int x86reg, int AddrReg) {
 	case x86_ESP: x86Command += 0xA000; break;
 	case x86_EBP: x86Command += 0xA800; break;
 	}
-	PUTDST16(*code,x86Command);
-	PUTDST32(*code,N64MEM);
+	PUTDST16(*code, x86Command);
+	PUTDST32(*code, base);
+}
+
+void MoveX86regHalfToN64Mem(BYTE** code, int x86reg, int AddrReg) {
+	MoveX86regHalfToBaseMem(code, x86reg, AddrReg, N64MEM, "N64MEM");
+}
+
+void MoveX86regHalfToDMem(BYTE** code, int x86reg, int AddrReg) {
+	MoveX86regHalfToBaseMem(code, x86reg, AddrReg, DMEM, "DMEM");
 }
 
 void MoveX86regHalfToVariable(BYTE** code, int x86reg, void * Variable, char * VariableName) {
@@ -1828,20 +1844,20 @@ void MoveX86regToMemory(BYTE** code, int x86reg, int AddrReg, DWORD Disp) {
 	PUTDST32(*code,Disp);
 }
 
-void MoveX86regToN64Mem(BYTE** code, int x86reg, int AddrReg) {
+static void MoveX86regToBaseMem(BYTE** code, int x86reg, int AddrReg, BYTE* base, char* baseName) {
 	WORD x86Command = 0x0;
 
-	CPU_OR_RSP_Message(*code, "      mov dword ptr [%s+N64mem], %s",x86_Name(AddrReg),x86_Name(x86reg));\
-	switch (AddrReg) {
-	case x86_EAX: x86Command = 0x0089; break;
-	case x86_EBX: x86Command = 0x0389; break;
-	case x86_ECX: x86Command = 0x0189; break;
-	case x86_EDX: x86Command = 0x0289; break;
-	case x86_ESI: x86Command = 0x0689; break;
-	case x86_EDI: x86Command = 0x0789; break;
-	case x86_ESP: x86Command = 0x0489; break;
-	case x86_EBP: x86Command = 0x0589; break;
-	}
+	CPU_OR_RSP_Message(*code, "      mov dword ptr [%s+%s], %s", x86_Name(AddrReg), baseName, x86_Name(x86reg)); \
+		switch (AddrReg) {
+		case x86_EAX: x86Command = 0x0089; break;
+		case x86_EBX: x86Command = 0x0389; break;
+		case x86_ECX: x86Command = 0x0189; break;
+		case x86_EDX: x86Command = 0x0289; break;
+		case x86_ESI: x86Command = 0x0689; break;
+		case x86_EDI: x86Command = 0x0789; break;
+		case x86_ESP: x86Command = 0x0489; break;
+		case x86_EBP: x86Command = 0x0589; break;
+		}
 	switch (x86reg) {
 	case x86_EAX: x86Command += 0x8000; break;
 	case x86_EBX: x86Command += 0x9800; break;
@@ -1852,8 +1868,16 @@ void MoveX86regToN64Mem(BYTE** code, int x86reg, int AddrReg) {
 	case x86_ESP: x86Command += 0xA000; break;
 	case x86_EBP: x86Command += 0xA800; break;
 	}
-	PUTDST16(*code,x86Command);
-	PUTDST32(*code,N64MEM);
+	PUTDST16(*code, x86Command);
+	PUTDST32(*code, base);
+}
+
+void MoveX86regToN64Mem(BYTE** code, int x86reg, int AddrReg) {
+	MoveX86regToBaseMem(code, x86reg, AddrReg, N64MEM, "N64MEM");
+}
+
+void MoveX86regToDMem(BYTE** code, int x86reg, int AddrReg) {
+	MoveX86regToBaseMem(code, x86reg, AddrReg, DMEM, "DMEM");
 }
 
 void MoveX86regToN64MemDisp(BYTE** code, int x86reg, int AddrReg, BYTE Disp) {

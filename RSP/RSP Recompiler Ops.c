@@ -49,8 +49,8 @@ DWORD BeginOfCurrentSubBlock = 0;
 /* align option affects: lrv, ssv, lsv */
 
 #define Compile_Immediates	/* ADDI, ADDIU, ANDI, ORI, XORI, LUI */
-#define Compile_GPRLoads	/* LB, LH, LW, LBU, LHU */
-/*#define Compile_GPRStores*/	/* SB, SH, SW */
+#define Compile_GPRLoads	/* LB, LH, LW, LBU, LHU, LWU */
+#define Compile_GPRStores	/* SB, SH, SW */
 #define Compile_Special		/* SLL, SRL, SRA, SRLV */
 							/* XOR, OR, AND, SUB, SUBU, ADDU, ADD, SLT */
 #define Compile_SLTI
@@ -1009,140 +1009,137 @@ void CompileRsp_LWU(void) {
 }
 
 void CompileRsp_SB ( void ) {
-	/*int Offset = (short)RSPOpC.offset;*/
+	int Offset = (short)RSPOpC.OP.LS.offset;
 
 	#ifndef Compile_GPRStores
 	InterpreterFallback((void*)RSP_Opcode_SB,"RSP_Opcode_SB"); return;
 	#endif
 
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
-	MoveVariableToX86reg(&RSP_GPR[RSPOpC.base].UW, GPR_Name(RSPOpC.base), x86_EBX);
-	MoveVariableToX86regByte(&RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt), x86_EAX);
+	MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.base].UW, RspGPR_Name(RSPOpC.OP.LS.base), x86_EBX);
+	MoveVariableToX86regByte(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
 
-	if (Offset != 0) AddConstToX86Reg(x86_EBX, Offset);
-	XorConstToX86Reg(x86_EBX, 3);
-	AndConstToX86Reg(x86_EBX, 0x0fff);
+	if (Offset != 0) AddConstToX86Reg(&RspRecompPos, x86_EBX, Offset);
+	XorConstToX86Reg(&RspRecompPos, x86_EBX, 3);
+	AndConstToX86Reg(&RspRecompPos, x86_EBX, 0x0fff);
 
-	MoveX86regByteToN64Mem(x86_EAX, x86_EBX);*/
-	LogMessage("TODO: CompileRsp_SB");
+	MoveX86regByteToDMem(&RspRecompPos, x86_EAX, x86_EBX);
 }
 
 void CompileRsp_SH ( void ) {
-	/*int Offset = (short)RSPOpC.offset;
-	BYTE * Jump[2];*/
+	int Offset = (short)RSPOpC.OP.LS.offset;
+	BYTE * Jump[2];
 
 	#ifndef Compile_GPRStores
 	InterpreterFallback((void*)RSP_Opcode_SH,"RSP_Opcode_SH"); return;
 	#endif
 
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
-	if (IsRegConst(RSPOpC.base) == TRUE) {
-		DWORD Addr = (MipsRegConst(RSPOpC.base) + Offset) ^ 2;
+	if (IsRspRegConst(RSPOpC.OP.LS.base) == TRUE) {
+		DWORD Addr = (MipsRspRegConst(RSPOpC.OP.LS.base) + Offset) ^ 2;
 		Addr &= 0xfff;
 
 		if ((Offset & 1) != 0) {
-			CompilerWarning("Unaligned SH at constant address PC = %04X", CompilePC);
-			Cheat_r4300iOpcodeNoMessage(RSP_Opcode_SH,"RSP_Opcode_SH");
+			//RspCompilerWarning("Unaligned SH at constant address PC = %04X", RspCompilePC);
+			InterpreterFallbackNoMessage((void*)RSP_Opcode_SH,"RSP_Opcode_SH");
 			return;
 		} else {
 			char Address[32];			
 			sprintf(Address, "Dmem + %Xh", Addr);
-			MoveVariableToX86regHalf(&RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt), x86_EAX);
-			MoveX86regHalfToVariable(x86_EAX, RSPInfo.DMEM + Addr, Address);
+			MoveVariableToX86regHalf(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
+			MoveX86regHalfToVariable(&RspRecompPos, x86_EAX, DMEM + Addr, Address);
 			return;
 		}
 	}
 
-	MoveVariableToX86reg(&RSP_GPR[RSPOpC.base].UW, GPR_Name(RSPOpC.base), x86_EBX);
-	if (Offset != 0) AddConstToX86Reg(x86_EBX, Offset);
+	MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.base].UW, RspGPR_Name(RSPOpC.OP.LS.base), x86_EBX);
+	if (Offset != 0) AddConstToX86Reg(&RspRecompPos, x86_EBX, Offset);
 
-	if (Compiler.bAlignGPR == FALSE) {
-		TestConstToX86Reg(1, x86_EBX);
-		JneLabel32("Unaligned", 0);
-		Jump[0] = RecompPos - 4;
+	if (RspCompiler.bAlignGPR == FALSE) {
+		TestConstToX86Reg(&RspRecompPos, 1, x86_EBX);
+		JneLabel32(&RspRecompPos, "Unaligned", 0);
+		Jump[0] = RspRecompPos - 4;
 
-		CompilerToggleBuffer();
+		RspCompilerToggleBuffer();
 
-		CPU_Message("   Unaligned:");
-		x86_SetBranch32b(Jump[0], RecompPos);
+		RSP_CPU_Message("   Unaligned:");
+		x86_SetBranch32b(Jump[0], RspRecompPos);
 
-		Cheat_r4300iOpcodeNoMessage(RSP_Opcode_SH,"RSP_Opcode_SH");
-		JmpLabel32("Done", 0);
-		Jump[1] = RecompPos - 4;
+		InterpreterFallbackNoMessage((void*)RSP_Opcode_SH,"RSP_Opcode_SH");
+		JmpLabel32(&RspRecompPos, "Done", 0);
+		Jump[1] = RspRecompPos - 4;
 
-		CompilerToggleBuffer();
+		RspCompilerToggleBuffer();
 	}
 
-	XorConstToX86Reg(x86_EBX, 2);
-	AndConstToX86Reg(x86_EBX, 0x0fff);
+	XorConstToX86Reg(&RspRecompPos, x86_EBX, 2);
+	AndConstToX86Reg(&RspRecompPos, x86_EBX, 0x0fff);
 
-	MoveVariableToX86regHalf(&RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt), x86_EAX);
-	MoveX86regHalfToN64Mem(x86_EAX, x86_EBX);
+	MoveVariableToX86regHalf(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
+	MoveX86regHalfToDMem(&RspRecompPos, x86_EAX, x86_EBX);
 
-	if (Compiler.bAlignGPR == FALSE) {
-		CPU_Message("   Done:");
-		x86_SetBranch32b(Jump[1], RecompPos);
-	}*/
-	LogMessage("TODO: CompileRsp_SH");
+	if (RspCompiler.bAlignGPR == FALSE) {
+		RSP_CPU_Message("   Done:");
+		x86_SetBranch32b(Jump[1], RspRecompPos);
+	}
 }
 
 void CompileRsp_SW ( void ) {
-	/*int Offset = (short)RSPOpC.offset;
-	BYTE * Jump[2];*/
+	int Offset = (short)RSPOpC.OP.LS.offset;
+	BYTE * Jump[2];
 
 	#ifndef Compile_GPRStores
 	InterpreterFallback((void*)RSP_Opcode_SW,"RSP_Opcode_SW"); return;
 	#endif
 
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
-	if (IsRegConst(RSPOpC.base) == TRUE) {
-		DWORD Addr = (MipsRegConst(RSPOpC.base) + Offset) & 0xfff;
+	if (IsRspRegConst(RSPOpC.OP.LS.base) == TRUE) {
+		DWORD Addr = (MipsRspRegConst(RSPOpC.OP.LS.base) + Offset) & 0xfff;
 
 		if ((Addr & 3) != 0) {
-			CompilerWarning("Unaligned SW at constant address PC = %04X", CompilePC);
-			Cheat_r4300iOpcodeNoMessage(RSP_Opcode_SW,"RSP_Opcode_SW");
+			//RspCompilerWarning("Unaligned SW at constant address PC = %04X", RspCompilePC);
+			InterpreterFallbackNoMessage((void*)RSP_Opcode_SW,"RSP_Opcode_SW");
 			return;
 		} else {
 			char Address[32];			
 			sprintf(Address, "Dmem + %Xh", Addr);
-			MoveVariableToX86reg(&RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt), x86_EAX);
-			MoveX86regToVariable(x86_EAX, RSPInfo.DMEM + Addr, Address);			
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, DMEM + Addr, Address);			
 			return;
 		}
-	} 
-
-	MoveVariableToX86reg(&RSP_GPR[RSPOpC.base].UW, GPR_Name(RSPOpC.base), x86_EBX);
-	if (Offset != 0) AddConstToX86Reg(x86_EBX, Offset);
+	}
 	
-	if (Compiler.bAlignGPR == FALSE) {
-		TestConstToX86Reg(3, x86_EBX);
-		JneLabel32("Unaligned", 0);
-		Jump[0] = RecompPos - 4;
+	MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.base].UW, RspGPR_Name(RSPOpC.OP.LS.base), x86_EBX);
+	if (Offset != 0) AddConstToX86Reg(&RspRecompPos, x86_EBX, Offset);
+	
+	if (RspCompiler.bAlignGPR == FALSE) {
+		TestConstToX86Reg(&RspRecompPos, 3, x86_EBX);
+		JneLabel32(&RspRecompPos, "Unaligned", 0);
+		Jump[0] = RspRecompPos - 4;
 
-		CompilerToggleBuffer();
+		RspCompilerToggleBuffer();
 
-		CPU_Message("   Unaligned:");
-		x86_SetBranch32b(Jump[0], RecompPos);
+		RSP_CPU_Message("   Unaligned:");
+		x86_SetBranch32b(Jump[0], RspRecompPos);
 
-		Cheat_r4300iOpcodeNoMessage(RSP_Opcode_SW,"RSP_Opcode_SW");
-		JmpLabel32("Done", 0);
-		Jump[1] = RecompPos - 4;
+		InterpreterFallbackNoMessage((void*)RSP_Opcode_SW,"RSP_Opcode_SW");
+		JmpLabel32(&RspRecompPos, "Done", 0);
+		Jump[1] = RspRecompPos - 4;
 
-		CompilerToggleBuffer();
+		RspCompilerToggleBuffer();
 	}
 
-	AndConstToX86Reg(x86_EBX, 0x0fff);
-	MoveVariableToX86reg(&RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt), x86_EAX);
-	MoveX86regToN64Mem(x86_EAX, x86_EBX);
+	AndConstToX86Reg(&RspRecompPos, x86_EBX, 0x0fff);
+	MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
+	MoveX86regToDMem(&RspRecompPos, x86_EAX, x86_EBX);
 
-	if (Compiler.bAlignGPR == FALSE) {
-		CPU_Message("   Done:");
-		x86_SetBranch32b(Jump[1], RecompPos);
-	}*/
-	LogMessage("TODO: CompileRsp_SW");
+	if (RspCompiler.bAlignGPR == FALSE) {
+		RSP_CPU_Message("   Done:");
+		x86_SetBranch32b(Jump[1], RspRecompPos);
+	}
 }
 
 void CompileRsp_LC2 (void) {
