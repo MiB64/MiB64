@@ -834,22 +834,30 @@ void LeaSourceAndOffset(BYTE** code, int x86DestReg, int x86SourceReg, int offse
 	PUTDST32(*code,offset);
 }
 
-void MoveConstByteToN64Mem(BYTE** code, BYTE Const, int AddrReg) {
-	CPU_OR_RSP_Message(*code, "      mov byte ptr [%s+N64mem], %Xh",x86_Name(AddrReg),Const);
+static void MoveConstByteToBaseMem(BYTE** code, BYTE Const, int AddrReg, BYTE* base, char* baseName) {
+	CPU_OR_RSP_Message(*code, "      mov byte ptr [%s+%s], %Xh", x86_Name(AddrReg), baseName, Const);
 	switch (AddrReg) {
-	case x86_EAX: PUTDST16(*code,0x80C6); break;
-	case x86_EBX: PUTDST16(*code,0x83C6); break;
-	case x86_ECX: PUTDST16(*code,0x81C6); break;
-	case x86_EDX: PUTDST16(*code,0x82C6); break;
-	case x86_ESI: PUTDST16(*code,0x86C6); break;
-	case x86_EDI: PUTDST16(*code,0x87C6); break;
-	case x86_ESP: PUTDST16(*code,0x84C6); break;
-	case x86_EBP: PUTDST16(*code,0x85C6); break;
+	case x86_EAX: PUTDST16(*code, 0x80C6); break;
+	case x86_EBX: PUTDST16(*code, 0x83C6); break;
+	case x86_ECX: PUTDST16(*code, 0x81C6); break;
+	case x86_EDX: PUTDST16(*code, 0x82C6); break;
+	case x86_ESI: PUTDST16(*code, 0x86C6); break;
+	case x86_EDI: PUTDST16(*code, 0x87C6); break;
+	case x86_ESP: PUTDST16(*code, 0x84C6); break;
+	case x86_EBP: PUTDST16(*code, 0x85C6); break;
 	default:
 		DisplayError("MoveConstByteToN64Mem\nUnknown x86 Register");
 	}
-	PUTDST32(*code,N64MEM);
-	PUTDST8(*code,Const);
+	PUTDST32(*code, base);
+	PUTDST8(*code, Const);
+}
+
+void MoveConstByteToN64Mem(BYTE** code, BYTE Const, int AddrReg) {
+	MoveConstByteToBaseMem(code, Const, AddrReg, N64MEM, "N64MEM");
+}
+
+void MoveConstByteToDMem(BYTE** code, BYTE Const, int AddrReg) {
+	MoveConstByteToBaseMem(code, Const, AddrReg, DMEM, "DMEM");
 }
 
 void MoveConstByteToVariable (BYTE** code, BYTE Const,void *Variable, char *VariableName) {
@@ -1543,6 +1551,30 @@ void MoveX86regByteToDMem(BYTE** code, int x86reg, int AddrReg) {
 	MoveX86regByteToBaseMem(code, x86reg, AddrReg, DMEM, "DMEM");
 }
 
+void MoveX86regHighByteToDMem(BYTE** code, int x86reg, int AddrReg) {
+	WORD x86Command = 0x0;
+
+	CPU_OR_RSP_Message(*code, "      mov byte ptr [%s+DMEM], %s", x86_Name(AddrReg), x86HighByte_Name(x86reg));
+
+	switch (AddrReg) {
+	case x86_EAX: x86Command = 0x0088; break;
+	case x86_EBX: x86Command = 0x0388; break;
+	case x86_ECX: x86Command = 0x0188; break;
+	case x86_EDX: x86Command = 0x0288; break;
+	case x86_ESI: x86Command = 0x0688; break;
+	case x86_EDI: x86Command = 0x0788; break;
+	}
+	switch (x86reg) {
+	case x86_EAX: x86Command += 0xa000; break;
+	case x86_EBX: x86Command += 0xb800; break;
+	case x86_ECX: x86Command += 0xa800; break;
+	case x86_EDX: x86Command += 0xb000; break;
+	}
+	PUTDST16(*code, x86Command);
+	PUTDST32(*code, DMEM);
+}
+
+
 void MoveX86regByteToVariable(BYTE** code, int x86reg, void * Variable, char * VariableName) {
 	CPU_OR_RSP_Message(*code, "      mov byte ptr [%s], %s",VariableName,x86Byte_Name(x86reg));
 	switch (x86reg) {
@@ -1554,6 +1586,19 @@ void MoveX86regByteToVariable(BYTE** code, int x86reg, void * Variable, char * V
 		DisplayError("MoveX86regByteToVariable\nUnknown x86 Register");
 	}
     PUTDST32(*code,Variable);
+}
+
+void MoveX86regHighByteToVariable(BYTE** code, int x86reg, void* Variable, char* VariableName) {
+	CPU_OR_RSP_Message(*code, "      mov byte ptr [%s], %s", VariableName, x86HighByte_Name(x86reg));
+	switch (x86reg) {
+	case x86_EAX: PUTDST16(*code, 0x2588); break;
+	case x86_EBX: PUTDST16(*code, 0x3D88); break;
+	case x86_ECX: PUTDST16(*code, 0x2D88); break;
+	case x86_EDX: PUTDST16(*code, 0x3588); break;
+	default:
+		DisplayError("MoveX86regByteToVariable\nUnknown x86 Register");
+	}
+	PUTDST32(*code, Variable);
 }
 
 void MoveX86regByteToX86regPointer(BYTE** code, int x86reg, int AddrReg1, int AddrReg2) {

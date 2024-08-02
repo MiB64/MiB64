@@ -42,6 +42,10 @@ enum x86FpuValues {
 							(Reg) == x86_ECX  ? "cl" : (Reg) == x86_EDX  ? "dl" :\
 							"Unknown x86 Register"
 
+#define x86HighByte_Name(Reg)	(Reg) == x86_EAX  ? "ah" : (Reg) == x86_EBX  ? "bh" :\
+								(Reg) == x86_ECX  ? "ch" : (Reg) == x86_EDX  ? "dh" :\
+								"Unknown x86 Register"
+
 #define x86Half_Name(Reg)   (Reg) == x86_EAX  ? "ax" : (Reg) == x86_EBX  ? "bx" :\
 							(Reg) == x86_ECX  ? "cx" : (Reg) == x86_EDX  ? "dx" :\
 							(Reg) == x86_ESI  ? "si" :	(Reg) == x86_EDI  ? "di" :\
@@ -106,6 +110,7 @@ void JsLabel32                       ( BYTE** code, char * Label, DWORD Value );
 void LeaRegReg                       ( BYTE** code, int x86RegDest, int x86RegSrc, int multiplier );
 void LeaSourceAndOffset              ( BYTE** code, int x86DestReg, int x86SourceReg, int offset );
 void MoveConstByteToN64Mem           ( BYTE** code, BYTE Const, int AddrReg );
+void MoveConstByteToDMem             ( BYTE** code, BYTE Const, int AddrReg );
 void MoveConstHalfToN64Mem           ( BYTE** code, WORD Const, int AddrReg );
 void MoveConstByteToVariable         ( BYTE** code, BYTE Const,void *Variable, char *VariableName );
 void MoveConstByteToX86regPointer    ( BYTE** code, BYTE Const, int AddrReg1, int AddrReg2 );
@@ -139,7 +144,9 @@ void MoveVariableToX86regHalf        ( BYTE** code, void *Variable, char *Variab
 void MoveX86PointerToX86reg          ( BYTE** code, int x86reg, int X86Pointer );
 void MoveX86regByteToN64Mem          ( BYTE** code, int x86reg, int AddrReg );
 void MoveX86regByteToDMem            ( BYTE** code, int x86reg, int AddrReg );
+void MoveX86regHighByteToDMem        ( BYTE** code, int x86reg, int AddrReg );
 void MoveX86regByteToVariable        ( BYTE** code, int x86reg, void * Variable, char * VariableName );
+void MoveX86regHighByteToVariable    ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void MoveX86regByteToX86regPointer   ( BYTE** code, int x86reg, int AddrReg1, int AddrReg2 );
 void MoveX86regHalfToN64Mem          ( BYTE** code, int x86reg, int AddrReg );
 void MoveX86regHalfToDMem			 ( BYTE** code, int x86reg, int AddrReg );
