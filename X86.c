@@ -279,6 +279,37 @@ void AndConstToX86Reg(BYTE** code, int x86Reg, DWORD Const) {
 	}
 }
 
+void AndConstToX86RegHalf(BYTE** code, int x86Reg, WORD Const) {
+	CPU_OR_RSP_Message(*code, "      and %s, %Xh", x86Half_Name(x86Reg), Const);
+	PUTDST8(*code, 0x66);
+	if ((Const & 0xFF80) != 0 && (Const & 0xFF80) != 0xFF80) {
+		switch (x86Reg) {
+		case x86_EAX: PUTDST16(*code, 0xE081); break;
+		case x86_EBX: PUTDST16(*code, 0xE381); break;
+		case x86_ECX: PUTDST16(*code, 0xE181); break;
+		case x86_EDX: PUTDST16(*code, 0xE281); break;
+		case x86_ESI: PUTDST16(*code, 0xE681); break;
+		case x86_EDI: PUTDST16(*code, 0xE781); break;
+		case x86_ESP: PUTDST16(*code, 0xE481); break;
+		case x86_EBP: PUTDST16(*code, 0xE581); break;
+		}
+		PUTDST16(*code, Const);
+	}
+	else {
+		switch (x86Reg) {
+		case x86_EAX: PUTDST16(*code, 0xE083); break;
+		case x86_EBX: PUTDST16(*code, 0xE383); break;
+		case x86_ECX: PUTDST16(*code, 0xE183); break;
+		case x86_EDX: PUTDST16(*code, 0xE283); break;
+		case x86_ESI: PUTDST16(*code, 0xE683); break;
+		case x86_EDI: PUTDST16(*code, 0xE783); break;
+		case x86_ESP: PUTDST16(*code, 0xE483); break;
+		case x86_EBP: PUTDST16(*code, 0xE583); break;
+		}
+		PUTDST8(*code, Const);
+	}
+}
+
 void AndVariableDispToX86Reg(BYTE** code, void *Variable, char *VariableName, int x86Reg, int AddrReg, int Multiplier) {
 	int x;
 	CPU_OR_RSP_Message(*code, "      and %s, dword ptr [%s+%s*%i]",x86_Name(x86Reg),VariableName, x86_Name(AddrReg), Multiplier);
@@ -806,32 +837,62 @@ void LeaSourceAndOffset(BYTE** code, int x86DestReg, int x86SourceReg, int offse
 
 	CPU_OR_RSP_Message(*code, "      lea %s, [%s + %0Xh]",x86_Name(x86DestReg),x86_Name(x86SourceReg),offset);
 
-	switch (x86DestReg) {
-	case x86_EAX: x86Command = 0x808D; break;
-	case x86_EBX: x86Command = 0x988D; break;
-	case x86_ECX: x86Command = 0x888D; break;
-	case x86_EDX: x86Command = 0x908D; break;
-	case x86_ESI: x86Command = 0xB08D; break;
-	case x86_EDI: x86Command = 0xB88D; break;
-	case x86_ESP: x86Command = 0xA08D; break;
-	case x86_EBP: x86Command = 0xA88D; break;
-	default:
-		DisplayError("LeaSourceAndOffset\nUnknown x86 Register");
+	if ((offset & 0xFFFFFF80) != 0 && (offset & 0xFFFFFF80) != 0xFFFFFF80) {
+		switch (x86DestReg) {
+		case x86_EAX: x86Command = 0x808D; break;
+		case x86_EBX: x86Command = 0x988D; break;
+		case x86_ECX: x86Command = 0x888D; break;
+		case x86_EDX: x86Command = 0x908D; break;
+		case x86_ESI: x86Command = 0xB08D; break;
+		case x86_EDI: x86Command = 0xB88D; break;
+		case x86_ESP: x86Command = 0xA08D; break;
+		case x86_EBP: x86Command = 0xA88D; break;
+		default:
+			DisplayError("LeaSourceAndOffset\nUnknown x86 Register");
+		}
+		switch (x86SourceReg) {
+		case x86_EAX: x86Command += 0x0000; break;
+		case x86_EBX: x86Command += 0x0300; break;
+		case x86_ECX: x86Command += 0x0100; break;
+		case x86_EDX: x86Command += 0x0200; break;
+		case x86_ESI: x86Command += 0x0600; break;
+		case x86_EDI: x86Command += 0x0700; break;
+		case x86_ESP: x86Command += 0x0400; break;
+		case x86_EBP: x86Command += 0x0500; break;
+		default:
+			DisplayError("LeaSourceAndOffset\nUnknown x86 Register");
+		}
+		PUTDST16(*code, x86Command);
+		PUTDST32(*code, offset);
 	}
-	switch (x86SourceReg) {
-	case x86_EAX: x86Command += 0x0000; break;
-	case x86_EBX: x86Command += 0x0300; break;
-	case x86_ECX: x86Command += 0x0100; break;
-	case x86_EDX: x86Command += 0x0200; break;
-	case x86_ESI: x86Command += 0x0600; break;
-	case x86_EDI: x86Command += 0x0700; break;
-	case x86_ESP: x86Command += 0x0400; break;
-	case x86_EBP: x86Command += 0x0500; break;
-	default:
-		DisplayError("LeaSourceAndOffset\nUnknown x86 Register");
+	else {
+		switch (x86DestReg) {
+		case x86_EAX: x86Command = 0x408D; break;
+		case x86_EBX: x86Command = 0x588D; break;
+		case x86_ECX: x86Command = 0x488D; break;
+		case x86_EDX: x86Command = 0x508D; break;
+		case x86_ESI: x86Command = 0x708D; break;
+		case x86_EDI: x86Command = 0x788D; break;
+		case x86_ESP: x86Command = 0x608D; break;
+		case x86_EBP: x86Command = 0x688D; break;
+		default:
+			DisplayError("LeaSourceAndOffset\nUnknown x86 Register");
+		}
+		switch (x86SourceReg) {
+		case x86_EAX: x86Command += 0x0000; break;
+		case x86_EBX: x86Command += 0x0300; break;
+		case x86_ECX: x86Command += 0x0100; break;
+		case x86_EDX: x86Command += 0x0200; break;
+		case x86_ESI: x86Command += 0x0600; break;
+		case x86_EDI: x86Command += 0x0700; break;
+		case x86_ESP: x86Command += 0x0400; break;
+		case x86_EBP: x86Command += 0x0500; break;
+		default:
+			DisplayError("LeaSourceAndOffset\nUnknown x86 Register");
+		}
+		PUTDST16(*code, x86Command);
+		PUTDST8(*code, offset);
 	}
-	PUTDST16(*code,x86Command);
-	PUTDST32(*code,offset);
 }
 
 static void MoveConstByteToBaseMem(BYTE** code, BYTE Const, int AddrReg, BYTE* base, char* baseName) {
@@ -867,23 +928,31 @@ void MoveConstByteToVariable (BYTE** code, BYTE Const,void *Variable, char *Vari
     PUTDST8(*code,Const);
 }
 
-void MoveConstHalfToN64Mem(BYTE** code, WORD Const, int AddrReg) {
-	CPU_OR_RSP_Message(*code, "      mov word ptr [%s+N64mem], %Xh",x86_Name(AddrReg),Const);
-	PUTDST8(*code,0x66);
+static void MoveConstHalfToBaseMem(BYTE** code, WORD Const, int AddrReg, BYTE* base, char* baseName) {
+	CPU_OR_RSP_Message(*code, "      mov word ptr [%s+%s], %Xh", x86_Name(AddrReg), baseName, Const);
+	PUTDST8(*code, 0x66);
 	switch (AddrReg) {
-	case x86_EAX: PUTDST16(*code,0x80C7); break;
-	case x86_EBX: PUTDST16(*code,0x83C7); break;
-	case x86_ECX: PUTDST16(*code,0x81C7); break;
-	case x86_EDX: PUTDST16(*code,0x82C7); break;
-	case x86_ESI: PUTDST16(*code,0x86C7); break;
-	case x86_EDI: PUTDST16(*code,0x87C7); break;
-	case x86_ESP: PUTDST16(*code,0x84C7); break;
-	case x86_EBP: PUTDST16(*code,0x85C7); break;
+	case x86_EAX: PUTDST16(*code, 0x80C7); break;
+	case x86_EBX: PUTDST16(*code, 0x83C7); break;
+	case x86_ECX: PUTDST16(*code, 0x81C7); break;
+	case x86_EDX: PUTDST16(*code, 0x82C7); break;
+	case x86_ESI: PUTDST16(*code, 0x86C7); break;
+	case x86_EDI: PUTDST16(*code, 0x87C7); break;
+	case x86_ESP: PUTDST16(*code, 0x84C7); break;
+	case x86_EBP: PUTDST16(*code, 0x85C7); break;
 	default:
 		DisplayError("MoveConstToN64Mem\nUnknown x86 Register");
 	}
-	PUTDST32(*code,N64MEM);
-	PUTDST16(*code,Const);
+	PUTDST32(*code, base);
+	PUTDST16(*code, Const);
+}
+
+void MoveConstHalfToN64Mem(BYTE** code, WORD Const, int AddrReg) {
+	MoveConstHalfToBaseMem(code, Const, AddrReg, N64MEM, "N64MEM");
+}
+
+void MoveConstHalfToDMem(BYTE** code, WORD Const, int AddrReg) {
+	MoveConstHalfToBaseMem(code, Const, AddrReg, DMEM, "DMEM");
 }
 
 void MoveConstHalfToVariable (BYTE** code, WORD Const,void *Variable, char *VariableName) {
@@ -947,22 +1016,30 @@ void MoveConstToMemoryDisp (BYTE** code, DWORD Const, int AddrReg, DWORD Disp) {
 	PUTDST32(*code,Const);
 }
 
-void MoveConstToN64Mem(BYTE** code, DWORD Const, int AddrReg) {
-	CPU_OR_RSP_Message(*code, "      mov dword ptr [%s+N64mem], %Xh",x86_Name(AddrReg),Const);
+static void MoveConstToBaseMem(BYTE** code, DWORD Const, int AddrReg, BYTE* base, char* baseName) {
+	CPU_OR_RSP_Message(*code, "      mov dword ptr [%s+%s], %Xh", x86_Name(AddrReg), baseName, Const);
 	switch (AddrReg) {
-	case x86_EAX: PUTDST16(*code,0x80C7); break;
-	case x86_EBX: PUTDST16(*code,0x83C7); break;
-	case x86_ECX: PUTDST16(*code,0x81C7); break;
-	case x86_EDX: PUTDST16(*code,0x82C7); break;
-	case x86_ESI: PUTDST16(*code,0x86C7); break;
-	case x86_EDI: PUTDST16(*code,0x87C7); break;
-	case x86_ESP: PUTDST16(*code,0x84C7); break;
-	case x86_EBP: PUTDST16(*code,0x85C7); break;
+	case x86_EAX: PUTDST16(*code, 0x80C7); break;
+	case x86_EBX: PUTDST16(*code, 0x83C7); break;
+	case x86_ECX: PUTDST16(*code, 0x81C7); break;
+	case x86_EDX: PUTDST16(*code, 0x82C7); break;
+	case x86_ESI: PUTDST16(*code, 0x86C7); break;
+	case x86_EDI: PUTDST16(*code, 0x87C7); break;
+	case x86_ESP: PUTDST16(*code, 0x84C7); break;
+	case x86_EBP: PUTDST16(*code, 0x85C7); break;
 	default:
 		DisplayError("MoveConstToN64Mem\nUnknown x86 Register");
 	}
-	PUTDST32(*code,N64MEM);
-	PUTDST32(*code,Const);
+	PUTDST32(*code, base);
+	PUTDST32(*code, Const);
+}
+
+void MoveConstToN64Mem(BYTE** code, DWORD Const, int AddrReg) {
+	MoveConstToBaseMem(code, Const, AddrReg, N64MEM, "N64MEM");
+}
+
+void MoveConstToDMem(BYTE** code, DWORD Const, int AddrReg) {
+	MoveConstToBaseMem(code, Const, AddrReg, DMEM, "DMEM");
 }
 
 void MoveConstToN64MemDisp (BYTE** code, DWORD Const, int AddrReg, BYTE Disp) {

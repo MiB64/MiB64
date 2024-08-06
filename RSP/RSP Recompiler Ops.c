@@ -1017,14 +1017,35 @@ void CompileRsp_SB ( void ) {
 
 	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
+	if (IsRspRegConst(RSPOpC.OP.LS.base) == TRUE) {
+		DWORD Addr = (MipsRspRegConst(RSPOpC.OP.LS.base) + Offset);
+
+		if (IsRspRegConst(RSPOpC.OP.LS.rt) == TRUE) {
+			char Address[32];
+			sprintf(Address, "Dmem + %Xh", Addr);
+			MoveConstByteToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.LS.rt) & 0xFF, DMEM + ((Addr & 0xFFF) ^ 3), Address);
+		} else {
+			MoveVariableToX86regByte(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
+			char Address[32];
+			sprintf(Address, "Dmem + %Xh", Addr);
+			MoveX86regByteToVariable(&RspRecompPos, x86_EAX, DMEM + ((Addr & 0xFFF) ^ 3), Address);
+		}
+		return;
+	}
+
 	MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.base].UW, RspGPR_Name(RSPOpC.OP.LS.base), x86_EBX);
-	MoveVariableToX86regByte(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
 
 	if (Offset != 0) AddConstToX86Reg(&RspRecompPos, x86_EBX, Offset);
 	XorConstToX86Reg(&RspRecompPos, x86_EBX, 3);
 	AndConstToX86Reg(&RspRecompPos, x86_EBX, 0x0fff);
 
-	MoveX86regByteToDMem(&RspRecompPos, x86_EAX, x86_EBX);
+	if (IsRspRegConst(RSPOpC.OP.LS.rt)) {
+		MoveConstByteToDMem(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.LS.rt) & 0xFF, x86_EBX);
+	}
+	else {
+		MoveVariableToX86regByte(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
+		MoveX86regByteToDMem(&RspRecompPos, x86_EAX, x86_EBX);
+	}
 }
 
 void CompileRsp_SH ( void ) {
@@ -1040,7 +1061,7 @@ void CompileRsp_SH ( void ) {
 	if (IsRspRegConst(RSPOpC.OP.LS.base) == TRUE) {
 		DWORD Addr = (MipsRspRegConst(RSPOpC.OP.LS.base) + Offset);
 
-		if ((Offset & 1) != 0) {
+		if ((Addr & 1) != 0) {
 			//RspCompilerWarning("Unaligned SH at constant address PC = %04X", RspCompilePC);
 
 			if (IsRspRegConst(RSPOpC.OP.LS.rt)) {
@@ -1066,7 +1087,7 @@ void CompileRsp_SH ( void ) {
 			char Address[32];			
 			sprintf(Address, "Dmem + %Xh", Addr);
 			if (IsRspRegConst(RSPOpC.OP.LS.rt) == TRUE) {
-				MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.LS.rt), DMEM + Addr, Address);
+				MoveConstHalfToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.LS.rt) & 0xFFFF, DMEM + Addr, Address);
 			} else {
 				MoveVariableToX86regHalf(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
 				MoveX86regHalfToVariable(&RspRecompPos, x86_EAX, DMEM + Addr, Address);
@@ -1095,7 +1116,7 @@ void CompileRsp_SH ( void ) {
 		AndConstToX86Reg(&RspRecompPos, x86_ECX, 0xFFF);
 		XorConstToX86Reg(&RspRecompPos, x86_EBX, 3);
 		XorConstToX86Reg(&RspRecompPos, x86_ECX, 3);
-
+		
 		if (IsRspRegConst(RSPOpC.OP.LS.rt)) {
 			MoveConstByteToDMem(&RspRecompPos, (MipsRspRegConst(RSPOpC.OP.LS.rt) >> 8) & 0xFF, x86_EBX);
 			MoveConstByteToDMem(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.LS.rt) & 0xFF, x86_ECX);
@@ -1114,8 +1135,12 @@ void CompileRsp_SH ( void ) {
 	XorConstToX86Reg(&RspRecompPos, x86_EBX, 2);
 	AndConstToX86Reg(&RspRecompPos, x86_EBX, 0x0fff);
 
-	MoveVariableToX86regHalf(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
-	MoveX86regHalfToDMem(&RspRecompPos, x86_EAX, x86_EBX);
+	if (IsRspRegConst(RSPOpC.OP.LS.rt)) {
+		MoveConstHalfToDMem(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.LS.rt) & 0xFFFF, x86_EBX);
+	} else {
+		MoveVariableToX86regHalf(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
+		MoveX86regHalfToDMem(&RspRecompPos, x86_EAX, x86_EBX);
+	}
 
 	if (RspCompiler.bAlignGPR == FALSE) {
 		RSP_CPU_Message("   Done:");
@@ -1138,7 +1163,31 @@ void CompileRsp_SW ( void ) {
 
 		if ((Addr & 3) != 0) {
 			//RspCompilerWarning("Unaligned SW at constant address PC = %04X", RspCompilePC);
-			InterpreterFallbackNoMessage((void*)RSP_Opcode_SW,"RSP_Opcode_SW");
+			
+			if (IsRspRegConst(RSPOpC.OP.LS.rt)) {
+				char Address[32];
+				sprintf(Address, "Dmem + %Xh", Addr);
+				MoveConstByteToVariable(&RspRecompPos, (MipsRspRegConst(RSPOpC.OP.LS.rt) >> 24) & 0xFF, DMEM + ((Addr & 0xFFF) ^ 3), Address);
+				sprintf(Address, "Dmem + %Xh", Addr + 1);
+				MoveConstByteToVariable(&RspRecompPos, (MipsRspRegConst(RSPOpC.OP.LS.rt) >> 16) & 0xFF, DMEM + (((Addr + 1) & 0xFFF) ^ 3), Address);
+				sprintf(Address, "Dmem + %Xh", Addr + 2);
+				MoveConstByteToVariable(&RspRecompPos, (MipsRspRegConst(RSPOpC.OP.LS.rt) >> 8) & 0xFF, DMEM + (((Addr + 2) & 0xFFF) ^ 3), Address);
+				sprintf(Address, "Dmem + %Xh", Addr + 3);
+				MoveConstByteToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.LS.rt) & 0xFF, DMEM + (((Addr + 3) & 0xFFF) ^ 3), Address);
+			}
+			else {
+				MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
+				char Address[32];
+				sprintf(Address, "Dmem + %Xh", Addr + 2);
+				MoveX86regHighByteToVariable(&RspRecompPos, x86_EAX, DMEM + (((Addr + 2) & 0xFFF) ^ 3), Address);
+				sprintf(Address, "Dmem + %Xh", Addr + 3);
+				MoveX86regByteToVariable(&RspRecompPos, x86_EAX, DMEM + (((Addr + 3) & 0xFFF) ^ 3), Address);
+				ShiftRightUnsignImmed(&RspRecompPos, x86_EAX, 16);
+				sprintf(Address, "Dmem + %Xh", Addr);
+				MoveX86regHighByteToVariable(&RspRecompPos, x86_EAX, DMEM + ((Addr & 0xFFF) ^ 3), Address);
+				sprintf(Address, "Dmem + %Xh", Addr + 1);
+				MoveX86regByteToVariable(&RspRecompPos, x86_EAX, DMEM + (((Addr + 1) & 0xFFF) ^ 3), Address);
+			}
 			return;
 		} else {
 			char Address[32];			
@@ -1162,7 +1211,34 @@ void CompileRsp_SW ( void ) {
 		RSP_CPU_Message("   Unaligned:");
 		x86_SetBranch32b(Jump[0], RspRecompPos);
 
-		InterpreterFallbackNoMessage((void*)RSP_Opcode_SW,"RSP_Opcode_SW");
+		AndConstToX86Reg(&RspRecompPos, x86_EBX, 0xFFF);
+		LeaSourceAndOffset(&RspRecompPos, x86_ECX, x86_EBX, 1);
+		LeaSourceAndOffset(&RspRecompPos, x86_EDX, x86_EBX, 2);
+		LeaSourceAndOffset(&RspRecompPos, x86_ESI, x86_EBX, 3);
+
+		AndConstToX86RegHalf(&RspRecompPos, x86_ECX, 0xFFF);
+		AndConstToX86RegHalf(&RspRecompPos, x86_EDX, 0xFFF);
+		AndConstToX86RegHalf(&RspRecompPos, x86_ESI, 0xFFF);
+		XorConstToX86Reg(&RspRecompPos, x86_EBX, 3);
+		XorConstToX86Reg(&RspRecompPos, x86_ECX, 3);
+		XorConstToX86Reg(&RspRecompPos, x86_EDX, 3);
+		XorConstToX86Reg(&RspRecompPos, x86_ESI, 3);
+
+		if (IsRspRegConst(RSPOpC.OP.LS.rt)) {
+			MoveConstByteToDMem(&RspRecompPos, (MipsRspRegConst(RSPOpC.OP.LS.rt) >> 24) & 0xFF, x86_EBX);
+			MoveConstByteToDMem(&RspRecompPos, (MipsRspRegConst(RSPOpC.OP.LS.rt) >> 16) & 0xFF, x86_ECX);
+			MoveConstByteToDMem(&RspRecompPos, (MipsRspRegConst(RSPOpC.OP.LS.rt) >> 8) & 0xFF, x86_EDX);
+			MoveConstByteToDMem(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.LS.rt) & 0xFF, x86_ESI);
+		}
+		else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
+			MoveX86regHighByteToDMem(&RspRecompPos, x86_EAX, x86_EDX);
+			MoveX86regByteToDMem(&RspRecompPos, x86_EAX, x86_ESI);
+			ShiftRightUnsignImmed(&RspRecompPos, x86_EAX, 16);
+			MoveX86regHighByteToDMem(&RspRecompPos, x86_EAX, x86_EBX);
+			MoveX86regByteToDMem(&RspRecompPos, x86_EAX, x86_ECX);
+		}
+
 		JmpLabel32(&RspRecompPos, "Done", 0);
 		Jump[1] = RspRecompPos - 4;
 
@@ -1170,8 +1246,12 @@ void CompileRsp_SW ( void ) {
 	}
 
 	AndConstToX86Reg(&RspRecompPos, x86_EBX, 0x0fff);
-	MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
-	MoveX86regToDMem(&RspRecompPos, x86_EAX, x86_EBX);
+	if (IsRspRegConst(RSPOpC.OP.LS.rt)) {
+		MoveConstToDMem(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.LS.rt), x86_EBX);
+	} else {
+		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt), x86_EAX);
+		MoveX86regToDMem(&RspRecompPos, x86_EAX, x86_EBX);
+	}
 
 	if (RspCompiler.bAlignGPR == FALSE) {
 		RSP_CPU_Message("   Done:");

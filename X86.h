@@ -64,6 +64,7 @@ void AddX86regToVariable             ( BYTE** code, int x86reg, void * Variable,
 void AddX86RegToX86Reg               ( BYTE** code, int Destination, int Source );
 void AndConstToVariable              ( BYTE** code, DWORD Const, void *Variable, char *VariableName );
 void AndConstToX86Reg                ( BYTE** code, int x86Reg, DWORD Const );
+void AndConstToX86RegHalf            ( BYTE** code, int x86Reg, WORD Const );
 void AndVariableToX86Reg             ( BYTE** code, void * Variable, char * VariableName, int x86Reg );
 void AndVariableDispToX86Reg         ( BYTE** code, void * Variable, char * VariableName, int x86Reg, int AddrReg, int Multiplier);
 void AndX86RegToVariable             ( BYTE** code, void * Variable, char * VariableName, int x86Reg );
@@ -112,12 +113,14 @@ void LeaSourceAndOffset              ( BYTE** code, int x86DestReg, int x86Sourc
 void MoveConstByteToN64Mem           ( BYTE** code, BYTE Const, int AddrReg );
 void MoveConstByteToDMem             ( BYTE** code, BYTE Const, int AddrReg );
 void MoveConstHalfToN64Mem           ( BYTE** code, WORD Const, int AddrReg );
+void MoveConstHalfToDMem             ( BYTE** code, WORD Const, int AddrReg );
 void MoveConstByteToVariable         ( BYTE** code, BYTE Const,void *Variable, char *VariableName );
 void MoveConstByteToX86regPointer    ( BYTE** code, BYTE Const, int AddrReg1, int AddrReg2 );
 void MoveConstHalfToVariable         ( BYTE** code, WORD Const, void *Variable, char *VariableName );
 void MoveConstHalfToX86regPointer    ( BYTE** code, WORD Const, int AddrReg1, int AddrReg2 );
 void MoveConstToMemoryDisp           ( BYTE** code, DWORD Const, int AddrReg, DWORD Disp );
 void MoveConstToN64Mem               ( BYTE** code, DWORD Const, int AddrReg );
+void MoveConstToDMem                 ( BYTE** code, DWORD Const, int AddrReg );
 void MoveConstToN64MemDisp           ( BYTE** code, DWORD Const, int AddrReg, BYTE Disp );
 void MoveConstToVariable             ( BYTE** code, DWORD Const, void *Variable, char *VariableName );
 void MoveConstToX86Pointer           ( BYTE** code, DWORD Const, int X86Pointer );
