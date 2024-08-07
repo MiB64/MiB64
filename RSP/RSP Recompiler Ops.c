@@ -5128,27 +5128,24 @@ void CompileRsp_CheckRspIsRunning() {
 	CompConstToVariable(&RspRecompPos, 0, &RSP_Running, "RSP_Running");
 	JneLabel8(&RspRecompPos, "RSP_Running", 0);
 	BYTE* pos = RspRecompPos - 1;
-	MoveConstToVariable(&RspRecompPos, RspCompilePC, &SP_PC_REG, "RSP PC");
+	MoveConstHalfToVariable(&RspRecompPos, (WORD)RspCompilePC, &SP_PC_REG, "RSP PC");
 	Ret(&RspRecompPos);
 	RSP_CPU_Message("   RSP_Running:");
 	x86_SetBranch8b(pos, RspRecompPos);
 }
 
 void CompileRsp_SaveBeginOfSubBlock() {
-	MoveConstToVariable(&RspRecompPos, RspCompilePC, &BeginOfCurrentSubBlock, "BeginOfCurentSubBlock");
+	MoveConstHalfToVariable(&RspRecompPos, (WORD)RspCompilePC, &BeginOfCurrentSubBlock, "BeginOfCurentSubBlock");
 }
 
 void CompileRsp_UpdateCycleCounts() {
 	MoveConstToX86reg(&RspRecompPos, RspCompilePC+4, x86_EAX);
 	SubVariableFromX86reg(&RspRecompPos, x86_EAX, &BeginOfCurrentSubBlock, "BeginOfcurrentSubBlock");
 	ShiftRightUnsignImmed(&RspRecompPos, x86_EAX, 2);
-	MoveVariableToX86reg(&RspRecompPos, &RemainingRspCycles, "RemainingRspCycles", x86_EBX);
-	SubX86RegToX86Reg(&RspRecompPos, x86_EBX, x86_EAX);
-	MoveX86regToVariable(&RspRecompPos, x86_EBX, &RemainingRspCycles, "RemainingRspCycles");
-	CompConstToX86reg(&RspRecompPos, x86_EBX, 0);
+	SubX86regFromVariable(&RspRecompPos, x86_EAX, &RemainingRspCycles, "RemainingRspCycles");
 	JgLabel8(&RspRecompPos, "NotYetFinished", 0);
 	BYTE* pos = RspRecompPos - 1;
-	MoveConstToVariable(&RspRecompPos, 0, &RSP_Running, "RSP_Running");
+	MoveConstByteToVariable(&RspRecompPos, 0, &RSP_Running, "RSP_Running");
 	RSP_CPU_Message("   NotYetFinished:");
 	x86_SetBranch8b(pos, RspRecompPos);
 }

@@ -428,9 +428,16 @@ void Call_Indirect(BYTE** code, void * FunctAddress, char * FunctName) {
 
 void CompConstToVariable(BYTE** code, DWORD Const, void * Variable, char * VariableName) {
 	CPU_OR_RSP_Message(*code, "      cmp dword ptr [%s], 0x%X",VariableName, Const);
-	PUTDST16(*code,0x3D81);
-	PUTDST32(*code,Variable);
-	PUTDST32(*code,Const);
+	if ((Const & 0xFFFFFF80) != 0 && (Const & 0xFFFFFF80) != 0xFFFFFF80) {
+		PUTDST16(*code, 0x3D81);
+		PUTDST32(*code, Variable);
+		PUTDST32(*code, Const);
+	}
+	else {
+		PUTDST16(*code, 0x3D83);
+		PUTDST32(*code, Variable);
+		PUTDST8(*code, Const);
+	}
 }
 
 void CompConstToX86reg(BYTE** code, int x86Reg, DWORD Const) {
@@ -1088,14 +1095,14 @@ void MoveConstToX86Pointer(BYTE** code, DWORD Const, int X86Pointer) {
 void MoveConstToX86reg(BYTE** code, DWORD Const, int x86reg) {
 	CPU_OR_RSP_Message(*code, "      mov %s, %Xh",x86_Name(x86reg),Const);
 	switch (x86reg) {
-	case x86_EAX: PUTDST16(*code,0xC0C7); break;
-	case x86_EBX: PUTDST16(*code,0xC3C7); break;
-	case x86_ECX: PUTDST16(*code,0xC1C7); break;
-	case x86_EDX: PUTDST16(*code,0xC2C7); break;
-	case x86_ESI: PUTDST16(*code,0xC6C7); break;
-	case x86_EDI: PUTDST16(*code,0xC7C7); break;
-	case x86_ESP: PUTDST16(*code,0xC4C7); break;
-	case x86_EBP: PUTDST16(*code,0xC5C7); break;
+	case x86_EAX: PUTDST8(*code,0xB8); break;
+	case x86_EBX: PUTDST8(*code,0xBB); break;
+	case x86_ECX: PUTDST8(*code,0xB9); break;
+	case x86_EDX: PUTDST8(*code,0xBA); break;
+	case x86_ESI: PUTDST8(*code,0xBE); break;
+	case x86_EDI: PUTDST8(*code,0xBF); break;
+	case x86_ESP: PUTDST8(*code,0xBC); break;
+	case x86_EBP: PUTDST8(*code,0xBD); break;
 	default:
 		DisplayError("MoveConstToX86reg\nUnknown x86 Register");
 		_asm int 3
