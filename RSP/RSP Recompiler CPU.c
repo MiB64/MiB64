@@ -904,7 +904,7 @@ static void CompilerRSPBlock ( void ) {
 DWORD RunRecompilerRspCPU ( DWORD Cycles ) {
 	BYTE * Block;
 
-	RemainingRspCycles = Cycles;
+	RemainingRspCycles = Cycles * 4;
 
 	RSP_Running = TRUE;
 	if (IMEMIsUpdated) {
@@ -962,5 +962,5 @@ DWORD RunRecompilerRspCPU ( DWORD Cycles ) {
 		_asm emms
 	}*/
 
-	return Cycles - RemainingRspCycles;
+	return Cycles - RemainingRspCycles / 4;
 }

@@ -5141,7 +5141,6 @@ void CompileRsp_SaveBeginOfSubBlock() {
 void CompileRsp_UpdateCycleCounts() {
 	MoveConstToX86reg(&RspRecompPos, RspCompilePC+4, x86_EAX);
 	SubVariableFromX86reg(&RspRecompPos, x86_EAX, &BeginOfCurrentSubBlock, "BeginOfcurrentSubBlock");
-	ShiftRightUnsignImmed(&RspRecompPos, x86_EAX, 2);
 	SubX86regFromVariable(&RspRecompPos, x86_EAX, &RemainingRspCycles, "RemainingRspCycles");
 	JgLabel8(&RspRecompPos, "NotYetFinished", 0);
 	BYTE* pos = RspRecompPos - 1;

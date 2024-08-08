@@ -147,17 +147,23 @@ void AdcX86RegToX86Reg(BYTE** code, int Destination, int Source) {
 }
 
 void AddConstToVariable (BYTE** code, DWORD Const, void *Variable, char *VariableName) {
-	CPU_OR_RSP_Message(*code, "      add dword ptr [%s], 0x%X",VariableName, Const);\
-	PUTDST16(*code,0x0581);
-	PUTDST32(*code,Variable);
-	PUTDST32(*code,Const);
+	CPU_OR_RSP_Message(*code, "      add dword ptr [%s], 0x%X",VariableName, Const);
+	if ((Const & 0xFFFFFF80) != 0 && (Const & 0xFFFFFF80) != 0xFFFFFF80) {
+		PUTDST16(*code, 0x0581);
+		PUTDST32(*code, Variable);
+		PUTDST32(*code, Const);
+	} else {
+		PUTDST16(*code, 0x0583);
+		PUTDST32(*code, Variable);
+		PUTDST8(*code, Const);
+	}
 }
 
 void AddConstToX86Reg (BYTE** code, int x86Reg, DWORD Const) {
 	CPU_OR_RSP_Message(*code, "      add %s, %Xh",x86_Name(x86Reg),Const);
 	if ((Const & 0xFFFFFF80) != 0 && (Const & 0xFFFFFF80) != 0xFFFFFF80) {
 		switch (x86Reg) {
-		case x86_EAX: PUTDST16(*code,0xC081); break;
+		case x86_EAX: PUTDST8(*code,0x05); break;
 		case x86_EBX: PUTDST16(*code,0xC381); break;
 		case x86_ECX: PUTDST16(*code,0xC181); break;
 		case x86_EDX: PUTDST16(*code,0xC281); break;
@@ -1521,7 +1527,7 @@ void MoveSxVariableToX86regHalf(BYTE** code, void *Variable, char *VariableName,
 void MoveVariableToX86reg(BYTE** code, void *Variable, char *VariableName, int x86reg) {
 	CPU_OR_RSP_Message(*code, "      mov %s, dword ptr [%s]",x86_Name(x86reg),VariableName);
 	switch (x86reg) {
-	case x86_EAX: PUTDST16(*code,0x058B); break;
+	case x86_EAX: PUTDST8(*code,0xA1); break;
 	case x86_EBX: PUTDST16(*code,0x1D8B); break;
 	case x86_ECX: PUTDST16(*code,0x0D8B); break;
 	case x86_EDX: PUTDST16(*code,0x158B); break;
@@ -2040,7 +2046,7 @@ void MoveX86regToN64MemDisp(BYTE** code, int x86reg, int AddrReg, BYTE Disp) {
 void MoveX86regToVariable(BYTE** code, int x86reg, void * Variable, char * VariableName) {
 	CPU_OR_RSP_Message(*code, "      mov dword ptr [%s], %s",VariableName,x86_Name(x86reg));
 	switch (x86reg) {
-	case x86_EAX: PUTDST16(*code,0x0589); break;
+	case x86_EAX: PUTDST8(*code,0xa3); break;
 	case x86_EBX: PUTDST16(*code,0x1D89); break;
 	case x86_ECX: PUTDST16(*code,0x0D89); break;
 	case x86_EDX: PUTDST16(*code,0x1589); break;
