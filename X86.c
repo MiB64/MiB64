@@ -250,17 +250,23 @@ void AddX86RegToX86Reg(BYTE** code, int Destination, int Source) {
 }
 
 void AndConstToVariable (BYTE** code, DWORD Const, void *Variable, char *VariableName) {
-	CPU_OR_RSP_Message(*code, "      and dword ptr [%s], 0x%X",VariableName, Const);\
-	PUTDST16(*code,0x2581);
-	PUTDST32(*code,Variable);
-	PUTDST32(*code,Const);
+	CPU_OR_RSP_Message(*code, "      and dword ptr [%s], 0x%X",VariableName, Const);
+	if ((Const & 0xFFFFFF80) != 0 && (Const & 0xFFFFFF80) != 0xFFFFFF80) {
+		PUTDST16(*code, 0x2581);
+		PUTDST32(*code, Variable);
+		PUTDST32(*code, Const);
+	} else {
+		PUTDST16(*code, 0x2583);
+		PUTDST32(*code, Variable);
+		PUTDST8(*code, Const);
+	}
 }
 
 void AndConstToX86Reg(BYTE** code, int x86Reg, DWORD Const) {
 	CPU_OR_RSP_Message(*code, "      and %s, %Xh",x86_Name(x86Reg),Const);
 	if ((Const & 0xFFFFFF80) != 0 && (Const & 0xFFFFFF80) != 0xFFFFFF80) {
 		switch (x86Reg) {
-		case x86_EAX: PUTDST16(*code,0xE081); break;
+		case x86_EAX: PUTDST8(*code,0x25); break;
 		case x86_EBX: PUTDST16(*code,0xE381); break;
 		case x86_ECX: PUTDST16(*code,0xE181); break;
 		case x86_EDX: PUTDST16(*code,0xE281); break;
@@ -2399,16 +2405,22 @@ void NotX86Reg(BYTE** code, int  x86Reg) {
 
 void OrConstToVariable(BYTE** code, DWORD Const, void * Variable, char * VariableName) {
 	CPU_OR_RSP_Message(*code, "      or dword ptr [%s], 0x%X",VariableName, Const);
-	PUTDST16(*code,0x0D81);
-	PUTDST32(*code,Variable);
-	PUTDST32(*code,Const);
+	if ((Const & 0xFFFFFF80) != 0 && (Const & 0xFFFFFF80) != 0xFFFFFF80) {
+		PUTDST16(*code, 0x0D81);
+		PUTDST32(*code, Variable);
+		PUTDST32(*code, Const);
+	} else {
+		PUTDST16(*code, 0x0D83);
+		PUTDST32(*code, Variable);
+		PUTDST8(*code, Const);
+	}
 }
 
 void OrConstToX86Reg(BYTE** code, DWORD Const, int  x86Reg) {
 	CPU_OR_RSP_Message(*code, "      or %s, %Xh",x86_Name(x86Reg),Const);
 	if ((Const & 0xFFFFFF80) != 0 && (Const & 0xFFFFFF80) != 0xFFFFFF80) {
 		switch (x86Reg) {
-		case x86_EAX: PUTDST16(*code,0xC881); break;
+		case x86_EAX: PUTDST8(*code,0x0D); break;
 		case x86_EBX: PUTDST16(*code,0xCB81); break;
 		case x86_ECX: PUTDST16(*code,0xC981); break;
 		case x86_EDX: PUTDST16(*code,0xCA81); break;
@@ -3148,7 +3160,7 @@ void XorConstToX86Reg(BYTE** code, int x86Reg, DWORD Const) {
 	CPU_OR_RSP_Message(*code, "      xor %s, %Xh",x86_Name(x86Reg),Const);
 	if ((Const & 0xFFFFFF80) != 0 && (Const & 0xFFFFFF80) != 0xFFFFFF80) {
 		switch (x86Reg) {
-		case x86_EAX: PUTDST16(*code,0xF081); break;
+		case x86_EAX: PUTDST8(*code,0x35); break;
 		case x86_EBX: PUTDST16(*code,0xF381); break;
 		case x86_ECX: PUTDST16(*code,0xF181); break;
 		case x86_EDX: PUTDST16(*code,0xF281); break;
@@ -3237,7 +3249,13 @@ void XorConstToVariable(BYTE** code, void* Variable, char* VariableName, DWORD C
 
 	CPU_OR_RSP_Message(*code, "      xor dword ptr [%s], 0x%X", VariableName, Const);
 
-	PUTDST16(*code, 0x3581);
-	PUTDST32(*code, Variable);
-	PUTDST32(*code, Const);
+	if ((Const & 0xFFFFFF80) != 0 && (Const & 0xFFFFFF80) != 0xFFFFFF80) {
+		PUTDST16(*code, 0x3581);
+		PUTDST32(*code, Variable);
+		PUTDST32(*code, Const);
+	} else {
+		PUTDST16(*code, 0x3583);
+		PUTDST32(*code, Variable);
+		PUTDST8(*code, Const);
+	}
 }
