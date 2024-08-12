@@ -132,8 +132,10 @@ void MoveN64MemToX86regByte          ( BYTE** code, int x86reg, int AddrReg );
 void MoveN64MemToX86regHalf          ( BYTE** code, int x86reg, int AddrReg );
 void MoveDMemToX86reg                ( BYTE** code, int x86reg, int AddrReg );
 void MoveDMemToX86regByte            ( BYTE** code, int x86reg, int AddrReg );
+void MoveDMemToX86regHighByte        ( BYTE** code, int x86reg, int AddrReg );
 void MoveSxByteX86regPointerToX86reg ( BYTE** code, int AddrReg1, int AddrReg2, int x86reg );
 void MoveSxHalfX86regPointerToX86reg ( BYTE** code, int AddrReg1, int AddrReg2, int x86reg );
+void MoveSxHalfX86regToX86reg        ( BYTE** code, int Source, int Destination );
 void MoveSxN64MemToX86regByte        ( BYTE** code, int x86reg, int AddrReg );
 void MoveSxN64MemToX86regHalf        ( BYTE** code, int x86reg, int AddrReg );
 void MoveSxDMemToX86regByte          ( BYTE** code, int x86reg, int AddrReg );
@@ -143,6 +145,7 @@ void MoveSxVariableToX86regHalf      ( BYTE** code, void *Variable, char *Variab
 void MoveVariableDispToX86Reg        ( BYTE** code, void *Variable, char *VariableName, int x86Reg, int AddrReg, int Multiplier );
 void MoveVariableToX86reg            ( BYTE** code, void *Variable, char *VariableName, int x86reg );
 void MoveVariableToX86regByte        ( BYTE** code, void *Variable, char *VariableName, int x86reg );
+void MoveVariableToX86regHighByte    ( BYTE** code, void* Variable, char* VariableName, int x86reg );
 void MoveVariableToX86regHalf        ( BYTE** code, void *Variable, char *VariableName, int x86reg );
 void MoveX86PointerToX86reg          ( BYTE** code, int x86reg, int X86Pointer );
 void MoveX86regByteToN64Mem          ( BYTE** code, int x86reg, int AddrReg );

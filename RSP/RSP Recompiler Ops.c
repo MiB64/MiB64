@@ -737,11 +737,10 @@ void CompileRsp_LH ( void ) {
 
 			char Address[32];
 			sprintf(Address, "Dmem + %Xh", (Addr & 0xFFF));
-			MoveSxVariableToX86regByte(&RspRecompPos, DMEM + ((Addr & 0xFFF) ^ 3), Address, x86_EAX);
+			MoveVariableToX86regHighByte(&RspRecompPos, DMEM + ((Addr & 0xFFF) ^ 3), Address, x86_EAX);
 			sprintf(Address, "Dmem + %Xh", ((Addr & 0xFFF) + 1));
-			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + (((Addr+1) & 0xFFF) ^ 3), Address, x86_EBX);
-			ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 8);
-			OrX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EBX);
+			MoveVariableToX86regByte(&RspRecompPos, DMEM + (((Addr + 1) & 0xFFF) ^ 3), Address, x86_EAX);
+			MoveSxHalfX86regToX86reg(&RspRecompPos, x86_EAX, x86_EAX);
 			MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt));
 			return;
 		} else {
@@ -769,17 +768,15 @@ void CompileRsp_LH ( void ) {
 		RSP_CPU_Message("   Unaligned:");
 		x86_SetBranch32b(Jump[0], RspRecompPos);
 
-		MoveX86RegToX86Reg(&RspRecompPos, x86_EBX, x86_EAX);
-		AddConstToX86Reg(&RspRecompPos, x86_EBX, 1);
-
-		AndConstToX86Reg(&RspRecompPos, x86_EAX, 0xFFF);
 		AndConstToX86Reg(&RspRecompPos, x86_EBX, 0xFFF);
+		LeaSourceAndOffset(&RspRecompPos, x86_EAX, x86_EBX, 1);
+
+		AndConstToX86RegHalf(&RspRecompPos, x86_EAX, 0xFFF);
 		XorConstToX86Reg(&RspRecompPos, x86_EAX, 3);
 		XorConstToX86Reg(&RspRecompPos, x86_EBX, 3);
-		MoveSxDMemToX86regByte(&RspRecompPos, x86_EAX, x86_EAX);
-		MoveZxDMemToX86regByte(&RspRecompPos, x86_EBX, x86_EBX);
-		ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 8);
-		OrX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EBX);
+		MoveDMemToX86regByte(&RspRecompPos, x86_EAX, x86_EAX);
+		MoveDMemToX86regHighByte(&RspRecompPos, x86_EAX, x86_EBX);
+		MoveSxHalfX86regToX86reg(&RspRecompPos, x86_EAX, x86_EAX);
 		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt));
 
 		JmpLabel32(&RspRecompPos, "Done", 0);
@@ -820,20 +817,15 @@ void CompileRsp_LW ( void ) {
 			
 			char Address[32];
 			sprintf(Address, "Dmem + %Xh", (Addr & 0xFFF));
-			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + ((Addr & 0xFFF) ^ 3), Address, x86_EAX);
+			MoveVariableToX86regHighByte(&RspRecompPos, DMEM + ((Addr & 0xFFF) ^ 3), Address, x86_EAX);
 			sprintf(Address, "Dmem + %Xh", ((Addr & 0xFFF) + 1));
-			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + (((Addr + 1) & 0xFFF) ^ 3), Address, x86_EBX);
+			MoveVariableToX86regByte(&RspRecompPos, DMEM + (((Addr + 1) & 0xFFF) ^ 3), Address, x86_EAX);
+			MoveX86regHalfToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UHW[1], RspGPR_Name(RSPOpC.OP.LS.rt));
 			sprintf(Address, "Dmem + %Xh", ((Addr & 0xFFF) + 2));
-			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + (((Addr + 2) & 0xFFF) ^ 3), Address, x86_ECX);
+			MoveVariableToX86regHighByte(&RspRecompPos, DMEM + (((Addr + 2) & 0xFFF) ^ 3), Address, x86_EAX);
 			sprintf(Address, "Dmem + %Xh", ((Addr & 0xFFF) + 3));
-			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + (((Addr + 3) & 0xFFF) ^ 3), Address, x86_EDX);
-			ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 8);
-			OrX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EBX);
-			ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 8);
-			OrX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_ECX);
-			ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 8);
-			OrX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EDX);
-			MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt));
+			MoveVariableToX86regByte(&RspRecompPos, DMEM + (((Addr + 3) & 0xFFF) ^ 3), Address, x86_EAX);
+			MoveX86regHalfToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UHW[0], RspGPR_Name(RSPOpC.OP.LS.rt));
 			return;
 		} else {
 			char Address[32];			
@@ -856,27 +848,24 @@ void CompileRsp_LW ( void ) {
 	x86_SetBranch32b(Jump[0], RspRecompPos);
 	RSP_CPU_Message("   Unaligned:");
 
-	LeaSourceAndOffset(&RspRecompPos, x86_ECX , x86_EBX, 2);
-	LeaSourceAndOffset(&RspRecompPos, x86_EDX , x86_EBX, 3);
-	MoveX86RegToX86Reg(&RspRecompPos, x86_EBX, x86_EAX);
-	AddConstToX86Reg(&RspRecompPos, x86_EBX, 1);
-
-	AndConstToX86Reg(&RspRecompPos, x86_EAX, 0xFFF);
 	AndConstToX86Reg(&RspRecompPos, x86_EBX, 0xFFF);
-	AndConstToX86Reg(&RspRecompPos, x86_ECX, 0xFFF);
-	AndConstToX86Reg(&RspRecompPos, x86_EDX, 0xFFF);
+	LeaSourceAndOffset(&RspRecompPos, x86_EAX, x86_EBX, 1);
+	LeaSourceAndOffset(&RspRecompPos, x86_ECX, x86_EBX, 2);
+	LeaSourceAndOffset(&RspRecompPos, x86_EDX, x86_EBX, 3);
+
+	AndConstToX86RegHalf(&RspRecompPos, x86_EAX, 0xFFF);
+	AndConstToX86RegHalf(&RspRecompPos, x86_ECX, 0xFFF);
+	AndConstToX86RegHalf(&RspRecompPos, x86_EDX, 0xFFF);
 	XorConstToX86Reg(&RspRecompPos, x86_EAX, 3);
 	XorConstToX86Reg(&RspRecompPos, x86_EBX, 3);
 	XorConstToX86Reg(&RspRecompPos, x86_ECX, 3);
 	XorConstToX86Reg(&RspRecompPos, x86_EDX, 3);
 	MoveDMemToX86regByte(&RspRecompPos, x86_EAX, x86_EAX);
-	MoveDMemToX86regByte(&RspRecompPos, x86_EBX, x86_EBX);
-	MoveDMemToX86regByte(&RspRecompPos, x86_ECX, x86_ECX);
-	MoveDMemToX86regByte(&RspRecompPos, x86_EDX, x86_EDX);
-	MoveX86regByteToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UB[3], RspGPR_Name(RSPOpC.OP.LS.rt));
-	MoveX86regByteToVariable(&RspRecompPos, x86_EBX, &RSP_GPR[RSPOpC.OP.LS.rt].UB[2], RspGPR_Name(RSPOpC.OP.LS.rt));
-	MoveX86regByteToVariable(&RspRecompPos, x86_ECX, &RSP_GPR[RSPOpC.OP.LS.rt].UB[1], RspGPR_Name(RSPOpC.OP.LS.rt));
-	MoveX86regByteToVariable(&RspRecompPos, x86_EDX, &RSP_GPR[RSPOpC.OP.LS.rt].UB[0], RspGPR_Name(RSPOpC.OP.LS.rt));
+	MoveDMemToX86regHighByte(&RspRecompPos, x86_EAX, x86_EBX);
+	MoveX86regHalfToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UHW[1], RspGPR_Name(RSPOpC.OP.LS.rt));
+	MoveDMemToX86regHighByte(&RspRecompPos, x86_EAX, x86_ECX);
+	MoveDMemToX86regByte(&RspRecompPos, x86_EAX, x86_EDX);
+	MoveX86regHalfToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UHW[0], RspGPR_Name(RSPOpC.OP.LS.rt));
 
 	JmpLabel32(&RspRecompPos, "Done", 0);
 	Jump[1] = RspRecompPos - 4;
@@ -913,13 +902,12 @@ void CompileRsp_LBU ( void ) {
 	}
 
 	MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.LS.base].UW, RspGPR_Name(RSPOpC.OP.LS.base), x86_EBX);
-	XorX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EAX);
 
 	if (Offset != 0) AddConstToX86Reg(&RspRecompPos, x86_EBX, Offset);
 	XorConstToX86Reg(&RspRecompPos, x86_EBX, 3);
 	AndConstToX86Reg(&RspRecompPos, x86_EBX, 0x0fff);
 
-	MoveDMemToX86regByte(&RspRecompPos, x86_EAX, x86_EBX);
+	MoveZxDMemToX86regByte(&RspRecompPos, x86_EAX, x86_EBX);
 	MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt));
 }
 
@@ -942,12 +930,10 @@ void CompileRsp_LHU ( void ) {
 			//RspCompilerWarning("Unaligned LHU at constant address PC = %04X", RspCompilePC);
 
 			char Address[32];
-			sprintf(Address, "Dmem + %Xh", (Addr & 0xFFF));
-			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + ((Addr & 0xFFF) ^ 3), Address, x86_EAX);
 			sprintf(Address, "Dmem + %Xh", ((Addr & 0xFFF) + 1));
-			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + (((Addr + 1) & 0xFFF) ^ 3), Address, x86_EBX);
-			ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 8);
-			OrX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EBX);
+			MoveZxVariableToX86regByte(&RspRecompPos, DMEM + (((Addr + 1) & 0xFFF) ^ 3), Address, x86_EAX);
+			sprintf(Address, "Dmem + %Xh", (Addr & 0xFFF));
+			MoveVariableToX86regHighByte(&RspRecompPos, DMEM + ((Addr & 0xFFF) ^ 3), Address, x86_EAX);
 			MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt));
 			return;
 		} else {
@@ -977,17 +963,14 @@ void CompileRsp_LHU ( void ) {
 	RSP_CPU_Message("   Unaligned:");
 	x86_SetBranch32b(Jump[0], RspRecompPos);
 
-	MoveX86RegToX86Reg(&RspRecompPos, x86_EBX, x86_EAX);
-	AddConstToX86Reg(&RspRecompPos, x86_EBX, 1);
-
-	AndConstToX86Reg(&RspRecompPos, x86_EAX, 0xFFF);
 	AndConstToX86Reg(&RspRecompPos, x86_EBX, 0xFFF);
+	LeaSourceAndOffset(&RspRecompPos, x86_EAX, x86_EBX, 1);
+
+	AndConstToX86RegHalf(&RspRecompPos, x86_EAX, 0xFFF);
 	XorConstToX86Reg(&RspRecompPos, x86_EAX, 3);
 	XorConstToX86Reg(&RspRecompPos, x86_EBX, 3);
 	MoveZxDMemToX86regByte(&RspRecompPos, x86_EAX, x86_EAX);
-	MoveZxDMemToX86regByte(&RspRecompPos, x86_EBX, x86_EBX);
-	ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 8);
-	OrX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EBX);
+	MoveDMemToX86regHighByte(&RspRecompPos, x86_EAX, x86_EBX);
 	MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.LS.rt].UW, RspGPR_Name(RSPOpC.OP.LS.rt));
 
 	//InterpreterFallbackNoMessage((void*)RSP_Opcode_LHU,"RSP_Opcode_LHU");
@@ -1109,11 +1092,10 @@ void CompileRsp_SH ( void ) {
 		RSP_CPU_Message("   Unaligned:");
 		x86_SetBranch32b(Jump[0], RspRecompPos);
 
-		MoveX86RegToX86Reg(&RspRecompPos, x86_EBX, x86_ECX);
-		AddConstToX86Reg(&RspRecompPos, x86_ECX, 1);
-
 		AndConstToX86Reg(&RspRecompPos, x86_EBX, 0xFFF);
-		AndConstToX86Reg(&RspRecompPos, x86_ECX, 0xFFF);
+		LeaSourceAndOffset(&RspRecompPos, x86_ECX, x86_EBX, 1);
+
+		AndConstToX86RegHalf(&RspRecompPos, x86_ECX, 0xFFF);
 		XorConstToX86Reg(&RspRecompPos, x86_EBX, 3);
 		XorConstToX86Reg(&RspRecompPos, x86_ECX, 3);
 		
