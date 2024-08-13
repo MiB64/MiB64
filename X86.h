@@ -209,13 +209,16 @@ void ShiftLeftDoubleImmed            ( BYTE** code, int Destination, int Source,
 void ShiftLeftSign                   ( BYTE** code, int x86reg );
 void ShiftLeftSignImmed              ( BYTE** code, int x86reg, BYTE Immediate );
 void ShiftLeftSignVariableImmed      ( BYTE** code, void * Variable, char * VariableName, BYTE Immediate );
+void ShiftLeftSignVariable           ( BYTE** code, void * Variable, char * VariableName );
 void ShiftRightDouble                ( BYTE** code, int Destination, int Source );
 void ShiftRightDoubleImmed           ( BYTE** code, int Destination, int Source, BYTE Immediate );
 void ShiftRightSign                  ( BYTE** code, int x86reg );
 void ShiftRightSignImmed             ( BYTE** code, int x86reg, BYTE Immediate );
 void ShiftRightSignVariableImmed     ( BYTE** code, void * Variable, char * VariableName, BYTE Immediate );
+void ShiftRightSignVariable          ( BYTE** code, void * Variable, char * VariableName );
 void ShiftRightUnsign                ( BYTE** code, int x86reg );
 void ShiftRightUnsignImmed           ( BYTE** code, int x86reg, BYTE Immediate );
+void ShiftRightUnsignVariable        ( BYTE** code, void * Variable, char * VariableName );
 void ShiftRightUnsignVariableImmed   ( BYTE** code, void * Variable, char * VariableName, BYTE Immediate );
 void SbbConstFromX86Reg              ( BYTE** code, int x86Reg, DWORD Const );
 void SbbVariableFromX86reg           ( BYTE** code, int x86reg, void * Variable, char * VariableName );

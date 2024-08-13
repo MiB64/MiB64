@@ -2858,25 +2858,51 @@ void ShiftLeftSign(BYTE** code, int x86reg) {
 
 void ShiftLeftSignImmed(BYTE** code, int x86reg, BYTE Immediate) {
 	CPU_OR_RSP_Message(*code, "      shl %s, %Xh",x86_Name(x86reg),Immediate);
-	switch (x86reg) {
-	case x86_EAX: PUTDST16(*code,0xE0C1); break;
-	case x86_EBX: PUTDST16(*code,0xE3C1); break;
-	case x86_ECX: PUTDST16(*code,0xE1C1); break;
-	case x86_EDX: PUTDST16(*code,0xE2C1); break;
-	case x86_ESI: PUTDST16(*code,0xE6C1); break;
-	case x86_EDI: PUTDST16(*code,0xE7C1); break;
-	case x86_ESP: PUTDST16(*code,0xE4C1); break;
-	case x86_EBP: PUTDST16(*code,0xE5C1); break;
+
+	if (Immediate != 1) {
+		switch (x86reg) {
+		case x86_EAX: PUTDST16(*code, 0xE0C1); break;
+		case x86_EBX: PUTDST16(*code, 0xE3C1); break;
+		case x86_ECX: PUTDST16(*code, 0xE1C1); break;
+		case x86_EDX: PUTDST16(*code, 0xE2C1); break;
+		case x86_ESI: PUTDST16(*code, 0xE6C1); break;
+		case x86_EDI: PUTDST16(*code, 0xE7C1); break;
+		case x86_ESP: PUTDST16(*code, 0xE4C1); break;
+		case x86_EBP: PUTDST16(*code, 0xE5C1); break;
+		}
+		PUTDST8(*code, Immediate);
+	} else {
+		switch (x86reg) {
+		case x86_EAX: PUTDST16(*code, 0xE0D1); break;
+		case x86_EBX: PUTDST16(*code, 0xE3D1); break;
+		case x86_ECX: PUTDST16(*code, 0xE1D1); break;
+		case x86_EDX: PUTDST16(*code, 0xE2D1); break;
+		case x86_ESI: PUTDST16(*code, 0xE6D1); break;
+		case x86_EDI: PUTDST16(*code, 0xE7D1); break;
+		case x86_ESP: PUTDST16(*code, 0xE4D1); break;
+		case x86_EBP: PUTDST16(*code, 0xE5D1); break;
+		}
 	}
-	PUTDST8(*code,Immediate);
 }
 
 void ShiftLeftSignVariableImmed(BYTE** code, void* Variable, char* VariableName, BYTE Immediate) {
 	CPU_OR_RSP_Message(*code, "      shl dword ptr [%s], %Xh", VariableName, Immediate);
 
-	PUTDST16(*code, 0x25C1)
+	if (Immediate != 1) {
+		PUTDST16(*code, 0x25C1);
+		PUTDST32(*code, Variable);
+		PUTDST8(*code, Immediate);
+	} else {
+		PUTDST16(*code, 0x25D1);
+		PUTDST32(*code, Variable);
+	}
+}
+
+void ShiftLeftSignVariable(BYTE** code, void* Variable, char* VariableName) {
+	CPU_OR_RSP_Message(*code, "      shl dword ptr [%s], cl", VariableName);
+
+	PUTDST16(*code, 0x25D3);
 	PUTDST32(*code, Variable);
-	PUTDST8(*code, Immediate);
 }
 
 void ShiftRightSign(BYTE** code, int x86reg) {
@@ -2895,27 +2921,54 @@ void ShiftRightSign(BYTE** code, int x86reg) {
 
 void ShiftRightSignImmed(BYTE** code, int x86reg, BYTE Immediate) {
 	CPU_OR_RSP_Message(*code, "      sar %s, %Xh",x86_Name(x86reg),Immediate);
-	switch (x86reg) {
-	case x86_EAX: PUTDST16(*code,0xF8C1); break;
-	case x86_EBX: PUTDST16(*code,0xFBC1); break;
-	case x86_ECX: PUTDST16(*code,0xF9C1); break;
-	case x86_EDX: PUTDST16(*code,0xFAC1); break;
-	case x86_ESI: PUTDST16(*code,0xFEC1); break;
-	case x86_EDI: PUTDST16(*code,0xFFC1); break;
-	case x86_ESP: PUTDST16(*code,0xFCC1); break;
-	case x86_EBP: PUTDST16(*code,0xFDC1); break;
-	default:
-		DisplayError("ShiftRightSignImmed\nUnknown x86 Register");
+	if (Immediate != 1) {
+		switch (x86reg) {
+		case x86_EAX: PUTDST16(*code, 0xF8C1); break;
+		case x86_EBX: PUTDST16(*code, 0xFBC1); break;
+		case x86_ECX: PUTDST16(*code, 0xF9C1); break;
+		case x86_EDX: PUTDST16(*code, 0xFAC1); break;
+		case x86_ESI: PUTDST16(*code, 0xFEC1); break;
+		case x86_EDI: PUTDST16(*code, 0xFFC1); break;
+		case x86_ESP: PUTDST16(*code, 0xFCC1); break;
+		case x86_EBP: PUTDST16(*code, 0xFDC1); break;
+		default:
+			DisplayError("ShiftRightSignImmed\nUnknown x86 Register");
+		}
+		PUTDST8(*code, Immediate);
+	} else {
+		switch (x86reg) {
+		case x86_EAX: PUTDST16(*code, 0xF8D1); break;
+		case x86_EBX: PUTDST16(*code, 0xFBD1); break;
+		case x86_ECX: PUTDST16(*code, 0xF9D1); break;
+		case x86_EDX: PUTDST16(*code, 0xFAD1); break;
+		case x86_ESI: PUTDST16(*code, 0xFED1); break;
+		case x86_EDI: PUTDST16(*code, 0xFFD1); break;
+		case x86_ESP: PUTDST16(*code, 0xFCD1); break;
+		case x86_EBP: PUTDST16(*code, 0xFDD1); break;
+		default:
+			DisplayError("ShiftRightSignImmed\nUnknown x86 Register");
+		}
 	}
-	PUTDST8(*code,Immediate);
 }
 
 void ShiftRightSignVariableImmed(BYTE** code, void* Variable, char* VariableName, BYTE Immediate) {
 	CPU_OR_RSP_Message(*code, "      sar dword ptr [%s], %Xh", VariableName, Immediate);
 
-	PUTDST16(*code, 0x3DC1)
+	if (Immediate != 1) {
+		PUTDST16(*code, 0x3DC1);
+		PUTDST32(*code, Variable);
+		PUTDST8(*code, Immediate);
+	} else {
+		PUTDST16(*code, 0x3DD1);
+		PUTDST32(*code, Variable);
+	}
+}
+
+void ShiftRightSignVariable(BYTE** code, void* Variable, char* VariableName) {
+	CPU_OR_RSP_Message(*code, "      sar dword ptr [%s], cl", VariableName);
+
+	PUTDST16(*code, 0x3DD3);
 	PUTDST32(*code, Variable);
-	PUTDST8(*code, Immediate);
 }
 
 void ShiftRightUnsign(BYTE** code, int x86reg) {
@@ -2997,25 +3050,50 @@ void ShiftRightDoubleImmed(BYTE** code, int Destination, int Source, BYTE Immedi
 
 void ShiftRightUnsignImmed(BYTE** code, int x86reg, BYTE Immediate) {
 	CPU_OR_RSP_Message(*code, "      shr %s, %Xh",x86_Name(x86reg),Immediate);
-	switch (x86reg) {
-	case x86_EAX: PUTDST16(*code,0xE8C1); break;
-	case x86_EBX: PUTDST16(*code,0xEBC1); break;
-	case x86_ECX: PUTDST16(*code,0xE9C1); break;
-	case x86_EDX: PUTDST16(*code,0xEAC1); break;
-	case x86_ESI: PUTDST16(*code,0xEEC1); break;
-	case x86_EDI: PUTDST16(*code,0xEFC1); break;
-	case x86_ESP: PUTDST16(*code,0xECC1); break;
-	case x86_EBP: PUTDST16(*code,0xEDC1); break;
+	if (Immediate != 1) {
+		switch (x86reg) {
+		case x86_EAX: PUTDST16(*code, 0xE8C1); break;
+		case x86_EBX: PUTDST16(*code, 0xEBC1); break;
+		case x86_ECX: PUTDST16(*code, 0xE9C1); break;
+		case x86_EDX: PUTDST16(*code, 0xEAC1); break;
+		case x86_ESI: PUTDST16(*code, 0xEEC1); break;
+		case x86_EDI: PUTDST16(*code, 0xEFC1); break;
+		case x86_ESP: PUTDST16(*code, 0xECC1); break;
+		case x86_EBP: PUTDST16(*code, 0xEDC1); break;
+		}
+		PUTDST8(*code, Immediate);
+	} else {
+		switch (x86reg) {
+		case x86_EAX: PUTDST16(*code, 0xE8D1); break;
+		case x86_EBX: PUTDST16(*code, 0xEBD1); break;
+		case x86_ECX: PUTDST16(*code, 0xE9D1); break;
+		case x86_EDX: PUTDST16(*code, 0xEAD1); break;
+		case x86_ESI: PUTDST16(*code, 0xEED1); break;
+		case x86_EDI: PUTDST16(*code, 0xEFD1); break;
+		case x86_ESP: PUTDST16(*code, 0xECD1); break;
+		case x86_EBP: PUTDST16(*code, 0xEDD1); break;
+		}
 	}
-	PUTDST8(*code,Immediate);
 }
 
 void ShiftRightUnsignVariableImmed(BYTE** code, void* Variable, char* VariableName, BYTE Immediate) {
 	CPU_OR_RSP_Message(*code, "      shr dword ptr [%s], %Xh", VariableName, Immediate);
 
-	PUTDST16(*code, 0x2DC1)
+	if (Immediate != 1) {
+		PUTDST16(*code, 0x2DC1);
+		PUTDST32(*code, Variable);
+		PUTDST8(*code, Immediate);
+	} else {
+		PUTDST16(*code, 0x2DD1);
+		PUTDST32(*code, Variable);
+	}
+}
+
+void ShiftRightUnsignVariable(BYTE** code, void* Variable, char* VariableName) {
+	CPU_OR_RSP_Message(*code, "      shr dword ptr [%s], cl", VariableName);
+
+	PUTDST16(*code, 0x2DD3);
 	PUTDST32(*code, Variable);
-	PUTDST8(*code, Immediate);
 }
 
 void SbbConstFromX86Reg (BYTE** code, int x86Reg, DWORD Const) {
