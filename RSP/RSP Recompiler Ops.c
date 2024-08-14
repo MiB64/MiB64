@@ -39,6 +39,8 @@
 #include "../x86.h"
 #include "rsp_config.h"
 #include "../Main.h"
+#include "../mi_registers.h"
+#include "../Exception.h"
 
 /*U_WORD Recp, RecpResult, SQroot, SQrootResult;
 DWORD ESP_RegSave = 0, EBP_RegSave = 0;*/
@@ -57,6 +59,7 @@ DWORD BeginOfCurrentSubBlock = 0;
 #define Compile_SLTIU
 #define Compile_SLLV
 #define Compile_SRAV
+#define Compile_BREAK
 /*#define Compile_Cop0
 #define Compile_Cop2
 
@@ -1446,6 +1449,7 @@ void CompileRsp_Special_SRAV ( void ) {
 
 void CompileRsp_Special_JR (void) {
 	static DWORD Target = 0;
+	static BOOL bDelayAffect = FALSE;
 	BYTE * Jump;
 
 	if (IsRspDelaySlotBranch(RspCompilePC)) {
@@ -1456,12 +1460,22 @@ void CompileRsp_Special_JR (void) {
 	if ( RSP_NextInstruction == NORMAL ) {
 		RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 		/* transfer destination to location pointed to by PrgCount */
-		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W,RspGPR_Name(RSPOpC.OP.R.rs),x86_EAX);
-		AndConstToX86Reg(&RspRecompPos, x86_EAX,0xFFC);
-		MoveX86regToVariable(&RspRecompPos, x86_EAX, &Target, "Target");
+		bDelayAffect = RspDelaySlotAffectBranch(RspCompilePC);
+		if (!IsRspRegConst(RSPOpC.OP.R.rs) && bDelayAffect) {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
+			AndConstToX86Reg(&RspRecompPos, x86_EAX, 0xFFC);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &Target, "Target");
+		}
 		RSP_NextInstruction = DO_DELAY_SLOT;
 	} else if ( RSP_NextInstruction == DELAY_SLOT_DONE ) {
-		MoveVariableToX86reg(&RspRecompPos, &Target,"Target", x86_EAX);
+		if (IsRspRegConst(RSPOpC.OP.R.rs)) {
+			MoveConstToX86reg(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rs) & 0xFFC, x86_EAX);
+		} else if (!bDelayAffect) {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
+			AndConstToX86Reg(&RspRecompPos, x86_EAX, 0xFFC);
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &Target, "Target", x86_EAX);
+		}
 		MoveX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EBX);
 		AddVariableToX86reg(&RspRecompPos, x86_EAX, &RspJumpTable, "RspJumpTable");
 		MoveX86PointerToX86reg(&RspRecompPos, x86_EAX, x86_EAX);
@@ -1484,6 +1498,7 @@ void CompileRsp_Special_JR (void) {
 
 void CompileRsp_Special_JALR ( void ) {
 	static DWORD Target = 0;
+	static BOOL bDelayAffect = FALSE;
 	BYTE * Jump;
 	DWORD Const = (RspCompilePC + 8) & 0xFFC;
 
@@ -1494,13 +1509,23 @@ void CompileRsp_Special_JALR ( void ) {
 
 	if (RSP_NextInstruction == NORMAL) {
 		RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
-		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W,RspGPR_Name(RSPOpC.OP.R.rs),x86_EAX);
-		AndConstToX86Reg(&RspRecompPos, x86_EAX,0xFFC);
-		MoveX86regToVariable(&RspRecompPos, x86_EAX, &Target, "Target");
+		bDelayAffect = RspDelaySlotAffectBranch(RspCompilePC) || RSPOpC.OP.R.rd == RSPOpC.OP.R.rs;
+		if (!IsRspRegConst(RSPOpC.OP.R.rs) && bDelayAffect) {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
+			AndConstToX86Reg(&RspRecompPos, x86_EAX, 0xFFC);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &Target, "Target");
+		}
 		MoveConstToVariable(&RspRecompPos, Const, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
 		RSP_NextInstruction = DO_DELAY_SLOT;
 	} else if (RSP_NextInstruction == DELAY_SLOT_DONE) {
-		MoveVariableToX86reg(&RspRecompPos, &Target, "Target", x86_EAX);
+		if (IsRspRegConst(RSPOpC.OP.R.rs)) {
+			MoveConstToX86reg(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rs) & 0xFFC, x86_EAX);
+		} else if (!bDelayAffect) {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
+			AndConstToX86Reg(&RspRecompPos, x86_EAX, 0xFFC);
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &Target, "Target", x86_EAX);
+		}
 		MoveX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EBX);
 		AddVariableToX86reg(&RspRecompPos, x86_EAX, &RspJumpTable, "JumpTable");
 		MoveX86PointerToX86reg(&RspRecompPos, x86_EAX, x86_EAX);
@@ -1522,7 +1547,22 @@ void CompileRsp_Special_JALR ( void ) {
 }
 
 void CompileRsp_Special_BREAK ( void ) {
-	InterpreterFallback((void*)RSP_Special_BREAK,"RSP_Special_BREAK");
+	#ifndef Compile_BREAK
+	InterpreterFallback((void*)RSP_Special_BREAK, "RSP_Special_BREAK"); return;
+	#endif
+
+	MoveConstByteToVariable(&RspRecompPos, 0, &RSP_Running, "RSP_Running");
+	OrConstToVariable(&RspRecompPos, (SP_STATUS_HALT | SP_STATUS_BROKE), &SP_STATUS_REG, "SP_STATUS_REG");
+	TestVariable(&RspRecompPos, SP_STATUS_INTR_BREAK, &SP_STATUS_REG, "SP_STATUS_REG");
+	JeLabel8(&RspRecompPos, "NoSpInterrupt", 0);
+	BYTE* Jump = RspRecompPos - 1;
+
+	OrConstToVariable(&RspRecompPos, MI_INTR_SP, &MI_INTR_REG, "MI_INTR_REG");
+	Call_Direct(&RspRecompPos, (void*)CheckInterrupts, "CheckInterrupts");
+
+	x86_SetBranch8b(Jump, RspRecompPos);
+	RSP_CPU_Message(" NoSpInterrupt:");
+
 	if (RSP_NextInstruction != NORMAL && RSP_NextInstruction != DELAY_SLOT) {
 		DisplayError("Compile_Special_BREAK: problem");
 	}
