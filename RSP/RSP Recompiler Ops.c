@@ -1584,20 +1584,50 @@ void CompileRsp_Special_ADD ( void ) {
 	if (RSPOpC.OP.R.rd == 0) return;
 
 	if (RSPOpC.OP.R.rd == RSPOpC.OP.R.rs) {
-		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
-		AddX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			AddConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt), &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+			AddX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		}
 	} else if (RSPOpC.OP.R.rd == RSPOpC.OP.R.rt) {
-		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
-		AddX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		if (IsRspRegConst(RSPOpC.OP.R.rs)) {
+			AddConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rs), &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
+			AddX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		}
 	} else if (RSPOpC.OP.R.rs == RSPOpC.OP.R.rt) {
-		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
-		AddX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EAX);
-		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		if (IsRspRegConst(RSPOpC.OP.R.rs)) {
+			MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rs) + MipsRspRegConst(RSPOpC.OP.R.rs), &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
+			AddX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EAX);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		}
 	} else if (RSPOpC.OP.R.rs == 0) {
-		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
-		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt), &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		}
 	} else if (RSPOpC.OP.R.rt == 0) {
+		if (IsRspRegConst(RSPOpC.OP.R.rs)) {
+			MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rs), &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		}
+	} else if (IsRspRegConst(RSPOpC.OP.R.rs) && IsRspRegConst(RSPOpC.OP.R.rt)) {
+		MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rs) + MipsRspRegConst(RSPOpC.OP.R.rt), &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+	} else if (IsRspRegConst(RSPOpC.OP.R.rs)) {
+		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+		AddConstToX86Reg(&RspRecompPos, x86_EAX, MipsRspRegConst(RSPOpC.OP.R.rs));
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+	} else if (IsRspRegConst(RSPOpC.OP.R.rt)) {
 		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
+		AddConstToX86Reg(&RspRecompPos, x86_EAX, MipsRspRegConst(RSPOpC.OP.R.rt));
 		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
 	} else {
 		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
@@ -1616,20 +1646,50 @@ void CompileRsp_Special_ADDU ( void ) {
 	if (RSPOpC.OP.R.rd == 0) return;
 
 	if (RSPOpC.OP.R.rd == RSPOpC.OP.R.rs) {
-		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
-		AddX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			AddConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt), &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+			AddX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		}
 	} else if (RSPOpC.OP.R.rd == RSPOpC.OP.R.rt) {
-		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
-		AddX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		if (IsRspRegConst(RSPOpC.OP.R.rs)) {
+			AddConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rs), &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
+			AddX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		}
 	} else if (RSPOpC.OP.R.rs == RSPOpC.OP.R.rt) {
-		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
-		AddX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EAX);
-		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		if (IsRspRegConst(RSPOpC.OP.R.rs)) {
+			MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rs) + MipsRspRegConst(RSPOpC.OP.R.rs), &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
+			AddX86RegToX86Reg(&RspRecompPos, x86_EAX, x86_EAX);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		}
 	} else if (RSPOpC.OP.R.rs == 0) {
-		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
-		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt), &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		}
 	} else if (RSPOpC.OP.R.rt == 0) {
+		if (IsRspRegConst(RSPOpC.OP.R.rs)) {
+			MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rs), &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+		}
+	} else if (IsRspRegConst(RSPOpC.OP.R.rs) && IsRspRegConst(RSPOpC.OP.R.rt)) {
+		MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rs) + MipsRspRegConst(RSPOpC.OP.R.rt), &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+	} else if (IsRspRegConst(RSPOpC.OP.R.rs)) {
+		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+		AddConstToX86Reg(&RspRecompPos, x86_EAX, MipsRspRegConst(RSPOpC.OP.R.rs));
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
+	} else if (IsRspRegConst(RSPOpC.OP.R.rt)) {
 		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
+		AddConstToX86Reg(&RspRecompPos, x86_EAX, MipsRspRegConst(RSPOpC.OP.R.rt));
 		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rd].W, RspGPR_Name(RSPOpC.OP.R.rd));
 	} else {
 		MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].W, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
