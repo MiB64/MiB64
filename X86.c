@@ -3179,7 +3179,7 @@ void SubConstFromX86Reg (BYTE** code, int x86Reg, DWORD Const) {
 	CPU_OR_RSP_Message(*code, "      sub %s, %Xh",x86_Name(x86Reg),Const);
 	if ((Const & 0xFFFFFF80) != 0 && (Const & 0xFFFFFF80) != 0xFFFFFF80) {
 		switch (x86Reg) {
-		case x86_EAX: PUTDST16(*code,0xE881); break;
+		case x86_EAX: PUTDST8(*code,0x2D); break;
 		case x86_EBX: PUTDST16(*code,0xEB81); break;
 		case x86_ECX: PUTDST16(*code,0xE981); break;
 		case x86_EDX: PUTDST16(*code,0xEA81); break;
