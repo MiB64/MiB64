@@ -61,6 +61,7 @@ DWORD BeginOfCurrentSubBlock = 0;
 #define Compile_SRAV
 #define Compile_BREAK
 #define Compile_NOR
+#define Compile_SLTU
 /*#define Compile_Cop0
 #define Compile_Cop2
 
@@ -2003,6 +2004,13 @@ void CompileRsp_Special_SLT ( void ) {
 
 	if (RSPOpC.OP.R.rt == RSPOpC.OP.R.rs) {
 		MoveConstToVariable(&RspRecompPos, 0, &RSP_GPR[RSPOpC.OP.R.rd].UW, RspGPR_Name(RSPOpC.OP.R.rd));
+	} else if (IsRspRegConst(RSPOpC.OP.R.rs) && IsRspRegConst(RSPOpC.OP.R.rt)) {
+		if ((long)MipsRspRegConst(RSPOpC.OP.R.rs) < (long)MipsRspRegConst(RSPOpC.OP.R.rt)) {
+			MoveConstToVariable(&RspRecompPos, 1, &RSP_GPR[RSPOpC.OP.R.rd].UW, RspGPR_Name(RSPOpC.OP.R.rd));
+		}
+		else {
+			MoveConstToVariable(&RspRecompPos, 0, &RSP_GPR[RSPOpC.OP.R.rd].UW, RspGPR_Name(RSPOpC.OP.R.rd));
+		}
 	} else {
 		XorX86RegToX86Reg(&RspRecompPos, x86_EBX, x86_EBX);
 		if (RSPOpC.OP.R.rs == 0) {
@@ -2013,7 +2021,15 @@ void CompileRsp_Special_SLT ( void ) {
 			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].UW, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
 			CompConstToX86reg(&RspRecompPos, x86_EAX, 0);
 			Setl(&RspRecompPos, x86_EBX);
-		} else {
+		} else if (IsRspRegConst(RSPOpC.OP.R.rs)) {
+			MoveConstToX86reg(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rs), x86_EAX);
+			CompX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
+			Setl(&RspRecompPos, x86_EBX);
+		} else if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			CompConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt), &RSP_GPR[RSPOpC.OP.R.rs].UW, RspGPR_Name(RSPOpC.OP.R.rs));
+			Setl(&RspRecompPos, x86_EBX);
+		}
+		else {
 			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].UW, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
 			CompX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
 			Setl(&RspRecompPos, x86_EBX);
@@ -2023,7 +2039,49 @@ void CompileRsp_Special_SLT ( void ) {
 }
 
 void CompileRsp_Special_SLTU ( void ) {
+	#ifndef Compile_SLTU
 	InterpreterFallback((void*)RSP_Special_SLTU,"RSP_Special_SLTU");
+	#endif
+
+	RSP_CPU_Message("  %X %s", RspCompilePC, RSPOpcodeName(RSPOpC.OP.Hex, RspCompilePC));
+	if (RSPOpC.OP.R.rd == 0) { return; }
+
+	if (RSPOpC.OP.R.rt == RSPOpC.OP.R.rs) {
+		MoveConstToVariable(&RspRecompPos, 0, &RSP_GPR[RSPOpC.OP.R.rd].UW, RspGPR_Name(RSPOpC.OP.R.rd));
+	} else if (IsRspRegConst(RSPOpC.OP.R.rs) && IsRspRegConst(RSPOpC.OP.R.rt)) {
+		if ((unsigned long)MipsRspRegConst(RSPOpC.OP.R.rs) < (unsigned long)MipsRspRegConst(RSPOpC.OP.R.rt)) {
+			MoveConstToVariable(&RspRecompPos, 1, &RSP_GPR[RSPOpC.OP.R.rd].UW, RspGPR_Name(RSPOpC.OP.R.rd));
+		} else {
+			MoveConstToVariable(&RspRecompPos, 0, &RSP_GPR[RSPOpC.OP.R.rd].UW, RspGPR_Name(RSPOpC.OP.R.rd));
+		}
+	} else {
+		XorX86RegToX86Reg(&RspRecompPos, x86_EBX, x86_EBX);
+		if (RSPOpC.OP.R.rs == 0) {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+			CompConstToX86reg(&RspRecompPos, x86_EAX, 0);
+			Seta(&RspRecompPos, x86_EBX);
+		}
+		else if (RSPOpC.OP.R.rt == 0) {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].UW, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
+			CompConstToX86reg(&RspRecompPos, x86_EAX, 0);
+			Setb(&RspRecompPos, x86_EBX);
+		}
+		else if (IsRspRegConst(RSPOpC.OP.R.rs)) {
+			MoveConstToX86reg(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rs), x86_EAX);
+			CompX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
+			Setb(&RspRecompPos, x86_EBX);
+		}
+		else if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			CompConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt), &RSP_GPR[RSPOpC.OP.R.rs].UW, RspGPR_Name(RSPOpC.OP.R.rs));
+			Setb(&RspRecompPos, x86_EBX);
+		}
+		else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rs].UW, RspGPR_Name(RSPOpC.OP.R.rs), x86_EAX);
+			CompX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
+			Setb(&RspRecompPos, x86_EBX);
+		}
+		MoveX86regToVariable(&RspRecompPos, x86_EBX, &RSP_GPR[RSPOpC.OP.R.rd].UW, RspGPR_Name(RSPOpC.OP.R.rd));
+	}
 }
 
 /********************** R4300i OpCodes: RegImm **********************/
