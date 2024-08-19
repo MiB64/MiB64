@@ -2114,6 +2114,16 @@ void CompileRsp_RegImm_BLTZ ( void ) {
 			RSP_NextInstruction = FINISH_SUB_BLOCK;
 			return;
 		}
+		if (IsRspRegConst(RSPOpC.OP.B.rs)) {
+			if ((long)MipsRspRegConst(RSPOpC.OP.B.rs) < 0) {
+				JmpLabel32(&RspRecompPos, "BranchLess", 0);
+				Branch_AddRef(Target, (DWORD*)(RspRecompPos - 4));
+				RSP_NextInstruction = FINISH_BLOCK;
+				return;
+			}
+			RSP_NextInstruction = FINISH_SUB_BLOCK;
+			return;
+		}
 		if (FALSE == bDelayAffect) {
 			CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
 			JlLabel32(&RspRecompPos, "BranchLess", 0);
@@ -2161,6 +2171,16 @@ void CompileRsp_RegImm_BGEZ ( void ) {
 			RSP_NextInstruction = FINISH_BLOCK;
 			return;
 		}
+		if (IsRspRegConst(RSPOpC.OP.B.rs)) {
+			if ((long)MipsRspRegConst(RSPOpC.OP.B.rs) >= 0) {
+				JmpLabel32(&RspRecompPos, "BranchGreaterEqual", 0);
+				Branch_AddRef(Target, (DWORD*)(RspRecompPos - 4));
+				RSP_NextInstruction = FINISH_BLOCK;
+				return;
+			}
+			RSP_NextInstruction = FINISH_SUB_BLOCK;
+			return;
+		}
 		if (FALSE == bDelayAffect) {
 			CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
 			JgeLabel32(&RspRecompPos, "BranchGreaterEqual", 0);
@@ -2178,6 +2198,8 @@ void CompileRsp_RegImm_BGEZ ( void ) {
 }
 
 void CompileRsp_RegImm_BLTZAL ( void ) {
+	static BOOL bDelayAffect;
+
 	if (IsRspDelaySlotBranch(RspCompilePC)) {
 		CompileRsp_ConsecutiveDelaySlots();
 		return;
@@ -2188,6 +2210,12 @@ void CompileRsp_RegImm_BLTZAL ( void ) {
 		if (RSPOpC.OP.B.rs == 0) {
 			MoveConstToVariable(&RspRecompPos, (RspCompilePC + 8) & 0xFFC, &RSP_GPR[31].UW, "RA.W");
 			RSP_NextInstruction = DO_DELAY_SLOT;			
+			return;
+		}
+		bDelayAffect = RspDelaySlotAffectBranch(RspCompilePC) || RSPOpC.OP.B.rs == 31;
+		if (FALSE == bDelayAffect) {
+			MoveConstToVariable(&RspRecompPos, (RspCompilePC + 8) & 0xFFC, &RSP_GPR[31].UW, "RA.W");
+			RSP_NextInstruction = DO_DELAY_SLOT;
 			return;
 		}
 		CompConstToVariable(&RspRecompPos, 0,&RSP_GPR[RSPOpC.OP.B.rs].W,RspGPR_Name(RSPOpC.OP.B.rs));
@@ -2201,10 +2229,25 @@ void CompileRsp_RegImm_BLTZAL ( void ) {
 			RSP_NextInstruction = FINISH_SUB_BLOCK;
 			return;
 		}
+		if (MipsRspRegConst(RSPOpC.OP.B.rs)) {
+			if ((long)MipsRspRegConst(RSPOpC.OP.B.rs) < 0) {
+				JmpLabel32(&RspRecompPos, "BranchLess", 0);
+				Branch_AddRef(Target, (DWORD*)(RspRecompPos - 4));
+				RSP_NextInstruction = FINISH_BLOCK;
+				return;
+			}
+			RSP_NextInstruction = FINISH_SUB_BLOCK;
+			return;
+		}
 
-		/* take a look at the branch compare variable */
-		CompConstToVariable(&RspRecompPos, TRUE, &BranchCompare, "BranchCompare");
-		JeLabel32(&RspRecompPos, "BranchLessEqual", 0);
+		if (FALSE == bDelayAffect) {
+			CompConstToVariable(&RspRecompPos, 0, &RSP_GPR[RSPOpC.OP.B.rs].W, RspGPR_Name(RSPOpC.OP.B.rs));
+			JlLabel32(&RspRecompPos, "BranchLess", 0);
+		} else {
+			/* take a look at the branch compare variable */
+			CompConstToVariable(&RspRecompPos, TRUE, &BranchCompare, "BranchCompare");
+			JeLabel32(&RspRecompPos, "BranchLess", 0);
+		}
 		Branch_AddRef(Target, (DWORD*)(RspRecompPos - 4));
 		RSP_NextInstruction = FINISH_SUB_BLOCK;
 	} else {
@@ -2244,6 +2287,16 @@ void CompileRsp_RegImm_BGEZAL ( void ) {
 		if (RSPOpC.OP.B.rs == 0) {			
 			JmpLabel32 (&RspRecompPos, "BranchToJump", 0 );
 			Branch_AddRef(Target, (DWORD*)(RspRecompPos - 4));
+			RSP_NextInstruction = FINISH_SUB_BLOCK;
+			return;
+		}
+		if (MipsRspRegConst(RSPOpC.OP.B.rs)) {
+			if ((long)MipsRspRegConst(RSPOpC.OP.B.rs) >= 0) {
+				JmpLabel32(&RspRecompPos, "BranchGreaterEqual", 0);
+				Branch_AddRef(Target, (DWORD*)(RspRecompPos - 4));
+				RSP_NextInstruction = FINISH_BLOCK;
+				return;
+			}
 			RSP_NextInstruction = FINISH_SUB_BLOCK;
 			return;
 		}
