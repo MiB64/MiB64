@@ -76,7 +76,7 @@ VECTOR  RSP_Vect[32];
 MIPS_WORD DivOut, DivIn;
 BYTE PendingDivIn;
 
-void WriteRspStatusRegister(DWORD Value) {
+void _fastcall WriteRspStatusRegister(DWORD Value) {
 	switch (Value & (SP_CLR_HALT | SP_SET_HALT))
 	{
 	case SP_CLR_HALT: SP_STATUS_REG &= ~SP_STATUS_HALT;

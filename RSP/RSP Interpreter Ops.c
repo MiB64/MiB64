@@ -402,7 +402,7 @@ void RSP_Cop0_MF (void) {
 		RSP_GPR[RSPOpC.OP.R.rt].W = SP_SEMAPHORE_REG;
 		SP_SEMAPHORE_REG = 1;
 		break;
-	/*case 8: RSP_GPR[RSPOpC.rt].UW = *RSPInfo.DPC_START_REG ; break;*/
+	case 8: RSP_GPR[RSPOpC.OP.R.rt].UW = DPC_START_REG ; break;
 	case 9: RSP_GPR[RSPOpC.OP.R.rt].UW = DPC_END_REG; break;
 	case 10: RSP_GPR[RSPOpC.OP.R.rt].UW = DPC_CURRENT_REG; break;
 	case 11: RSP_GPR[RSPOpC.OP.R.rt].W = DPC_STATUS_REG; break;

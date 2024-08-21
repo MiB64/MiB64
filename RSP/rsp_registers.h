@@ -135,4 +135,4 @@ extern BYTE PendingDivIn;
 #define RspVCC RSP_Flags[1].HW[0]
 #define RspVCE RSP_Flags[2].B[0]
 
-void WriteRspStatusRegister(DWORD Value);
+void _fastcall WriteRspStatusRegister(DWORD Value);

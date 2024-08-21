@@ -34,12 +34,13 @@
 #include "RSP Command.h"
 #include "rsp_registers.h"
 #include "rsp_memory.h"
-/*#include "dma.h"*/
+#include "../Dma.h"
 #include "rsp_log.h"
 #include "../x86.h"
 #include "rsp_config.h"
 #include "../Main.h"
 #include "../mi_registers.h"
+#include "../rdp_registers.h"
 #include "../Exception.h"
 
 /*U_WORD Recp, RecpResult, SQroot, SQrootResult;
@@ -62,8 +63,8 @@ DWORD BeginOfCurrentSubBlock = 0;
 #define Compile_BREAK
 #define Compile_NOR
 #define Compile_SLTU
-/*#define Compile_Cop0
-#define Compile_Cop2
+#define Compile_Cop0
+/*#define Compile_Cop2
 
 #define RSP_VectorMuls
 #define RSP_VectorLoads
@@ -2323,50 +2324,66 @@ void CompileRsp_Cop0_MF ( void ) {
 	InterpreterFallback((void*)RSP_Cop0_MF,"RSP_Cop0_MF"); return;
 	#endif
 
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
-	switch (RSPOpC.rd) {
+	switch (RSPOpC.OP.R.rd) {
+	case 0:
+		MoveVariableToX86reg(&RspRecompPos, &SP_MEM_ADDR_REG, "SP_MEM_ADDR_REG", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
+		break;
+	case 1:
+		MoveVariableToX86reg(&RspRecompPos, &SP_DRAM_ADDR_REG, "SP_DRAM_ADDR_REG", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
+		break;
+	case 2:
+		MoveVariableToX86reg(&RspRecompPos, &SP_RD_LEN_REG, "SP_RD_LEN_REG", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
+		break;
+	case 3:
+		MoveVariableToX86reg(&RspRecompPos, &SP_WR_LEN_REG, "SP_WR_LEN_REG", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
+		break;
 	case 4: 
-		MoveVariableToX86reg(RSPInfo.SP_STATUS_REG, "SP_STATUS_REG", x86_EAX);
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
+		MoveVariableToX86reg(&RspRecompPos, &SP_STATUS_REG, "SP_STATUS_REG", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
 		break;
 	case 5: 
-		MoveVariableToX86reg(RSPInfo.SP_DMA_FULL_REG, "SP_DMA_FULL_REG", x86_EAX);
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
+		MoveVariableToX86reg(&RspRecompPos, &SP_DMA_FULL_REG, "SP_DMA_FULL_REG", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
 		break;
 	case 6: 
-		MoveVariableToX86reg(RSPInfo.SP_DMA_BUSY_REG, "SP_DMA_BUSY_REG", x86_EAX);
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
+		MoveVariableToX86reg(&RspRecompPos, &SP_DMA_BUSY_REG, "SP_DMA_BUSY_REG", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
 		break;
-	case 7: 
-		MoveConstToVariable(0, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
-		//Cheat_r4300iOpcode(RSP_Cop0_MF,"RSP_Cop0_MF");
+	case 7:
+		MoveVariableToX86reg(&RspRecompPos, &SP_SEMAPHORE_REG, "SP_SEMAPHORE_REG", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
+		MoveConstToVariable(&RspRecompPos, 1, &SP_SEMAPHORE_REG, "SP_SEMAPHORE_REG");
 		break;
 	case 8:
-		MoveVariableToX86reg(RSPInfo.DPC_START_REG, "DPC_START_REG", x86_EAX);
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
+		MoveVariableToX86reg(&RspRecompPos, &DPC_START_REG, "DPC_START_REG", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
 		break;
 	case 9:
-		MoveVariableToX86reg(RSPInfo.DPC_END_REG, "DPC_END_REG", x86_EAX);
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
+		MoveVariableToX86reg(&RspRecompPos, &DPC_END_REG, "DPC_END_REG", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
 		break;
 	case 10:
-		MoveVariableToX86reg(RSPInfo.DPC_CURRENT_REG, "DPC_CURRENT_REG", x86_EAX);
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
+		MoveVariableToX86reg(&RspRecompPos, &DPC_CURRENT_REG, "DPC_CURRENT_REG", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
 		break;
 	case 11: 
-		MoveVariableToX86reg(RSPInfo.DPC_STATUS_REG, "DPC_STATUS_REG", x86_EAX);
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
+		MoveVariableToX86reg(&RspRecompPos, &DPC_STATUS_REG, "DPC_STATUS_REG", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
 		break;
 	case 12: 
-		MoveVariableToX86reg(RSPInfo.DPC_CLOCK_REG, "DPC_CLOCK_REG", x86_EAX);
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt));
+		MoveVariableToX86reg(&RspRecompPos, &DPC_CLOCK_REG, "DPC_CLOCK_REG", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt));
 		break;
 
 	default:
-		CompilerWarning("have not implemented RSP MF CP0 reg %s (%d)",COP0_Name(RSPOpC.rd),RSPOpC.rd);
-	}*/
-	LogMessage("TODO: CompileRsp_Cop0_MF");
+		RspCompilerWarning("have not implemented RSP MF CP0 reg %s (%d)",RspCOP0_Name(RSPOpC.OP.R.rd),RSPOpC.OP.R.rd);
+	}
 }
 
 void CompileRsp_Cop0_MT ( void ) {
@@ -2382,58 +2399,10 @@ void CompileRsp_Cop0_MT ( void ) {
 		RspCompilePC &= 0xFFC;
 		return;
 	}
-#else
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
-
-	switch (RSPOpC.rd) {
-	case 0:
-		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt), x86_EAX);
-		MoveX86regToVariable(x86_EAX, RSPInfo.SP_MEM_ADDR_REG,"SP_MEM_ADDR_REG");
-		break;
-	case 1:
-		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt), x86_EAX);
-		MoveX86regToVariable(x86_EAX, RSPInfo.SP_DRAM_ADDR_REG,"SP_DRAM_ADDR_REG");
-		break;
-	case 2: 
-		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt), x86_EAX);
-		MoveX86regToVariable(x86_EAX, RSPInfo.SP_RD_LEN_REG,"SP_RD_LEN_REG");
-		Call_Direct(SP_DMA_READ, "SP_DMA_READ");
-		break;
-	case 3: 
-		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt), x86_EAX);
-		MoveX86regToVariable(x86_EAX, RSPInfo.SP_WR_LEN_REG,"SP_WR_LEN_REG");
-		Call_Direct(SP_DMA_WRITE, "SP_DMA_WRITE");
-		break;
-	case 7: 
-		MoveConstToVariable(0, RSPInfo.SP_SEMAPHORE_REG, "SP_SEMAPHORE_REG");
-		break;
-	case 8: 
-		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt), x86_EAX);
-		MoveX86regToVariable(x86_EAX, RSPInfo.DPC_START_REG,"DPC_START_REG");
-		MoveX86regToVariable(x86_EAX, RSPInfo.DPC_CURRENT_REG,"DPC_CURRENT_REG");
-		break;
-	case 9: 
-		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt), x86_EAX);
-		MoveX86regToVariable(x86_EAX, RSPInfo.DPC_END_REG,"DPC_END_REG");
-
-		if (RSPInfo.ProcessRdpList != NULL)
-			Call_Direct(RSPInfo.ProcessRdpList, "ProcessRdpList");
-		break;
-	case 10:
-		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt), x86_EAX);
-		MoveX86regToVariable(x86_EAX, RSPInfo.DPC_CURRENT_REG,"DPC_CURRENT_REG");
-		break;
-
-	default:
-		Cheat_r4300iOpcode(RSP_Cop0_MT,"RSP_Cop0_MT");
-		break;
-	}*/
-	LogMessage("TODO: CompileRsp_Cop0_MT");
-#endif
 	if (RSPOpC.OP.R.rd == 2) {
-		BYTE * Jump;
+		BYTE* Jump;
 
-		TestVariable(&RspRecompPos, 0x1000, &SP_MEM_ADDR_REG, "RSPInfo.SP_MEM_ADDR_REG");
+		TestVariable(&RspRecompPos, 0x1000, &SP_MEM_ADDR_REG, "SP_MEM_ADDR_REG");
 		JeLabel8(&RspRecompPos, "DontExit", 0);
 		Jump = RspRecompPos - 1;
 
@@ -2452,6 +2421,175 @@ void CompileRsp_Cop0_MT ( void ) {
 		RSP_CPU_Message("DontExit:");
 		x86_SetBranch8b(Jump, RspRecompPos);
 	}
+#else
+	BYTE* Jump;
+	BYTE* Jump2;
+	BYTE* Jump3;
+
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
+
+	switch (RSPOpC.OP.R.rd) {
+	case 0:
+		if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt) & 0x1FF8, &SP_MEM_ADDR_REGW, "SP_MEM_ADDR_REGW");
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+			AndConstToX86Reg(&RspRecompPos, x86_EAX, 0x1FF8);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &SP_MEM_ADDR_REGW, "SP_MEM_ADDR_REGW");
+		}
+		break;
+	case 1:
+		if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt) & 0xFFFFF8, &SP_DRAM_ADDR_REGW, "SP_DRAM_ADDR_REGW");
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+			AndConstToX86Reg(&RspRecompPos, x86_EAX, 0xFFFFF8);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &SP_DRAM_ADDR_REGW, "SP_DRAM_ADDR_REGW");
+		}
+		break;
+	case 2:
+		if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt) & 0xFF8FFFF8, &SP_RD_LEN_REG, "SP_RD_LEN_REG");
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+			AndConstToX86Reg(&RspRecompPos, x86_EAX, 0xFF8FFFF8);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &SP_RD_LEN_REG, "SP_RD_LEN_REG");
+		}
+		Call_Direct(&RspRecompPos, (void*)SP_DMA_READ, "SP_DMA_READ");
+
+		TestVariable(&RspRecompPos, 0x1000, &SP_MEM_ADDR_REG, "SP_MEM_ADDR_REG");
+		JeLabel8(&RspRecompPos, "DontExit", 0);
+		Jump = RspRecompPos - 1;
+
+		CompileRsp_UpdateCycleCounts();
+
+		if (RSP_NextInstruction == DELAY_SLOT) {
+			MoveConstToVariable(&RspRecompPos, 0, &RSP_Running, "RSP_Running");
+			Call_Direct(&RspRecompPos, (void*)SetRspJumpTable, "SetRspJumpTable");
+		}
+		else {
+			MoveConstToVariable(&RspRecompPos, (RspCompilePC + 4) & 0xFFC, &SP_PC_REG, "RSP PC");
+			Call_Direct(&RspRecompPos, (void*)SetRspJumpTable, "SetRspJumpTable");
+			Ret(&RspRecompPos);
+		}
+
+		RSP_CPU_Message("DontExit:");
+		x86_SetBranch8b(Jump, RspRecompPos);
+		break;
+	case 3:
+		if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt) & 0xFF8FFFF8, &SP_WR_LEN_REG, "SP_WR_LEN_REG");
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+			AndConstToX86Reg(&RspRecompPos, x86_EAX, 0xFF8FFFF8);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &SP_WR_LEN_REG, "SP_WR_LEN_REG");
+		}
+		Call_Direct(&RspRecompPos, (void*)SP_DMA_WRITE, "SP_DMA_WRITE");
+		break;
+	case 4:
+		if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			MoveConstToX86reg(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt), x86_ECX);
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt), x86_ECX);
+		}
+		Call_Direct(&RspRecompPos, (void*)WriteRspStatusRegister, "WriteRspStatusRegister");
+		BOOL neverHalt = IsRspRegConst(RSPOpC.OP.R.rt) && (MipsRspRegConst(RSPOpC.OP.R.rt) & SP_SET_HALT) == 0;
+		if (!neverHalt) {
+			TestVariable(&RspRecompPos, SP_STATUS_HALT, &SP_STATUS_REG, "SP_STATUS_REG");
+			JeLabel8(&RspRecompPos, "NoHalt", 0);
+			Jump = RspRecompPos - 1;
+			MoveConstByteToVariable(&RspRecompPos, 0, &RSP_Running, "RSP_Running");
+			x86_SetBranch8b(Jump, RspRecompPos);
+		}
+		if(RSP_NextInstruction != DELAY_SLOT && !neverHalt) {
+			CompileRsp_UpdateCycleCounts();
+			RspCompilePC += 4;
+			RspCompilePC &= 0xFFC;
+			CompileRsp_CheckRspIsRunning();
+			CompileRsp_SaveBeginOfSubBlock();
+			RspCompilePC -= 4;
+			RspCompilePC &= 0xFFC;
+			return;
+		}
+		break;
+	case 7: 
+		MoveConstToVariable(&RspRecompPos,0, &SP_SEMAPHORE_REG, "SP_SEMAPHORE_REG");
+		break;
+	case 8:
+		TestVariable(&RspRecompPos, DPC_STATUS_START_VALID, &DPC_STATUS_REG, "DPC_STATUS_REG");
+		JneLabel8(&RspRecompPos, "ValidDpcStart", 0);
+		Jump = RspRecompPos - 1;
+		if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt) & 0xFFFFF8, &DPC_START_REG, "DPC_START_REG");
+		}
+		else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+			AndConstToX86Reg(&RspRecompPos, x86_EAX, 0xFFFFF8);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &DPC_START_REG, "DPC_START_REG");
+		}
+		OrConstToVariable(&RspRecompPos, DPC_STATUS_START_VALID, &DPC_STATUS_REG, "DPC_STATUS_REG");
+		RSP_CPU_Message("ValidDpcStart:");
+		x86_SetBranch8b(Jump, RspRecompPos);
+		break;
+	case 9:
+		if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			MoveConstToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt) & 0xFFFFF8, &DPC_END_REG, "DPC_END_REG");
+		} else {
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+			AndConstToX86Reg(&RspRecompPos, x86_EAX, 0xFFFFF8);
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &DPC_END_REG, "DPC_END_REG");
+		}
+		TestVariable(&RspRecompPos, DPC_STATUS_START_VALID, &DPC_STATUS_REG, "DPC_STATUS_REG");
+		JeLabel8(&RspRecompPos, "InvalidDpcStart", 0);
+		Jump = RspRecompPos - 1;
+
+		MoveVariableToX86reg(&RspRecompPos, &DPC_START_REG, "DPC_START_REG", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &DPC_CURRENT_REG, "DPC_CURRENT_REG");
+		AndConstToVariable(&RspRecompPos, (DWORD)~DPC_STATUS_START_VALID, &DPC_STATUS_REG, "DPC_STATUS_REG");
+		OrConstToVariable(&RspRecompPos, DPC_STATUS_PIPE_BUSY | DPC_STATUS_START_GCLK, &DPC_STATUS_REG, "DPC_STATUS_REG");
+		RSP_CPU_Message("InvalidDpcStart:");
+		x86_SetBranch8b(Jump, RspRecompPos);
+
+		if (ProcessRDPList) {
+			TestVariable(&RspRecompPos, DPC_STATUS_FREEZE, &DPC_STATUS_REG, "DPC_STATUS_REG");
+			JneLabel8(&RspRecompPos, "NoProcessRdpList", 0);
+			Jump = RspRecompPos - 1;
+
+			TestVariable(&RspRecompPos, DPC_STATUS_START_VALID, &DPC_STATUS_REG, "DPC_STATUS_REG");
+			JneLabel8(&RspRecompPos, "NoProcessRdpList", 0);
+			Jump2 = RspRecompPos - 1;
+
+			MoveVariableToX86reg(&RspRecompPos, &DPC_CURRENT_REG, "DPC_CURRENT_REG", x86_EAX);
+			CompX86regToVariable(&RspRecompPos, x86_EAX, &DPC_END_REG, "DPC_END_REG");
+			JaeLabel8(&RspRecompPos, "NoProcessRdpList", 0);
+			Jump3 = RspRecompPos - 1;
+
+			Call_Direct(&RspRecompPos, (void*)ProcessRDPList, "ProcessRdpList");
+
+			RSP_CPU_Message("NoProcessRdpList:");
+			x86_SetBranch8b(Jump, RspRecompPos);
+			x86_SetBranch8b(Jump2, RspRecompPos);
+			x86_SetBranch8b(Jump3, RspRecompPos);
+		}
+		break;
+	/*case 10:
+		MoveVariableToX86reg(&RSP_GPR[RSPOpC.rt].UW, GPR_Name(RSPOpC.rt), x86_EAX);
+		MoveX86regToVariable(x86_EAX, RSPInfo.DPC_CURRENT_REG,"DPC_CURRENT_REG");
+		break;*/
+
+	case 11:
+		if (IsRspRegConst(RSPOpC.OP.R.rt))
+			MoveConstToX86reg(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt), x86_ECX);
+		else
+			MoveVariableToX86reg(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].UW, RspGPR_Name(RSPOpC.OP.R.rt), x86_ECX);
+		Call_Direct(&RspRecompPos, (void*)WriteDPCStatusRegister, "WriteDPCStatusRegister");
+		break;
+
+	default:
+		RspCompilerWarning("have not implemented RSP MT CP0 reg %s (%d)", RspCOP0_Name(RSPOpC.OP.R.rd), RSPOpC.OP.R.rd);
+		break;
+	}
+#endif
 }
 /************************** Cop2 functions *************************/
 
