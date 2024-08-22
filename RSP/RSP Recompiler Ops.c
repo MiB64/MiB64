@@ -64,9 +64,9 @@ DWORD BeginOfCurrentSubBlock = 0;
 #define Compile_NOR
 #define Compile_SLTU
 #define Compile_Cop0
-/*#define Compile_Cop2
+#define Compile_Cop2
 
-#define RSP_VectorMuls
+/*#define RSP_VectorMuls
 #define RSP_VectorLoads
 #define RSP_VectorMisc
 
@@ -2326,6 +2326,13 @@ void CompileRsp_Cop0_MF ( void ) {
 
 	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
+	if (RSPOpC.OP.R.rt == 0) {
+		if (RSPOpC.OP.R.rd == 7) {
+			MoveConstToVariable(&RspRecompPos, 1, &SP_SEMAPHORE_REG, "SP_SEMAPHORE_REG");
+		}
+		return;
+	}
+
 	switch (RSPOpC.OP.R.rd) {
 	case 0:
 		MoveVariableToX86reg(&RspRecompPos, &SP_MEM_ADDR_REG, "SP_MEM_ADDR_REG", x86_EAX);
@@ -2594,40 +2601,36 @@ void CompileRsp_Cop0_MT ( void ) {
 /************************** Cop2 functions *************************/
 
 void CompileRsp_Cop2_MF ( void ) {
-	/*char Reg[256];
-	int element = (RSPOpC.sa >> 1);
+	char Reg[256];
+	int element = RSPOpC.OP.LSV.element;
 
 	int element1 = 15 - element;
-	int element2 = 15 - ((element + 1) % 16);*/
+	int element2 = 15 - ((element + 1) % 16);
 	
 	#ifndef Compile_Cop2
 	InterpreterFallback((void*)RSP_Cop2_MF,"RSP_Cop2_MF"); return;
 	#endif
 
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
+
+	if (RSPOpC.OP.R.rt == 0) return;
 
 	if (element2 != (element1 - 1)) {
-		XorX86RegToX86Reg(x86_EAX, x86_EAX);
-		XorX86RegToX86Reg(x86_EBX, x86_EBX);
+		sprintf(Reg, "RSP_Vect[%i].B[%i]", RSPOpC.OP.R.rd, element1);
+		MoveVariableToX86regHighByte(&RspRecompPos, &RSP_Vect[RSPOpC.OP.R.rd].B[element1], Reg, x86_EAX);
 
-		sprintf(Reg, "RSP_Vect[%i].B[%i]", RSPOpC.rd, element1);
-		MoveVariableToX86regByte(&RSP_Vect[RSPOpC.rd].B[element1], Reg, x86_EAX);
+		sprintf(Reg, "RSP_Vect[%i].B[%i]", RSPOpC.OP.R.rd, element2);
+		MoveVariableToX86regByte(&RspRecompPos, &RSP_Vect[RSPOpC.OP.R.rd].B[element2], Reg, x86_EAX);
 
-		sprintf(Reg, "RSP_Vect[%i].B[%i]", RSPOpC.rd, element2);
-		MoveVariableToX86regByte(&RSP_Vect[RSPOpC.rd].B[element2], Reg, x86_EBX);
+		Cwde(&RspRecompPos);
 
-		ShiftLeftSignImmed(x86_EAX, 8);
-		OrX86RegToX86Reg(x86_EAX, x86_EBX);
-		Cwde();
-
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].W, GPR_Name(RSPOpC.rt));
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt));
 	} else {
-		sprintf(Reg, "RSP_Vect[%i].B[%i]", RSPOpC.rd, element2);
-		MoveSxVariableToX86regHalf(&RSP_Vect[RSPOpC.rd].B[element2], Reg, x86_EAX);
+		sprintf(Reg, "RSP_Vect[%i].B[%i]", RSPOpC.OP.R.rd, element2);
+		MoveSxVariableToX86regHalf(&RspRecompPos, &RSP_Vect[RSPOpC.OP.R.rd].B[element2], Reg, x86_EAX);
 
-		MoveX86regToVariable(x86_EAX, &RSP_GPR[RSPOpC.rt].W, GPR_Name(RSPOpC.rt));
-	}*/
-	LogMessage("TODO: CompileRsp_Cop2_MF");
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt));
+	}
 }
 
 void CompileRsp_Cop2_CF ( void ) {
@@ -2635,28 +2638,38 @@ void CompileRsp_Cop2_CF ( void ) {
 }
 
 void CompileRsp_Cop2_MT ( void ) {
-	/*char Reg[256];
-	int element = 15 - (RSPOpC.sa >> 1);*/
+	char Reg[256];
+	int element = 15 - RSPOpC.OP.MV.element;
 
 	#ifndef Compile_Cop2
 	InterpreterFallback((void*)RSP_Cop2_MT,"RSP_Cop2_MT"); return;
 	#endif
 
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
-	if (element == 0) {
-		sprintf(Reg, "RSP_GPR[%i].B[1]", RSPOpC.rt);
-		MoveVariableToX86regByte(&RSP_GPR[RSPOpC.rt].B[1], Reg, x86_EAX);
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
+	if (IsRspRegConst(RSPOpC.OP.MV.rt)) {
+		if (element == 0) {
+			sprintf(Reg, "RSP_Vect[%i].B[%i]", RSPOpC.OP.MV.vs, element);
+			MoveConstByteToVariable(&RspRecompPos, (MipsRspRegConst(RSPOpC.OP.MV.rt) >> 8) & 0xFF, &RSP_Vect[RSPOpC.OP.MV.vs].B[element], Reg);
+		} else {
+			sprintf(Reg, "RSP_Vect[%i].B[%i]", RSPOpC.OP.MV.vs, element - 1);
+			MoveConstHalfToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.MV.rt) & 0xFFFF, &RSP_Vect[RSPOpC.OP.MV.vs].B[element - 1], Reg);
+		}
+	}
+	else {
+		if (element == 0) {
+			sprintf(Reg, "RSP_GPR[%i].B[1]", RSPOpC.OP.MV.rt);
+			MoveVariableToX86regByte(&RspRecompPos, &RSP_GPR[RSPOpC.OP.MV.rt].B[1], Reg, x86_EAX);
 
-		sprintf(Reg, "RSP_Vect[%i].B[%i]", RSPOpC.rd, element);
-		MoveX86regByteToVariable(x86_EAX, &RSP_Vect[RSPOpC.rd].B[element], Reg);
-	} else {
-		sprintf(Reg, "RSP_GPR[%i].B[0]", RSPOpC.rt);
-		MoveVariableToX86regHalf(&RSP_GPR[RSPOpC.rt].B[0], Reg, x86_EAX);
+			sprintf(Reg, "RSP_Vect[%i].B[%i]", RSPOpC.OP.MV.vs, element);
+			MoveX86regByteToVariable(&RspRecompPos, x86_EAX, &RSP_Vect[RSPOpC.OP.MV.vs].B[element], Reg);
+		} else {
+			sprintf(Reg, "RSP_GPR[%i].B[0]", RSPOpC.OP.MV.rt);
+			MoveVariableToX86regHalf(&RspRecompPos, &RSP_GPR[RSPOpC.OP.MV.rt].B[0], Reg, x86_EAX);
 
-		sprintf(Reg, "RSP_Vect[%i].B[%i]", RSPOpC.rd, element - 1);
-		MoveX86regHalfToVariable(x86_EAX, &RSP_Vect[RSPOpC.rd].B[element - 1], Reg);
-	}*/
-	LogMessage("TODO: Compile_Cop2_MT");
+			sprintf(Reg, "RSP_Vect[%i].B[%i]", RSPOpC.OP.MV.vs, element - 1);
+			MoveX86regHalfToVariable(&RspRecompPos, x86_EAX, &RSP_Vect[RSPOpC.OP.MV.vs].B[element - 1], Reg);
+		}
+	}
 }
 
 void CompileRsp_Cop2_CT ( void ) {

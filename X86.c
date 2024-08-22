@@ -545,6 +545,11 @@ void CompX86RegToX86Reg(BYTE** code, int Destination, int Source) {
 	PUTDST16(*code,x86Command);
 }
 
+void Cwde(BYTE** code) {
+	CPU_OR_RSP_Message(*code, "      cwde");
+	PUTDST8(*code, 0x98);
+}
+
 void DecX86reg(BYTE** code, int x86Reg) {
 	CPU_OR_RSP_Message(*code, "      dec %s",x86_Name(x86Reg));
 	switch (x86Reg) {

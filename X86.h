@@ -77,6 +77,7 @@ void CompConstToX86reg               ( BYTE** code, int x86Reg, DWORD Const );
 void CompX86regToVariable            ( BYTE** code, int x86Reg, void * Variable, char * VariableName );
 void CompVariableToX86reg	         ( BYTE** code, int x86Reg, void * Variable, char * VariableName );
 void CompX86RegToX86Reg              ( BYTE** code, int Destination, int Source );
+void Cwde                            ( BYTE** code );
 void DecX86reg                       ( BYTE** code, int x86Reg );
 void DivX86reg                       ( BYTE** code, int x86reg );
 void idivX86reg                      ( BYTE** code, int x86reg );
