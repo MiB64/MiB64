@@ -66,6 +66,9 @@ DWORD BeginOfCurrentSubBlock = 0;
 #define Compile_Cop0
 #define Compile_Cop2
 
+#define Compile_CFC2
+#define Compile_CTC2
+
 /*#define RSP_VectorMuls
 #define RSP_VectorLoads
 #define RSP_VectorMisc
@@ -2634,7 +2637,26 @@ void CompileRsp_Cop2_MF ( void ) {
 }
 
 void CompileRsp_Cop2_CF ( void ) {
-	InterpreterFallback((void*)RSP_Cop2_CF,"RSP_Cop2_CF");
+	#ifndef Compile_CFC2
+	InterpreterFallback((void*)RSP_Cop2_CF, "RSP_Cop2_CF"); return;
+	#endif
+
+	switch ((RSPOpC.OP.R.rd & 0x03)) {
+	case 0:
+		MoveSxVariableToX86regHalf(&RspRecompPos, &RspVCO, "VCO", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt));
+		break;
+	case 1:
+		MoveSxVariableToX86regHalf(&RspRecompPos, &RspVCC, "VCC", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt));
+		break;
+	case 2:
+	case 3:
+		MoveZxVariableToX86regByte(&RspRecompPos, &RspVCE, "VCE", x86_EAX);
+		MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt));
+		break;
+
+	}
 }
 
 void CompileRsp_Cop2_MT ( void ) {
@@ -2673,7 +2695,39 @@ void CompileRsp_Cop2_MT ( void ) {
 }
 
 void CompileRsp_Cop2_CT ( void ) {
+	#ifndef Compile_CTC2
 	InterpreterFallback((void*)RSP_Cop2_CT,"RSP_Cop2_CT");
+	#endif
+
+	switch ((RSPOpC.OP.R.rd & 0x03)) {
+	case 0:
+		if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			MoveConstHalfToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt) & 0xFFFF, &RspVCO, "VCO");
+		} else {
+			MoveVariableToX86regHalf(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+			MoveX86regHalfToVariable(&RspRecompPos, x86_EAX, &RspVCO, "VCO");
+		}
+		break;
+	case 1:
+		if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			MoveConstHalfToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt) & 0xFFFF, &RspVCC, "VCC");
+		}
+		else {
+			MoveVariableToX86regHalf(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+			MoveX86regHalfToVariable(&RspRecompPos, x86_EAX, &RspVCC, "VCC");
+		}
+		break;
+	case 2:
+	case 3:
+		if (IsRspRegConst(RSPOpC.OP.R.rt)) {
+			MoveConstByteToVariable(&RspRecompPos, MipsRspRegConst(RSPOpC.OP.R.rt) & 0xFF, &RspVCE, "VCE");
+		}
+		else {
+			MoveVariableToX86regByte(&RspRecompPos, &RSP_GPR[RSPOpC.OP.R.rt].W, RspGPR_Name(RSPOpC.OP.R.rt), x86_EAX);
+			MoveX86regByteToVariable(&RspRecompPos, x86_EAX, &RspVCE, "VCE");
+		}
+		break;
+	}
 }
 
 void CompileRsp_COP2_VECTOR (void) {
