@@ -29,6 +29,7 @@
 #include "../Plugin.h"
 #include "../resource.h"
 #include "../Settings Common Defines.h"
+#include "../X86.h"
 #include "rsp_Cpu.h"
 #include "RSP_breakpoint.h"
 #include "RSP Command.h"
@@ -127,11 +128,11 @@ void InitiateInternalRSP() {
 	Compiler.bFlags = TRUE;*/
 	RspCompiler.bReOrdering = TRUE;
 	RspCompiler.bSections = TRUE;
-	/*Compiler.bDest = TRUE;
-	Compiler.bAccum = TRUE;*/
+	RspCompiler.bDest = TRUE;
+	/*Compiler.bAccum = TRUE;*/
 	RspCompiler.bGPRConstants = TRUE;
 
-	/*DetectCpuSpecs();*/
+	DetectCpuSpecs();
 	hRspConfigMutex = CreateMutex(NULL, FALSE, NULL);
 
 	LoadRspSettings();
@@ -173,9 +174,9 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 		/*if (Compiler.bFlags == TRUE)
 			CheckDlgButton(hDlg, IDC_COMPILER_FLAGS, BST_CHECKED);
 		if (Compiler.bAccum == TRUE)
-			CheckDlgButton(hDlg, IDC_COMPILER_ACCUM, BST_CHECKED);
-		if (Compiler.bDest == TRUE)
-			CheckDlgButton(hDlg, IDC_COMPILER_DEST, BST_CHECKED);*/
+			CheckDlgButton(hDlg, IDC_COMPILER_ACCUM, BST_CHECKED);*/
+		if (RspCompiler.bDest == TRUE)
+			CheckDlgButton(hDlg, IDC_COMPILER_DEST, BST_CHECKED);
 
 		SetTimer(hDlg, 1, 250, NULL);
 		break;
@@ -197,8 +198,8 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 			RspCompiler.bReOrdering = GetBooleanCheck(hDlg, IDC_COMPILER_REORDER);
 			RspCompiler.bGPRConstants = GetBooleanCheck(hDlg, IDC_COMPILER_GPRCONSTANTS);
 			/*Compiler.bFlags = GetBooleanCheck(hDlg, IDC_COMPILER_FLAGS);
-			Compiler.bAccum = GetBooleanCheck(hDlg, IDC_COMPILER_ACCUM);
-			Compiler.bDest = GetBooleanCheck(hDlg, IDC_COMPILER_DEST);*/
+			Compiler.bAccum = GetBooleanCheck(hDlg, IDC_COMPILER_ACCUM);*/
+			RspCompiler.bDest = GetBooleanCheck(hDlg, IDC_COMPILER_DEST);
 			RspCompiler.bAlignGPR = GetBooleanCheck(hDlg, IDC_COMPILER_ALIGNGPR);
 			/*Compiler.bAlignVector = GetBooleanCheck(hDlg, IDC_COMPILER_ALIGNVEC);*/
 			KillTimer(hDlg, 1);

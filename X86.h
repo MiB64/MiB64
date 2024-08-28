@@ -52,6 +52,8 @@ enum x86FpuValues {
 							(Reg) == x86_ESP  ? "sp" : (Reg) == x86_EBP  ? "bp" :\
 							"Unknown x86 Register"
 
+void DetectCpuSpecs(void);
+
 void AdcX86regToVariable             ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void AdcConstToVariable              ( BYTE** code, void *Variable, char *VariableName, BYTE Constant );
 void AdcConstToX86Reg                ( BYTE** code, int x86Reg, DWORD Const );
@@ -72,11 +74,13 @@ void AndX86RegToX86Reg               ( BYTE** code, int Destination, int Source 
 void BreakPoint                      ( BYTE** code );
 void Call_Direct                     ( BYTE** code, void * FunctAddress, char * FunctName );
 void Call_Indirect                   ( BYTE** code, void * FunctAddress, char * FunctName );
+void Cdq                             ( BYTE** code );
 void CompConstToVariable             ( BYTE** code, DWORD Const, void * Variable, char * VariableName );
 void CompConstToX86reg               ( BYTE** code, int x86Reg, DWORD Const );
 void CompX86regToVariable            ( BYTE** code, int x86Reg, void * Variable, char * VariableName );
 void CompVariableToX86reg	         ( BYTE** code, int x86Reg, void * Variable, char * VariableName );
 void CompX86RegToX86Reg              ( BYTE** code, int Destination, int Source );
+void CondMoveEqual                   ( BYTE** code, int Destination, int Source );
 void Cwde                            ( BYTE** code );
 void DecX86reg                       ( BYTE** code, int x86Reg );
 void DivX86reg                       ( BYTE** code, int x86reg );
@@ -302,4 +306,5 @@ void fpuSubQwordReverse              ( BYTE** code, void *Variable, char *Variab
 void fpuSubReg				         ( BYTE** code, int x86reg );
 void fpuSubRegPop			         ( BYTE** code, int x86reg );
 
+void x86_SetBranch8b(void* JumpByte, void* Destination);
 void x86_SetBranch32b(void* JumpByte, void* Destination);

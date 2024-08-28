@@ -32,6 +32,47 @@
 #include "debugger.h"
 #include "RSP/rsp_log.h"
 
+
+static BOOL ConditionalMove;
+
+void DetectCpuSpecs(void) {
+	DWORD Intel_Features = 0;
+	/*DWORD AMD_Features = 0;*/
+
+	__try {
+		_asm {
+			/* Intel features */
+			mov eax, 1
+			cpuid
+			mov[Intel_Features], edx
+
+			/* AMD features */
+/*			mov eax, 80000001h
+			cpuid
+			or [AMD_Features], edx*/
+		}
+	}
+	__except (EXCEPTION_EXECUTE_HANDLER) {
+		/*AMD_Features =*/ Intel_Features = 0;
+	}
+
+	/*if (Intel_Features & 0x02000000) {
+		Compiler.mmx2 = TRUE;
+		Compiler.sse = TRUE;
+	}
+	if (Intel_Features & 0x00800000) {
+		Compiler.mmx = TRUE;
+	}
+	if (AMD_Features & 0x40000000) {
+		Compiler.mmx2 = TRUE;
+	}*/
+	if (Intel_Features & 0x00008000) {
+		ConditionalMove = TRUE;
+	} else {
+		ConditionalMove = FALSE;
+	}
+}
+
 #if defined(Log_x86Code) || defined(RspLog_x86Code)
 #define CPU_OR_RSP_Message(code, Message, ...) { \
 	if(code == RecompPos) { \
@@ -438,6 +479,11 @@ void Call_Indirect(BYTE** code, void * FunctAddress, char * FunctName) {
 	PUTDST32(*code,FunctAddress);
 }
 
+void Cdq(BYTE** code) {
+	CPU_OR_RSP_Message(*code, "      cdq");
+	PUTDST8(*code, 0x99);
+}
+
 void CompConstToVariable(BYTE** code, DWORD Const, void * Variable, char * VariableName) {
 	CPU_OR_RSP_Message(*code, "      cmp dword ptr [%s], 0x%X",VariableName, Const);
 	if ((Const & 0xFFFFFF80) != 0 && (Const & 0xFFFFFF80) != 0xFFFFFF80) {
@@ -543,6 +589,49 @@ void CompX86RegToX86Reg(BYTE** code, int Destination, int Source) {
 	case x86_EBP: x86Command += 0xE800; break;
 	}
 	PUTDST16(*code,x86Command);
+}
+
+void CondMoveEqual(BYTE** code, int Destination, int Source) {
+	if (ConditionalMove == FALSE) {
+		BYTE* Jump;
+		CPU_OR_RSP_Message(*code, "   [*]cmove %s, %s", x86_Name(Destination), x86_Name(Source));
+
+		JneLabel8(code, "label", 0);
+		Jump = *code - 1;
+		MoveX86RegToX86Reg(code, Source, Destination);
+		CPU_OR_RSP_Message(*code, "     label:");
+		x86_SetBranch8b(Jump, *code);
+	}
+	else {
+		BYTE x86Command = 0;
+		CPU_OR_RSP_Message(*code, "      cmove %s, %s", x86_Name(Destination), x86_Name(Source));
+
+		PUTDST16(*code, 0x440F);
+
+		switch (Source) {
+		case x86_EAX: x86Command = 0x00; break;
+		case x86_EBX: x86Command = 0x03; break;
+		case x86_ECX: x86Command = 0x01; break;
+		case x86_EDX: x86Command = 0x02; break;
+		case x86_ESI: x86Command = 0x06; break;
+		case x86_EDI: x86Command = 0x07; break;
+		case x86_ESP: x86Command = 0x04; break;
+		case x86_EBP: x86Command = 0x05; break;
+		}
+
+		switch (Destination) {
+		case x86_EAX: x86Command += 0xC0; break;
+		case x86_EBX: x86Command += 0xD8; break;
+		case x86_ECX: x86Command += 0xC8; break;
+		case x86_EDX: x86Command += 0xD0; break;
+		case x86_ESI: x86Command += 0xF0; break;
+		case x86_EDI: x86Command += 0xF8; break;
+		case x86_ESP: x86Command += 0xE0; break;
+		case x86_EBP: x86Command += 0xE8; break;
+		}
+
+		PUTDST8(*code, x86Command);
+	}
 }
 
 void Cwde(BYTE** code) {

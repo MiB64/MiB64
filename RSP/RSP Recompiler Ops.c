@@ -69,12 +69,12 @@ DWORD BeginOfCurrentSubBlock = 0;
 #define Compile_CFC2
 #define Compile_CTC2
 
-/*#define RSP_VectorMuls
-#define RSP_VectorLoads
-#define RSP_VectorMisc
+#define RSP_VectorMuls
+/*#define RSP_VectorLoads
+#define RSP_VectorMisc*/
 
 #ifdef RSP_VectorMuls
-#	define CompileVmulf*/	/* Verified 12/17/2000 - Jabo */
+#	define CompileVmulf	/* Verified 12/17/2000 - Jabo */
 /*#	define CompileVmacf*/	/* Rewritten & Verified 12/15/2000 - Jabo */
 /*#	define CompileVmudm*/	/* Verified 12/17/2000 - Jabo */
 /*#	define CompileVmudh*/	/* Verified 12/17/2000 - Jabo */
@@ -84,8 +84,8 @@ DWORD BeginOfCurrentSubBlock = 0;
 #	define CompileVmadm*/	/* Verified 12/17/2000 - Jabo */
 /*#	define CompileVmadh*/	/* Verified 12/15/2000 - Jabo */
 /*#	define CompileVmadn*/	/* Verified 12/17/2000 - Jabo */
-/*#endif
-#ifdef RSP_VectorMisc
+#endif
+/*#ifdef RSP_VectorMisc
 #	define CompileVrsqh
 #	define CompileVrcph
 #	define CompileVsaw*/		/* Verified 12/17/2000 - Jabo */
@@ -2696,7 +2696,7 @@ void CompileRsp_Cop2_MT ( void ) {
 
 void CompileRsp_Cop2_CT ( void ) {
 	#ifndef Compile_CTC2
-	InterpreterFallback((void*)RSP_Cop2_CT,"RSP_Cop2_CT");
+	InterpreterFallback((void*)RSP_Cop2_CT, "RSP_Cop2_CT"); return;
 	#endif
 
 	switch ((RSPOpC.OP.R.rd & 0x03)) {
@@ -2903,20 +2903,20 @@ BOOL Compile_Vector_VMULF_MMX ( void ) {
 }*/
 
 void CompileRsp_Vector_VMULF ( void ) {
-	/*char Reg[256];
+	char Reg[256];
 	int count, el, del;
 
-	BOOL bOptimize = ((RSPOpC.rs & 0x0f) >= 8) ? TRUE : FALSE;
-	BOOL bWriteToAccum = WriteToAccum(EntireAccum, CompilePC);
-	BOOL bWriteToDest = WriteToVectorDest(RSPOpC.sa, CompilePC);*/
+	/*BOOL bOptimize = ((RSPOpC.rs & 0x0f) >= 8) ? TRUE : FALSE;
+	BOOL bWriteToAccum = WriteToAccum(EntireAccum, CompilePC);*/
+	BOOL bWriteToDest = WriteToVectorDest(RSPOpC.OP.V.vd, RspCompilePC);
 
 	#ifndef CompileVmulf
 	InterpreterFallback((void*)RSP_Vector_VMULF,"RSP_Vector_VMULF"); return;
 	#endif
 
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
-	if (bWriteToAccum == FALSE) {
+	/*if (bWriteToAccum == FALSE) {
 		if (TRUE == Compile_Vector_VMULF_MMX())
 			return;
 	}
@@ -2925,57 +2925,57 @@ void CompileRsp_Vector_VMULF ( void ) {
 		del = (RSPOpC.rs & 0x07) ^ 7;
 		sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.rt, del);
 		MoveSxVariableToX86regHalf(&RSP_Vect[RSPOpC.rt].HW[del], Reg, x86_EBX);
-	}
+	}*/
 
 	if (bWriteToDest == TRUE) {
-		MoveConstToX86reg(0x7fff0000, x86_ESI);
+		MoveConstToX86reg(&RspRecompPos, 0x7fff0000, x86_ESI);
 	}
-	if (bWriteToAccum == TRUE) {
-		XorX86RegToX86Reg(x86_EDI, x86_EDI);
-	}
+	/*if (bWriteToAccum == TRUE) {*/
+		XorX86RegToX86Reg(&RspRecompPos, x86_EDI, x86_EDI);
+	/*}*/
 
 	for (count = 0; count < 8; count++) {
-		CPU_Message("     Iteration: %i", count);
+		RSP_CPU_Message("     Iteration: %i", count);
 
-		el = Indx[RSPOpC.rs].B[count];
-		del = EleSpec[RSPOpC.rs].B[el];
+		el = Indx[RSPOpC.OP.V.element].B[count];
+		del = EleSpec[RSPOpC.OP.V.element].B[el];
 
-		sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.rd, el);
-		MoveSxVariableToX86regHalf(&RSP_Vect[RSPOpC.rd].HW[el], Reg, x86_EAX);
+		sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.OP.V.vs, el);
+		MoveSxVariableToX86regHalf(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vs].HW[el], Reg, x86_EAX);
 
-		if (RSPOpC.rt == RSPOpC.rd && !bOptimize) {
-			imulX86reg(x86_EAX);
-		} else {
-			if (bOptimize == FALSE) {
-				sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.rt, del);
-				MoveSxVariableToX86regHalf(&RSP_Vect[RSPOpC.rt].HW[del], Reg, x86_EBX);
-			}
-			imulX86reg(x86_EBX);
-		}
+		//if (RSPOpC.OP.V.vt == RSPOpC.OP.V.vs /*&& !bOptimize*/) {
+			//imulX86reg(&RspRecompPos, x86_EAX);
+		//} else {
+			/*if (bOptimize == FALSE) {*/
+				sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.OP.V.vt, del);
+				MoveSxVariableToX86regHalf(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vt].HW[del], Reg, x86_EBX);
+			/*}*/
+			imulX86reg(&RspRecompPos, x86_EBX);
+		//}
 
-		ShiftLeftSignImmed(x86_EAX, 1);
-		AddConstToX86Reg(x86_EAX, 0x8000);
+		ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 1);
+		AddConstToX86Reg(&RspRecompPos, x86_EAX, 0x8000);
 
-		if (bWriteToAccum == TRUE) {
-			MoveX86regToVariable(x86_EAX, &RSP_ACCUM[el].HW[1], "RSP_ACCUM[el].HW[1]");*/
+/*		if (bWriteToAccum == TRUE) {*/
+			MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_ACCUM[el].HW[1], "RSP_ACCUM[el].HW[1]");
 			/* calculate sign extension into edx */
-/*			MoveX86RegToX86Reg(x86_EAX, x86_EDX);
-			ShiftRightSignImmed(x86_EDX, 31);
-		}
+			Cdq(&RspRecompPos);
+/*		}*/
 
-		CompConstToX86reg(x86_EAX, 0x80008000);
+		//if(bWriteToDest == TRUE || bWriteToAccum == TRUE) {
+		CompConstToX86reg(&RspRecompPos, x86_EAX, 0x80008000);
 
-		if (bWriteToAccum == TRUE) {
-			CondMoveEqual(x86_EDX, x86_EDI);
-			MoveX86regHalfToVariable(x86_EDX, &RSP_ACCUM[el].HW[3], "RSP_ACCUM[el].HW[3]");
-		}
+/*		if (bWriteToAccum == TRUE) {*/
+			CondMoveEqual(&RspRecompPos, x86_EDX, x86_EDI);
+			MoveX86regHalfToVariable(&RspRecompPos, x86_EDX, &RSP_ACCUM[el].HW[3], "RSP_ACCUM[el].HW[3]");
+/*		}*/
+
 		if (bWriteToDest == TRUE) {
-			CondMoveEqual(x86_EAX, x86_ESI);
-			ShiftRightUnsignImmed(x86_EAX, 16);
-			MoveX86regHalfToVariable(x86_EAX, &RSP_Vect[RSPOpC.sa].HW[el], "RSP_Vect[RSPOpC.sa].HW[el]");
+			CondMoveEqual(&RspRecompPos, x86_EAX, x86_ESI);
+			ShiftRightUnsignImmed(&RspRecompPos, x86_EAX, 16);
+			MoveX86regHalfToVariable(&RspRecompPos, x86_EAX, &RSP_Vect[RSPOpC.OP.V.vd].HW[el], "RSP_Vect[RSPOpC.OP.V.vd].HW[el]");
 		}
-	}*/
-	LogMessage("TODO: CompileRsp_Vector_VMULF");
+	}
 }
 
 void CompileRsp_Vector_VMULU ( void ) {

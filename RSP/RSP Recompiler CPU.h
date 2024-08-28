@@ -49,9 +49,9 @@ extern "C" {
 	#define Low16BitAccum		4
 	#define EntireAccum			(Low16BitAccum|Middle16BitAccum|High16BitAccum)
 
-	BOOL WriteToAccum (int Location, int PC);
+	BOOL WriteToAccum (int Location, int PC);*/
 	BOOL WriteToVectorDest (DWORD DestReg, int PC);
-	BOOL UseRspFlags (int PC);*/
+	/*BOOL UseRspFlags (int PC);*/
 
 	BOOL RspDelaySlotAffectBranch(DWORD PC);
 	BOOL RspCompareInstructions(DWORD PC, OPCODE* Top, OPCODE* Bottom);
@@ -108,7 +108,7 @@ extern "C" {
 		/*	BOOL bFlags;*/			/* RSP Flag Analysis */
 		BOOL bReOrdering;		/* Instruction reordering */
 		BOOL bSections;			/* Microcode sections */
-	/*	BOOL bDest;*/				/* Vector destionation toggle */
+		BOOL bDest;				/* Vector destination toggle */
 	/*	BOOL bAccum;*/			/* Accumulator toggle */
 		BOOL bGPRConstants;		/* Analyze GPR constants */
 	/*	BOOL bAlignVector;*/		/* Align known vector loads */
