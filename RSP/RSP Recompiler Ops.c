@@ -2906,8 +2906,8 @@ void CompileRsp_Vector_VMULF ( void ) {
 	char Reg[256];
 	int count, el, del;
 
-	/*BOOL bOptimize = ((RSPOpC.rs & 0x0f) >= 8) ? TRUE : FALSE;
-	BOOL bWriteToAccum = WriteToAccum(EntireAccum, CompilePC);*/
+	/*BOOL bOptimize = ((RSPOpC.rs & 0x0f) >= 8) ? TRUE : FALSE;*/
+	BOOL bWriteToAccum = WriteToAccum(EntireAccum, RspCompilePC);
 	BOOL bWriteToDest = WriteToVectorDest(RSPOpC.OP.V.vd, RspCompilePC);
 
 	#ifndef CompileVmulf
@@ -2915,6 +2915,10 @@ void CompileRsp_Vector_VMULF ( void ) {
 	#endif
 
 	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
+
+	if (bWriteToDest == FALSE && bWriteToAccum == FALSE) {
+		return;
+	}
 
 	/*if (bWriteToAccum == FALSE) {
 		if (TRUE == Compile_Vector_VMULF_MMX())
@@ -2930,9 +2934,9 @@ void CompileRsp_Vector_VMULF ( void ) {
 	if (bWriteToDest == TRUE) {
 		MoveConstToX86reg(&RspRecompPos, 0x7fff0000, x86_ESI);
 	}
-	/*if (bWriteToAccum == TRUE) {*/
+	if (bWriteToAccum == TRUE) {
 		XorX86RegToX86Reg(&RspRecompPos, x86_EDI, x86_EDI);
-	/*}*/
+	}
 
 	for (count = 0; count < 8; count++) {
 		RSP_CPU_Message("     Iteration: %i", count);
@@ -2956,19 +2960,18 @@ void CompileRsp_Vector_VMULF ( void ) {
 		ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 1);
 		AddConstToX86Reg(&RspRecompPos, x86_EAX, 0x8000);
 
-/*		if (bWriteToAccum == TRUE) {*/
+		if (bWriteToAccum == TRUE) {
 			MoveX86regToVariable(&RspRecompPos, x86_EAX, &RSP_ACCUM[el].HW[1], "RSP_ACCUM[el].HW[1]");
 			/* calculate sign extension into edx */
 			Cdq(&RspRecompPos);
-/*		}*/
+		}
 
-		//if(bWriteToDest == TRUE || bWriteToAccum == TRUE) {
 		CompConstToX86reg(&RspRecompPos, x86_EAX, 0x80008000);
 
-/*		if (bWriteToAccum == TRUE) {*/
+		if (bWriteToAccum == TRUE) {
 			CondMoveEqual(&RspRecompPos, x86_EDX, x86_EDI);
 			MoveX86regHalfToVariable(&RspRecompPos, x86_EDX, &RSP_ACCUM[el].HW[3], "RSP_ACCUM[el].HW[3]");
-/*		}*/
+		}
 
 		if (bWriteToDest == TRUE) {
 			CondMoveEqual(&RspRecompPos, x86_EAX, x86_ESI);

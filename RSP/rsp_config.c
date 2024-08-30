@@ -129,7 +129,7 @@ void InitiateInternalRSP() {
 	RspCompiler.bReOrdering = TRUE;
 	RspCompiler.bSections = TRUE;
 	RspCompiler.bDest = TRUE;
-	/*Compiler.bAccum = TRUE;*/
+	RspCompiler.bAccum = TRUE;
 	RspCompiler.bGPRConstants = TRUE;
 
 	DetectCpuSpecs();
@@ -172,9 +172,9 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 		if (RspCompiler.bReOrdering == TRUE)
 			CheckDlgButton(hDlg, IDC_COMPILER_REORDER, BST_CHECKED);
 		/*if (Compiler.bFlags == TRUE)
-			CheckDlgButton(hDlg, IDC_COMPILER_FLAGS, BST_CHECKED);
-		if (Compiler.bAccum == TRUE)
-			CheckDlgButton(hDlg, IDC_COMPILER_ACCUM, BST_CHECKED);*/
+			CheckDlgButton(hDlg, IDC_COMPILER_FLAGS, BST_CHECKED);*/
+		if (RspCompiler.bAccum == TRUE)
+			CheckDlgButton(hDlg, IDC_COMPILER_ACCUM, BST_CHECKED);
 		if (RspCompiler.bDest == TRUE)
 			CheckDlgButton(hDlg, IDC_COMPILER_DEST, BST_CHECKED);
 
@@ -197,8 +197,8 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 			RspCompiler.bSections = GetBooleanCheck(hDlg, IDC_COMPILER_SECTIONS);
 			RspCompiler.bReOrdering = GetBooleanCheck(hDlg, IDC_COMPILER_REORDER);
 			RspCompiler.bGPRConstants = GetBooleanCheck(hDlg, IDC_COMPILER_GPRCONSTANTS);
-			/*Compiler.bFlags = GetBooleanCheck(hDlg, IDC_COMPILER_FLAGS);
-			Compiler.bAccum = GetBooleanCheck(hDlg, IDC_COMPILER_ACCUM);*/
+			/*Compiler.bFlags = GetBooleanCheck(hDlg, IDC_COMPILER_FLAGS);*/
+			RspCompiler.bAccum = GetBooleanCheck(hDlg, IDC_COMPILER_ACCUM);
 			RspCompiler.bDest = GetBooleanCheck(hDlg, IDC_COMPILER_DEST);
 			RspCompiler.bAlignGPR = GetBooleanCheck(hDlg, IDC_COMPILER_ALIGNGPR);
 			/*Compiler.bAlignVector = GetBooleanCheck(hDlg, IDC_COMPILER_ALIGNVEC);*/

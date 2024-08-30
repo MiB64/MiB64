@@ -44,12 +44,12 @@ extern "C" {
 
 #define RspCompilerWarning if (RspShowErrors) DisplayError
 
-	/*#define High16BitAccum		1
+	#define High16BitAccum		1
 	#define Middle16BitAccum	2
 	#define Low16BitAccum		4
 	#define EntireAccum			(Low16BitAccum|Middle16BitAccum|High16BitAccum)
 
-	BOOL WriteToAccum (int Location, int PC);*/
+	BOOL WriteToAccum (int Location, int PC);
 	BOOL WriteToVectorDest (DWORD DestReg, int PC);
 	/*BOOL UseRspFlags (int PC);*/
 
@@ -109,7 +109,7 @@ extern "C" {
 		BOOL bReOrdering;		/* Instruction reordering */
 		BOOL bSections;			/* Microcode sections */
 		BOOL bDest;				/* Vector destination toggle */
-	/*	BOOL bAccum;*/			/* Accumulator toggle */
+		BOOL bAccum;			/* Accumulator toggle */
 		BOOL bGPRConstants;		/* Analyze GPR constants */
 	/*	BOOL bAlignVector;*/		/* Align known vector loads */
 		BOOL bAlignGPR;			/* Align known gpr loads */

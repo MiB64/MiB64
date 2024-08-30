@@ -129,28 +129,30 @@ BOOL IsRspOpcodeNop(DWORD PC) {
 
 #define HIT_BRANCH	0x2
 
-/*DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
+static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 	OPCODE RspOp;
 	DWORD BranchTarget = 0;
 	signed int BranchImmed = 0;
-	DWORD JumpTarget = 0;
+	BOOL BranchMet = FALSE;
+	/*DWORD JumpTarget = 0;*/
 	BOOL JumpUncond = FALSE;
 
-	int Instruction_State = NextInstruction;
+	int Instruction_State = RSP_NextInstruction;
 
-	if (Compiler.bAccum == FALSE) return TRUE;
+	if (RspCompiler.bAccum == FALSE) return TRUE;
 
 	if (Instruction_State == DELAY_SLOT) { 
-		return TRUE; 
+		//return TRUE;
+		LogMessage("TODO: WriteToAccum2 in delay slot");
 	}
 
 	do {
 		PC += 4;
-		if (PC >= 0x1000) { return TRUE; }
-		RSP_LW_IMEM(PC, &RspOp.Hex);
+		PC &= 0xFFC;
+		RSP_LW_IMEM(PC, &RspOp.OP.Hex);
 
-		switch (RspOp.op) {
- 		case RSP_REGIMM:
+		switch (RspOp.OP.I.op) {
+ 		/*case RSP_REGIMM:
 			switch (RspOp.rt) {
 			case RSP_REGIMM_BLTZ:
 			case RSP_REGIMM_BGEZ:
@@ -162,12 +164,12 @@ BOOL IsRspOpcodeNop(DWORD PC) {
 				CompilerWarning("Unkown opcode in WriteToAccum\n%s",RSPOpcodeName(RspOp.Hex,PC));
 				return TRUE;
 			}
-			break;
+			break;*/
 		case RSP_SPECIAL:
-			switch (RspOp.funct) {
-			case RSP_SPECIAL_SLL:
+			switch (RspOp.OP.R.funct) {
+			/*case RSP_SPECIAL_SLL:*/
 			case RSP_SPECIAL_SRL:
-			case RSP_SPECIAL_SRA:
+			/*case RSP_SPECIAL_SRA:
 			case RSP_SPECIAL_SLLV:
 			case RSP_SPECIAL_SRLV:
 			case RSP_SPECIAL_SRAV:
@@ -178,52 +180,56 @@ BOOL IsRspOpcodeNop(DWORD PC) {
 			case RSP_SPECIAL_AND:
 			case RSP_SPECIAL_OR:
 			case RSP_SPECIAL_XOR:
-			case RSP_SPECIAL_NOR:
+			case RSP_SPECIAL_NOR:*/
 			case RSP_SPECIAL_SLT:
-			case RSP_SPECIAL_SLTU:
-			case RSP_SPECIAL_BREAK:
+			/*case RSP_SPECIAL_SLTU:*/
 				break;
 
-			case RSP_SPECIAL_JR:
+			case RSP_SPECIAL_BREAK:
+				return TRUE;
+
+			/*case RSP_SPECIAL_JR:
 				Instruction_State = DO_DELAY_SLOT;
-				break;
+				break;*/
 
 			default:
-				CompilerWarning("Unkown opcode in WriteToAccum\n%s",RSPOpcodeName(RspOp.Hex,PC));
+				RspCompilerWarning("Unkown opcode in WriteToAccum\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
 				return TRUE;
 			}
 			break;
-		case RSP_J:
+		/*case RSP_J:
 		case RSP_JAL:
 			if (!JumpTarget) {
 				JumpUncond = TRUE;
 				JumpTarget = (RspOp.target << 2) & 0xFFC;
 			}
 			Instruction_State = DO_DELAY_SLOT;
-			break;
+			break;*/
 
 		case RSP_BEQ:
 		case RSP_BNE:
-		case RSP_BLEZ:
+		/*case RSP_BLEZ:*/
 		case RSP_BGTZ:
+			if (Instruction_State == DELAY_SLOT) return TRUE;
 			Instruction_State = DO_DELAY_SLOT;
-			BranchTarget = (PC + ((short)RspOp.offset << 2) + 4) & 0xFFC;
-			BranchImmed = (short)RspOp.offset;
+			BranchTarget = (PC + ((short)RspOp.OP.B.offset << 2) + 4) & 0xFFC;
+			BranchImmed = (short)RspOp.OP.B.offset;
+			BranchMet = TRUE;
 			break;
 		case RSP_ADDI:
 		case RSP_ADDIU:
-		case RSP_SLTI:
-		case RSP_SLTIU:
+		/*case RSP_SLTI:
+		case RSP_SLTIU:*/
 		case RSP_ANDI:
 		case RSP_ORI:
-		case RSP_XORI:
+		/*case RSP_XORI:*/
 		case RSP_LUI:
-		case RSP_CP0:			
+		/*case RSP_CP0:*/
 			break;
 
 		case RSP_CP2:
-			if ((RspOp.rs & 0x10) != 0) {
-				switch (RspOp.funct) {
+			if ((RspOp.OP.I.rs & 0x10) != 0) {
+				switch (RspOp.OP.V.funct) {
 				case RSP_VECTOR_VMULF:
 				case RSP_VECTOR_VMUDL:
 				case RSP_VECTOR_VMUDM:
@@ -231,19 +237,23 @@ BOOL IsRspOpcodeNop(DWORD PC) {
 				case RSP_VECTOR_VMUDH:
 					return FALSE;
 				case RSP_VECTOR_VMACF:
+				case RSP_VECTOR_VMACU:
 				case RSP_VECTOR_VMADL:
 				case RSP_VECTOR_VMADM:
 				case RSP_VECTOR_VMADN:
-				case RSP_VECTOR_VMADH:
 					return TRUE;
-				case RSP_VECTOR_VABS: // hope this is ok
+				case RSP_VECTOR_VMADH:
+					if ((Location & High16BitAccum) != 0) return TRUE;
+					if ((Location & Middle16BitAccum) != 0) return TRUE;
+					break;
+				/*case RSP_VECTOR_VABS: // hope this is ok*/
 				case RSP_VECTOR_VADD:
 				case RSP_VECTOR_VADDC:
-				case RSP_VECTOR_VSUB:
+				/*case RSP_VECTOR_VSUB:*/
 				case RSP_VECTOR_VSUBC:
-				case RSP_VECTOR_VAND:
+				/*case RSP_VECTOR_VAND:*/
 				case RSP_VECTOR_VOR:
-				case RSP_VECTOR_VXOR:
+				/*case RSP_VECTOR_VXOR:
 				case RSP_VECTOR_VNXOR:
 				case RSP_VECTOR_VCR:
 				case RSP_VECTOR_VCH:
@@ -254,98 +264,110 @@ BOOL IsRspOpcodeNop(DWORD PC) {
 				case RSP_VECTOR_VRSQL:
 				case RSP_VECTOR_VRSQH: // hope this is ok
 				case RSP_VECTOR_VLT:
-				case RSP_VECTOR_VEQ:
+				case RSP_VECTOR_VEQ:*/
 				case RSP_VECTOR_VGE:
+				case RSP_VECTOR_VMOV:
 					if (Location == Low16BitAccum) { return FALSE; }
 					break;
 
-				case RSP_VECTOR_VMOV:
-				case RSP_VECTOR_VMRG:
+				/*case RSP_VECTOR_VMRG:
+					break;*/
+				case RSP_VECTOR_VSAR:
+					switch (RspOp.OP.V.element) {
+					case 8:
+						if ((Location & High16BitAccum) != 0) return TRUE;
+						break;
+					case 9:
+						if ((Location & Middle16BitAccum) != 0) return TRUE;
+						break;
+					case 10:
+						if ((Location & Low16BitAccum) != 0) return TRUE;
+						break;
+					}
 					break;
-				case RSP_VECTOR_VSAW:
-					return TRUE;
 				default:
-					CompilerWarning("Unkown opcode in WriteToVectorDest\n%s",RSPOpcodeName(RspOp.Hex,PC));
+					RspCompilerWarning("Unkown opcode in WriteToAccum\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
 					return TRUE;
 				}
 			} else {
-				switch (RspOp.rs) {				
-				case RSP_COP2_CF:
-				case RSP_COP2_CT:
+				switch (RspOp.OP.I.rs) {
+				/*case RSP_COP2_CF:
+				case RSP_COP2_CT:*/
 				case RSP_COP2_MT:
-				case RSP_COP2_MF:
+				/*case RSP_COP2_MF:*/
 					break;
 				default:
-					CompilerWarning("Unkown opcode in WriteToVectorDest\n%s",RSPOpcodeName(RspOp.Hex,PC));
+					RspCompilerWarning("Unkown opcode in WriteToAccum\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
 					return TRUE;
 				}
 			}
 			break;
-		case RSP_LB:
-		case RSP_LH:
+		/*case RSP_LB:
+		case RSP_LH:*/
 		case RSP_LW:
-		case RSP_LBU:
-		case RSP_LHU:
+		/*case RSP_LBU:
+		case RSP_LHU:*/
 		case RSP_SB:
-		case RSP_SH:
-		case RSP_SW:
+		/*case RSP_SH:
+		case RSP_SW:*/
 			break;
 		case RSP_LC2:
-			switch (RspOp.rd) {
-			case RSP_LSC2_SV:
+			switch (RspOp.OP.R.rd) {
+			/*case RSP_LSC2_SV:
 			case RSP_LSC2_DV:
-			case RSP_LSC2_RV:
+			case RSP_LSC2_RV:*/
 			case RSP_LSC2_QV:
-			case RSP_LSC2_LV:
+			/*case RSP_LSC2_LV:*/
 			case RSP_LSC2_UV:
 			case RSP_LSC2_PV:
-			case RSP_LSC2_TV:
+			/*case RSP_LSC2_TV:*/
 				break;
 			default:
-				CompilerWarning("Unkown opcode in WriteToAccum\n%s",RSPOpcodeName(RspOp.Hex,PC));
+				RspCompilerWarning("Unkown opcode in WriteToAccum\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
 				return TRUE;
 			}
 			break;
 		case RSP_SC2:
-			switch (RspOp.rd) {
-			case RSP_LSC2_BV:
+			switch (RspOp.OP.R.rd) {
+			/*case RSP_LSC2_BV:*/
 			case RSP_LSC2_SV:
-			case RSP_LSC2_LV:
-			case RSP_LSC2_DV:
+			/*case RSP_LSC2_LV:
+			case RSP_LSC2_DV:*/
 			case RSP_LSC2_QV:
-			case RSP_LSC2_RV:
-			case RSP_LSC2_PV:
+			/*case RSP_LSC2_RV:
+			case RSP_LSC2_PV:*/
 			case RSP_LSC2_UV:
-			case RSP_LSC2_HV:
+			/*case RSP_LSC2_HV:
 			case RSP_LSC2_FV:
 			case RSP_LSC2_WV:
-			case RSP_LSC2_TV:
+			case RSP_LSC2_TV:*/
 				break;
 			default:
-				CompilerWarning("Unkown opcode in WriteToAccum\n%s",RSPOpcodeName(RspOp.Hex,PC));
+				RspCompilerWarning("Unkown opcode in WriteToAccum\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
 				return TRUE;
 			}
 			break;
 		default:
-			CompilerWarning("Unkown opcode in WriteToAccum\n%s",RSPOpcodeName(RspOp.Hex,PC));
+			RspCompilerWarning("Unkown opcode in WriteToAccum\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
 			return TRUE;
 		}
 		switch (Instruction_State) {
 		case NORMAL: break;
-		case DO_DELAY_SLOT: 
+		case DO_DELAY_SLOT:
 			Instruction_State = DELAY_SLOT;
 			break;
-		case DELAY_SLOT: 
+		case DELAY_SLOT:
 			if (JumpUncond) {
-				PC = JumpTarget - 0x04;
-				Instruction_State = NORMAL;
+				/*PC = JumpTarget - 0x04;
+				Instruction_State = NORMAL;*/
+				LogMessage("TODO: WriteToAccum2 main loop, delay slot, jump uncond");
 			} else {
-				Instruction_State = FINISH_BLOCK; 
+				Instruction_State = FINISH_BLOCK;
 			}
-			JumpUncond = FALSE;
+			/*JumpUncond = FALSE;*/
 			break;
 		}
-	} while (Instruction_State != FINISH_BLOCK);*/
+	} while (Instruction_State != FINISH_BLOCK);
 
 	/***
 	** This is a tricky situation because most of the 
@@ -353,41 +375,44 @@ BOOL IsRspOpcodeNop(DWORD PC) {
 	** can prove effective, but it's still a branch..
 	***/
 
-/*	if (BranchTarget != 0 && RecursiveCall == FALSE) {
-		DWORD BranchTaken, BranchFall;*/
+	if (BranchMet == TRUE && RecursiveCall == FALSE) {
+		DWORD BranchTaken, BranchFall;
 
 		/* analysis of branch taken */
-/*		BranchTaken = WriteToAccum2(Location, BranchTarget - 4, TRUE);*/
+		BranchTaken = WriteToAccum2(Location, BranchTarget - 4, TRUE);
 		/* analysis of branch as nop */
-/*		BranchFall = WriteToAccum2(Location, PC, TRUE);
+		BranchFall = WriteToAccum2(Location, PC, TRUE);
 
 		if (BranchImmed < 0) {
-			if (BranchTaken != FALSE) {*/
+			if (BranchTaken != FALSE) {
 				/*
 				** took this back branch and couldnt find a place 
-				** that resets the accum or hit a branch etc 
+				** that resets the accum or hit a branch etc
+				** or a branch was met and we widdn't go deeper in recursion and decide to write the register
 				**/
-/*				return TRUE;
-			} else if (BranchFall == HIT_BRANCH) {*/
+/*				/*return TRUE;*/
+				LogMessage("TODO: WriteToAccum2 check branch, backward, branch taken don't need accum");
+				return FALSE;
+			} else if (BranchFall == HIT_BRANCH) {
 				/* risky? the loop ended, hit another branch after loop-back */
 			
-/*#if !defined(RSP_SAFE_ANALYSIS)
-				CPU_Message("WriteToDest: Backward branch hit, BranchFall = Hit branch (returning FALSE)");
+#if !defined(RSP_SAFE_ANALYSIS)
+				RSP_CPU_Message("WriteToDest: Backward branch hit, BranchFall = Hit branch (returning FALSE)");
 				return FALSE;
 #endif
 				return TRUE;
-			} else {*/
+			} else {
 				/* otherwise this is completely valid */
-/*				return BranchFall;
+				return BranchFall;
 			}
-		} else {	
-			if (BranchFall != FALSE) {*/
+		} else {
+			if (BranchFall != FALSE) {
 				/*
 				** took this forward branch and couldnt find a place 
 				** that resets the accum or hit a branch etc 
 				**/
-/*				return TRUE;
-			} else if (BranchTaken == HIT_BRANCH) {*/
+				return TRUE;
+			} else if (BranchTaken == HIT_BRANCH) {
 				/* risky? jumped forward, hit another branch */
 				
 /*#if !defined(RSP_SAFE_ANALYSIS)
@@ -395,10 +420,14 @@ BOOL IsRspOpcodeNop(DWORD PC) {
 				return FALSE;
 #endif
 
-				return TRUE;
-			} else {*/
+				return TRUE;*/
+				LogMessage("TODO: WriteToAccum2 check branch, forward, hit branch");
+				return FALSE;
+			} else {
 				/* otherwise this is completely valid */
-/*				return BranchTaken;
+/*				return BranchTaken;*/
+				LogMessage("TODO: WriteToAccum2 check branch, forward, valid");
+				return FALSE;
 			}
 		}
 	} else {
@@ -410,10 +439,11 @@ BOOL WriteToAccum (int Location, int PC) {
 	DWORD value = WriteToAccum2(Location, PC, FALSE);
 
 	if (value == HIT_BRANCH) {
-		return TRUE;*/ /* ??? */
-/*	} else
+		LogMessage("TODO: WriteToAccum hit branch");
+		return TRUE; /* ??? */
+	} else
 		return value;
-}*/
+}
 
 /************************************************************
 ** WriteToVectorDest
@@ -425,7 +455,7 @@ BOOL WriteToAccum (int Location, int PC) {
 ** Input: PC, Register
 *************************************************************/
 
-BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
+static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 	OPCODE RspOp;
 	DWORD BranchTarget = 0;
 	signed int BranchImmed = 0;
@@ -678,22 +708,19 @@ BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 		DWORD BranchTaken, BranchFall;
 
 		/* analysis of branch taken */
-		BranchTaken = WriteToVectorDest2(DestReg, BranchTarget - 4, TRUE);
+		BranchTaken = WriteToVectorDest2(DestReg, (BranchTarget - 4) & 0xFFC, TRUE);
 		/* analysis of branch as nop */
 		BranchFall = WriteToVectorDest2(DestReg, PC, TRUE);
 
 		if (BranchImmed < 0) {
-			if (BranchTaken == TRUE) {
+			if (BranchTaken != FALSE) {
 				/*
 				** took this back branch and found a place
 				** that needs this vector as a source
+				** or a branch was met and we widdn't go deeper in recursion and decide to write the register
 				**/
 				return TRUE;
-			} else if (BranchTaken == HIT_BRANCH) {
-				LogMessage("TODO: WriteToVectorDest2 take branch, backward, branch taken hit branch");
-				return FALSE;
-			}
-			else if (BranchFall == HIT_BRANCH) {
+			} else if (BranchFall == HIT_BRANCH) {
 				/* (dlist) risky? the loop ended, hit another branch after loop-back */
 			
 #if !defined(RSP_SAFE_ANALYSIS)
