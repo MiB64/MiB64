@@ -59,8 +59,10 @@ extern "C" {
 	BOOL IsRspOpcodeNop(DWORD PC);
 	BOOL IsRspDelaySlotBranch(DWORD PC);
 
-	/*BOOL IsNextInstructionMmx(DWORD PC);*/
+	BOOL IsNextRspInstructionMmx(DWORD PC);
 	BOOL IsRspRegisterConstant(DWORD Reg, DWORD* Constant);
+
+	BOOL IsVectorOpcodeRecompiled(int funct);
 
 	/*void RSP_Element2Mmx(int MmxReg);
 	void RSP_MultiElement2Mmx(int MmxReg1, int MmxReg2);*/
@@ -104,7 +106,7 @@ extern "C" {
 	#define MipsRspRegConst(i)  (RspCode.MipsRegConst[i])
 
 	typedef struct {
-		/*	BOOL mmx, mmx2, sse;*/	/* CPU specs and compiling */
+		BOOL mmx, mmx2/*, sse*/;	/* CPU specs and compiling */
 		/*	BOOL bFlags;*/			/* RSP Flag Analysis */
 		BOOL bReOrdering;		/* Instruction reordering */
 		BOOL bSections;			/* Microcode sections */
@@ -117,9 +119,9 @@ extern "C" {
 
 	extern RSP_COMPILER RspCompiler;
 
-	/*#define IsMmxEnabled	(Compiler.mmx)
-	#define IsMmx2Enabled	(Compiler.mmx2)
-	#define IsSseEnabled	(Compiler.sse)*/
+	#define IsMmxEnabled	(RspCompiler.mmx)
+	#define IsMmx2Enabled	(RspCompiler.mmx2)
+	/*#define IsSseEnabled	(Compiler.sse)*/
 
 	extern BOOL IMEMIsUpdated;
 

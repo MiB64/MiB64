@@ -112,6 +112,19 @@ DWORD BeginOfCurrentSubBlock = 0;
 /*#	define CompileSlv
 #endif*/
 
+BOOL IsVectorOpcodeRecompiled(int funct) {
+	switch (funct) {
+	case RSP_VECTOR_VMULF:
+#ifdef CompileVmulf
+		return TRUE;
+#else
+		return FALSE;
+#endif
+	default:
+		return FALSE;
+	}
+}
+
 static void CompileRsp_ConsecutiveDelaySlots();
 
 static void Branch_AddRef(DWORD Target, DWORD * X86Loc) {
@@ -2736,55 +2749,55 @@ void CompileRsp_COP2_VECTOR (void) {
 
 /************************** Vect functions **************************/
 
-/*UDWORD MMX_Scratch;
+MIPS_DWORD MMX_Scratch;
 
-void RSP_Element2Mmx(int MmxReg) {
+static void RSP_Element2Mmx(int MmxReg) {
 	char Reg[256];
 
-	DWORD Rs = RSPOpC.rs & 0x0f;
+	DWORD Element = RSPOpC.OP.V.element & 0x0f;
 	DWORD el;
 
-	switch (Rs) {
+	switch (Element) {
 	case 0: case 1:
 	case 2: case 3:
 	case 4:	case 5:
 	case 6:	case 7:
-		CompilerWarning("Unimplemented RSP_Element2Mmx");
+		RspCompilerWarning("Unimplemented RSP_Element2Mmx");
 		break;
 
-	default:*/
+	default:
 		/*
 		 * Noticed the exclusive-or of seven to take into account
 		 * the pseudo-swapping we have in the vector registers
 		 */
 
-/*		el = (RSPOpC.rs & 0x07) ^ 7;
+		el = (RSPOpC.OP.V.element & 0x07) ^ 7;
 
 		if (IsMmx2Enabled == FALSE) {
-			sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.rt, el);
-			MoveVariableToX86regHalf(&RSP_Vect[RSPOpC.rt].HW[el], Reg, x86_ECX);
-			MoveX86regHalfToVariable(x86_ECX, &MMX_Scratch.HW[0], "MMX_Scratch.HW[0]");
-			MoveX86regHalfToVariable(x86_ECX, &MMX_Scratch.HW[1], "MMX_Scratch.HW[1]");
-			MoveX86regHalfToVariable(x86_ECX, &MMX_Scratch.HW[2], "MMX_Scratch.HW[2]");
-			MoveX86regHalfToVariable(x86_ECX, &MMX_Scratch.HW[3], "MMX_Scratch.HW[3]");
-			MmxMoveQwordVariableToReg(MmxReg, &MMX_Scratch.HW[0], "MMX_Scratch.HW[0]");
+			sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.OP.V.vt, el);
+			MoveVariableToX86regHalf(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vt].HW[el], Reg, x86_ECX);
+			MoveX86regHalfToVariable(&RspRecompPos, x86_ECX, &MMX_Scratch.HW[0], "MMX_Scratch.HW[0]");
+			MoveX86regHalfToVariable(&RspRecompPos, x86_ECX, &MMX_Scratch.HW[1], "MMX_Scratch.HW[1]");
+			MoveX86regHalfToVariable(&RspRecompPos, x86_ECX, &MMX_Scratch.HW[2], "MMX_Scratch.HW[2]");
+			MoveX86regHalfToVariable(&RspRecompPos, x86_ECX, &MMX_Scratch.HW[3], "MMX_Scratch.HW[3]");
+			MmxMoveQwordVariableToReg(&RspRecompPos, MmxReg, &MMX_Scratch.HW[0], "MMX_Scratch.HW[0]");
 		} else {
 			unsigned long Qword;
 			
 			Qword = (el >> 2) & 0x1;
 			el &= 0x3;
 
-			sprintf(Reg, "RSP_Vect[%i].DW[%i]", RSPOpC.rt, Qword);
-			MmxShuffleMemoryToReg(MmxReg, 
-				&RSP_Vect[RSPOpC.rt].DW[Qword], Reg, _MMX_SHUFFLE(el, el, el, el));
+			sprintf(Reg, "RSP_Vect[%i].DW[%i]", RSPOpC.OP.V.vt, Qword);
+			MmxShuffleMemoryToReg(&RspRecompPos, MmxReg, 
+				&RSP_Vect[RSPOpC.OP.V.vt].DW[Qword], Reg, _MMX_SHUFFLE(el, el, el, el));
 		}
 		break;
 	}
 }
 
-void RSP_MultiElement2Mmx(int MmxReg1, int MmxReg2) {
+static void RSP_MultiElement2Mmx(int MmxReg1, int MmxReg2) {
 	char Reg[256];
-	DWORD Rs = RSPOpC.rs & 0x0f;*/
+	DWORD Element = RSPOpC.OP.V.element & 0x0f;
 
 	/*
 	 * Ok, this is tricky, hopefully this clears it up:
@@ -2800,21 +2813,24 @@ void RSP_MultiElement2Mmx(int MmxReg1, int MmxReg2) {
 	 *
 	 */
 
-/*	switch (Rs) {
-	case 0:
-	case 1:
-		sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.rt);
+	switch (Element) {
+/*	case 0:
+		LogMessage("TODO: RSP_MultiElement2Mmx 0");
+	case 1:*/
+		/*sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.rt);
 		MmxMoveQwordVariableToReg(MmxReg1, &RSP_Vect[RSPOpC.rt].UHW[0], Reg);
 		sprintf(Reg, "RSP_Vect[%i].UHW[4]", RSPOpC.rt);
 		MmxMoveQwordVariableToReg(MmxReg2, &RSP_Vect[RSPOpC.rt].UHW[4], Reg);
-		break;
+		break;*/
+/*		LogMessage("TODO: RSP_MultiElement2Mmx 1");
 	case 2:*/
 		/* [0q]    | 0 | 0 | 2 | 2 | 4 | 4 | 6 | 6 | */
 /*		sprintf(Reg, "RSP_Vect[%i].DW[0]", RSPOpC.rt);
 		MmxShuffleMemoryToReg(MmxReg1, &RSP_Vect[RSPOpC.rt].DW[0], Reg, 0xF5);
 		sprintf(Reg, "RSP_Vect[%i].DW[1]", RSPOpC.rt);
 		MmxShuffleMemoryToReg(MmxReg2, &RSP_Vect[RSPOpC.rt].DW[1], Reg, 0xF5);
-		break;
+		break;*/
+/*		LogMessage("TODO: RSP_MultiElement2Mmx 2");
 	case 3:*/
 		/* [1q]    | 1 | 1 | 3 | 3 | 5 | 5 | 7 | 7 | */
 /*		sprintf(Reg, "RSP_Vect[%i].DW[0]", RSPOpC.rt);
@@ -2823,90 +2839,145 @@ void RSP_MultiElement2Mmx(int MmxReg1, int MmxReg2) {
 		sprintf(Reg, "RSP_Vect[%i].DW[1]", RSPOpC.rt);
 		MmxShuffleMemoryToReg(MmxReg2, &RSP_Vect[RSPOpC.rt].DW[1], Reg, 0xA0);
 		//MmxShuffleMemoryToReg(MmxReg2, &RSP_Vect[RSPOpC.rt].DW[1], Reg, 0x0A);
-		break;
-	case 4:*/
+		break;*/
+/*		LogMessage("TODO: RSP_MultiElement2Mmx 3");*/
+	case 4:
 		/* [0h]    | 0 | 0 | 0 | 0 | 4 | 4 | 4 | 4 | */
-/*		sprintf(Reg, "RSP_Vect[%i].DW[0]", RSPOpC.rt);
-		MmxShuffleMemoryToReg(MmxReg1, &RSP_Vect[RSPOpC.rt].DW[0], Reg, 0xFF);
-		sprintf(Reg, "RSP_Vect[%i].DW[1]", RSPOpC.rt);
-		MmxShuffleMemoryToReg(MmxReg2, &RSP_Vect[RSPOpC.rt].DW[1], Reg, 0xFF);
+		sprintf(Reg, "RSP_Vect[%i].DW[0]", RSPOpC.OP.V.vt);
+		MmxShuffleMemoryToReg(&RspRecompPos, MmxReg1, &RSP_Vect[RSPOpC.OP.V.vt].DW[0], Reg, 0xFF);
+		sprintf(Reg, "RSP_Vect[%i].DW[1]", RSPOpC.OP.V.vt);
+		MmxShuffleMemoryToReg(&RspRecompPos, MmxReg2, &RSP_Vect[RSPOpC.OP.V.vt].DW[1], Reg, 0xFF);
 		break;
-	case 5:*/
+	case 5:
 		/* [1h]    | 1 | 1 | 1 | 1 | 5 | 5 | 5 | 5 | */
-/*		sprintf(Reg, "RSP_Vect[%i].DW[0]", RSPOpC.rt);
-		MmxShuffleMemoryToReg(MmxReg1, &RSP_Vect[RSPOpC.rt].DW[0], Reg, 0xAA);
-		sprintf(Reg, "RSP_Vect[%i].DW[1]", RSPOpC.rt);
-		MmxShuffleMemoryToReg(MmxReg2, &RSP_Vect[RSPOpC.rt].DW[1], Reg, 0xAA);
+		sprintf(Reg, "RSP_Vect[%i].DW[0]", RSPOpC.OP.V.vt);
+		MmxShuffleMemoryToReg(&RspRecompPos, MmxReg1, &RSP_Vect[RSPOpC.OP.V.vt].DW[0], Reg, 0xAA);
+		sprintf(Reg, "RSP_Vect[%i].DW[1]", RSPOpC.OP.V.vt);
+		MmxShuffleMemoryToReg(&RspRecompPos, MmxReg2, &RSP_Vect[RSPOpC.OP.V.vt].DW[1], Reg, 0xAA);
 		break;
+/*		LogMessage("TODO: RSP_MultiElement2Mmx 5");
 	case 6:*/
 		/* [2h]    | 2 | 2 | 2 | 2 | 6 | 6 | 6 | 6 | */
 /*		sprintf(Reg, "RSP_Vect[%i].DW[0]", RSPOpC.rt);
 		MmxShuffleMemoryToReg(MmxReg1, &RSP_Vect[RSPOpC.rt].DW[0], Reg, 0x55);
 		sprintf(Reg, "RSP_Vect[%i].DW[1]", RSPOpC.rt);
 		MmxShuffleMemoryToReg(MmxReg2, &RSP_Vect[RSPOpC.rt].DW[1], Reg, 0x55);
-		break;
+		break;*/
+/*		LogMessage("TODO: RSP_MultiElement2Mmx 6");
 	case 7:*/
 		/* [3h]    | 3 | 3 | 3 | 3 | 7 | 7 | 7 | 7 | */
 /*		sprintf(Reg, "RSP_Vect[%i].DW[0]", RSPOpC.rt);
 		MmxShuffleMemoryToReg(MmxReg1, &RSP_Vect[RSPOpC.rt].DW[0], Reg, 0x00);
 		sprintf(Reg, "RSP_Vect[%i].DW[1]", RSPOpC.rt);
 		MmxShuffleMemoryToReg(MmxReg2, &RSP_Vect[RSPOpC.rt].DW[1], Reg, 0x00);
-		break;
+		break;*/
+//		LogMessage("TODO: RSP_MultiElement2Mmx 7");
 
 	default:
-		CompilerWarning("Unimplemented RSP_MultiElement2Mmx [?]");
+		RspCompilerWarning("Unimplemented RSP_MultiElement2Mmx [%d]", Element);
+		LogMessage("TODO: multi");
 		break;
 	}
 }
 
-BOOL Compile_Vector_VMULF_MMX ( void ) {
-	char Reg[256];*/
+static BOOL Compile_Vector_VMULF_MMX ( void ) {
+	char Reg[256];
+	static __int64 MIN_VALUE = 0x8000800080008000LL;
+	static __int64 ROUNDED_RESULT = 0x7FFF7FFF7FFF7FFFLL;
 
 	/* Do our MMX checks here */
-/*	if (IsMmxEnabled == FALSE)
+	if (IsMmxEnabled == FALSE)
 		return FALSE;
-	if ((RSPOpC.rs & 0x0f) >= 2 && (RSPOpC.rs & 0x0f) <= 7 && IsMmx2Enabled == FALSE)
-		return FALSE;*/
+	if ((RSPOpC.OP.V.element & 0x0f) >= 2 && (RSPOpC.OP.V.element & 0x0f) <= 7 && IsMmx2Enabled == FALSE)
+		return FALSE;
 
-	/* NOTE: Problem here is the lack of +/- 0x8000 rounding */
-/*	sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.rd);
-	MmxMoveQwordVariableToReg(x86_MM0, &RSP_Vect[RSPOpC.rd].UHW[0], Reg);
-	sprintf(Reg, "RSP_Vect[%i].UHW[4]", RSPOpC.rd);
-	MmxMoveQwordVariableToReg(x86_MM1, &RSP_Vect[RSPOpC.rd].UHW[4], Reg);
+	sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.OP.V.vs);
+	MmxMoveQwordVariableToReg(&RspRecompPos, x86_MM0, &RSP_Vect[RSPOpC.OP.V.vs].UHW[0], Reg);
+	sprintf(Reg, "RSP_Vect[%i].UHW[4]", RSPOpC.OP.V.vs);
+	MmxMoveQwordVariableToReg(&RspRecompPos, x86_MM1, &RSP_Vect[RSPOpC.OP.V.vs].UHW[4], Reg);
 
-	if ((RSPOpC.rs & 0xF) < 2) {
-		sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.rt);
-		MmxPmulhwRegToVariable(x86_MM0, &RSP_Vect[RSPOpC.rt].UHW[0], Reg);
-		sprintf(Reg, "RSP_Vect[%i].UHW[4]", RSPOpC.rt);
-		MmxPmulhwRegToVariable(x86_MM1, &RSP_Vect[RSPOpC.rt].UHW[4], Reg);
-	} else if ((RSPOpC.rs & 0xF) >= 8) {
+	// check if vs is 0x8000
+	MmxMoveQwordVariableToReg(&RspRecompPos, x86_MM5, &MIN_VALUE, "MIN_VALUE(0x8000)");
+	MmxMoveRegToReg(&RspRecompPos, x86_MM6, x86_MM5);
+	MmxCompareEqualWordRegToReg(&RspRecompPos, x86_MM6, x86_MM0);
+	MmxMoveRegToReg(&RspRecompPos, x86_MM7, x86_MM5);
+	MmxCompareEqualWordRegToReg(&RspRecompPos, x86_MM7, x86_MM1);
+
+	int mmxRegForSecondVT = x86_MM3;
+
+	if ((RSPOpC.OP.V.element & 0xF) < 2) {
+		sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.OP.V.vt);
+		MmxMoveQwordVariableToReg(&RspRecompPos, x86_MM2, &RSP_Vect[RSPOpC.OP.V.vt].UHW[0], Reg);
+		sprintf(Reg, "RSP_Vect[%i].UHW[4]", RSPOpC.OP.V.vt);
+		MmxMoveQwordVariableToReg(&RspRecompPos, x86_MM3, &RSP_Vect[RSPOpC.OP.V.vt].UHW[4], Reg);
+	} else if ((RSPOpC.OP.V.element & 0xF) >= 8) {
 		RSP_Element2Mmx(x86_MM2);
-		MmxPmulhwRegToReg(x86_MM0, x86_MM2);
-		MmxPmulhwRegToReg(x86_MM1, x86_MM2);
+		mmxRegForSecondVT = x86_MM2;
 	} else {
 		RSP_MultiElement2Mmx(x86_MM2, x86_MM3);
-		MmxPmulhwRegToReg(x86_MM0, x86_MM2);
-		MmxPmulhwRegToReg(x86_MM1, x86_MM3);
 	}
-	MmxPsllwImmed(x86_MM0, 1);
-	MmxPsllwImmed(x86_MM1, 1);
 
-	sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.sa);
-	MmxMoveQwordRegToVariable(x86_MM0, &RSP_Vect[RSPOpC.sa].UHW[0], Reg);
-	sprintf(Reg, "RSP_Vect[%i].UHW[4]", RSPOpC.sa);
-	MmxMoveQwordRegToVariable(x86_MM1, &RSP_Vect[RSPOpC.sa].UHW[4], Reg);
+	// 1st half of ((vs * vt) << 1) + 0x8000
+	MmxMoveRegToReg(&RspRecompPos, x86_MM4, x86_MM0);
+	MmxPmulhwRegToReg(&RspRecompPos, x86_MM0, x86_MM2);
+	MmxPsllwImmed(&RspRecompPos, x86_MM0, 1);
+	MmxPmullwRegToReg(&RspRecompPos, x86_MM4, x86_MM2);
+	MmxMoveRegToReg(&RspRecompPos, x86_MM5, x86_MM4);
+	MmxPsrlwImmed(&RspRecompPos, x86_MM4, 15);
+	MmxPorRegToReg(&RspRecompPos, x86_MM0, x86_MM4);
+	MmxPsllwImmed(&RspRecompPos, x86_MM5, 14);
+	MmxPsrlwImmed(&RspRecompPos, x86_MM5, 15);
+	MmxPaddwRegToReg(&RspRecompPos, x86_MM0, x86_MM5);
 
-	if (IsNextInstructionMmx(CompilePC) == FALSE)
-		MmxEmptyMultimediaState();
+	// 2nd half of ((vs * vt) << 1) + 0x8000
+	MmxMoveRegToReg(&RspRecompPos, x86_MM4, x86_MM1);
+	MmxPmulhwRegToReg(&RspRecompPos, x86_MM1, mmxRegForSecondVT);
+	MmxPsllwImmed(&RspRecompPos, x86_MM1, 1);
+	MmxPmullwRegToReg(&RspRecompPos, x86_MM4, mmxRegForSecondVT);
+	MmxMoveRegToReg(&RspRecompPos, x86_MM5, x86_MM4);
+	MmxPsrlwImmed(&RspRecompPos, x86_MM4, 15);
+	MmxPorRegToReg(&RspRecompPos, x86_MM1, x86_MM4);
+	MmxPsllwImmed(&RspRecompPos, x86_MM5, 14);
+	MmxPsrlwImmed(&RspRecompPos, x86_MM5, 15);
+	MmxPaddwRegToReg(&RspRecompPos, x86_MM0, x86_MM5);
+
+	// check if vt is 0x8000 and round result when required
+	MmxMoveQwordVariableToReg(&RspRecompPos, x86_MM5, &MIN_VALUE, "MIN_VALUE(0x8000)");
+	MmxMoveRegToReg(&RspRecompPos, x86_MM4, x86_MM5);
+	MmxCompareEqualWordRegToReg(&RspRecompPos, x86_MM4, x86_MM2);
+	MmxCompareEqualWordRegToReg(&RspRecompPos, x86_MM5, mmxRegForSecondVT);
+
+	MmxPandRegToReg(&RspRecompPos, x86_MM4, x86_MM6);
+	MmxPandRegToReg(&RspRecompPos, x86_MM5, x86_MM7);
+
+	MmxMoveQwordVariableToReg(&RspRecompPos, x86_MM6, &ROUNDED_RESULT, "ROUNDED_RESULT(0x7FFF)");
+	MmxMoveRegToReg(&RspRecompPos, x86_MM7, x86_MM6);
+
+	MmxPandRegToReg(&RspRecompPos, x86_MM6, x86_MM4);
+	MmxPandRegToReg(&RspRecompPos, x86_MM7, x86_MM5);
+
+	MmxPandnRegToReg(&RspRecompPos, x86_MM4, x86_MM0);
+	MmxPandnRegToReg(&RspRecompPos, x86_MM5, x86_MM1);
+
+	MmxPorRegToReg(&RspRecompPos, x86_MM4, x86_MM6);
+	MmxPorRegToReg(&RspRecompPos, x86_MM5, x86_MM7);
+
+	sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.OP.V.vd);
+	MmxMoveQwordRegToVariable(&RspRecompPos, x86_MM4, &RSP_Vect[RSPOpC.OP.V.vd].UHW[0], Reg);
+	sprintf(Reg, "RSP_Vect[%i].UHW[4]", RSPOpC.OP.V.vd);
+	MmxMoveQwordRegToVariable(&RspRecompPos, x86_MM5, &RSP_Vect[RSPOpC.OP.V.vd].UHW[4], Reg);
+
+	if (IsNextRspInstructionMmx(RspCompilePC) == FALSE)
+		MmxEmptyMultimediaState(&RspRecompPos);
 
 	return TRUE;
-}*/
+}
 
 void CompileRsp_Vector_VMULF ( void ) {
 	char Reg[256];
 	int count, el, del;
 
-	/*BOOL bOptimize = ((RSPOpC.rs & 0x0f) >= 8) ? TRUE : FALSE;*/
+	BOOL bOptimize = ((RSPOpC.OP.V.element & 0x0f) >= 8) ? TRUE : FALSE;
 	BOOL bWriteToAccum = WriteToAccum(EntireAccum, RspCompilePC);
 	BOOL bWriteToDest = WriteToVectorDest(RSPOpC.OP.V.vd, RspCompilePC);
 
@@ -2920,16 +2991,16 @@ void CompileRsp_Vector_VMULF ( void ) {
 		return;
 	}
 
-	/*if (bWriteToAccum == FALSE) {
+	if (bWriteToAccum == FALSE) {
 		if (TRUE == Compile_Vector_VMULF_MMX())
 			return;
 	}
 
 	if (bOptimize == TRUE) {
-		del = (RSPOpC.rs & 0x07) ^ 7;
-		sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.rt, del);
-		MoveSxVariableToX86regHalf(&RSP_Vect[RSPOpC.rt].HW[del], Reg, x86_EBX);
-	}*/
+		del = (RSPOpC.OP.V.element & 0x07) ^ 7;
+		sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.OP.V.vt, del);
+		MoveSxVariableToX86regHalf(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vt].HW[del], Reg, x86_EBX);
+	}
 
 	if (bWriteToDest == TRUE) {
 		MoveConstToX86reg(&RspRecompPos, 0x7fff0000, x86_ESI);
@@ -2947,15 +3018,15 @@ void CompileRsp_Vector_VMULF ( void ) {
 		sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.OP.V.vs, el);
 		MoveSxVariableToX86regHalf(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vs].HW[el], Reg, x86_EAX);
 
-		//if (RSPOpC.OP.V.vt == RSPOpC.OP.V.vs /*&& !bOptimize*/) {
-			//imulX86reg(&RspRecompPos, x86_EAX);
-		//} else {
-			/*if (bOptimize == FALSE) {*/
+		if (RSPOpC.OP.V.vt == RSPOpC.OP.V.vs && el == del) {
+			imulX86reg(&RspRecompPos, x86_EAX);
+		} else {
+			if (bOptimize == FALSE) {
 				sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.OP.V.vt, del);
 				MoveSxVariableToX86regHalf(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vt].HW[del], Reg, x86_EBX);
-			/*}*/
+			}
 			imulX86reg(&RspRecompPos, x86_EBX);
-		//}
+		}
 
 		ShiftLeftSignImmed(&RspRecompPos, x86_EAX, 1);
 		AddConstToX86Reg(&RspRecompPos, x86_EAX, 0x8000);

@@ -133,6 +133,8 @@ void InitiateInternalRSP() {
 	RspCompiler.bGPRConstants = TRUE;
 
 	DetectCpuSpecs();
+	RspCompiler.mmx = IsMMXSupported();
+	RspCompiler.mmx2 = IsMMX2Supported();
 	hRspConfigMutex = CreateMutex(NULL, FALSE, NULL);
 
 	LoadRspSettings();
@@ -153,11 +155,11 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 
 	switch (uMsg) {
 	case WM_INITDIALOG:
-		/*if (Compiler.mmx == TRUE)
+		if (RspCompiler.mmx == TRUE)
 			CheckDlgButton(hDlg, IDC_CHECK_MMX, BST_CHECKED);
-		if (Compiler.mmx2 == TRUE)
+		if (RspCompiler.mmx2 == TRUE)
 			CheckDlgButton(hDlg, IDC_CHECK_MMX2, BST_CHECKED);
-		if (Compiler.sse == TRUE)
+		/*if (Compiler.sse == TRUE)
 			CheckDlgButton(hDlg, IDC_CHECK_SSE, BST_CHECKED);*/
 
 		if (RspCompiler.bAlignGPR == TRUE)
@@ -191,9 +193,9 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 	case WM_COMMAND:
 		switch (GET_WM_COMMAND_ID(wParam, lParam)) {
 		case IDOK:
-			/*Compiler.mmx = GetBooleanCheck(hDlg, IDC_CHECK_MMX);
-			Compiler.mmx2 = GetBooleanCheck(hDlg, IDC_CHECK_MMX2);
-			Compiler.sse = GetBooleanCheck(hDlg, IDC_CHECK_SSE);*/
+			RspCompiler.mmx = GetBooleanCheck(hDlg, IDC_CHECK_MMX);
+			RspCompiler.mmx2 = GetBooleanCheck(hDlg, IDC_CHECK_MMX2);
+			/*Compiler.sse = GetBooleanCheck(hDlg, IDC_CHECK_SSE);*/
 			RspCompiler.bSections = GetBooleanCheck(hDlg, IDC_COMPILER_SECTIONS);
 			RspCompiler.bReOrdering = GetBooleanCheck(hDlg, IDC_COMPILER_REORDER);
 			RspCompiler.bGPRConstants = GetBooleanCheck(hDlg, IDC_COMPILER_GPRCONSTANTS);

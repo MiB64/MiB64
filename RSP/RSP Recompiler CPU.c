@@ -958,9 +958,9 @@ DWORD RunRecompilerRspCPU ( DWORD Cycles ) {
 
 	}
 
-	/*if (IsMmxEnabled == TRUE) {
+	if (IsMmxEnabled == TRUE) {
 		_asm emms
-	}*/
+	}
 
 	return Cycles - RemainingRspCycles / 4;
 }

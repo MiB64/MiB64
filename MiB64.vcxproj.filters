@@ -354,6 +354,9 @@
     <ClCompile Include="hash\xxhash.c">
       <Filter>Source Files\Hash Source</Filter>
     </ClCompile>
+    <ClCompile Include="Mmx.c">
+      <Filter>Source Files\X86 Opcodes Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BreakPoints.h">

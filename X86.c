@@ -33,11 +33,13 @@
 #include "RSP/rsp_log.h"
 
 
-static BOOL ConditionalMove;
+static BOOL ConditionalMove = FALSE;
+static BOOL mmxSupported = FALSE;
+static BOOL mmx2Supported = FALSE;
 
 void DetectCpuSpecs(void) {
 	DWORD Intel_Features = 0;
-	/*DWORD AMD_Features = 0;*/
+	DWORD AMD_Features = 0;
 
 	__try {
 		_asm {
@@ -47,30 +49,38 @@ void DetectCpuSpecs(void) {
 			mov[Intel_Features], edx
 
 			/* AMD features */
-/*			mov eax, 80000001h
+			mov eax, 80000001h
 			cpuid
-			or [AMD_Features], edx*/
+			or [AMD_Features], edx
 		}
 	}
 	__except (EXCEPTION_EXECUTE_HANDLER) {
-		/*AMD_Features =*/ Intel_Features = 0;
+		AMD_Features = Intel_Features = 0;
 	}
 
-	/*if (Intel_Features & 0x02000000) {
-		Compiler.mmx2 = TRUE;
-		Compiler.sse = TRUE;
+	if (Intel_Features & 0x02000000) {
+		mmx2Supported = TRUE;
+		/*Compiler.sse = TRUE;*/
 	}
 	if (Intel_Features & 0x00800000) {
-		Compiler.mmx = TRUE;
+		mmxSupported = TRUE;
 	}
 	if (AMD_Features & 0x40000000) {
-		Compiler.mmx2 = TRUE;
-	}*/
+		mmx2Supported = TRUE;
+	}
 	if (Intel_Features & 0x00008000) {
 		ConditionalMove = TRUE;
 	} else {
 		ConditionalMove = FALSE;
 	}
+}
+
+BOOL IsMMXSupported(void) {
+	return mmxSupported;
+}
+
+BOOL IsMMX2Supported(void) {
+	return mmx2Supported;
 }
 
 #if defined(Log_x86Code) || defined(RspLog_x86Code)

@@ -32,6 +32,11 @@ enum x86FpuValues {
 	x86_ST0,x86_ST1,x86_ST2,x86_ST3,x86_ST4,x86_ST5,x86_ST6,x86_ST7
 };
 
+enum mmxRegValues {
+	x86_MM0 = 0, x86_MM1 = 1, x86_MM2 = 2, x86_MM3 = 3,
+	x86_MM4 = 4, x86_MM5 = 5, x86_MM6 = 6, x86_MM7 = 7
+};
+
 #define x86_Name(Reg)   (Reg) == x86_EAX  ? "eax" : (Reg) == x86_EBX  ? "ebx" :\
 						(Reg) == x86_ECX  ? "ecx" : (Reg) == x86_EDX  ? "edx" :\
 						(Reg) == x86_ESI  ? "esi" :	(Reg) == x86_EDI  ? "edi" :\
@@ -53,6 +58,8 @@ enum x86FpuValues {
 							"Unknown x86 Register"
 
 void DetectCpuSpecs(void);
+BOOL IsMMXSupported(void);
+BOOL IsMMX2Supported(void);
 
 void AdcX86regToVariable             ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void AdcConstToVariable              ( BYTE** code, void *Variable, char *VariableName, BYTE Constant );
@@ -305,6 +312,62 @@ void fpuSubQwordRegPointer           ( BYTE** code, int x86Pointer );
 void fpuSubQwordReverse              ( BYTE** code, void *Variable, char *VariableName );
 void fpuSubReg				         ( BYTE** code, int x86reg );
 void fpuSubRegPop			         ( BYTE** code, int x86reg );
+
+#define _MMX_SHUFFLE(a, b, c, d)	\
+	((BYTE)(((a) << 6) | ((b) << 4) | ((c) << 2) | (d)))
+
+void MmxMoveRegToReg( BYTE** code, int Dest, int Source );
+void MmxMoveQwordRegToVariable( BYTE** code, int Dest, void * Variable, char * VariableName );
+void MmxMoveQwordVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
+void MmxPandRegToReg( BYTE** code, int Dest, int Source );
+void MmxPandnRegToReg( BYTE** code, int Dest, int Source );
+/*void MmxPandVariableToReg(void* Variable, char* VariableName, int Dest);*/
+void MmxPorRegToReg( BYTE** code, int Dest, int Source );
+/*void MmxPorVariableToReg(void* Variable, char* VariableName, int Dest);
+void MmxXorRegToReg(int Dest, int Source);*/
+void MmxShuffleMemoryToReg( BYTE** code, int Dest, void* Variable, char* VariableName, BYTE Immed );
+void MmxPmullwRegToReg( BYTE** code, int Dest, int Source );
+/*void MmxPmullwVariableToReg(int Dest, void* Variable, char* VariableName);
+void MmxPmulhuwRegToReg(int Dest, int Source);*/
+void MmxPmulhwRegToReg( BYTE** code, int Dest, int Source );
+void MmxPmulhwRegToVariable( BYTE** code, int Dest, void * Variable, char * VariableName );
+void MmxPsrlwImmed( BYTE** code,int Dest, BYTE Immed );
+/*void MmxPsrawImmed(int Dest, BYTE Immed);*/
+void MmxPsllwImmed( BYTE** code, int Dest, BYTE Immed );
+/*void MmxPaddswRegToReg(int Dest, int Source);
+void MmxPaddswVariableToReg(int Dest, void* Variable, char* VariableName);*/
+void MmxPaddwRegToReg( BYTE** code, int Dest, int Source );
+/*void MmxPackSignedDwords(int Dest, int Source);
+void MmxUnpackLowWord(int Dest, int Source);
+void MmxUnpackHighWord(int Dest, int Source);
+void MmxCompareGreaterWordRegToReg(int Dest, int Source);*/
+void MmxCompareEqualWordRegToReg( BYTE** code, int Dest, int Source );
+void MmxEmptyMultimediaState( BYTE** code );
+
+/*void SseMoveAlignedVariableToReg(void* Variable, char* VariableName, int sseReg);
+void SseMoveAlignedRegToVariable(int sseReg, void* Variable, char* VariableName);
+void SseMoveAlignedN64MemToReg(int sseReg, int AddrReg);
+void SseMoveAlignedRegToN64Mem(int sseReg, int AddrReg);
+void SseMoveUnalignedVariableToReg(void* Variable, char* VariableName, int sseReg);
+void SseMoveUnalignedRegToVariable(int sseReg, void* Variable, char* VariableName);
+void SseMoveUnalignedN64MemToReg(int sseReg, int AddrReg);
+void SseMoveUnalignedRegToN64Mem(int sseReg, int AddrReg);
+void SseMoveRegToReg(int Dest, int Source);
+void SseXorRegToReg(int Dest, int Source);
+
+typedef struct {
+	union {
+		struct {
+			unsigned Reg0 : 2;
+			unsigned Reg1 : 2;
+			unsigned Reg2 : 2;
+			unsigned Reg3 : 2;
+		};
+		unsigned UB : 8;
+	};
+} SHUFFLE;
+
+void SseShuffleReg(int Dest, int Source, BYTE Immed);*/
 
 void x86_SetBranch8b(void* JumpByte, void* Destination);
 void x86_SetBranch32b(void* JumpByte, void* Destination);

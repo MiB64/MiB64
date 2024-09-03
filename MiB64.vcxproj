@@ -338,6 +338,7 @@
     <ClCompile Include="Logging.c" />
     <ClCompile Include="mapping.c" />
     <ClCompile Include="MemDump.c" />
+    <ClCompile Include="Mmx.c" />
     <ClCompile Include="n64_cic_nus_6105.c" />
     <ClCompile Include="FileHandler.cpp" />
     <ClCompile Include="r4300i Commands.c" />

@@ -62,34 +62,37 @@ BOOL IsRspOpcodeNop(DWORD PC) {
 ** Input: PC
 *************************************************************/
 
-/*BOOL IsNextInstructionMmx(DWORD PC) {
+BOOL IsNextRspInstructionMmx(DWORD PC) {
 	OPCODE RspOp;
 	
 	if (IsMmxEnabled == FALSE)
 		return FALSE;
 
 	PC += 4;
-	if (PC >= 0x1000) return FALSE;
-	RSP_LW_IMEM(PC, &RspOp.Hex);
+	PC &= 0xFFC;
+	RSP_LW_IMEM(PC, &RspOp.OP.Hex);
 
-	if (RspOp.op != RSP_CP2)
+	if (RspOp.OP.I.op != RSP_CP2)
 		return FALSE;
 
-	if ((RspOp.rs & 0x10) != 0) {
-		switch (RspOp.funct) {
+	if ((RspOp.OP.I.rs & 0x10) != 0) {
+		switch (RspOp.OP.V.funct) {
 		case RSP_VECTOR_VMULF:
-		case RSP_VECTOR_VMUDL:*/ /* Warning: Not all handled? */
+		/*case RSP_VECTOR_VMUDL:*/ /* Warning: Not all handled? */
 /*		case RSP_VECTOR_VMUDM:
 		case RSP_VECTOR_VMUDN:
-		case RSP_VECTOR_VMUDH:
-			if (TRUE == WriteToAccum(7, PC)) {
+		case RSP_VECTOR_VMUDH:*/
+			if (!IsVectorOpcodeRecompiled(RspOp.OP.V.funct)) {
 				return FALSE;
-			} else if ((RspOp.rs & 0x0f) >= 2 && (RspOp.rs & 0x0f) <= 7 && IsMmx2Enabled == FALSE) {
+			}
+			if (TRUE == WriteToAccum(EntireAccum, PC)) {
+				return FALSE;
+			} else if ((RspOp.OP.V.element & 0x0f) >= 2 && (RspOp.OP.V.element & 0x0f) <= 7 && IsMmx2Enabled == FALSE) {
 				return FALSE;
 			} else 
 				return TRUE;
 
-		case RSP_VECTOR_VAND:
+		/*case RSP_VECTOR_VAND:
 		case RSP_VECTOR_VOR:
 		case RSP_VECTOR_VXOR:
 			if (TRUE == WriteToAccum(Low16BitAccum, PC)) {
@@ -108,14 +111,16 @@ BOOL IsRspOpcodeNop(DWORD PC) {
 			} else if ((RspOp.rs & 0x0f) >= 2 && (RspOp.rs & 0x0f) <= 7 && IsMmx2Enabled == FALSE) {
 				return FALSE;
 			} else
-				return TRUE;
+				return TRUE;*/
 
 		default:
 			return FALSE;
 		}
 	} else 
-		return FALSE;
-}*/
+		/*return FALSE;*/
+	LogMessage("TODO: IsNextRspInstructionMmx, not vec");
+	return FALSE;
+}
 
 /************************************************************
 ** WriteToAccum2
