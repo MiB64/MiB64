@@ -71,7 +71,7 @@ static FARPROC RefreshProc;
 /*** RSP Registers ***/
 MIPS_WORD  RSP_GPR[32];
 MIPS_WORD  RSP_Flags[3];
-MIPS_DWORD  RSP_ACCUM[8];
+__declspec(align(16)) MIPS_DWORD  RSP_ACCUM[8];
 VECTOR  RSP_Vect[32];
 MIPS_WORD DivOut, DivIn;
 BYTE PendingDivIn;

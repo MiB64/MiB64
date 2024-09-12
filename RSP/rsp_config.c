@@ -135,6 +135,9 @@ void InitiateInternalRSP() {
 	DetectCpuSpecs();
 	RspCompiler.mmx = IsMMXSupported();
 	RspCompiler.mmx2 = IsMMX2Supported();
+	RspCompiler.sse = IsSSESupported();
+	RspCompiler.sse2 = IsSSE2Supported();
+	RspCompiler.sse41 = IsSSE41Supported();
 	hRspConfigMutex = CreateMutex(NULL, FALSE, NULL);
 
 	LoadRspSettings();
@@ -159,8 +162,12 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 			CheckDlgButton(hDlg, IDC_CHECK_MMX, BST_CHECKED);
 		if (RspCompiler.mmx2 == TRUE)
 			CheckDlgButton(hDlg, IDC_CHECK_MMX2, BST_CHECKED);
-		/*if (Compiler.sse == TRUE)
-			CheckDlgButton(hDlg, IDC_CHECK_SSE, BST_CHECKED);*/
+		if (RspCompiler.sse == TRUE)
+			CheckDlgButton(hDlg, IDC_CHECK_SSE, BST_CHECKED);
+		if (RspCompiler.sse2 == TRUE)
+			CheckDlgButton(hDlg, IDC_CHECK_SSE2, BST_CHECKED);
+		if (RspCompiler.sse41 == TRUE)
+			CheckDlgButton(hDlg, IDC_CHECK_SSE41, BST_CHECKED);
 
 		if (RspCompiler.bAlignGPR == TRUE)
 			CheckDlgButton(hDlg, IDC_COMPILER_ALIGNGPR, BST_CHECKED);
@@ -195,7 +202,9 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 		case IDOK:
 			RspCompiler.mmx = GetBooleanCheck(hDlg, IDC_CHECK_MMX);
 			RspCompiler.mmx2 = GetBooleanCheck(hDlg, IDC_CHECK_MMX2);
-			/*Compiler.sse = GetBooleanCheck(hDlg, IDC_CHECK_SSE);*/
+			RspCompiler.sse = GetBooleanCheck(hDlg, IDC_CHECK_SSE);
+			RspCompiler.sse2 = GetBooleanCheck(hDlg, IDC_CHECK_SSE2);
+			RspCompiler.sse41 = GetBooleanCheck(hDlg, IDC_CHECK_SSE41);
 			RspCompiler.bSections = GetBooleanCheck(hDlg, IDC_COMPILER_SECTIONS);
 			RspCompiler.bReOrdering = GetBooleanCheck(hDlg, IDC_COMPILER_REORDER);
 			RspCompiler.bGPRConstants = GetBooleanCheck(hDlg, IDC_COMPILER_GPRCONSTANTS);

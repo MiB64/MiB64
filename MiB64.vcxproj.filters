@@ -357,6 +357,9 @@
     <ClCompile Include="Mmx.c">
       <Filter>Source Files\X86 Opcodes Source</Filter>
     </ClCompile>
+    <ClCompile Include="Sse.c">
+      <Filter>Source Files\X86 Opcodes Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BreakPoints.h">
@@ -634,6 +637,9 @@
     </ClInclude>
     <ClInclude Include="hash\xxhash.h">
       <Filter>Header Files\Hash Header</Filter>
+    </ClInclude>
+    <ClInclude Include="RSP\resource.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

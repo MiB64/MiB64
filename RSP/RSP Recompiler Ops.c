@@ -112,10 +112,11 @@ DWORD BeginOfCurrentSubBlock = 0;
 /*#	define CompileSlv
 #endif*/
 
-BOOL IsVectorOpcodeRecompiled(int funct) {
+BOOL IsVectorOpcodeRecompiledWithMMX(int funct) {
 	switch (funct) {
 	case RSP_VECTOR_VMULF:
 #ifdef CompileVmulf
+		if (IsSSE2Supported) return FALSE;
 		return TRUE;
 #else
 		return FALSE;
@@ -2795,6 +2796,50 @@ static void RSP_Element2Mmx(int MmxReg) {
 	}
 }
 
+static void RSP_Element2Sse(int SseReg) {
+	char Reg[256];
+
+	DWORD Element = RSPOpC.OP.V.element & 0x0f;
+	DWORD el;
+
+	switch (Element) {
+	case 0: case 1:
+	case 2: case 3:
+	case 4:	case 5:
+	case 6:	case 7:
+		RspCompilerWarning("Unimplemented RSP_Element2Sse");
+		break;
+
+	default:
+		/*
+		 * Noticed the exclusive-or of seven to take into account
+		 * the pseudo-swapping we have in the vector registers
+		 */
+
+		el = (RSPOpC.OP.V.element & 0x07) ^ 7;
+
+		{
+			unsigned long Qword;
+
+			Qword = (el >> 2) & 0x1;
+			el &= 0x3;
+
+			sprintf(Reg, "RSP_Vect[%i].DW[%i]", RSPOpC.OP.V.vt, Qword);
+			if (Qword == 0) {
+				Sse2ShuffleLowWordsMemoryToReg(&RspRecompPos, SseReg,
+					&RSP_Vect[RSPOpC.OP.V.vt].UDW, Reg, _MMX_SHUFFLE(el, el, el, el));
+				Sse2ShuffleDWordsRegToReg(&RspRecompPos, SseReg, SseReg, _MMX_SHUFFLE(1, 0, 1, 0));
+			}
+			else {
+				Sse2ShuffleHighWordsMemoryToReg(&RspRecompPos, SseReg,
+					&RSP_Vect[RSPOpC.OP.V.vt].UDW, Reg, _MMX_SHUFFLE(el, el, el, el));
+				Sse2ShuffleDWordsRegToReg(&RspRecompPos, SseReg, SseReg, _MMX_SHUFFLE(3, 2, 3, 2));
+			}
+		}
+		break;
+	}
+}
+
 static void RSP_MultiElement2Mmx(int MmxReg1, int MmxReg2) {
 	char Reg[256];
 	DWORD Element = RSPOpC.OP.V.element & 0x0f;
@@ -2876,6 +2921,87 @@ static void RSP_MultiElement2Mmx(int MmxReg1, int MmxReg2) {
 	default:
 		RspCompilerWarning("Unimplemented RSP_MultiElement2Mmx [%d]", Element);
 		LogMessage("TODO: multi");
+		break;
+	}
+}
+
+static void RSP_MultiElement2Sse(int SseReg) {
+	char Reg[256];
+	DWORD Element = RSPOpC.OP.V.element & 0x0f;
+
+	/*
+	 * Ok, this is tricky, hopefully this clears it up:
+	 *
+	 * $vd[0] = $vd[0] + $vt[2]
+	 * because of swapped registers becomes:
+	 * $vd[7] = $vd[7] + $vt[5]
+	 *
+	 * we must perform this swap correctly, this involves the 3-bit
+	 * xclusive or, 2-bits of which are done within a dword boundary,
+	 * the last bit, is ignored because we are loading the source linearly,
+	 * so the xclusive or has transparently happened on that side
+	 *
+	 */
+
+	switch (Element) {
+		/*	case 0:
+				LogMessage("TODO: RSP_MultiElement2Mmx 0");
+			case 1:*/
+			/*sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.rt);
+			MmxMoveQwordVariableToReg(MmxReg1, &RSP_Vect[RSPOpC.rt].UHW[0], Reg);
+			sprintf(Reg, "RSP_Vect[%i].UHW[4]", RSPOpC.rt);
+			MmxMoveQwordVariableToReg(MmxReg2, &RSP_Vect[RSPOpC.rt].UHW[4], Reg);
+			break;*/
+			/*		LogMessage("TODO: RSP_MultiElement2Mmx 1");
+				case 2:*/
+				/* [0q]    | 0 | 0 | 2 | 2 | 4 | 4 | 6 | 6 | */
+		/*		sprintf(Reg, "RSP_Vect[%i].DW[0]", RSPOpC.rt);
+				MmxShuffleMemoryToReg(MmxReg1, &RSP_Vect[RSPOpC.rt].DW[0], Reg, 0xF5);
+				sprintf(Reg, "RSP_Vect[%i].DW[1]", RSPOpC.rt);
+				MmxShuffleMemoryToReg(MmxReg2, &RSP_Vect[RSPOpC.rt].DW[1], Reg, 0xF5);
+				break;*/
+				/*		LogMessage("TODO: RSP_MultiElement2Mmx 2");
+					case 3:*/
+					/* [1q]    | 1 | 1 | 3 | 3 | 5 | 5 | 7 | 7 | */
+			/*		sprintf(Reg, "RSP_Vect[%i].DW[0]", RSPOpC.rt);
+					MmxShuffleMemoryToReg(MmxReg1, &RSP_Vect[RSPOpC.rt].DW[0], Reg, 0xA0);
+					//MmxShuffleMemoryToReg(MmxReg1, &RSP_Vect[RSPOpC.rt].DW[0], Reg, 0x0A);
+					sprintf(Reg, "RSP_Vect[%i].DW[1]", RSPOpC.rt);
+					MmxShuffleMemoryToReg(MmxReg2, &RSP_Vect[RSPOpC.rt].DW[1], Reg, 0xA0);
+					//MmxShuffleMemoryToReg(MmxReg2, &RSP_Vect[RSPOpC.rt].DW[1], Reg, 0x0A);
+					break;*/
+					/*		LogMessage("TODO: RSP_MultiElement2Mmx 3");*/
+	case 4:
+		/* [0h]    | 0 | 0 | 0 | 0 | 4 | 4 | 4 | 4 | */
+		sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vt);
+		Sse2ShuffleLowWordsMemoryToReg(&RspRecompPos, SseReg, &RSP_Vect[RSPOpC.OP.V.vt].DW[0], Reg, 0xFF);
+		Sse2ShuffleHighWordsRegToReg(&RspRecompPos, SseReg, SseReg, 0xFF);
+		break;
+	case 5:
+		/* [1h]    | 1 | 1 | 1 | 1 | 5 | 5 | 5 | 5 | */
+		sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vt);
+		Sse2ShuffleLowWordsMemoryToReg(&RspRecompPos, SseReg, &RSP_Vect[RSPOpC.OP.V.vt].DW[0], Reg, 0xAA);
+		Sse2ShuffleHighWordsRegToReg(&RspRecompPos, SseReg, SseReg, 0xAA);
+		break;
+		/*		LogMessage("TODO: RSP_MultiElement2Mmx 5");
+			case 6:*/
+			/* [2h]    | 2 | 2 | 2 | 2 | 6 | 6 | 6 | 6 | */
+	/*		sprintf(Reg, "RSP_Vect[%i].DW[0]", RSPOpC.rt);
+			MmxShuffleMemoryToReg(MmxReg1, &RSP_Vect[RSPOpC.rt].DW[0], Reg, 0x55);
+			sprintf(Reg, "RSP_Vect[%i].DW[1]", RSPOpC.rt);
+			MmxShuffleMemoryToReg(MmxReg2, &RSP_Vect[RSPOpC.rt].DW[1], Reg, 0x55);
+			break;*/
+			/*		LogMessage("TODO: RSP_MultiElement2Mmx 6");*/
+	case 7:
+		/* [3h]    | 3 | 3 | 3 | 3 | 7 | 7 | 7 | 7 | */
+		sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vt);
+		Sse2ShuffleLowWordsMemoryToReg(&RspRecompPos, SseReg, &RSP_Vect[RSPOpC.OP.V.vt].DW[0], Reg, 0x00);
+		Sse2ShuffleHighWordsRegToReg(&RspRecompPos, SseReg, SseReg, 0x00);
+		break;
+
+	default:
+		RspCompilerWarning("Unimplemented RSP_MultiElement2Sse [%d]", Element);
+		LogMessage("TODO: sse multi");
 		break;
 	}
 }
@@ -2973,6 +3099,237 @@ static BOOL Compile_Vector_VMULF_MMX ( void ) {
 	return TRUE;
 }
 
+static BOOL Compile_Vector_VMULF_NoAccum_SSE2(void) {
+	char Reg[256];
+	static VECTOR MIN_VALUE;
+	static VECTOR ROUNDED_RESULT;
+	static BOOL constInitialized = FALSE;
+
+	if (!constInitialized) {
+		MIN_VALUE.UDW[0] = MIN_VALUE.UDW[1] = 0x8000800080008000ULL;
+		ROUNDED_RESULT.UDW[0] = ROUNDED_RESULT.UDW[1] = 0x7FFF7FFF7FFF7FFFULL;
+		constInitialized = TRUE;
+	}
+
+	/* Do our SSE checks here */
+	if (IsSseEnabled == FALSE || IsSse2Enabled == FALSE)
+		return FALSE;
+
+	sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vs);
+	SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vs].UHW[0], Reg, x86_XMM0, SseType_QuadWord, TRUE);
+
+	// check if vs is 0x8000
+	SseMoveAlignedVariableToReg(&RspRecompPos, &MIN_VALUE.sseValue, "MIN_VALUE(0x8000)", x86_XMM5, SseType_QuadWord, TRUE);
+	SseMoveRegToReg(&RspRecompPos, x86_XMM6, x86_XMM5, SseType_QuadWord, TRUE);
+	Sse2CompareEqualWordRegToReg(&RspRecompPos, x86_XMM6, x86_XMM0);
+
+	if ((RSPOpC.OP.V.element & 0xF) < 2) {
+		sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vt);
+		SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vt].UHW[0], Reg, x86_XMM2, SseType_QuadWord, TRUE);
+	} else if ((RSPOpC.OP.V.element & 0xF) >= 8) {
+		RSP_Element2Sse(x86_XMM2);
+	} else {
+		RSP_MultiElement2Sse(x86_XMM2);
+	}
+
+	// ((vs * vt) << 1) + 0x8000
+	SseMoveRegToReg(&RspRecompPos, x86_XMM4, x86_XMM0, SseType_QuadWord, TRUE);
+	Sse2PmulhwRegToReg(&RspRecompPos, x86_XMM0, x86_XMM2);
+	Sse2PsllwImmed(&RspRecompPos, x86_XMM0, 1);
+	Sse2PmullwRegToReg(&RspRecompPos, x86_XMM4, x86_XMM2);
+	SseMoveRegToReg(&RspRecompPos, x86_XMM1, x86_XMM4, SseType_QuadWord, TRUE);
+	Sse2PsrlwImmed(&RspRecompPos, x86_XMM4, 15);
+	Sse2PorRegToReg(&RspRecompPos, x86_XMM0, x86_XMM4);
+	Sse2PsllwImmed(&RspRecompPos, x86_XMM1, 14);
+	Sse2PsrlwImmed(&RspRecompPos, x86_XMM1, 15);
+	Sse2PaddwRegToReg(&RspRecompPos, x86_XMM0, x86_XMM1);
+
+	// check if vt is 0x8000 and round result when required
+	Sse2CompareEqualWordRegToReg(&RspRecompPos, x86_XMM5, x86_XMM2);
+	Sse2PandRegToReg(&RspRecompPos, x86_XMM5, x86_XMM6);
+	SseMoveAlignedVariableToReg(&RspRecompPos, &ROUNDED_RESULT, "ROUNDED_RESULT(0x7FFF)", x86_XMM6, SseType_QuadWord, TRUE);
+	Sse2PandRegToReg(&RspRecompPos, x86_XMM6, x86_XMM5);
+	Sse2PandnRegToReg(&RspRecompPos, x86_XMM5, x86_XMM0);
+	Sse2PorRegToReg(&RspRecompPos, x86_XMM5, x86_XMM6);
+
+	sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vd);
+	SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM5, &RSP_Vect[RSPOpC.OP.V.vd].UHW[0], Reg, SseType_QuadWord, TRUE);
+
+	return TRUE;
+}
+
+static BOOL Compile_Vector_VMULF_SSE2(BOOL writeToVectorDest) {
+	char Reg[256];
+	static VECTOR ROUND_CONST;
+	static VECTOR OVERFLOW_VALUE;
+	static VECTOR ACCUM_MASK;
+	static VECTOR SATURATED_CONST;
+	static VECTOR INV_SIGN_MASK;
+	static BOOL constInitialized = FALSE;
+
+	if (!constInitialized) {
+		ROUND_CONST.UW[0] = ROUND_CONST.UW[1] = ROUND_CONST.UW[2] = ROUND_CONST.UW[3] = 0x8000;
+		OVERFLOW_VALUE.UW[0] = OVERFLOW_VALUE.UW[1] = OVERFLOW_VALUE.UW[2] = OVERFLOW_VALUE.UW[3] = 0x80008000;
+		ACCUM_MASK.UDW[0] = ACCUM_MASK.UDW[1] = 0x0000FFFFFFFF0000ULL;
+		SATURATED_CONST.UHW[0] = SATURATED_CONST.UHW[1] = SATURATED_CONST.UHW[2] = SATURATED_CONST.UHW[3] = 0x7FFF;
+		SATURATED_CONST.UHW[4] = SATURATED_CONST.UHW[5] = SATURATED_CONST.UHW[6] = SATURATED_CONST.UHW[7] = 0x7FFF;
+		INV_SIGN_MASK.UDW[0] = INV_SIGN_MASK.UDW[1] = 0x0000FFFFFFFFFFFFULL;
+		constInitialized = TRUE;
+	}
+
+	/* Do our SSE checks here */
+	if (IsSseEnabled == FALSE || IsSse2Enabled == FALSE)
+		return FALSE;
+
+	// load vs and vt
+	sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vs);
+	SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vs].UHW[0], Reg, x86_XMM1, SseType_QuadWord, TRUE);
+
+	if ((RSPOpC.OP.V.element & 0xF) < 2) {
+		sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vt);
+		SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vt].UHW[0], Reg, x86_XMM2, SseType_QuadWord, TRUE);
+	} else if ((RSPOpC.OP.V.element & 0xF) >= 8) {
+		RSP_Element2Sse(x86_XMM2);
+	} else {
+		RSP_MultiElement2Sse(x86_XMM2);
+	}
+
+	// do the multiplication
+	if (RspCompiler.sse41) {
+		Sse2MoveSxWordRegToDWordReg(&RspRecompPos, x86_XMM3, x86_XMM1, RspCompiler.sse41);
+		Sse2MoveSxWordRegToDWordReg(&RspRecompPos, x86_XMM4, x86_XMM2, RspCompiler.sse41);
+		Sse2PmulldRegToReg(&RspRecompPos, x86_XMM3, x86_XMM4);
+	} else {
+		SseMoveRegToReg(&RspRecompPos, x86_XMM3, x86_XMM2, SseType_QuadWord, TRUE);
+		Sse2PmullwRegToReg(&RspRecompPos, x86_XMM2, x86_XMM1);
+		Sse2PmulhwRegToReg(&RspRecompPos, x86_XMM1, x86_XMM3);
+		SseMoveRegToReg(&RspRecompPos, x86_XMM3, x86_XMM2, SseType_QuadWord, TRUE);
+		Sse2PunpckLowWordsRegToReg(&RspRecompPos, x86_XMM3, x86_XMM1);
+	}
+
+	// shift and round
+	Sse2PslldImmed(&RspRecompPos, x86_XMM3, 1);
+	Sse2PadddVariableToReg(&RspRecompPos, x86_XMM3, &ROUND_CONST.UHW[0], "ROUND_CONST(0x8000)");
+
+	SseMoveRegToReg(&RspRecompPos, x86_XMM5, x86_XMM3, SseType_QuadWord, TRUE);
+	Sse2CompareEqualDWordVariableToReg(&RspRecompPos, x86_XMM5, &OVERFLOW_VALUE, "OVERFLOW_VALUE(0x80008000)");
+	Sse2PslldImmed(&RspRecompPos, x86_XMM5, 16); // introduce a source of 0 for further shuffling*/
+
+	if (writeToVectorDest) {
+		SseMoveRegToReg(&RspRecompPos, x86_XMM6, x86_XMM5, SseType_QuadWord, TRUE);
+		SseMoveRegToReg(&RspRecompPos, x86_XMM7, x86_XMM5, SseType_QuadWord, TRUE);
+		Sse2PandVariableToReg(&RspRecompPos, x86_XMM6, &SATURATED_CONST.UHW[0], "SATURATED_CONST(0x7FFF)");
+		Sse2PandnRegToReg(&RspRecompPos, x86_XMM7, x86_XMM3);
+		Sse2PorRegToReg(&RspRecompPos, x86_XMM7, x86_XMM6);
+		Sse2ShuffleLowWordsRegToReg(&RspRecompPos, x86_XMM7, x86_XMM7, _MMX_SHUFFLE(0, 0, 3, 1));
+		Sse2ShuffleHighWordsRegToReg(&RspRecompPos, x86_XMM7, x86_XMM7, _MMX_SHUFFLE(3, 1, 0, 0));
+		Sse2ShuffleDWordsRegToReg(&RspRecompPos, x86_XMM7, x86_XMM7, _MMX_SHUFFLE(0, 0, 3, 0));
+	}
+
+	// build the accumulator
+	Sse2ShuffleDWordsRegToReg(&RspRecompPos, x86_XMM4, x86_XMM3, _MMX_SHUFFLE(1, 0, 1, 0));
+	Sse2ShuffleLowWordsRegToReg(&RspRecompPos, x86_XMM4, x86_XMM4, _MMX_SHUFFLE(1, 1, 0, 0));
+	Sse2ShuffleHighWordsRegToReg(&RspRecompPos, x86_XMM4, x86_XMM4, _MMX_SHUFFLE(3, 3, 2, 2));
+
+	SseMoveRegToReg(&RspRecompPos, x86_XMM6, x86_XMM4, SseType_QuadWord, TRUE);
+	Sse2PsrawImmed(&RspRecompPos, x86_XMM6, 15);
+	Sse2ShuffleDWordsRegToReg(&RspRecompPos, x86_XMM0, x86_XMM5, _MMX_SHUFFLE(1, 0, 1, 0));
+	Sse2ShuffleLowWordsRegToReg(&RspRecompPos, x86_XMM0, x86_XMM0, _MMX_SHUFFLE(1, 1, 1, 0));
+	Sse2ShuffleHighWordsRegToReg(&RspRecompPos, x86_XMM0, x86_XMM0, _MMX_SHUFFLE(3, 3, 3, 2));
+	Sse2PorVariableToReg(&RspRecompPos, x86_XMM0, &INV_SIGN_MASK, "INV_SIGN_MASK(0x0000FFFFFFFFFFFF");
+	Sse2PandnRegToReg(&RspRecompPos, x86_XMM0, x86_XMM6);
+	Sse2PandVariableToReg(&RspRecompPos, x86_XMM4, &ACCUM_MASK, "ACCUM_MASK(0x0000FFFFFFFF0000)");
+	Sse2PorRegToReg(&RspRecompPos, x86_XMM4, x86_XMM0);
+
+	SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM4, &RSP_ACCUM[0].UHW[0], "RSP_ACCUM[el]", SseType_QuadWord, TRUE);
+
+	Sse2ShuffleDWordsRegToReg(&RspRecompPos, x86_XMM4, x86_XMM3, _MMX_SHUFFLE(3, 2, 3, 2));
+	Sse2ShuffleLowWordsRegToReg(&RspRecompPos, x86_XMM4, x86_XMM4, _MMX_SHUFFLE(1, 1, 0, 0));
+	Sse2ShuffleHighWordsRegToReg(&RspRecompPos, x86_XMM4, x86_XMM4, _MMX_SHUFFLE(3, 3, 2, 2));
+
+	SseMoveRegToReg(&RspRecompPos, x86_XMM6, x86_XMM4, SseType_QuadWord, TRUE);
+	Sse2PsrawImmed(&RspRecompPos, x86_XMM6, 15);
+	Sse2ShuffleDWordsRegToReg(&RspRecompPos, x86_XMM0, x86_XMM5, _MMX_SHUFFLE(3, 2, 3, 2));
+	Sse2ShuffleLowWordsRegToReg(&RspRecompPos, x86_XMM0, x86_XMM0, _MMX_SHUFFLE(1, 1, 1, 0));
+	Sse2ShuffleHighWordsRegToReg(&RspRecompPos, x86_XMM0, x86_XMM0, _MMX_SHUFFLE(3, 3, 3, 2));
+	Sse2PorVariableToReg(&RspRecompPos, x86_XMM0, &INV_SIGN_MASK, "INV_SIGN_MASK(0x0000FFFFFFFFFFFF");
+	Sse2PandnRegToReg(&RspRecompPos, x86_XMM0, x86_XMM6);
+	Sse2PandVariableToReg(&RspRecompPos, x86_XMM4, &ACCUM_MASK, "ACCUM_MASK(0x0000FFFFFFFF0000)");
+	Sse2PorRegToReg(&RspRecompPos, x86_XMM4, x86_XMM0);
+
+	SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM4, &RSP_ACCUM[2].UHW[0], "RSP_ACCUM[el]", SseType_QuadWord, TRUE);
+
+	if (RspCompiler.sse41) {
+		SseMoveHighRegToLowReg(&RspRecompPos, x86_XMM1, x86_XMM1);
+		SseMoveHighRegToLowReg(&RspRecompPos, x86_XMM2, x86_XMM2);
+		Sse2MoveSxWordRegToDWordReg(&RspRecompPos, x86_XMM1, x86_XMM1, RspCompiler.sse41);
+		Sse2MoveSxWordRegToDWordReg(&RspRecompPos, x86_XMM2, x86_XMM2, RspCompiler.sse41);
+		Sse2PmulldRegToReg(&RspRecompPos, x86_XMM2, x86_XMM1);
+	} else {
+		Sse2PunpckHighWordsRegToReg(&RspRecompPos, x86_XMM2, x86_XMM1);
+	}
+
+	// shift and round
+	Sse2PslldImmed(&RspRecompPos, x86_XMM2, 1);
+	Sse2PadddVariableToReg(&RspRecompPos, x86_XMM2, &ROUND_CONST.UHW[0], "ROUND_CONST(0x8000)");
+
+	SseMoveRegToReg(&RspRecompPos, x86_XMM5, x86_XMM2, SseType_QuadWord, TRUE);
+	Sse2CompareEqualDWordVariableToReg(&RspRecompPos, x86_XMM5, &OVERFLOW_VALUE, "OVERFLOW_VALUE(0x80008000)");
+	Sse2PslldImmed(&RspRecompPos, x86_XMM5, x86_XMM5); // introduce a source of 0 for further shuffling
+
+	if (writeToVectorDest) {
+		SseMoveRegToReg(&RspRecompPos, x86_XMM6, x86_XMM5, SseType_QuadWord, TRUE);
+		SseMoveRegToReg(&RspRecompPos, x86_XMM3, x86_XMM5, SseType_QuadWord, TRUE);
+		Sse2PandVariableToReg(&RspRecompPos, x86_XMM6, &SATURATED_CONST.UHW[0], "SATURATED_CONST(0x7FFF)");
+		Sse2PandnRegToReg(&RspRecompPos, x86_XMM3, x86_XMM2);
+		Sse2PorRegToReg(&RspRecompPos, x86_XMM3, x86_XMM6);
+		Sse2ShuffleLowWordsRegToReg(&RspRecompPos, x86_XMM3, x86_XMM3, _MMX_SHUFFLE(0, 0, 3, 1));
+		Sse2ShuffleHighWordsRegToReg(&RspRecompPos, x86_XMM3, x86_XMM3, _MMX_SHUFFLE(3, 1, 0, 0));
+		Sse2ShuffleDWordsRegToReg(&RspRecompPos, x86_XMM3, x86_XMM3, _MMX_SHUFFLE(3, 0, 0, 0));
+		Sse2MoveQWordRegToReg(&RspRecompPos, x86_XMM3, x86_XMM7);
+	}
+
+	// build the accumulator
+	Sse2ShuffleDWordsRegToReg(&RspRecompPos, x86_XMM4, x86_XMM2, _MMX_SHUFFLE(1, 0, 1, 0));
+	Sse2ShuffleLowWordsRegToReg(&RspRecompPos, x86_XMM4, x86_XMM4, _MMX_SHUFFLE(1, 1, 0, 0));
+	Sse2ShuffleHighWordsRegToReg(&RspRecompPos, x86_XMM4, x86_XMM4, _MMX_SHUFFLE(3, 3, 2, 2));
+
+	SseMoveRegToReg(&RspRecompPos, x86_XMM6, x86_XMM4, SseType_QuadWord, TRUE);
+	Sse2PsrawImmed(&RspRecompPos, x86_XMM6, 15);
+	Sse2ShuffleDWordsRegToReg(&RspRecompPos, x86_XMM0, x86_XMM5, _MMX_SHUFFLE(1, 0, 1, 0));
+	Sse2ShuffleLowWordsRegToReg(&RspRecompPos, x86_XMM0, x86_XMM0, _MMX_SHUFFLE(1, 1, 1, 0));
+	Sse2ShuffleHighWordsRegToReg(&RspRecompPos, x86_XMM0, x86_XMM0, _MMX_SHUFFLE(3, 3, 3, 2));
+	Sse2PorVariableToReg(&RspRecompPos, x86_XMM0, &INV_SIGN_MASK, "INV_SIGN_MASK(0x0000FFFFFFFFFFFF");
+	Sse2PandnRegToReg(&RspRecompPos, x86_XMM0, x86_XMM6);
+	Sse2PandVariableToReg(&RspRecompPos, x86_XMM4, &ACCUM_MASK, "ACCUM_MASK(0x0000FFFFFFFF0000)");
+	Sse2PorRegToReg(&RspRecompPos, x86_XMM4, x86_XMM0);
+
+	SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM4, &RSP_ACCUM[4].UHW[0], "RSP_ACCUM[el]", SseType_QuadWord, TRUE);
+
+	Sse2ShuffleDWordsRegToReg(&RspRecompPos, x86_XMM4, x86_XMM2, _MMX_SHUFFLE(3, 2, 3, 2));
+	Sse2ShuffleLowWordsRegToReg(&RspRecompPos, x86_XMM4, x86_XMM4, _MMX_SHUFFLE(1, 1, 0, 0));
+	Sse2ShuffleHighWordsRegToReg(&RspRecompPos, x86_XMM4, x86_XMM4, _MMX_SHUFFLE(3, 3, 2, 2));
+
+	SseMoveRegToReg(&RspRecompPos, x86_XMM6, x86_XMM4, SseType_QuadWord, TRUE);
+	Sse2PsrawImmed(&RspRecompPos, x86_XMM6, 15);
+	Sse2ShuffleDWordsRegToReg(&RspRecompPos, x86_XMM0, x86_XMM5, _MMX_SHUFFLE(3, 2, 3, 2));
+	Sse2ShuffleLowWordsRegToReg(&RspRecompPos, x86_XMM0, x86_XMM0, _MMX_SHUFFLE(1, 1, 1, 0));
+	Sse2ShuffleHighWordsRegToReg(&RspRecompPos, x86_XMM0, x86_XMM0, _MMX_SHUFFLE(3, 3, 3, 2));
+	Sse2PorVariableToReg(&RspRecompPos, x86_XMM0, &INV_SIGN_MASK, "INV_SIGN_MASK(0x0000FFFFFFFFFFFF");
+	Sse2PandnRegToReg(&RspRecompPos, x86_XMM0, x86_XMM6);
+	Sse2PandVariableToReg(&RspRecompPos, x86_XMM4, &ACCUM_MASK, "ACCUM_MASK(0x0000FFFFFFFF0000)");
+	Sse2PorRegToReg(&RspRecompPos, x86_XMM4, x86_XMM0);
+
+	SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM4, &RSP_ACCUM[6].UHW[0], "RSP_ACCUM[el]", SseType_QuadWord, TRUE);
+
+	if (writeToVectorDest) {
+		sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vd);
+		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM3, &RSP_Vect[RSPOpC.OP.V.vd].UHW[0], Reg, SseType_QuadWord, TRUE);
+	}
+
+	return TRUE;
+}
+
 void CompileRsp_Vector_VMULF ( void ) {
 	char Reg[256];
 	int count, el, del;
@@ -2988,6 +3345,15 @@ void CompileRsp_Vector_VMULF ( void ) {
 	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
 	if (bWriteToDest == FALSE && bWriteToAccum == FALSE) {
+		return;
+	}
+
+	if (bWriteToAccum == FALSE) {
+		if (TRUE == Compile_Vector_VMULF_NoAccum_SSE2())
+			return;
+	}
+
+	if (TRUE == Compile_Vector_VMULF_SSE2(bWriteToDest)) {
 		return;
 	}
 

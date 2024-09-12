@@ -82,7 +82,7 @@ BOOL IsNextRspInstructionMmx(DWORD PC) {
 /*		case RSP_VECTOR_VMUDM:
 		case RSP_VECTOR_VMUDN:
 		case RSP_VECTOR_VMUDH:*/
-			if (!IsVectorOpcodeRecompiled(RspOp.OP.V.funct)) {
+			if (!IsVectorOpcodeRecompiledWithMMX(RspOp.OP.V.funct)) {
 				return FALSE;
 			}
 			if (TRUE == WriteToAccum(EntireAccum, PC)) {

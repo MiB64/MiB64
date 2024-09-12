@@ -36,10 +36,14 @@
 static BOOL ConditionalMove = FALSE;
 static BOOL mmxSupported = FALSE;
 static BOOL mmx2Supported = FALSE;
+static BOOL sseSupported = FALSE;
+static BOOL sse2Supported = FALSE;
+static BOOL sse41Supported = FALSE;
 
 void DetectCpuSpecs(void) {
 	DWORD Intel_Features = 0;
 	DWORD AMD_Features = 0;
+	DWORD ECX_Features = 0;
 
 	__try {
 		_asm {
@@ -47,6 +51,7 @@ void DetectCpuSpecs(void) {
 			mov eax, 1
 			cpuid
 			mov[Intel_Features], edx
+			mov[ECX_Features], ecx
 
 			/* AMD features */
 			mov eax, 80000001h
@@ -60,7 +65,10 @@ void DetectCpuSpecs(void) {
 
 	if (Intel_Features & 0x02000000) {
 		mmx2Supported = TRUE;
-		/*Compiler.sse = TRUE;*/
+		sseSupported = TRUE;
+	}
+	if (Intel_Features & 0x04000000) {
+		sse2Supported = TRUE;
 	}
 	if (Intel_Features & 0x00800000) {
 		mmxSupported = TRUE;
@@ -73,6 +81,9 @@ void DetectCpuSpecs(void) {
 	} else {
 		ConditionalMove = FALSE;
 	}
+	if (ECX_Features & 0x00080000) {
+		sse41Supported = TRUE;
+	}
 }
 
 BOOL IsMMXSupported(void) {
@@ -81,6 +92,18 @@ BOOL IsMMXSupported(void) {
 
 BOOL IsMMX2Supported(void) {
 	return mmx2Supported;
+}
+
+BOOL IsSSESupported(void) {
+	return sseSupported;
+}
+
+BOOL IsSSE2Supported(void) {
+	return sse2Supported;
+}
+
+BOOL IsSSE41Supported(void) {
+	return sse41Supported;
 }
 
 #if defined(Log_x86Code) || defined(RspLog_x86Code)

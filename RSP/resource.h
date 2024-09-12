@@ -1,9 +1,8 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by PJ64.rc
+// Used by RSP.rc
 //
-#define IDC_STATIC						-1
-#define IDC_LOCATION_EDIT				105
+#define IDC_LOCATION_EDIT               105
 #define MAIN_MENU                       116
 #define IDD_Settings_PlugSel            121
 #define IDR_WINDOWMODE                  122
@@ -290,7 +289,8 @@
 #define IDC_GRAPHICSHLE                 1278
 #define IDC_COMPILER_SELECT             1279
 #define IDC_CHECK_SSE2                  1280
-#define IDC_CHECK_SSE41					1281
+#define IDC_CHECK_SSE3                  1281
+#define IDC_CHECK_SSE41                 1281
 #define ID_RSPCOMMANDS                  5001
 #define ID_RSPREGISTERS                 5002
 #define ID_PROFILING_ON                 5003
@@ -343,16 +343,6 @@
 #define ID_CURRENTSAVE_7                40120
 #define ID_CURRENTSAVE_8                40121
 #define ID_CURRENTSAVE_9                40122
-#define ID_CURRENTSAVE_10               40203
-#define ID_CURRENTSAVE_11               40204
-#define ID_CURRENTSAVE_12               40205
-#define ID_CURRENTSAVE_13               40206
-#define ID_CURRENTSAVE_14               40207
-#define ID_CURRENTSAVE_15               40208
-#define ID_CURRENTSAVE_16               40209
-#define ID_CURRENTSAVE_17               40210
-#define ID_CURRENTSAVE_18               40211
-#define ID_CURRENTSAVE_19               40212
 #define ID_OPTIONS_FULLSCREEN           40123
 #define ID_DEBUGGER_SHOWDLISTALISTCOUNT 40124
 #define ID_OPTIONS_SETTINGS             40126
@@ -387,12 +377,22 @@
 #define ID_FILE_GAMEINFORMATION         40170
 #define ID_HELP_DISCORD                 40171
 #define ID_SHOW_CURSOR                  40172
+#define ID_CURRENTSAVE_10               40203
+#define ID_CURRENTSAVE_11               40204
+#define ID_CURRENTSAVE_12               40205
+#define ID_CURRENTSAVE_13               40206
+#define ID_CURRENTSAVE_14               40207
+#define ID_CURRENTSAVE_15               40208
+#define ID_CURRENTSAVE_16               40209
+#define ID_CURRENTSAVE_17               40210
+#define ID_CURRENTSAVE_18               40211
+#define ID_CURRENTSAVE_19               40212
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        186
+#define _APS_NEXT_RESOURCE_VALUE        187
 #define _APS_NEXT_COMMAND_VALUE         40214
 #define _APS_NEXT_CONTROL_VALUE         1265
 #define _APS_NEXT_SYMED_VALUE           101

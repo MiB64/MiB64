@@ -364,6 +364,7 @@
     <ClCompile Include="RSP\RSP_Profiling.c" />
     <ClCompile Include="Sessions.cpp" />
     <ClCompile Include="Settings Api.c" />
+    <ClCompile Include="Sse.c" />
     <ClCompile Include="TLB Display.c" />
     <ClCompile Include="Cheat.c" />
     <ClCompile Include="Main.c" />
@@ -438,6 +439,7 @@
     <ClInclude Include="Real-Time Clock.h" />
     <ClInclude Include="resource_cheat.h" />
     <ClInclude Include="RomTools_Common.h" />
+    <ClInclude Include="RSP\resource.h" />
     <ClInclude Include="RSP\RSP Command.h" />
     <ClInclude Include="RSP\RSP Interpreter CPU.h" />
     <ClInclude Include="RSP\RSP Interpreter Ops.h" />

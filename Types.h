@@ -27,6 +27,8 @@
 #ifndef __Types_h 
 #define __Types_h 
 
+#include <xmmintrin.h>
+
 typedef unsigned _int64 QWORD;
 
 typedef union tagUWORD {
@@ -63,6 +65,7 @@ typedef union tagVect {
 	unsigned short		UHW[8];
 	char				B[16];
 	unsigned char		UB[16];
+	__m128				sseValue;
 } VECTOR;
 
 #endif

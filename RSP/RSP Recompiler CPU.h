@@ -62,7 +62,7 @@ extern "C" {
 	BOOL IsNextRspInstructionMmx(DWORD PC);
 	BOOL IsRspRegisterConstant(DWORD Reg, DWORD* Constant);
 
-	BOOL IsVectorOpcodeRecompiled(int funct);
+	BOOL IsVectorOpcodeRecompiledWithMMX(int funct);
 
 	/*void RSP_Element2Mmx(int MmxReg);
 	void RSP_MultiElement2Mmx(int MmxReg1, int MmxReg2);*/
@@ -106,7 +106,9 @@ extern "C" {
 	#define MipsRspRegConst(i)  (RspCode.MipsRegConst[i])
 
 	typedef struct {
-		BOOL mmx, mmx2/*, sse*/;	/* CPU specs and compiling */
+		BOOL mmx, mmx2, sse;	/* CPU specs and compiling */
+		BOOL sse2;
+		BOOL sse41;
 		/*	BOOL bFlags;*/			/* RSP Flag Analysis */
 		BOOL bReOrdering;		/* Instruction reordering */
 		BOOL bSections;			/* Microcode sections */
@@ -121,7 +123,8 @@ extern "C" {
 
 	#define IsMmxEnabled	(RspCompiler.mmx)
 	#define IsMmx2Enabled	(RspCompiler.mmx2)
-	/*#define IsSseEnabled	(Compiler.sse)*/
+	#define IsSseEnabled	(RspCompiler.sse)
+	#define IsSse2Enabled	(RspCompiler.sse2)
 
 	extern BOOL IMEMIsUpdated;
 

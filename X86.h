@@ -37,6 +37,11 @@ enum mmxRegValues {
 	x86_MM4 = 4, x86_MM5 = 5, x86_MM6 = 6, x86_MM7 = 7
 };
 
+enum sseRegValues {
+	x86_XMM0 = 0, x86_XMM1 = 1, x86_XMM2 = 2, x86_XMM3 = 3,
+	x86_XMM4 = 4, x86_XMM5 = 5, x86_XMM6 = 6, x86_XMM7 = 7
+};
+
 #define x86_Name(Reg)   (Reg) == x86_EAX  ? "eax" : (Reg) == x86_EBX  ? "ebx" :\
 						(Reg) == x86_ECX  ? "ecx" : (Reg) == x86_EDX  ? "edx" :\
 						(Reg) == x86_ESI  ? "esi" :	(Reg) == x86_EDI  ? "edi" :\
@@ -60,6 +65,9 @@ enum mmxRegValues {
 void DetectCpuSpecs(void);
 BOOL IsMMXSupported(void);
 BOOL IsMMX2Supported(void);
+BOOL IsSSESupported(void);
+BOOL IsSSE2Supported(void);
+BOOL IsSSE41Supported(void);
 
 void AdcX86regToVariable             ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void AdcConstToVariable              ( BYTE** code, void *Variable, char *VariableName, BYTE Constant );
@@ -344,18 +352,52 @@ void MmxCompareGreaterWordRegToReg(int Dest, int Source);*/
 void MmxCompareEqualWordRegToReg( BYTE** code, int Dest, int Source );
 void MmxEmptyMultimediaState( BYTE** code );
 
-/*void SseMoveAlignedVariableToReg(void* Variable, char* VariableName, int sseReg);
-void SseMoveAlignedRegToVariable(int sseReg, void* Variable, char* VariableName);
-void SseMoveAlignedN64MemToReg(int sseReg, int AddrReg);
-void SseMoveAlignedRegToN64Mem(int sseReg, int AddrReg);
-void SseMoveUnalignedVariableToReg(void* Variable, char* VariableName, int sseReg);
+enum SseDataType {
+	SseType_QuadWord
+};
+
+void SseMoveAlignedVariableToReg( BYTE** code, void * Variable, char * VariableName, int sseReg, int sseDataType, BOOL SS2Supported );
+void SseMoveAlignedRegToVariable( BYTE** code, int sseReg, void * Variable, char * VariableName, int sseDataType, BOOL SS2Supported );
+/*void SseMoveAlignedN64MemToReg(int sseReg, int AddrReg);
+void SseMoveAlignedRegToN64Mem(int sseReg, int AddrReg);*/
+void SsetMoveHighRegToLowReg( BYTE** code, int Dest, int Source );
+/*void SseMoveUnalignedVariableToReg(void* Variable, char* VariableName, int sseReg);
 void SseMoveUnalignedRegToVariable(int sseReg, void* Variable, char* VariableName);
 void SseMoveUnalignedN64MemToReg(int sseReg, int AddrReg);
-void SseMoveUnalignedRegToN64Mem(int sseReg, int AddrReg);
-void SseMoveRegToReg(int Dest, int Source);
-void SseXorRegToReg(int Dest, int Source);
+void SseMoveUnalignedRegToN64Mem(int sseReg, int AddrReg);*/
+void SseMoveRegToReg( BYTE** code, int Dest, int Source, int sseDataType, BOOL SSE2Supported );
+/*void SseXorRegToReg(int Dest, int Source);*/
 
-typedef struct {
+void Sse2CompareEqualDWordRegToReg( BYTE** code, int Dest, int Source );
+void Sse2CompareEqualDWordVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
+void Sse2CompareEqualWordRegToReg( BYTE** code, int Dest, int Source );
+void Sse2MoveQWordRegToReg( BYTE** code, int Dest, int Source );
+void Sse2MoveSxWordRegToDWordReg( BYTE** code, int Dest, int Source, BOOL SSE41Supported );
+void Sse2PadddRegToReg( BYTE** code, int Dest, int Source );
+void Sse2PadddVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
+void Sse2PaddwRegToReg( BYTE** code, int Dest, int Source );
+void Sse2PandVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
+void Sse2PandRegToReg( BYTE** code, int Dest, int Source );
+void Sse2PandnRegToReg( BYTE** code, int Dest, int Source );
+void Sse2PmulldRegToReg( BYTE** code, int Dest, int Source );
+void Sse2PmullwRegToReg( BYTE** code, int Dest, int Source );
+void Sse2PmulhwRegToReg( BYTE** code, int Dest, int Source );
+void Sse2PorRegToReg( BYTE** code, int Dest, int Source );
+void Sse2PorVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
+void Sse2PslldImmed( BYTE** code, int Dest, BYTE Immed );
+void Sse2PsllwImmed( BYTE** code, int Dest, BYTE Immed );
+void Sse2PsradImmed( BYTE** code, int Dest, BYTE Immed );
+void Sse2PsrawImmed( BYTE** code, int Dest, BYTE Immed );
+void Sse2PsrlwImmed( BYTE** code, int Dest, BYTE Immed );
+void Sse2PunpckHighWordsRegToReg(BYTE** code, int Dest, int Source);
+void Sse2PunpckLowWordsRegToReg( BYTE** code, int Dest, int Source );
+void Sse2ShuffleDWordsRegToReg( BYTE** code, int Dest, int Source, BYTE Immed );
+void Sse2ShuffleLowWordsMemoryToReg( BYTE** code, int Dest, void * Variable, char * VariableName, BYTE Immed );
+void Sse2ShuffleLowWordsRegToReg( BYTE** code, int Dest, int Source, BYTE Immed );
+void Sse2ShuffleHighWordsMemoryToReg( BYTE** code, int Dest, void * Variable, char * VariableName, BYTE Immed );
+void Sse2ShuffleHighWordsRegToReg( BYTE** code, int Dest, int Source, BYTE Immed );
+
+/*typedef struct {
 	union {
 		struct {
 			unsigned Reg0 : 2;
