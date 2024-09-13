@@ -360,7 +360,8 @@ void SseMoveAlignedVariableToReg( BYTE** code, void * Variable, char * VariableN
 void SseMoveAlignedRegToVariable( BYTE** code, int sseReg, void * Variable, char * VariableName, int sseDataType, BOOL SS2Supported );
 /*void SseMoveAlignedN64MemToReg(int sseReg, int AddrReg);
 void SseMoveAlignedRegToN64Mem(int sseReg, int AddrReg);*/
-void SsetMoveHighRegToLowReg( BYTE** code, int Dest, int Source );
+void SseMoveLowRegToHighReg( BYTE** code, int Dest, int Source );
+void SseMoveHighRegToLowReg( BYTE** code, int Dest, int Source );
 /*void SseMoveUnalignedVariableToReg(void* Variable, char* VariableName, int sseReg);
 void SseMoveUnalignedRegToVariable(int sseReg, void* Variable, char* VariableName);
 void SseMoveUnalignedN64MemToReg(int sseReg, int AddrReg);

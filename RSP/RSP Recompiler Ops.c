@@ -3275,7 +3275,7 @@ static BOOL Compile_Vector_VMULF_SSE2(BOOL writeToVectorDest) {
 
 	SseMoveRegToReg(&RspRecompPos, x86_XMM5, x86_XMM2, SseType_QuadWord, TRUE);
 	Sse2CompareEqualDWordVariableToReg(&RspRecompPos, x86_XMM5, &OVERFLOW_VALUE, "OVERFLOW_VALUE(0x80008000)");
-	Sse2PslldImmed(&RspRecompPos, x86_XMM5, x86_XMM5); // introduce a source of 0 for further shuffling
+	Sse2PslldImmed(&RspRecompPos, x86_XMM5, 16); // introduce a source of 0 for further shuffling
 
 	if (writeToVectorDest) {
 		SseMoveRegToReg(&RspRecompPos, x86_XMM6, x86_XMM5, SseType_QuadWord, TRUE);
@@ -3285,8 +3285,8 @@ static BOOL Compile_Vector_VMULF_SSE2(BOOL writeToVectorDest) {
 		Sse2PorRegToReg(&RspRecompPos, x86_XMM3, x86_XMM6);
 		Sse2ShuffleLowWordsRegToReg(&RspRecompPos, x86_XMM3, x86_XMM3, _MMX_SHUFFLE(0, 0, 3, 1));
 		Sse2ShuffleHighWordsRegToReg(&RspRecompPos, x86_XMM3, x86_XMM3, _MMX_SHUFFLE(3, 1, 0, 0));
-		Sse2ShuffleDWordsRegToReg(&RspRecompPos, x86_XMM3, x86_XMM3, _MMX_SHUFFLE(3, 0, 0, 0));
-		Sse2MoveQWordRegToReg(&RspRecompPos, x86_XMM3, x86_XMM7);
+		Sse2ShuffleDWordsRegToReg(&RspRecompPos, x86_XMM3, x86_XMM3, _MMX_SHUFFLE(0, 0, 3, 0));
+		SseMoveLowRegToHighReg(&RspRecompPos, x86_XMM7, x86_XMM3);
 	}
 
 	// build the accumulator
@@ -3324,7 +3324,7 @@ static BOOL Compile_Vector_VMULF_SSE2(BOOL writeToVectorDest) {
 
 	if (writeToVectorDest) {
 		sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vd);
-		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM3, &RSP_Vect[RSPOpC.OP.V.vd].UHW[0], Reg, SseType_QuadWord, TRUE);
+		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM7, &RSP_Vect[RSPOpC.OP.V.vd].UHW[0], Reg, SseType_QuadWord, TRUE);
 	}
 
 	return TRUE;
