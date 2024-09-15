@@ -126,7 +126,9 @@ void UpdateRSPRegistersScreen(void);
 
 /*** RSP Registers ***/
 extern MIPS_WORD   RSP_GPR[32], RSP_Flags[3];
-extern MIPS_DWORD  RSP_ACCUM[8];
+extern VECTOR RSP_ACCUM_LOW;
+extern VECTOR RSP_ACCUM_MID;
+extern VECTOR RSP_ACCUM_HIGH;
 extern VECTOR  RSP_Vect[32];
 extern MIPS_WORD DivOut, DivIn;
 extern BYTE PendingDivIn;

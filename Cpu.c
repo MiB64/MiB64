@@ -872,7 +872,9 @@ BOOL Machine_LoadState(void) {
 			// Specific data introduced in  2024.1
 			unzReadCurrentFile(file, RSP_GPR, sizeof(MIPS_WORD) * 32);
 			unzReadCurrentFile(file, RSP_Vect, sizeof(VECTOR) * 32);
-			unzReadCurrentFile(file, RSP_ACCUM, sizeof(MIPS_DWORD) * 8);
+			unzReadCurrentFile(file, &RSP_ACCUM_HIGH, sizeof(VECTOR));
+			unzReadCurrentFile(file, &RSP_ACCUM_MID, sizeof(VECTOR));
+			unzReadCurrentFile(file, &RSP_ACCUM_LOW, sizeof(VECTOR));
 			unzReadCurrentFile(file, RSP_Flags, sizeof(MIPS_WORD) * 3);
 			unzReadCurrentFile(file, &DivOut, sizeof(MIPS_WORD));
 			unzReadCurrentFile(file, &DivIn, sizeof(MIPS_WORD));
@@ -1038,7 +1040,9 @@ BOOL Machine_LoadState(void) {
 		// Specific data introduced in 2024.1
 		ReadFile(hSaveFile, RSP_GPR, sizeof(MIPS_WORD) * 32, &dwRead, NULL);
 		ReadFile(hSaveFile, RSP_Vect, sizeof(VECTOR) * 32, &dwRead, NULL);
-		ReadFile(hSaveFile, RSP_ACCUM, sizeof(MIPS_DWORD) * 8, &dwRead, NULL);
+		ReadFile(hSaveFile, &RSP_ACCUM_HIGH, sizeof(VECTOR), &dwRead, NULL);
+		ReadFile(hSaveFile, &RSP_ACCUM_MID, sizeof(VECTOR), &dwRead, NULL);
+		ReadFile(hSaveFile, &RSP_ACCUM_LOW, sizeof(VECTOR), &dwRead, NULL);
 		ReadFile(hSaveFile, RSP_Flags, sizeof(MIPS_WORD) * 3, &dwRead, NULL);
 		ReadFile(hSaveFile, &DivOut, sizeof(MIPS_WORD), &dwRead, NULL);
 		ReadFile(hSaveFile, &DivIn, sizeof(MIPS_WORD), &dwRead, NULL);
@@ -1184,7 +1188,9 @@ BOOL Machine_SaveState(void) {
 		// Specific data introduced in 2024.1
 		zipWriteInFileInZip(file, RSP_GPR, sizeof(MIPS_WORD) * 32);
 		zipWriteInFileInZip(file, RSP_Vect, sizeof(VECTOR) * 32);
-		zipWriteInFileInZip(file, RSP_ACCUM, sizeof(MIPS_DWORD) * 8);
+		zipWriteInFileInZip(file, &RSP_ACCUM_HIGH, sizeof(VECTOR));
+		zipWriteInFileInZip(file, &RSP_ACCUM_MID, sizeof(VECTOR));
+		zipWriteInFileInZip(file, &RSP_ACCUM_LOW, sizeof(VECTOR));
 		zipWriteInFileInZip(file, RSP_Flags, sizeof(MIPS_WORD) * 3);
 		zipWriteInFileInZip(file, &DivOut, sizeof(MIPS_WORD));
 		zipWriteInFileInZip(file, &DivIn, sizeof(MIPS_WORD));
@@ -1267,7 +1273,9 @@ BOOL Machine_SaveState(void) {
 		// Specific data introduced in 2024.1
 		WriteFile(hSaveFile, RSP_GPR, sizeof(MIPS_WORD) * 32, &dwWritten, NULL);
 		WriteFile(hSaveFile, RSP_Vect, sizeof(VECTOR) * 32, &dwWritten, NULL);
-		WriteFile(hSaveFile, RSP_ACCUM, sizeof(MIPS_DWORD) * 8, &dwWritten, NULL);
+		WriteFile(hSaveFile, &RSP_ACCUM_HIGH, sizeof(VECTOR), &dwWritten, NULL);
+		WriteFile(hSaveFile, &RSP_ACCUM_MID, sizeof(VECTOR), &dwWritten, NULL);
+		WriteFile(hSaveFile, &RSP_ACCUM_LOW, sizeof(VECTOR), &dwWritten, NULL);
 		WriteFile(hSaveFile, RSP_Flags, sizeof(MIPS_WORD) * 3, &dwWritten, NULL);
 		WriteFile(hSaveFile, &DivOut, sizeof(MIPS_WORD), &dwWritten, NULL);
 		WriteFile(hSaveFile, &DivIn, sizeof(MIPS_WORD), &dwWritten, NULL);

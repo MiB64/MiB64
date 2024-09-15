@@ -71,7 +71,9 @@ static FARPROC RefreshProc;
 /*** RSP Registers ***/
 MIPS_WORD  RSP_GPR[32];
 MIPS_WORD  RSP_Flags[3];
-__declspec(align(16)) MIPS_DWORD  RSP_ACCUM[8];
+VECTOR RSP_ACCUM_LOW;
+VECTOR RSP_ACCUM_MID;
+VECTOR RSP_ACCUM_HIGH;
 VECTOR  RSP_Vect[32];
 MIPS_WORD DivOut, DivIn;
 BYTE PendingDivIn;
@@ -235,7 +237,9 @@ void HideRSP_RegisterPanel ( int Panel) {
 void InitilizeRSPRegisters (void) {
 	memset(RSP_GPR,0,sizeof(RSP_GPR));
 	memset(RSP_Vect,0,sizeof(RSP_Vect));
-	memset(RSP_ACCUM, 0, sizeof(RSP_ACCUM));
+	memset(&RSP_ACCUM_LOW, 0, sizeof(VECTOR));
+	memset(&RSP_ACCUM_MID, 0, sizeof(VECTOR));
+	memset(&RSP_ACCUM_HIGH, 0, sizeof(VECTOR));
 	memset(RSP_Flags, 0, sizeof(RSP_Flags));
 	DivIn.UW = 0;
 	DivOut.UW = 0;
@@ -759,7 +763,7 @@ void UpdateRSPRegistersScreen ( void ) {
 			break;
 		case HiddenRegisters:
 			for (count = 0; count < 8;count ++) { 
-				sprintf(RegisterValue," 0x%08X - %08X",RSP_ACCUM[count].W[1], RSP_ACCUM[count].W[0]);
+				sprintf(RegisterValue," 0x%04X - %04X - %04X",RSP_ACCUM_HIGH.UHW[count], RSP_ACCUM_MID.UHW[count], RSP_ACCUM_LOW.UHW[count]);
 				SetWindowText(hHIDDEN[count],RegisterValue);
 			}
 			for (count = 0; count < 3;count ++) { 
