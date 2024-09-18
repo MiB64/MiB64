@@ -360,6 +360,9 @@
     <ClCompile Include="Sse.c">
       <Filter>Source Files\X86 Opcodes Source</Filter>
     </ClCompile>
+    <ClCompile Include="avx.c">
+      <Filter>Source Files\X86 Opcodes Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BreakPoints.h">

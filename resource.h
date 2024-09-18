@@ -291,6 +291,8 @@
 #define IDC_COMPILER_SELECT             1279
 #define IDC_CHECK_SSE2                  1280
 #define IDC_CHECK_SSE41					1281
+#define IDC_CHECK_AVX					1282
+#define IDC_CHECK_AVX2					1283
 #define ID_RSPCOMMANDS                  5001
 #define ID_RSPREGISTERS                 5002
 #define ID_PROFILING_ON                 5003

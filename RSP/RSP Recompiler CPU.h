@@ -109,6 +109,8 @@ extern "C" {
 		BOOL mmx, mmx2, sse;	/* CPU specs and compiling */
 		BOOL sse2;
 		BOOL sse41;
+		BOOL avx;
+		BOOL avx2;
 		/*	BOOL bFlags;*/			/* RSP Flag Analysis */
 		BOOL bReOrdering;		/* Instruction reordering */
 		BOOL bSections;			/* Microcode sections */
@@ -125,6 +127,9 @@ extern "C" {
 	#define IsMmx2Enabled	(RspCompiler.mmx2)
 	#define IsSseEnabled	(RspCompiler.sse)
 	#define IsSse2Enabled	(RspCompiler.sse2)
+	#define IsSse41Enabled	(RspCompiler.sse41)
+	#define IsAvxEnabled	(RspCompiler.avx)
+	#define IsAvx2Enabled	(RspCompiler.avx2)
 
 	extern BOOL IMEMIsUpdated;
 

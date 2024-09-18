@@ -42,6 +42,11 @@ enum sseRegValues {
 	x86_XMM4 = 4, x86_XMM5 = 5, x86_XMM6 = 6, x86_XMM7 = 7
 };
 
+enum avxRegValues {
+	x86_YMM0 = 0, x86_YMM1 = 1, x86_YMM2 = 2, x86_YMM3 = 3,
+	x86_YMM4 = 4, x86_YMM5 = 5, x86_YMM6 = 6, x86_YMM7 = 7
+};
+
 #define x86_Name(Reg)   (Reg) == x86_EAX  ? "eax" : (Reg) == x86_EBX  ? "ebx" :\
 						(Reg) == x86_ECX  ? "ecx" : (Reg) == x86_EDX  ? "edx" :\
 						(Reg) == x86_ESI  ? "esi" :	(Reg) == x86_EDI  ? "edi" :\
@@ -68,6 +73,8 @@ BOOL IsMMX2Supported(void);
 BOOL IsSSESupported(void);
 BOOL IsSSE2Supported(void);
 BOOL IsSSE41Supported(void);
+BOOL IsAVXSupported(void);
+BOOL IsAVX2Supported(void);
 
 void AdcX86regToVariable             ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void AdcConstToVariable              ( BYTE** code, void *Variable, char *VariableName, BYTE Constant );
@@ -398,6 +405,9 @@ void Sse2ShuffleLowWordsRegToReg( BYTE** code, int Dest, int Source, BYTE Immed 
 void Sse2ShuffleHighWordsMemoryToReg( BYTE** code, int Dest, void * Variable, char * VariableName, BYTE Immed );
 void Sse2ShuffleHighWordsRegToReg( BYTE** code, int Dest, int Source, BYTE Immed );
 
+void Sse41PackUnsignedDWordRegToWordReg( BYTE** code, int Dest, int Source );
+void Sse41PBlendVariableToRegWithXMM0Mask( BYTE** code, int Dest, void * Variable, char * VariableName );
+
 /*typedef struct {
 	union {
 		struct {
@@ -411,6 +421,19 @@ void Sse2ShuffleHighWordsRegToReg( BYTE** code, int Dest, int Source, BYTE Immed
 } SHUFFLE;
 
 void SseShuffleReg(int Dest, int Source, BYTE Immed);*/
+
+void AvxCompareEqualDWordRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVExtracti128RegToReg( BYTE** code , int Dest, int Src, BOOL msb );
+void AvxVPAdddRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPBlendvbRegToReg256( BYTE** code, int Dest, int Src1, int Src2, int Src3Mask );
+void AvxVPBroadcastdVariableToReg256( BYTE** code, int Dest, void * Variable, char * VariableName );
+void AvxVPBroadcastwVariableToReg128( BYTE** code, int Dest, void * Variable, char * VariableName );
+void AvxVPMovesxWordReg128ToDwordReg256( BYTE** code, int Dest, int Source );
+void AvxVPMovesxWordVariableToDWordReg256( BYTE** code, int Dest, void * Variable, char * VariableName );
+void AvxVPMulldRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPorRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPSlldRegToReg256Immed( BYTE** code, int Dest, int Src, BYTE Immed );
+void AvxVPSrldRegToReg256Immed( BYTE** code, int Dest, int Src, BYTE Immed );
 
 void x86_SetBranch8b(void* JumpByte, void* Destination);
 void x86_SetBranch32b(void* JumpByte, void* Destination);

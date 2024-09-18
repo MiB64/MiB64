@@ -138,6 +138,8 @@ void InitiateInternalRSP() {
 	RspCompiler.sse = IsSSESupported();
 	RspCompiler.sse2 = IsSSE2Supported();
 	RspCompiler.sse41 = IsSSE41Supported();
+	RspCompiler.avx = IsAVXSupported();
+	RspCompiler.avx2 = IsAVX2Supported();
 	hRspConfigMutex = CreateMutex(NULL, FALSE, NULL);
 
 	LoadRspSettings();
@@ -168,6 +170,10 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 			CheckDlgButton(hDlg, IDC_CHECK_SSE2, BST_CHECKED);
 		if (RspCompiler.sse41 == TRUE)
 			CheckDlgButton(hDlg, IDC_CHECK_SSE41, BST_CHECKED);
+		if (RspCompiler.avx == TRUE)
+			CheckDlgButton(hDlg, IDC_CHECK_AVX, BST_CHECKED);
+		if (RspCompiler.avx2 == TRUE)
+			CheckDlgButton(hDlg, IDC_CHECK_AVX2, BST_CHECKED);
 
 		if (RspCompiler.bAlignGPR == TRUE)
 			CheckDlgButton(hDlg, IDC_COMPILER_ALIGNGPR, BST_CHECKED);
@@ -205,6 +211,8 @@ static BOOL CALLBACK CompilerDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 			RspCompiler.sse = GetBooleanCheck(hDlg, IDC_CHECK_SSE);
 			RspCompiler.sse2 = GetBooleanCheck(hDlg, IDC_CHECK_SSE2);
 			RspCompiler.sse41 = GetBooleanCheck(hDlg, IDC_CHECK_SSE41);
+			RspCompiler.avx = GetBooleanCheck(hDlg, IDC_CHECK_AVX);
+			RspCompiler.avx2 = GetBooleanCheck(hDlg, IDC_CHECK_AVX2);
 			RspCompiler.bSections = GetBooleanCheck(hDlg, IDC_COMPILER_SECTIONS);
 			RspCompiler.bReOrdering = GetBooleanCheck(hDlg, IDC_COMPILER_REORDER);
 			RspCompiler.bGPRConstants = GetBooleanCheck(hDlg, IDC_COMPILER_GPRCONSTANTS);

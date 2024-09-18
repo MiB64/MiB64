@@ -39,11 +39,15 @@ static BOOL mmx2Supported = FALSE;
 static BOOL sseSupported = FALSE;
 static BOOL sse2Supported = FALSE;
 static BOOL sse41Supported = FALSE;
+static BOOL avxSupported = FALSE;
+static BOOL avx2Supported = FALSE;
 
 void DetectCpuSpecs(void) {
 	DWORD Intel_Features = 0;
 	DWORD AMD_Features = 0;
 	DWORD ECX_Features = 0;
+	DWORD XCR0 = 0;
+	DWORD Extended_Features = 0;
 
 	__try {
 		_asm {
@@ -57,6 +61,11 @@ void DetectCpuSpecs(void) {
 			mov eax, 80000001h
 			cpuid
 			or [AMD_Features], edx
+
+			mov eax, 7
+			xor ecx, ecx
+			cpuid
+			mov[Extended_Features], ebx
 		}
 	}
 	__except (EXCEPTION_EXECUTE_HANDLER) {
@@ -84,6 +93,29 @@ void DetectCpuSpecs(void) {
 	if (ECX_Features & 0x00080000) {
 		sse41Supported = TRUE;
 	}
+	if (ECX_Features & 0x10000000) { // avx supported by the cpu
+		if (ECX_Features & 0x08000000) { // xgetbv supported
+			__try {
+				_asm {
+					xor ecx, ecx
+					xgetbv
+					mov[XCR0], eax
+				}
+			}
+			__except (EXCEPTION_EXECUTE_HANDLER) {
+				AMD_Features = Intel_Features = 0;
+			}
+
+			if ((XCR0 & 6) == 6) { // ymm supported by the OS
+				avxSupported = TRUE;
+
+				if (Extended_Features & 0x00000020) {
+					avx2Supported = TRUE;
+				}
+			}
+
+		}
+	}
 }
 
 BOOL IsMMXSupported(void) {
@@ -104,6 +136,14 @@ BOOL IsSSE2Supported(void) {
 
 BOOL IsSSE41Supported(void) {
 	return sse41Supported;
+}
+
+BOOL IsAVXSupported(void) {
+	return avxSupported;
+}
+
+BOOL IsAVX2Supported(void) {
+	return avx2Supported;
 }
 
 #if defined(Log_x86Code) || defined(RspLog_x86Code)

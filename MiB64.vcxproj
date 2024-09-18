@@ -254,6 +254,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="avx.c" />
     <ClCompile Include="BreakPoints.c" />
     <ClCompile Include="CheatSearch.c" />
     <ClCompile Include="CheatSearch_Dev.c" />

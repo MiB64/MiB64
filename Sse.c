@@ -1235,3 +1235,54 @@ void Sse2ShuffleHighWordsRegToReg(BYTE** code, int Dest, int Source, BYTE Immed)
 	PUTDST8(*code, 0xC0 | x86Command);
 	PUTDST8(*code, Immed);
 }
+
+void Sse41PackUnsignedDWordRegToWordReg(BYTE** code, int Dest, int Source) {
+	BYTE x86Command = 0;
+
+	RSP_CPU_Message("      packusdw %s, %s", sse_Name(Dest), sse_Name(Source));
+
+	switch (Dest) {
+	case x86_XMM0: x86Command = 0 << 3; break;
+	case x86_XMM1: x86Command = 1 << 3; break;
+	case x86_XMM2: x86Command = 2 << 3; break;
+	case x86_XMM3: x86Command = 3 << 3; break;
+	case x86_XMM4: x86Command = 4 << 3; break;
+	case x86_XMM5: x86Command = 5 << 3; break;
+	case x86_XMM6: x86Command = 6 << 3; break;
+	case x86_XMM7: x86Command = 7 << 3; break;
+	}
+	switch (Source) {
+	case x86_XMM0: x86Command |= 0; break;
+	case x86_XMM1: x86Command |= 1; break;
+	case x86_XMM2: x86Command |= 2; break;
+	case x86_XMM3: x86Command |= 3; break;
+	case x86_XMM4: x86Command |= 4; break;
+	case x86_XMM5: x86Command |= 5; break;
+	case x86_XMM6: x86Command |= 6; break;
+	case x86_XMM7: x86Command |= 7; break;
+	}
+
+	PUTDST32(*code, 0x2b380f66);
+	PUTDST8(*code, 0xC0 | x86Command);
+}
+
+void Sse41PBlendVariableToRegWithXMM0Mask(BYTE** code, int Dest, void* Variable, char* VariableName) {
+	BYTE x86Command = 0;
+
+	RSP_CPU_Message("      pblendvb %s, xmmword ptr [%s], xmm0", sse_Name(Dest), VariableName);
+
+	switch (Dest) {
+	case x86_XMM0: x86Command = 0x05; break;
+	case x86_XMM1: x86Command = 0x0D; break;
+	case x86_XMM2: x86Command = 0x15; break;
+	case x86_XMM3: x86Command = 0x1D; break;
+	case x86_XMM4: x86Command = 0x25; break;
+	case x86_XMM5: x86Command = 0x2D; break;
+	case x86_XMM6: x86Command = 0x35; break;
+	case x86_XMM7: x86Command = 0x3D; break;
+	}
+
+	PUTDST32(*code, 0x10380f66);
+	PUTDST8(*code, x86Command);
+	PUTDST32(*code, Variable);
+}
