@@ -3294,6 +3294,79 @@ static BOOL Compile_Vector_VMULF_NoAccum_AVX(void) {
 	return TRUE;
 }
 
+static BOOL Compile_Vector_VMULF_AVX(BOOL writeToVectorDest) {
+	char Reg[256];
+	static const DWORD C8000 = 0x8000;
+	static const DWORD C7FFF0000 = 0x7FFF0000;
+
+	/* Do our AVX checks here */
+	if (IsAvxEnabled == FALSE || IsAvx2Enabled == FALSE || IsSse2Enabled == FALSE || IsSse41Enabled == FALSE)
+		return FALSE;
+
+	sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vs);
+	AvxVPMovesxWordVariableToDWordReg256(&RspRecompPos, x86_YMM0, &RSP_Vect[RSPOpC.OP.V.vs].UHW[0], Reg);
+
+	if ((RSPOpC.OP.V.element & 0xF) < 2) {
+		sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vt);
+		AvxVPMovesxWordVariableToDWordReg256(&RspRecompPos, x86_YMM2, &RSP_Vect[RSPOpC.OP.V.vt].UHW[0], Reg);
+	}
+	else if ((RSPOpC.OP.V.element & 0xF) >= 8) {
+		RSP_Element2Sse(x86_XMM2);
+		AvxVPMovesxWordReg128ToDwordReg256(&RspRecompPos, x86_YMM2, x86_XMM2);
+	}
+	else {
+		RSP_MultiElement2Sse(x86_XMM2);
+		AvxVPMovesxWordReg128ToDwordReg256(&RspRecompPos, x86_YMM2, x86_XMM2);
+	}
+
+	// ((vs * vt) << 1) + 0x8000
+	AvxVPMulldRegToReg256(&RspRecompPos, x86_YMM2, x86_YMM2, x86_YMM0);
+	AvxVPSlldRegToReg256Immed(&RspRecompPos, x86_YMM2, x86_YMM2, 1);
+	AvxVPBroadcastdVariableToReg256(&RspRecompPos, x86_YMM7, (void*)&C8000, "Constant(0x8000)");
+	AvxVPAdddRegToReg256(&RspRecompPos, x86_YMM2, x86_YMM2, x86_YMM7);
+
+	// accum low
+	AvxVPSlldRegToReg256Immed(&RspRecompPos, x86_YMM3, x86_YMM2, 16);
+	AvxVPSrldRegToReg256Immed(&RspRecompPos, x86_YMM3, x86_YMM3, 16);
+	AvxVExtracti128RegToReg(&RspRecompPos, x86_XMM4, x86_YMM3, TRUE);
+	Sse41PackUnsignedDWordRegToWordReg(&RspRecompPos, x86_XMM3, x86_XMM4);
+	SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM3, &RSP_ACCUM_LOW.UHW[0], "RSP_ACCUM_LOW", SseType_QuadWord, TRUE);
+
+	// accum mid
+	AvxVPSrldRegToReg256Immed(&RspRecompPos, x86_YMM3, x86_YMM2, 16);
+	AvxVExtracti128RegToReg(&RspRecompPos, x86_XMM4, x86_YMM3, TRUE);
+	Sse41PackUnsignedDWordRegToWordReg(&RspRecompPos, x86_XMM3, x86_XMM4);
+	SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM3, &RSP_ACCUM_MID.UHW[0], "RSP_ACCUM_MID", SseType_QuadWord, TRUE);
+
+	// check which result has value 0x80008000
+	AvxVPSlldRegToReg256Immed(&RspRecompPos, x86_YMM6, x86_YMM7, 16);
+	AvxVPorRegToReg256(&RspRecompPos, x86_YMM7, x86_YMM7, x86_YMM6);
+	AvxCompareEqualDWordRegToReg256(&RspRecompPos, x86_YMM1, x86_YMM2, x86_YMM7);
+
+	if (writeToVectorDest == TRUE) {
+		AvxVPBroadcastdVariableToReg256(&RspRecompPos, x86_YMM6, (void*)&C7FFF0000, "Constant(0x7FFF0000)");
+		AvxVPBlendvbRegToReg256(&RspRecompPos, x86_YMM2, x86_YMM2, x86_YMM6, x86_YMM1);
+
+		// build the final vec result
+		AvxVPSrldRegToReg256Immed(&RspRecompPos, x86_YMM2, x86_YMM2, 16);
+		AvxVExtracti128RegToReg(&RspRecompPos, x86_XMM1, x86_YMM2, TRUE);
+		Sse41PackUnsignedDWordRegToWordReg(&RspRecompPos, x86_XMM2, x86_XMM1);
+		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM2, &RSP_Vect[RSPOpC.OP.V.vd].UHW[0], Reg, SseType_QuadWord, TRUE);
+	}
+	else {
+		AvxVPandnRegToReg256(&RspRecompPos, x86_YMM2, x86_YMM1, x86_YMM2);
+		AvxVPSrldRegToReg256Immed(&RspRecompPos, x86_YMM2, x86_YMM2, 16);
+		AvxVExtracti128RegToReg(&RspRecompPos, x86_XMM1, x86_YMM2, TRUE);
+		Sse41PackUnsignedDWordRegToWordReg(&RspRecompPos, x86_XMM2, x86_XMM1);
+	}
+
+	// accum high
+	Sse2PsrawImmed(&RspRecompPos, x86_XMM2, 15);
+	SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM2, &RSP_ACCUM_HIGH.UHW[0], "RSP_ACCUM_HIGH", SseType_QuadWord, TRUE);
+
+	return TRUE;
+}
+
 void CompileRsp_Vector_VMULF ( void ) {
 	char Reg[256];
 	int count, el, del;
@@ -3315,20 +3388,20 @@ void CompileRsp_Vector_VMULF ( void ) {
 	if (bWriteToAccum == FALSE) {
 		if (TRUE == Compile_Vector_VMULF_NoAccum_AVX())
 			return;
-	}
 
-	if (bWriteToAccum == FALSE) {
 		if (TRUE == Compile_Vector_VMULF_NoAccum_SSE2())
 			return;
+
+		if (TRUE == Compile_Vector_VMULF_MMX())
+			return;
+	}
+
+	if (TRUE == Compile_Vector_VMULF_AVX(bWriteToDest)) {
+		return;
 	}
 
 	if (TRUE == Compile_Vector_VMULF_SSE2(bWriteToDest)) {
 		return;
-	}
-
-	if (bWriteToAccum == FALSE) {
-		if (TRUE == Compile_Vector_VMULF_MMX())
-			return;
 	}
 
 	if (bOptimize == TRUE) {

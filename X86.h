@@ -424,7 +424,9 @@ void SseShuffleReg(int Dest, int Source, BYTE Immed);*/
 
 void AvxCompareEqualDWordRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVExtracti128RegToReg( BYTE** code , int Dest, int Src, BOOL msb );
+void AvxVPackUnsignedDWordRegToWordReg128( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPAdddRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPandnRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPBlendvbRegToReg256( BYTE** code, int Dest, int Src1, int Src2, int Src3Mask );
 void AvxVPBroadcastdVariableToReg256( BYTE** code, int Dest, void * Variable, char * VariableName );
 void AvxVPBroadcastwVariableToReg128( BYTE** code, int Dest, void * Variable, char * VariableName );
