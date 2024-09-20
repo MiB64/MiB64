@@ -707,6 +707,49 @@ void CondMoveEqual(BYTE** code, int Destination, int Source) {
 	}
 }
 
+void CondMoveLess(BYTE** code, int Destination, int Source) {
+	if (ConditionalMove == FALSE) {
+		BYTE* Jump;
+		CPU_OR_RSP_Message(*code, "   [*]cmovl %s, %s", x86_Name(Destination), x86_Name(Source));
+
+		JgeLabel8(code, "label", 0);
+		Jump = *code - 1;
+		MoveX86RegToX86Reg(code, Source, Destination);
+		CPU_OR_RSP_Message(*code, "     label:");
+		x86_SetBranch8b(Jump, *code);
+	}
+	else {
+		BYTE x86Command = 0;
+		CPU_OR_RSP_Message(*code, "      cmovl %s, %s", x86_Name(Destination), x86_Name(Source));
+
+		PUTDST16(*code, 0x4C0F);
+
+		switch (Source) {
+		case x86_EAX: x86Command = 0x00; break;
+		case x86_EBX: x86Command = 0x03; break;
+		case x86_ECX: x86Command = 0x01; break;
+		case x86_EDX: x86Command = 0x02; break;
+		case x86_ESI: x86Command = 0x06; break;
+		case x86_EDI: x86Command = 0x07; break;
+		case x86_ESP: x86Command = 0x04; break;
+		case x86_EBP: x86Command = 0x05; break;
+		}
+
+		switch (Destination) {
+		case x86_EAX: x86Command += 0xC0; break;
+		case x86_EBX: x86Command += 0xD8; break;
+		case x86_ECX: x86Command += 0xC8; break;
+		case x86_EDX: x86Command += 0xD0; break;
+		case x86_ESI: x86Command += 0xF0; break;
+		case x86_EDI: x86Command += 0xF8; break;
+		case x86_ESP: x86Command += 0xE0; break;
+		case x86_EBP: x86Command += 0xE8; break;
+		}
+
+		PUTDST8(*code, x86Command);
+	}
+}
+
 void Cwde(BYTE** code) {
 	CPU_OR_RSP_Message(*code, "      cwde");
 	PUTDST8(*code, 0x98);
@@ -842,6 +885,12 @@ void JeLabel32(BYTE** code, char * Label,DWORD Value) {
 	CPU_OR_RSP_Message(*code, "      je $%s",Label);
 	PUTDST16(*code,0x840F);
 	PUTDST32(*code,Value);
+}
+
+void JgeLabel8(BYTE** code, char * Label, BYTE Value) {
+	CPU_OR_RSP_Message(*code, "      jge $%s", Label);
+	PUTDST8(*code, 0x7D);
+	PUTDST8(*code, Value);
 }
 
 void JgeLabel32(BYTE** code, char * Label,DWORD Value) {

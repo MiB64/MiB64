@@ -103,6 +103,7 @@ void CompX86regToVariable            ( BYTE** code, int x86Reg, void * Variable,
 void CompVariableToX86reg	         ( BYTE** code, int x86Reg, void * Variable, char * VariableName );
 void CompX86RegToX86Reg              ( BYTE** code, int Destination, int Source );
 void CondMoveEqual                   ( BYTE** code, int Destination, int Source );
+void CondMoveLess                    ( BYTE** code, int Destination, int Source );
 void Cwde                            ( BYTE** code );
 void DecX86reg                       ( BYTE** code, int x86Reg );
 void DivX86reg                       ( BYTE** code, int x86reg );
@@ -118,6 +119,7 @@ void JbLabel32                       ( BYTE** code, char * Label, DWORD Value );
 void JecxzLabel8                     ( BYTE** code, char * Label, BYTE Value );
 void JeLabel8                        ( BYTE** code, char * Label, BYTE Value );
 void JeLabel32                       ( BYTE** code, char * Label, DWORD Value );
+void JgeLabel8                       ( BYTE** code, char * Label, BYTE Value );
 void JgeLabel32                      ( BYTE** code, char * Label, DWORD Value );
 void JgLabel8                        ( BYTE** code, char * Label, BYTE Value );
 void JgLabel32                       ( BYTE** code, char * Label, DWORD Value );
