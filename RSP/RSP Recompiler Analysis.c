@@ -236,6 +236,7 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 			if ((RspOp.OP.I.rs & 0x10) != 0) {
 				switch (RspOp.OP.V.funct) {
 				case RSP_VECTOR_VMULF:
+				case RSP_VECTOR_VMULU:
 				case RSP_VECTOR_VMUDL:
 				case RSP_VECTOR_VMUDM:
 				case RSP_VECTOR_VMUDN:
@@ -499,8 +500,8 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 			break;*/
 		case RSP_SPECIAL:
 			switch (RspOp.OP.R.funct) {
-			/*case RSP_SPECIAL_SLL:
-			case RSP_SPECIAL_SRL:
+			case RSP_SPECIAL_SLL:
+			/*case RSP_SPECIAL_SRL:
 			case RSP_SPECIAL_SRA:
 			case RSP_SPECIAL_SLLV:
 			case RSP_SPECIAL_SRLV:
@@ -509,9 +510,9 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 			/*case RSP_SPECIAL_ADDU:
 			case RSP_SPECIAL_SUB:
 			case RSP_SPECIAL_SUBU:
-			case RSP_SPECIAL_AND:
+			case RSP_SPECIAL_AND:*/
 			case RSP_SPECIAL_OR:
-			case RSP_SPECIAL_XOR:
+			/*case RSP_SPECIAL_XOR:
 			case RSP_SPECIAL_NOR:
 			case RSP_SPECIAL_SLT:
 			case RSP_SPECIAL_SLTU:*/
@@ -520,9 +521,9 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 			case RSP_SPECIAL_BREAK:
 				return TRUE;
 
-			/*case RSP_SPECIAL_JR:
+			case RSP_SPECIAL_JR:
 				Instruction_State = DO_DELAY_SLOT;
-				break;*/
+				break;
 
 			default:
 				RspCompilerWarning("Unkown opcode in WriteToVectorDest\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
@@ -562,6 +563,7 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 			if ((RspOp.OP.I.rs & 0x10) != 0) {
 				switch (RspOp.OP.V.funct) {
 				case RSP_VECTOR_VMULF:
+				case RSP_VECTOR_VMULU:
 				case RSP_VECTOR_VMUDL:
 				case RSP_VECTOR_VMUDM:
 				case RSP_VECTOR_VMUDN:
@@ -593,13 +595,16 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 				case RSP_VECTOR_VCR:
 				case RSP_VECTOR_VRCP:
 				case RSP_VECTOR_VRCPH:
-				case RSP_VECTOR_VRSQH:
+				case RSP_VECTOR_VRSQH:*/
 				case RSP_VECTOR_VCH:
 				case RSP_VECTOR_VCL:
-					return TRUE;
+					if (DestReg == RspOp.OP.V.vs) { return TRUE; }
+					if (DestReg == RspOp.OP.V.vt) { return TRUE; }
+					if (DestReg == RspOp.OP.V.vd) { return FALSE; }
+					break;
 
 				case RSP_VECTOR_VMRG:
-				case RSP_VECTOR_VLT:
+				/*case RSP_VECTOR_VLT:
 				case RSP_VECTOR_VEQ:*/
 				case RSP_VECTOR_VGE:
 					if (DestReg == RspOp.OP.V.vs) { return TRUE; }
@@ -634,8 +639,8 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 		/*case RSP_LB:
 		case RSP_LH:*/
 		case RSP_LW:
-		/*case RSP_LBU:
-		case RSP_LHU:*/
+		case RSP_LBU:
+		/*case RSP_LHU:*/
 		case RSP_SB:
 		/*case RSP_SH:
 		case RSP_SW:*/
@@ -667,8 +672,8 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 			case RSP_LSC2_LV:
 			case RSP_LSC2_DV:*/
 			case RSP_LSC2_QV:
-			/*case RSP_LSC2_RV:
-			case RSP_LSC2_PV:*/
+			/*case RSP_LSC2_RV:*/
+			case RSP_LSC2_PV:
 			case RSP_LSC2_UV:
 			/*case RSP_LSC2_HV:
 			case RSP_LSC2_FV:
@@ -741,27 +746,29 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 				return FALSE;
 			}
 		} else {
-			/*if (BranchFall != FALSE) {*/
+			if (BranchFall != FALSE) {
 				/*
 				** took this forward branch and found a place
 				** that needs this vector as a source
 				**/
-/*				return TRUE;
-			} else if (BranchTaken == HIT_BRANCH) {*/
+				return TRUE;
+			} else if (BranchTaken == HIT_BRANCH) {
 				/* (dlist) risky? jumped forward, hit another branch */
 
-/*#if !defined(RSP_SAFE_ANALYSIS)
-				CPU_Message("WriteToDest: Forward branch hit, BranchTaken = Hit branch (returning FALSE)");
+#if !defined(RSP_SAFE_ANALYSIS)
+				RSP_CPU_Message("WriteToDest: Forward branch hit, BranchTaken = Hit branch (returning FALSE)");
 				return FALSE;
 #endif
 
-				return TRUE;
-			} else {*/
+				/*return TRUE;*/
+				LogMessage("TODO: WriteToVectorDest2 take branch, forward, branch taken hit branch");
+				return FALSE;
+			} else {
 				/* otherwise this is completely valid */
-/*				return BranchTaken;
-			}*/
-			LogMessage("TODO: WriteToVectorDest2 take branch, forward");
-			return FALSE;
+/*				return BranchTaken;*/
+				LogMessage("TODO: WriteToVectorDest2 take branch, forward, branch taken doesn't hit branch");
+				return FALSE;
+			}
 		}
 	} else {
 		return HIT_BRANCH;
