@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <ATLBASE.H>
 #include <EXDISP.h>
 #include <CommCtrl.h>
 #include "main.h"
