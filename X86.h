@@ -427,6 +427,7 @@ void Sse41PBlendVariableToRegWithXMM0Mask( BYTE** code, int Dest, void * Variabl
 void SseShuffleReg(int Dest, int Source, BYTE Immed);*/
 
 void AvxCompareEqualDWordRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxCompareGreaterDWordRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVExtracti128RegToReg( BYTE** code , int Dest, int Src, BOOL msb );
 void AvxVPackUnsignedDWordRegToWordReg128( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPAdddRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
@@ -439,7 +440,9 @@ void AvxVPMovesxWordVariableToDWordReg256( BYTE** code, int Dest, void * Variabl
 void AvxVPMulldRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPorRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPSlldRegToReg256Immed( BYTE** code, int Dest, int Src, BYTE Immed );
+void AvxVPSradRegToReg256Immed( BYTE** code, int Dest, int Src, BYTE Immed );
 void AvxVPSrldRegToReg256Immed( BYTE** code, int Dest, int Src, BYTE Immed );
+void AvxVPxorRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
 
 void x86_SetBranch8b(void* JumpByte, void* Destination);
 void x86_SetBranch32b(void* JumpByte, void* Destination);
