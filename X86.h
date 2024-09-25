@@ -381,6 +381,7 @@ void SseMoveRegToReg( BYTE** code, int Dest, int Source, int sseDataType, BOOL S
 void Sse2CompareEqualDWordRegToReg( BYTE** code, int Dest, int Source );
 void Sse2CompareEqualDWordVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
 void Sse2CompareEqualWordRegToReg( BYTE** code, int Dest, int Source );
+void Sse2CompareGreaterWordRegToReg( BYTE** code, int Dest, int Source );
 void Sse2MoveQWordRegToReg( BYTE** code, int Dest, int Source );
 void Sse2MoveSxWordRegToDWordReg( BYTE** code, int Dest, int Source, BOOL SSE41Supported );
 void Sse2PadddRegToReg( BYTE** code, int Dest, int Source );
@@ -401,6 +402,7 @@ void Sse2PsrawImmed( BYTE** code, int Dest, BYTE Immed );
 void Sse2PsrlwImmed( BYTE** code, int Dest, BYTE Immed );
 void Sse2PunpckHighWordsRegToReg(BYTE** code, int Dest, int Source);
 void Sse2PunpckLowWordsRegToReg( BYTE** code, int Dest, int Source );
+void Sse2PxorRegToReg( BYTE** code, int Dest, int Source );
 void Sse2ShuffleDWordsRegToReg( BYTE** code, int Dest, int Source, BYTE Immed );
 void Sse2ShuffleLowWordsMemoryToReg( BYTE** code, int Dest, void * Variable, char * VariableName, BYTE Immed );
 void Sse2ShuffleLowWordsRegToReg( BYTE** code, int Dest, int Source, BYTE Immed );
