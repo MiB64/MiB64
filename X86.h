@@ -86,6 +86,7 @@ void AddConstToX86Reg                ( BYTE** code, int x86Reg, DWORD Const );
 void AddVariableToX86reg             ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void AddX86regToVariable             ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void AddX86RegToX86Reg               ( BYTE** code, int Destination, int Source );
+void AddX86RegToX86RegHalf           ( BYTE** code, int Destination, int Source );
 void AndConstToVariable              ( BYTE** code, DWORD Const, void *Variable, char *VariableName );
 void AndConstToX86Reg                ( BYTE** code, int x86Reg, DWORD Const );
 void AndConstToX86RegHalf            ( BYTE** code, int x86Reg, WORD Const );
@@ -103,6 +104,7 @@ void CompX86regToVariable            ( BYTE** code, int x86Reg, void * Variable,
 void CompVariableToX86reg	         ( BYTE** code, int x86Reg, void * Variable, char * VariableName );
 void CompX86RegToX86Reg              ( BYTE** code, int Destination, int Source );
 void CondMoveEqual                   ( BYTE** code, int Destination, int Source );
+void CondMoveGreater                 ( BYTE** code, int Destination, int Source );
 void CondMoveLess                    ( BYTE** code, int Destination, int Source );
 void Cwde                            ( BYTE** code );
 void DecX86reg                       ( BYTE** code, int x86Reg );

@@ -363,6 +363,34 @@ void AddX86RegToX86Reg(BYTE** code, int Destination, int Source) {
 	PUTDST16(*code,x86Command);
 }
 
+void AddX86RegToX86RegHalf(BYTE** code, int Destination, int Source) {
+	WORD x86Command = 0x0;
+
+	CPU_OR_RSP_Message(*code, "      add %s, %s", x86Half_Name(Destination), x86Half_Name(Source));
+	switch (Destination) {
+	case x86_EAX: x86Command = 0x0001; break;
+	case x86_EBX: x86Command = 0x0301; break;
+	case x86_ECX: x86Command = 0x0101; break;
+	case x86_EDX: x86Command = 0x0201; break;
+	case x86_ESI: x86Command = 0x0601; break;
+	case x86_EDI: x86Command = 0x0701; break;
+	case x86_ESP: x86Command = 0x0401; break;
+	case x86_EBP: x86Command = 0x0501; break;
+	}
+	switch (Source) {
+	case x86_EAX: x86Command += 0xC000; break;
+	case x86_EBX: x86Command += 0xD800; break;
+	case x86_ECX: x86Command += 0xC800; break;
+	case x86_EDX: x86Command += 0xD000; break;
+	case x86_ESI: x86Command += 0xF000; break;
+	case x86_EDI: x86Command += 0xF800; break;
+	case x86_ESP: x86Command += 0xE000; break;
+	case x86_EBP: x86Command += 0xE800; break;
+	}
+	PUTDST8(*code, 0x66);
+	PUTDST16(*code, x86Command);
+}
+
 void AndConstToVariable (BYTE** code, DWORD Const, void *Variable, char *VariableName) {
 	CPU_OR_RSP_Message(*code, "      and dword ptr [%s], 0x%X",VariableName, Const);
 	if ((Const & 0xFFFFFF80) != 0 && (Const & 0xFFFFFF80) != 0xFFFFFF80) {
@@ -680,6 +708,49 @@ void CondMoveEqual(BYTE** code, int Destination, int Source) {
 		CPU_OR_RSP_Message(*code, "      cmove %s, %s", x86_Name(Destination), x86_Name(Source));
 
 		PUTDST16(*code, 0x440F);
+
+		switch (Source) {
+		case x86_EAX: x86Command = 0x00; break;
+		case x86_EBX: x86Command = 0x03; break;
+		case x86_ECX: x86Command = 0x01; break;
+		case x86_EDX: x86Command = 0x02; break;
+		case x86_ESI: x86Command = 0x06; break;
+		case x86_EDI: x86Command = 0x07; break;
+		case x86_ESP: x86Command = 0x04; break;
+		case x86_EBP: x86Command = 0x05; break;
+		}
+
+		switch (Destination) {
+		case x86_EAX: x86Command += 0xC0; break;
+		case x86_EBX: x86Command += 0xD8; break;
+		case x86_ECX: x86Command += 0xC8; break;
+		case x86_EDX: x86Command += 0xD0; break;
+		case x86_ESI: x86Command += 0xF0; break;
+		case x86_EDI: x86Command += 0xF8; break;
+		case x86_ESP: x86Command += 0xE0; break;
+		case x86_EBP: x86Command += 0xE8; break;
+		}
+
+		PUTDST8(*code, x86Command);
+	}
+}
+
+void CondMoveGreater(BYTE** code, int Destination, int Source) {
+	if (ConditionalMove == FALSE) {
+		BYTE* Jump;
+		CPU_OR_RSP_Message(*code, "    [*]cmovg %s, %s", x86_Name(Destination), x86_Name(Source));
+
+		JleLabel8(code, "label", 0);
+		Jump = *code - 1;
+		MoveX86RegToX86Reg(code, Source, Destination);
+		CPU_OR_RSP_Message(*code, "     label:");
+		x86_SetBranch8b(Jump, *code);
+	}
+	else {
+		BYTE x86Command = 0;
+		CPU_OR_RSP_Message(*code, "      cmovg %s, %s", x86_Name(Destination), x86_Name(Source));
+
+		PUTDST16(*code, 0x4F0F);
 
 		switch (Source) {
 		case x86_EAX: x86Command = 0x00; break;
