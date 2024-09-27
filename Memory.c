@@ -1472,7 +1472,23 @@ int r4300i_CPU_MemoryFilter( DWORD dwExptCode, LPEXCEPTION_POINTERS lpEP) {
 			}
 		}
 		lpEP->ContextRecord->Eip = (DWORD)ReadPos;
-		return EXCEPTION_CONTINUE_EXECUTION;		
+		return EXCEPTION_CONTINUE_EXECUTION;
+	case 0xA1:
+		if (!r4300i_LW_NonMemory(MemAddress, &lpEP->ContextRecord->Eax)) {
+			if (ShowUnhandledMemory) {
+				DisplayError("Failed to load word\n\nEip: %X\nMIPS Address: %X", lpEP->ContextRecord->Eip, MemAddress);
+			}
+		}
+		lpEP->ContextRecord->Eip = (DWORD)TypePos+5;
+		return EXCEPTION_CONTINUE_EXECUTION;
+	case 0xA3:
+		if (!r4300i_SW_NonMemory(MemAddress, *(DWORD*)&lpEP->ContextRecord->Eax)) {
+			if (ShowUnhandledMemory) {
+				DisplayError("Failed to store word\n\nEip: %X\nMIPS Address: %X", lpEP->ContextRecord->Eip, MemAddress);
+			}
+		}
+		lpEP->ContextRecord->Eip = (DWORD)TypePos+5;
+		return EXCEPTION_CONTINUE_EXECUTION;
 	case 0xC6:
 		if (Reg != &lpEP->ContextRecord->Eax) { return EXCEPTION_CONTINUE_SEARCH; }
 		if (!r4300i_SB_NonMemory(MemAddress,*(BYTE *)ReadPos)) {
