@@ -81,12 +81,23 @@ DWORD __cdecl InternalDoRspCycles(DWORD numberOfCycles) {
 	}
 #endif
 
-	DWORD executedCycles;
+	DWORD executedCycles = numberOfCycles;
+
+	if (AudioHle || GraphicsHle) {
+		numberOfCycles = 0x7FFFFFFF;
+	}
 
 	WaitForSingleObjectEx(hRspConfigMutex, INFINITE, FALSE);
 	switch (RspCPUCore) {
 	case RecompilerCPU:
-		executedCycles = RunRecompilerRspCPU(numberOfCycles);
+		if (AudioHle || GraphicsHle) {
+			while (!(SP_STATUS_REG & SP_STATUS_HALT)) {
+				RunRecompilerRspCPU(numberOfCycles);
+			}
+		}
+		else {
+			executedCycles = RunRecompilerRspCPU(numberOfCycles);
+		}
 		break;
 	case InterpreterCPU:
 		executedCycles = RunInterpreterRspCPU(numberOfCycles);
