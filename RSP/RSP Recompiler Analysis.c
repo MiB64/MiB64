@@ -172,7 +172,7 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 			break;*/
 		case RSP_SPECIAL:
 			switch (RspOp.OP.R.funct) {
-			/*case RSP_SPECIAL_SLL:*/
+			case RSP_SPECIAL_SLL:
 			case RSP_SPECIAL_SRL:
 			/*case RSP_SPECIAL_SRA:
 			case RSP_SPECIAL_SLLV:
@@ -237,6 +237,14 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 				switch (RspOp.OP.V.funct) {
 				case RSP_VECTOR_VMULF:
 				case RSP_VECTOR_VMULU:
+					return FALSE;
+				case RSP_VECTOR_VRNDP:
+					if ((Location & High16BitAccum) != 0) return TRUE;
+					if ((Location & Middle16BitAccum) != 0) return TRUE;
+					if ((Location & Low16BitAccum) != 0) {
+						if ((RspOp.OP.V.vs & 1) == 0) return TRUE;
+					}
+					break;
 				case RSP_VECTOR_VMUDL:
 				case RSP_VECTOR_VMUDM:
 				case RSP_VECTOR_VMUDN:
@@ -244,6 +252,14 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 					return FALSE;
 				case RSP_VECTOR_VMACF:
 				case RSP_VECTOR_VMACU:
+					return TRUE;
+				case RSP_VECTOR_VRNDN:
+					if ((Location & High16BitAccum) != 0) return TRUE;
+					if ((Location & Middle16BitAccum) != 0) return TRUE;
+					if ((Location & Low16BitAccum) != 0) {
+						if ((RspOp.OP.V.vs & 1) == 0) return TRUE;
+					}
+					break;
 				case RSP_VECTOR_VMADL:
 				case RSP_VECTOR_VMADM:
 				case RSP_VECTOR_VMADN:
@@ -396,9 +412,7 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 				** that resets the accum or hit a branch etc
 				** or a branch was met and we widdn't go deeper in recursion and decide to write the register
 				**/
-/*				/*return TRUE;*/
-				LogMessage("TODO: WriteToAccum2 check branch, backward, branch taken don't need accum");
-				return FALSE;
+				return TRUE;
 			} else if (BranchFall == HIT_BRANCH) {
 				/* risky? the loop ended, hit another branch after loop-back */
 			
@@ -564,12 +578,28 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 				switch (RspOp.OP.V.funct) {
 				case RSP_VECTOR_VMULF:
 				case RSP_VECTOR_VMULU:
+					if (DestReg == RspOp.OP.V.vs) { return TRUE; }
+					if (DestReg == RspOp.OP.V.vt) { return TRUE; }
+					if (DestReg == RspOp.OP.V.vd) { return FALSE; }
+					break;
+				case RSP_VECTOR_VRNDP:
+					if (DestReg == RspOp.OP.V.vt) { return TRUE; }
+					if (DestReg == RspOp.OP.V.vd) { return FALSE; }
+					break;
 				case RSP_VECTOR_VMUDL:
 				case RSP_VECTOR_VMUDM:
 				case RSP_VECTOR_VMUDN:
 				case RSP_VECTOR_VMUDH:
 				case RSP_VECTOR_VMACF:
 				case RSP_VECTOR_VMACU:
+					if (DestReg == RspOp.OP.V.vs) { return TRUE; }
+					if (DestReg == RspOp.OP.V.vt) { return TRUE; }
+					if (DestReg == RspOp.OP.V.vd) { return FALSE; }
+					break;
+				case RSP_VECTOR_VRNDN:
+					if (DestReg == RspOp.OP.V.vt) { return TRUE; }
+					if (DestReg == RspOp.OP.V.vd) { return FALSE; }
+					break;
 				case RSP_VECTOR_VMADL:
 				case RSP_VECTOR_VMADM:
 				case RSP_VECTOR_VMADN:
@@ -741,9 +771,7 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 				return TRUE;
 			} else {
 				/* otherwise this is completely valid */
-/*				/*return BranchFall;*/
-				LogMessage("TODO: WriteToVectorDest2 take branch, backward, branch fall doesn't hit branch");
-				return FALSE;
+				return BranchFall;
 			}
 		} else {
 			if (BranchFall != FALSE) {
