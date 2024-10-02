@@ -3930,6 +3930,83 @@ static BOOL Compile_Vector_VRNDP_SSE2(BOOL writeToVectorDest, BOOL writeToAccum)
 	return TRUE;
 }
 
+static BOOL Compile_Vector_VRNDP_AVX(BOOL writeToVectorDest, BOOL writeToAccum) {
+	char Reg[256];
+
+	/* Do our AVX checks here */
+	if (IsAvxEnabled == FALSE || IsAvx2Enabled == FALSE || IsSse2Enabled == FALSE)
+		return FALSE;
+
+	// load vs and vt
+	if ((RSPOpC.OP.V.element & 0xF) < 2) {
+		sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vt);
+		SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vt].UHW[0], Reg, x86_XMM1, SseType_QuadWord, TRUE);
+	} else if ((RSPOpC.OP.V.element & 0xF) >= 8) {
+		RSP_Element2Sse(x86_XMM1);
+	} else {
+		RSP_MultiElement2Sse(x86_XMM1);
+	}
+
+	SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_ACCUM_HIGH.UHW[0], "RSP_ACCUM_HIGH", x86_XMM4, SseType_QuadWord, TRUE);
+	SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_ACCUM_MID.UHW[0], "RSP_ACCUM_MID", x86_XMM2, SseType_QuadWord, TRUE);
+	AvxVPunpckHighWordsRegToReg256(&RspRecompPos, x86_YMM7, x86_YMM2, x86_YMM4);
+	AvxVPunpckLowWordsRegToReg256(&RspRecompPos, x86_YMM2, x86_YMM2, x86_YMM4);
+	AvxVInserti128RegToReg(&RspRecompPos, x86_YMM2, x86_YMM2, x86_XMM7, TRUE);
+
+	Sse2PxorRegToReg(&RspRecompPos, x86_XMM5, x86_XMM5);
+	Sse2CompareGreaterWordRegToReg(&RspRecompPos, x86_XMM5, x86_XMM4);
+	AvxVPandnRegToReg128(&RspRecompPos, x86_XMM1, x86_XMM5, x86_XMM1);
+
+	if ((RSPOpC.OP.V.vs & 1) != 0) {
+		AvxVPMovesxWordReg128ToDwordReg256(&RspRecompPos, x86_YMM1, x86_XMM1);
+		AvxVPAdddRegToReg256(&RspRecompPos, x86_YMM2, x86_YMM2, x86_YMM1);
+	} else {
+		SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_ACCUM_LOW.UHW[0], "RSP_ACCUM_LOW", x86_XMM4, SseType_QuadWord, TRUE);
+
+		AvxVPAddwRegToReg128(&RspRecompPos, x86_XMM3, x86_XMM4, x86_XMM1);
+
+		if (writeToAccum == TRUE) {
+			SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM3, &RSP_ACCUM_LOW.UHW[0], "RSP_ACCUM_LOW", SseType_QuadWord, TRUE);
+		}
+
+		// compute carry
+		Sse2PadduswRegToReg(&RspRecompPos, x86_XMM4, x86_XMM1);
+		Sse2CompareEqualWordRegToReg(&RspRecompPos, x86_XMM4, x86_XMM3);
+		Sse2CompareEqualDWordRegToReg(&RspRecompPos, x86_XMM5, x86_XMM5);
+		Sse2PandnRegToReg(&RspRecompPos, x86_XMM4, x86_XMM5);
+		Sse2PsrlwImmed(&RspRecompPos, x86_XMM4, 15);
+		Sse2PsrawImmed(&RspRecompPos, x86_XMM1, 15);
+		Sse2PaddwRegToReg(&RspRecompPos, x86_XMM1, x86_XMM4);
+
+		// add to accum mid and high
+		AvxVPMovesxWordReg128ToDwordReg256(&RspRecompPos, x86_YMM1, x86_XMM1);
+		AvxVPAdddRegToReg256(&RspRecompPos, x86_YMM2, x86_YMM2, x86_YMM1);
+	}
+
+	if (writeToVectorDest) {
+		AvxVExtracti128RegToReg(&RspRecompPos, x86_XMM0, x86_YMM2, TRUE);
+		AvxVPackSignedDWordRegToWordReg128(&RspRecompPos, x86_XMM0, x86_XMM2, x86_XMM0);
+
+		sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vd);
+		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM0, &RSP_Vect[RSPOpC.OP.V.vd].UHW[0], Reg, SseType_QuadWord, TRUE);
+	}
+
+	if (writeToAccum) {
+		AvxVPSlldRegToReg256Immed(&RspRecompPos, x86_YMM0, x86_YMM2, 16);
+		AvxVPSradRegToReg256Immed(&RspRecompPos, x86_YMM0, x86_YMM0, 16);
+		AvxVExtracti128RegToReg(&RspRecompPos, x86_XMM7, x86_YMM0, TRUE);
+		AvxVPackSignedDWordRegToWordReg128(&RspRecompPos, x86_XMM0, x86_XMM0, x86_XMM7);
+		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM0, &RSP_ACCUM_MID.UHW[0], "RSP_ACCUM_MID", SseType_QuadWord, TRUE);
+
+		AvxVPSradRegToReg256Immed(&RspRecompPos, x86_YMM0, x86_YMM2, 16);
+		AvxVExtracti128RegToReg(&RspRecompPos, x86_XMM7, x86_YMM0, TRUE);
+		AvxVPackSignedDWordRegToWordReg128(&RspRecompPos, x86_XMM0, x86_XMM0, x86_XMM7);
+		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM0, &RSP_ACCUM_HIGH.UHW[0], "RSP_ACCUM_HIGH", SseType_QuadWord, TRUE);
+	}
+
+	return TRUE;
+}
+
 void CompileRsp_Vector_VRNDP(void) {
 	char Reg[256];
 	int count, el, del;
@@ -3949,9 +4026,9 @@ void CompileRsp_Vector_VRNDP(void) {
 		return;
 	}
 
-	/*if (TRUE == Compile_Vector_VMULU_AVX(bWriteToDest)) {
+	if (TRUE == Compile_Vector_VRNDP_AVX(bWriteToDest, bWriteToAccum)) {
 		return;
-	}*/
+	}
 
 	if (TRUE == Compile_Vector_VRNDP_SSE2(bWriteToDest, bWriteToAccum)) {
 		return;

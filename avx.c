@@ -127,6 +127,49 @@ void AvxCompareGreaterDWordRegToReg256(BYTE** code, int Dest, int Src1, int Src2
 	PUTDST8(*code, 0xc0 | x86Command);
 }
 
+void AvxVPackSignedDWordRegToWordReg128(BYTE** code, int Dest, int Src1, int Src2) {
+	BYTE x86Command = 0;
+	BYTE x86Src1 = 0;
+
+	RSP_CPU_Message("      vpackssdw %s, %s, %s", sse_Name(Dest), sse_Name(Src1), sse_Name(Src2));
+
+	switch (Src1) {
+	case x86_XMM0: x86Src1 = 0xf9; break;
+	case x86_XMM1: x86Src1 = 0xf1; break;
+	case x86_XMM2: x86Src1 = 0xe9; break;
+	case x86_XMM3: x86Src1 = 0xe1; break;
+	case x86_XMM4: x86Src1 = 0xd9; break;
+	case x86_XMM5: x86Src1 = 0xd1; break;
+	case x86_XMM6: x86Src1 = 0xc9; break;
+	case x86_XMM7: x86Src1 = 0xc1; break;
+	}
+	switch (Dest) {
+	case x86_XMM0: x86Command = 0 << 3; break;
+	case x86_XMM1: x86Command = 1 << 3; break;
+	case x86_XMM2: x86Command = 2 << 3; break;
+	case x86_XMM3: x86Command = 3 << 3; break;
+	case x86_XMM4: x86Command = 4 << 3; break;
+	case x86_XMM5: x86Command = 5 << 3; break;
+	case x86_XMM6: x86Command = 6 << 3; break;
+	case x86_XMM7: x86Command = 7 << 3; break;
+	}
+	switch (Src2) {
+	case x86_XMM0: x86Command |= 0; break;
+	case x86_XMM1: x86Command |= 1; break;
+	case x86_XMM2: x86Command |= 2; break;
+	case x86_XMM3: x86Command |= 3; break;
+	case x86_XMM4: x86Command |= 4; break;
+	case x86_XMM5: x86Command |= 5; break;
+	case x86_XMM6: x86Command |= 6; break;
+	case x86_XMM7: x86Command |= 7; break;
+	}
+
+	PUTDST8(*code, 0xc5);
+	PUTDST8(*code, x86Src1);
+	PUTDST8(*code, 0x6b);
+	PUTDST8(*code, 0xC0 | x86Command);
+}
+
 void AvxVPackUnsignedDWordRegToWordReg128(BYTE** code, int Dest, int Src1, int Src2) {
 	BYTE x86Command = 0;
 	BYTE x86Src1 = 0;
@@ -209,6 +252,90 @@ void AvxVPAdddRegToReg256(BYTE** code, int Dest, int Src1, int Src2) {
 	PUTDST8(*code, 0xc5);
 	PUTDST8(*code, x86Src1);
 	PUTDST8(*code, 0xfe);
+	PUTDST8(*code, 0xc0 | x86Command);
+}
+
+void AvxVPAddwRegToReg128(BYTE** code, int Dest, int Src1, int Src2) {
+	BYTE x86Command = 0;
+	BYTE x86Src1 = 0;
+
+	RSP_CPU_Message("      vpaddw %s, %s, %s", sse_Name(Dest), sse_Name(Src1), sse_Name(Src2));
+
+	switch (Src1) {
+	case x86_XMM0: x86Src1 = 0xf9; break;
+	case x86_XMM1: x86Src1 = 0xf1; break;
+	case x86_XMM2: x86Src1 = 0xe9; break;
+	case x86_XMM3: x86Src1 = 0xe1; break;
+	case x86_XMM4: x86Src1 = 0xd9; break;
+	case x86_XMM5: x86Src1 = 0xd1; break;
+	case x86_XMM6: x86Src1 = 0xc9; break;
+	case x86_XMM7: x86Src1 = 0xc1; break;
+	}
+	switch (Dest) {
+	case x86_XMM0: x86Command = 0 << 3; break;
+	case x86_XMM1: x86Command = 1 << 3; break;
+	case x86_XMM2: x86Command = 2 << 3; break;
+	case x86_XMM3: x86Command = 3 << 3; break;
+	case x86_XMM4: x86Command = 4 << 3; break;
+	case x86_XMM5: x86Command = 5 << 3; break;
+	case x86_XMM6: x86Command = 6 << 3; break;
+	case x86_XMM7: x86Command = 7 << 3; break;
+	}
+	switch (Src2) {
+	case x86_XMM0: x86Command |= 0; break;
+	case x86_XMM1: x86Command |= 1; break;
+	case x86_XMM2: x86Command |= 2; break;
+	case x86_XMM3: x86Command |= 3; break;
+	case x86_XMM4: x86Command |= 4; break;
+	case x86_XMM5: x86Command |= 5; break;
+	case x86_XMM6: x86Command |= 6; break;
+	case x86_XMM7: x86Command |= 7; break;
+	}
+	PUTDST8(*code, 0xc5);
+	PUTDST8(*code, x86Src1);
+	PUTDST8(*code, 0xfd);
+	PUTDST8(*code, 0xc0 | x86Command);
+}
+
+void AvxVPandnRegToReg128(BYTE** code, int Dest, int Src1, int Src2) {
+	BYTE x86Command = 0;
+	BYTE x86Src1 = 0;
+
+	RSP_CPU_Message("      vpandn %s, %s, %s", sse_Name(Dest), sse_Name(Src1), sse_Name(Src2));
+
+	switch (Src1) {
+	case x86_XMM0: x86Src1 = 0xf9; break;
+	case x86_XMM1: x86Src1 = 0xf1; break;
+	case x86_XMM2: x86Src1 = 0xe9; break;
+	case x86_XMM3: x86Src1 = 0xe1; break;
+	case x86_XMM4: x86Src1 = 0xd9; break;
+	case x86_XMM5: x86Src1 = 0xd1; break;
+	case x86_XMM6: x86Src1 = 0xc9; break;
+	case x86_XMM7: x86Src1 = 0xc1; break;
+	}
+	switch (Dest) {
+	case x86_XMM0: x86Command = 0 << 3; break;
+	case x86_XMM1: x86Command = 1 << 3; break;
+	case x86_XMM2: x86Command = 2 << 3; break;
+	case x86_XMM3: x86Command = 3 << 3; break;
+	case x86_XMM4: x86Command = 4 << 3; break;
+	case x86_XMM5: x86Command = 5 << 3; break;
+	case x86_XMM6: x86Command = 6 << 3; break;
+	case x86_XMM7: x86Command = 7 << 3; break;
+	}
+	switch (Src2) {
+	case x86_XMM0: x86Command |= 0; break;
+	case x86_XMM1: x86Command |= 1; break;
+	case x86_XMM2: x86Command |= 2; break;
+	case x86_XMM3: x86Command |= 3; break;
+	case x86_XMM4: x86Command |= 4; break;
+	case x86_XMM5: x86Command |= 5; break;
+	case x86_XMM6: x86Command |= 6; break;
+	case x86_XMM7: x86Command |= 7; break;
+	}
+	PUTDST8(*code, 0xc5);
+	PUTDST8(*code, x86Src1);
+	PUTDST8(*code, 0xdf);
 	PUTDST8(*code, 0xc0 | x86Command);
 }
 
@@ -573,6 +700,90 @@ void AvxVPSrldRegToReg256Immed(BYTE** code, int Dest, int Src, BYTE Immed) {
 	PUTDST8(*code, Immed);
 }
 
+void AvxVPunpckHighWordsRegToReg256(BYTE** code, int Dest, int Src1, int Src2) {
+	BYTE x86Command = 0;
+	BYTE x86Src1 = 0;
+
+	RSP_CPU_Message("      vpunpckhwd %s, %s, %s", avx_Name(Dest), avx_Name(Src1), avx_Name(Src2));
+
+	switch (Src1) {
+	case x86_YMM0: x86Src1 = 0xfd; break;
+	case x86_YMM1: x86Src1 = 0xf5; break;
+	case x86_YMM2: x86Src1 = 0xed; break;
+	case x86_YMM3: x86Src1 = 0xe5; break;
+	case x86_YMM4: x86Src1 = 0xdd; break;
+	case x86_YMM5: x86Src1 = 0xd5; break;
+	case x86_YMM6: x86Src1 = 0xcd; break;
+	case x86_YMM7: x86Src1 = 0xc5; break;
+	}
+	switch (Dest) {
+	case x86_YMM0: x86Command = 0 << 3; break;
+	case x86_YMM1: x86Command = 1 << 3; break;
+	case x86_YMM2: x86Command = 2 << 3; break;
+	case x86_YMM3: x86Command = 3 << 3; break;
+	case x86_YMM4: x86Command = 4 << 3; break;
+	case x86_YMM5: x86Command = 5 << 3; break;
+	case x86_YMM6: x86Command = 6 << 3; break;
+	case x86_YMM7: x86Command = 7 << 3; break;
+	}
+	switch (Src2) {
+	case x86_YMM0: x86Command |= 0; break;
+	case x86_YMM1: x86Command |= 1; break;
+	case x86_YMM2: x86Command |= 2; break;
+	case x86_YMM3: x86Command |= 3; break;
+	case x86_YMM4: x86Command |= 4; break;
+	case x86_YMM5: x86Command |= 5; break;
+	case x86_YMM6: x86Command |= 6; break;
+	case x86_YMM7: x86Command |= 7; break;
+	}
+	PUTDST8(*code, 0xc5);
+	PUTDST8(*code, x86Src1);
+	PUTDST8(*code, 0x69);
+	PUTDST8(*code, 0xc0 | x86Command);
+}
+
+void AvxVPunpckLowWordsRegToReg256(BYTE** code, int Dest, int Src1, int Src2) {
+	BYTE x86Command = 0;
+	BYTE x86Src1 = 0;
+
+	RSP_CPU_Message("      vpunpcklwd %s, %s, %s", avx_Name(Dest), avx_Name(Src1), avx_Name(Src2));
+
+	switch (Src1) {
+	case x86_YMM0: x86Src1 = 0xfd; break;
+	case x86_YMM1: x86Src1 = 0xf5; break;
+	case x86_YMM2: x86Src1 = 0xed; break;
+	case x86_YMM3: x86Src1 = 0xe5; break;
+	case x86_YMM4: x86Src1 = 0xdd; break;
+	case x86_YMM5: x86Src1 = 0xd5; break;
+	case x86_YMM6: x86Src1 = 0xcd; break;
+	case x86_YMM7: x86Src1 = 0xc5; break;
+	}
+	switch (Dest) {
+	case x86_YMM0: x86Command = 0 << 3; break;
+	case x86_YMM1: x86Command = 1 << 3; break;
+	case x86_YMM2: x86Command = 2 << 3; break;
+	case x86_YMM3: x86Command = 3 << 3; break;
+	case x86_YMM4: x86Command = 4 << 3; break;
+	case x86_YMM5: x86Command = 5 << 3; break;
+	case x86_YMM6: x86Command = 6 << 3; break;
+	case x86_YMM7: x86Command = 7 << 3; break;
+	}
+	switch (Src2) {
+	case x86_YMM0: x86Command |= 0; break;
+	case x86_YMM1: x86Command |= 1; break;
+	case x86_YMM2: x86Command |= 2; break;
+	case x86_YMM3: x86Command |= 3; break;
+	case x86_YMM4: x86Command |= 4; break;
+	case x86_YMM5: x86Command |= 5; break;
+	case x86_YMM6: x86Command |= 6; break;
+	case x86_YMM7: x86Command |= 7; break;
+	}
+	PUTDST8(*code, 0xc5);
+	PUTDST8(*code, x86Src1);
+	PUTDST8(*code, 0x61);
+	PUTDST8(*code, 0xc0 | x86Command);
+}
+
 void AvxVPxorRegToReg256(BYTE** code, int Dest, int Src1, int Src2) {
 	BYTE x86Command = 0;
 	BYTE x86Src1 = 0;
@@ -641,6 +852,49 @@ void AvxVExtracti128RegToReg(BYTE** code, int Dest, int Src, BOOL msb) {
 	case x86_XMM7: x86Command |= 7; break;
 	}
 	PUTDST32(*code, 0x397de3c4);
+	PUTDST8(*code, 0xc0 | x86Command);
+	PUTDST8(*code, msb ? 1 : 0);
+}
+
+void AvxVInserti128RegToReg(BYTE** code, int Dest, int Src1, int Src2, BOOL msb) {
+	BYTE x86Command = 0;
+	BYTE x86Src1 = 0;
+
+	RSP_CPU_Message("      vinserti128 %s, %s, %d", avx_Name(Dest), avx_Name(Src1), sse_Name(Src2), msb ? 1 : 0);
+
+	switch (Src1) {
+	case x86_YMM0: x86Src1 = 0x7d; break;
+	case x86_YMM1: x86Src1 = 0x75; break;
+	case x86_YMM2: x86Src1 = 0x6d; break;
+	case x86_YMM3: x86Src1 = 0x65; break;
+	case x86_YMM4: x86Src1 = 0x5d; break;
+	case x86_YMM5: x86Src1 = 0x55; break;
+	case x86_YMM6: x86Src1 = 0x4d; break;
+	case x86_YMM7: x86Src1 = 0x45; break;
+	}
+	switch (Dest) {
+	case x86_YMM0: x86Command = 0 << 3; break;
+	case x86_YMM1: x86Command = 1 << 3; break;
+	case x86_YMM2: x86Command = 2 << 3; break;
+	case x86_YMM3: x86Command = 3 << 3; break;
+	case x86_YMM4: x86Command = 4 << 3; break;
+	case x86_YMM5: x86Command = 5 << 3; break;
+	case x86_YMM6: x86Command = 6 << 3; break;
+	case x86_YMM7: x86Command = 7 << 3; break;
+	}
+	switch (Src2) {
+	case x86_XMM0: x86Command |= 0; break;
+	case x86_XMM1: x86Command |= 1; break;
+	case x86_XMM2: x86Command |= 2; break;
+	case x86_XMM3: x86Command |= 3; break;
+	case x86_XMM4: x86Command |= 4; break;
+	case x86_XMM5: x86Command |= 5; break;
+	case x86_XMM6: x86Command |= 6; break;
+	case x86_XMM7: x86Command |= 7; break;
+	}
+	PUTDST16(*code, 0xe3c4);
+	PUTDST8(*code, x86Src1);
+	PUTDST8(*code, 0x38);
 	PUTDST8(*code, 0xc0 | x86Command);
 	PUTDST8(*code, msb ? 1 : 0);
 }
