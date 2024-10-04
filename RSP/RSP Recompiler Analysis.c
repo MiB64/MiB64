@@ -245,6 +245,7 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 						if ((RspOp.OP.V.vs & 1) == 0) return TRUE;
 					}
 					break;
+				case RSP_VECTOR_VMULQ:
 				case RSP_VECTOR_VMUDL:
 				case RSP_VECTOR_VMUDM:
 				case RSP_VECTOR_VMUDN:
