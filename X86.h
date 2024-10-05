@@ -403,6 +403,7 @@ void Sse2PslldImmed( BYTE** code, int Dest, BYTE Immed );
 void Sse2PsllwImmed( BYTE** code, int Dest, BYTE Immed );
 void Sse2PsradImmed( BYTE** code, int Dest, BYTE Immed );
 void Sse2PsrawImmed( BYTE** code, int Dest, BYTE Immed );
+void Sse2PsrldImmed( BYTE** code, int Dest, BYTE Immed );
 void Sse2PsrlwImmed( BYTE** code, int Dest, BYTE Immed );
 void Sse2PunpckHighWordsRegToReg(BYTE** code, int Dest, int Source);
 void Sse2PunpckLowWordsRegToReg( BYTE** code, int Dest, int Source );

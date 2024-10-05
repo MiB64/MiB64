@@ -1101,6 +1101,28 @@ void Sse2PsrawImmed(BYTE** code, int Dest, BYTE Immed) {
 	PUTDST8(*code, Immed);
 }
 
+void Sse2PsrldImmed(BYTE** code, int Dest, BYTE Immed) {
+	BYTE x86Command = 0;
+
+	RSP_CPU_Message("      psrld %s, %i", sse_Name(Dest), Immed);
+
+	switch (Dest) {
+	case x86_XMM0: x86Command = 0xD0; break;
+	case x86_XMM1: x86Command = 0xD1; break;
+	case x86_XMM2: x86Command = 0xD2; break;
+	case x86_XMM3: x86Command = 0xD3; break;
+	case x86_XMM4: x86Command = 0xD4; break;
+	case x86_XMM5: x86Command = 0xD5; break;
+	case x86_XMM6: x86Command = 0xD6; break;
+	case x86_XMM7: x86Command = 0xD7; break;
+	}
+
+	PUTDST8(*code, 0x66);
+	PUTDST16(*code, 0x720f);
+	PUTDST8(*code, x86Command);
+	PUTDST8(*code, Immed);
+}
+
 void Sse2PsrlwImmed(BYTE** code, int Dest, BYTE Immed) {
 	BYTE x86Command = 0;
 
