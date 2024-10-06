@@ -82,7 +82,7 @@ DWORD BeginOfCurrentSubBlock = 0;
 /*#	define CompileVmudm*/	/* Verified 12/17/2000 - Jabo */
 /*#	define CompileVmudh*/	/* Verified 12/17/2000 - Jabo */
 /*#	define CompileVmudn*/	/* Verified 12/17/2000 - Jabo */
-/*#	define CompileVmudl*/	/* Verified 12/17/2000 - Jabo */
+#	define CompileVmudl	/* Verified 12/17/2000 - Jabo */
 /*#	define CompileVmadl	
 #	define CompileVmadm*/	/* Verified 12/17/2000 - Jabo */
 /*#	define CompileVmadh*/	/* Verified 12/15/2000 - Jabo */
@@ -4376,62 +4376,63 @@ void CompileRsp_Vector_VMULQ(void) {
 }*/
 
 void CompileRsp_Vector_VMUDL ( void ) {
-	/*char Reg[256];
+	char Reg[256];
 	int count, el, del;
 	
-	BOOL bOptimize = ((RSPOpC.rs & 0x0f) >= 8) ? TRUE : FALSE;
-	BOOL bWriteToDest = WriteToVectorDest(RSPOpC.sa, CompilePC);
-	BOOL bWriteToAccum = WriteToAccum(EntireAccum, CompilePC);*/
+	BOOL bOptimize = ((RSPOpC.OP.V.element & 0x0f) >= 8) ? TRUE : FALSE;
+	BOOL bWriteToDest = WriteToVectorDest(RSPOpC.OP.V.vd, RspCompilePC);
+	BOOL bWriteToAccum = WriteToAccum(EntireAccum, RspCompilePC);
 
 	#ifndef CompileVmudl
 	InterpreterFallback((void*)RSP_Vector_VMUDL,"RSP_Vector_VMUDL"); return;
 	#endif
 
-	/*CPU_Message("  %X %s",CompilePC,RSPOpcodeName(RSPOpC.Hex,CompilePC));
+	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
-	if (bWriteToAccum == FALSE) {
+	/*if (bWriteToAccum == FALSE) {
 		if (TRUE == Compile_Vector_VMUDL_MMX())
 			return;
-	}
+	}*/
 	
 	if (bOptimize == TRUE) {
-		del = (RSPOpC.rs & 0x07) ^ 7;
-		sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.rt, del);
-		MoveZxVariableToX86regHalf(&RSP_Vect[RSPOpC.rt].HW[del], Reg, x86_EBX);
+		del = (RSPOpC.OP.V.element & 0x07) ^ 7;
+		sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.OP.V.vt, del);
+		MoveZxVariableToX86regHalf(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vt].HW[del], Reg, x86_EBX);
 	}
 
 	if (bWriteToAccum == TRUE)
-		XorX86RegToX86Reg(x86_EDI, x86_EDI);
+		XorX86RegToX86Reg(&RspRecompPos, x86_EDI, x86_EDI);
 
 	for (count = 0; count < 8; count++) {
-		CPU_Message("     Iteration: %i", count);
-		el = Indx[RSPOpC.rs].B[count];
-		del = EleSpec[RSPOpC.rs].B[el];
+		RSP_CPU_Message("     Iteration: %i", count);
+		el = Indx[RSPOpC.OP.V.element].B[count];
+		del = EleSpec[RSPOpC.OP.V.element].B[el];
 
-		sprintf(Reg, "RSP_Vect[%i].UHW[%i]", RSPOpC.rd, el);
-		MoveZxVariableToX86regHalf(&RSP_Vect[RSPOpC.rd].UHW[el], Reg, x86_EAX);
+		sprintf(Reg, "RSP_Vect[%i].UHW[%i]", RSPOpC.OP.V.vs, el);
+		MoveZxVariableToX86regHalf(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vs].UHW[el], Reg, x86_EAX);
 
 		if (bOptimize == FALSE) {
-			sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.rt, del);
-			MoveZxVariableToX86regHalf(&RSP_Vect[RSPOpC.rt].HW[del], Reg, x86_EBX);
+			sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.OP.V.vt, del);
+			MoveZxVariableToX86regHalf(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vt].HW[del], Reg, x86_EBX);
 		}
 
-		imulX86reg(x86_EBX);
+		imulX86reg(&RspRecompPos, x86_EBX);
+		ShiftRightUnsignImmed(&RspRecompPos, x86_EAX, 16);
 
 		if (bWriteToAccum == TRUE) {
-			sprintf(Reg, "RSP_ACCUM[%i].UW[0]", el);
-			MoveX86regToVariable(x86_EAX, &RSP_ACCUM[el].UW[0], Reg);
-			sprintf(Reg, "RSP_ACCUM[%i].UW[1]", el);
-			MoveX86regToVariable(x86_EDI, &RSP_ACCUM[el].UW[1], Reg);
+			sprintf(Reg, "RSP_ACCUM_LOW.HW[%i]", el);
+			MoveX86regHalfToVariable(&RspRecompPos, x86_EAX, &RSP_ACCUM_LOW.UHW[el], Reg);
+			sprintf(Reg, "RSP_ACCUM_HIGH.HW[%i]", el);
+			MoveX86regHalfToVariable(&RspRecompPos, x86_EDI, &RSP_ACCUM_HIGH.UHW[el], Reg);
+			sprintf(Reg, "RSP_ACCUM_MID.HW[%i]", el);
+			MoveX86regHalfToVariable(&RspRecompPos, x86_EDI, &RSP_ACCUM_MID.UHW[el], Reg);
 		}
 
 		if (bWriteToDest == TRUE) {
-			ShiftRightUnsignImmed(x86_EAX, 16);
-			sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.sa, el);
-			MoveX86regHalfToVariable(x86_EAX, &RSP_Vect[RSPOpC.sa].HW[el], Reg);
+			sprintf(Reg, "RSP_Vect[%i].HW[%i]", RSPOpC.OP.V.vd, el);
+			MoveX86regHalfToVariable(&RspRecompPos, x86_EAX, &RSP_Vect[RSPOpC.OP.V.vd].HW[el], Reg);
 		}
-	}*/
-	LogMessage("TODO: CompileRsp_Vector_VMUDL");
+	}
 }
 
 /*BOOL Compile_Vector_VMUDM_MMX ( void ) {
