@@ -396,6 +396,8 @@ void Sse2PandRegToReg( BYTE** code, int Dest, int Source );
 void Sse2PandnRegToReg( BYTE** code, int Dest, int Source );
 void Sse2PmulldRegToReg( BYTE** code, int Dest, int Source );
 void Sse2PmullwRegToReg( BYTE** code, int Dest, int Source );
+void Sse2PmulhuwRegToReg( BYTE** code, int Dest, int Source );
+void Sse2PmulhuwVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
 void Sse2PmulhwRegToReg( BYTE** code, int Dest, int Source );
 void Sse2PorRegToReg( BYTE** code, int Dest, int Source );
 void Sse2PorVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
