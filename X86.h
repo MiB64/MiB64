@@ -346,8 +346,8 @@ void MmxPorRegToReg( BYTE** code, int Dest, int Source );
 void MmxXorRegToReg(int Dest, int Source);*/
 void MmxShuffleMemoryToReg( BYTE** code, int Dest, void* Variable, char* VariableName, BYTE Immed );
 void MmxPmullwRegToReg( BYTE** code, int Dest, int Source );
-/*void MmxPmullwVariableToReg(int Dest, void* Variable, char* VariableName);
-void MmxPmulhuwRegToReg(int Dest, int Source);*/
+/*void MmxPmullwVariableToReg(int Dest, void* Variable, char* VariableName);*/
+void MmxPmulhuwRegToReg( BYTE** code, int Dest, int Source );
 void MmxPmulhwRegToReg( BYTE** code, int Dest, int Source );
 void MmxPmulhwRegToVariable( BYTE** code, int Dest, void * Variable, char * VariableName );
 void MmxPsrlwImmed( BYTE** code,int Dest, BYTE Immed );

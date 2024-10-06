@@ -78,7 +78,6 @@ BOOL IsNextRspInstructionMmx(DWORD PC) {
 	if ((RspOp.OP.I.rs & 0x10) != 0) {
 		switch (RspOp.OP.V.funct) {
 		case RSP_VECTOR_VMULF:
-		/*case RSP_VECTOR_VMUDL:*/ /* Warning: Not all handled? */
 /*		case RSP_VECTOR_VMUDM:
 		case RSP_VECTOR_VMUDN:
 		case RSP_VECTOR_VMUDH:*/
@@ -90,6 +89,16 @@ BOOL IsNextRspInstructionMmx(DWORD PC) {
 			} else if ((RspOp.OP.V.element & 0x0f) >= 2 && (RspOp.OP.V.element & 0x0f) <= 7 && IsMmx2Enabled == FALSE) {
 				return FALSE;
 			} else 
+				return TRUE;
+
+		case RSP_VECTOR_VMUDL:
+			if (!IsVectorOpcodeRecompiledWithMMX(RspOp.OP.V.funct)) {
+				return FALSE;
+			}
+			if (TRUE == WriteToAccum(EntireAccum, PC)) {
+				return FALSE;
+			} else if (IsMmx2Enabled == FALSE) {
+			} else
 				return TRUE;
 
 		/*case RSP_VECTOR_VAND:

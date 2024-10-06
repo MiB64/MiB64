@@ -124,6 +124,13 @@ BOOL IsVectorOpcodeRecompiledWithMMX(int funct) {
 #else
 		return FALSE;
 #endif
+	case RSP_VECTOR_VMUDL:
+#ifdef CompileVmudl
+		if (IsSse2Enabled == TRUE) return FALSE;
+		return TRUE;
+#else
+		return FALSE;
+#endif
 	default:
 		return FALSE;
 	}
@@ -4332,48 +4339,48 @@ void CompileRsp_Vector_VMULQ(void) {
 	}
 }
 
-/*BOOL Compile_Vector_VMUDL_MMX ( void ) {
-	char Reg[256];*/
+BOOL Compile_Vector_VMUDL_MMX ( void ) {
+	char Reg[256];
 
 	/* Do our MMX checks here */
-/*	if (IsMmxEnabled == FALSE)
+	if (IsMmxEnabled == FALSE)
 		return FALSE;
 	if (IsMmx2Enabled == FALSE)
 		return FALSE;
 
-	sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.rd);
-	MmxMoveQwordVariableToReg(x86_MM0, &RSP_Vect[RSPOpC.rd].UHW[0], Reg);
-	sprintf(Reg, "RSP_Vect[%i].UHW[4]", RSPOpC.rd);
-	MmxMoveQwordVariableToReg(x86_MM1, &RSP_Vect[RSPOpC.rd].UHW[4], Reg);
+	sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.OP.V.vs);
+	MmxMoveQwordVariableToReg(&RspRecompPos, x86_MM0, &RSP_Vect[RSPOpC.OP.V.vs].UHW[0], Reg);
+	sprintf(Reg, "RSP_Vect[%i].UHW[4]", RSPOpC.OP.V.vs);
+	MmxMoveQwordVariableToReg(&RspRecompPos, x86_MM1, &RSP_Vect[RSPOpC.OP.V.vs].UHW[4], Reg);
 
-	if ((RSPOpC.rs & 0xF) < 2) {
-		sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.rt);
-		MmxMoveQwordVariableToReg(x86_MM2, &RSP_Vect[RSPOpC.rt].UHW[0], Reg);
-		sprintf(Reg, "RSP_Vect[%i].UHW[4]", RSPOpC.rt);
-		MmxMoveQwordVariableToReg(x86_MM3, &RSP_Vect[RSPOpC.rt].UHW[4], Reg);
+	if ((RSPOpC.OP.V.element & 0xF) < 2) {
+		sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.OP.V.vt);
+		MmxMoveQwordVariableToReg(&RspRecompPos, x86_MM2, &RSP_Vect[RSPOpC.OP.V.vt].UHW[0], Reg);
+		sprintf(Reg, "RSP_Vect[%i].UHW[4]", RSPOpC.OP.V.vt);
+		MmxMoveQwordVariableToReg(&RspRecompPos, x86_MM3, &RSP_Vect[RSPOpC.OP.V.vt].UHW[4], Reg);
 		
-		MmxPmulhuwRegToReg(x86_MM0, x86_MM2);
-		MmxPmulhuwRegToReg(x86_MM1, x86_MM3);
-	} else if ((RSPOpC.rs & 0xF) >= 8) {
+		MmxPmulhuwRegToReg(&RspRecompPos, x86_MM0, x86_MM2);
+		MmxPmulhuwRegToReg(&RspRecompPos, x86_MM1, x86_MM3);
+	} else if ((RSPOpC.OP.V.element & 0xF) >= 8) {
 		RSP_Element2Mmx(x86_MM2);
-		MmxPmulhuwRegToReg(x86_MM0, x86_MM2);
-		MmxPmulhuwRegToReg(x86_MM1, x86_MM2);
+		MmxPmulhuwRegToReg(&RspRecompPos, x86_MM0, x86_MM2);
+		MmxPmulhuwRegToReg(&RspRecompPos, x86_MM1, x86_MM2);
 	} else {
 		RSP_MultiElement2Mmx(x86_MM2, x86_MM3);
-		MmxPmulhuwRegToReg(x86_MM0, x86_MM2);
-		MmxPmulhuwRegToReg(x86_MM1, x86_MM3);
+		MmxPmulhuwRegToReg(&RspRecompPos, x86_MM0, x86_MM2);
+		MmxPmulhuwRegToReg(&RspRecompPos, x86_MM1, x86_MM3);
 	}
 
-	sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.sa);
-	MmxMoveQwordRegToVariable(x86_MM0, &RSP_Vect[RSPOpC.sa].UHW[0], Reg);
-	sprintf(Reg, "RSP_Vect[%i].UHW[4]", RSPOpC.sa);
-	MmxMoveQwordRegToVariable(x86_MM1, &RSP_Vect[RSPOpC.sa].UHW[4], Reg);
+	sprintf(Reg, "RSP_Vect[%i].UHW[0]", RSPOpC.OP.V.vd);
+	MmxMoveQwordRegToVariable(&RspRecompPos, x86_MM0, &RSP_Vect[RSPOpC.OP.V.vd].UHW[0], Reg);
+	sprintf(Reg, "RSP_Vect[%i].UHW[4]", RSPOpC.OP.V.vd);
+	MmxMoveQwordRegToVariable(&RspRecompPos, x86_MM1, &RSP_Vect[RSPOpC.OP.V.vd].UHW[4], Reg);
 	
-	if (IsNextInstructionMmx(CompilePC) == FALSE)
-		MmxEmptyMultimediaState();
+	if (IsNextRspInstructionMmx(RspCompilePC) == FALSE)
+		MmxEmptyMultimediaState(&RspRecompPos);
 
 	return TRUE;
-}*/
+}
 
 void CompileRsp_Vector_VMUDL ( void ) {
 	char Reg[256];
@@ -4389,10 +4396,14 @@ void CompileRsp_Vector_VMUDL ( void ) {
 
 	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
-	/*if (bWriteToAccum == FALSE) {
+	if (bWriteToDest == FALSE && bWriteToAccum == FALSE) {
+		return;
+	}
+
+	if (bWriteToAccum == FALSE) {
 		if (TRUE == Compile_Vector_VMUDL_MMX())
 			return;
-	}*/
+	}
 	
 	if (bOptimize == TRUE) {
 		del = (RSPOpC.OP.V.element & 0x07) ^ 7;

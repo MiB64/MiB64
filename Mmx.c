@@ -348,12 +348,12 @@ void MmxPmullwRegToReg(BYTE** code, int Dest, int Source) {
 	PUTDST16(RecompPos,0xd50f);
 	PUTDST8(RecompPos, x86Command);
 	PUTDST32(RecompPos, Variable);
-}
+}*/
 
-void MmxPmulhuwRegToReg(int Dest, int Source) {
-	BYTE x86Command;
+void MmxPmulhuwRegToReg(BYTE** code, int Dest, int Source) {
+	BYTE x86Command = 0;
 
-	CPU_Message("      pmulhuw %s, %s", mmx_Name(Dest), mmx_Name(Source));
+	RSP_CPU_Message("      pmulhuw %s, %s", mmx_Name(Dest), mmx_Name(Source));
 
 	switch (Dest) {
 	case x86_MM0: x86Command = 0 << 3; break;
@@ -375,9 +375,9 @@ void MmxPmulhuwRegToReg(int Dest, int Source) {
 	case x86_MM6: x86Command |= 6; break;
 	case x86_MM7: x86Command |= 7; break;
 	}
-	PUTDST16(RecompPos,0xe40f);
-	PUTDST8(RecompPos, 0xC0 | x86Command);
-}*/
+	PUTDST16(*code,0xe40f);
+	PUTDST8(*code, 0xC0 | x86Command);
+}
 
 void MmxPmulhwRegToReg(BYTE** code, int Dest, int Source) {
 	BYTE x86Command = 0;
