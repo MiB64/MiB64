@@ -1637,6 +1637,24 @@ void MoveN64MemToX86regHalf(BYTE** code, int x86reg, int AddrReg) {
 	PUTDST32(*code,N64MEM);
 }
 
+void MoveOffsetToX86reg(BYTE** code, DWORD Const, char* VariableName, int x86reg) {
+	CPU_OR_RSP_Message(*code, "      mov %s, offset %s", x86_Name(x86reg), VariableName);
+	switch (x86reg) {
+	case x86_EAX: PUTDST8(*code, 0xB8); break;
+	case x86_EBX: PUTDST8(*code, 0xBB); break;
+	case x86_ECX: PUTDST8(*code, 0xB9); break;
+	case x86_EDX: PUTDST8(*code, 0xBA); break;
+	case x86_ESI: PUTDST8(*code, 0xBE); break;
+	case x86_EDI: PUTDST8(*code, 0xBF); break;
+	case x86_ESP: PUTDST8(*code, 0xBC); break;
+	case x86_EBP: PUTDST8(*code, 0xBD); break;
+	default:
+		DisplayError("MoveOffsetToX86reg\nUnknown x86 Register");
+		_asm int 3
+	}
+	PUTDST32(*code, Const);
+}
+
 void MoveSxByteX86regPointerToX86reg(BYTE** code, int AddrReg1, int AddrReg2, int x86reg) {
 	BYTE Param = 0x0;
 
@@ -1882,6 +1900,37 @@ void MoveSxVariableToX86regHalf(BYTE** code, void *Variable, char *VariableName,
 	default: DisplayError("MoveSxVariableToX86regHalf\nUnknown x86 Register");
 	}
     PUTDST32(*code,Variable);
+}
+
+void MoveSxX86RegPtrDispToX86RegHalf(BYTE** code, int AddrReg, BYTE Disp, int Destination) {
+	BYTE x86Command = 0;
+
+	CPU_OR_RSP_Message(*code, "      movsx %s, [%s+%X]", x86_Name(Destination), x86_Name(AddrReg), Disp);
+
+	switch (AddrReg) {
+	case x86_EAX: x86Command = 0x00; break;
+	case x86_EBX: x86Command = 0x03; break;
+	case x86_ECX: x86Command = 0x01; break;
+	case x86_EDX: x86Command = 0x02; break;
+	case x86_ESI: x86Command = 0x06; break;
+	case x86_EDI: x86Command = 0x07; break;
+	case x86_ESP: x86Command = 0x04; break;
+	case x86_EBP: x86Command = 0x05; break;
+	}
+
+	switch (Destination) {
+	case x86_EAX: x86Command += 0x40; break;
+	case x86_EBX: x86Command += 0x58; break;
+	case x86_ECX: x86Command += 0x48; break;
+	case x86_EDX: x86Command += 0x50; break;
+	case x86_ESI: x86Command += 0x70; break;
+	case x86_EDI: x86Command += 0x78; break;
+	case x86_ESP: x86Command += 0x60; break;
+	case x86_EBP: x86Command += 0x68; break;
+	}
+	PUTDST16(*code, 0xBF0F);
+	PUTDST8(*code, x86Command);
+	PUTDST8(*code, Disp);
 }
 
 void MoveVariableToX86reg(BYTE** code, void *Variable, char *VariableName, int x86reg) {
@@ -2205,6 +2254,40 @@ void MoveX86regHalfToX86regPointer(BYTE** code, int x86reg, int AddrReg1, int Ad
 		DisplayError("MoveX86regHalfToX86regPointer\nUnhandled x86 Register");
 	}
 	PUTDST8(*code,Param);
+}
+
+void MoveX86regHalfToX86regPointerDisp(BYTE** code, int Source, int AddrReg, BYTE Disp) {
+	BYTE x86Amb = 0;
+
+	CPU_OR_RSP_Message(*code, "      mov word ptr [%s+%X], %s", x86_Name(AddrReg), Disp, x86Half_Name(Source));
+
+	switch (AddrReg) {
+	case x86_EAX: x86Amb = 0x00; break;
+	case x86_EBX: x86Amb = 0x03; break;
+	case x86_ECX: x86Amb = 0x01; break;
+	case x86_EDX: x86Amb = 0x02; break;
+	case x86_ESI: x86Amb = 0x06; break;
+	case x86_EDI: x86Amb = 0x07; break;
+	case x86_ESP: x86Amb = 0x04; break;
+	case x86_EBP: x86Amb = 0x05; break;
+	default: DisplayError("MoveX86regBytePointer\nUnknown x86 Register");
+	}
+
+	switch (Source) {
+	case x86_EAX: x86Amb += 0x00; break;
+	case x86_ECX: x86Amb += 0x08; break;
+	case x86_EDX: x86Amb += 0x10; break;
+	case x86_EBX: x86Amb += 0x18; break;
+	case x86_ESI: x86Amb += 0x30; break;
+	case x86_EDI: x86Amb += 0x38; break;
+	case x86_ESP: x86Amb += 0x20; break;
+	case x86_EBP: x86Amb += 0x28; break;
+	default: DisplayError("MoveX86regBytePointer\nUnknown x86 Register");
+	}
+
+	PUTDST16(*code, 0x8966);
+	PUTDST8(*code, x86Amb | 0x40);
+	PUTDST8(*code, Disp);
 }
 
 void MoveX86PointerToX86reg(BYTE** code, int x86reg, int X86Pointer) {
@@ -2737,6 +2820,37 @@ void MoveZxVariableToX86regHalf(BYTE** code, void *Variable, char *VariableName,
 	default: DisplayError("MoveZxVariableToX86regHalf\nUnknown x86 Register");
 	}
     PUTDST32(*code,Variable);
+}
+
+void MoveZxX86RegPtrDispToX86RegHalf(BYTE** code, int AddrReg, BYTE Disp, int Destination) {
+	BYTE x86Command = 0;
+
+	CPU_OR_RSP_Message(*code, "      movzx %s, [%s+%X]", x86_Name(Destination), x86_Name(AddrReg), Disp);
+
+	switch (AddrReg) {
+	case x86_EAX: x86Command = 0x00; break;
+	case x86_EBX: x86Command = 0x03; break;
+	case x86_ECX: x86Command = 0x01; break;
+	case x86_EDX: x86Command = 0x02; break;
+	case x86_ESI: x86Command = 0x06; break;
+	case x86_EDI: x86Command = 0x07; break;
+	case x86_ESP: x86Command = 0x04; break;
+	case x86_EBP: x86Command = 0x05; break;
+	}
+
+	switch (Destination) {
+	case x86_EAX: x86Command += 0x40; break;
+	case x86_EBX: x86Command += 0x58; break;
+	case x86_ECX: x86Command += 0x48; break;
+	case x86_EDX: x86Command += 0x50; break;
+	case x86_ESI: x86Command += 0x70; break;
+	case x86_EDI: x86Command += 0x78; break;
+	case x86_ESP: x86Command += 0x60; break;
+	case x86_EBP: x86Command += 0x68; break;
+	}
+	PUTDST16(*code, 0xB70F);
+	PUTDST8(*code, x86Command);
+	PUTDST8(*code, Disp);
 }
 
 void MulX86reg(BYTE** code, int x86reg) {

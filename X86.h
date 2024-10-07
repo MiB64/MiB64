@@ -157,6 +157,7 @@ void MoveConstToVariable             ( BYTE** code, DWORD Const, void *Variable,
 void MoveConstToX86Pointer           ( BYTE** code, DWORD Const, int X86Pointer );
 void MoveConstToX86reg               ( BYTE** code, DWORD Const, int x86reg );
 void MoveConstToX86regPointer        ( BYTE** code, DWORD Const, int AddrReg1, int AddrReg2 );
+void MoveOffsetToX86reg				 ( BYTE** code, DWORD Const, void *Variable, int x86reg );
 void MoveN64MemDispToX86reg          ( BYTE** code, int x86reg, int AddrReg, BYTE Disp );
 void MoveN64MemToX86reg              ( BYTE** code, int x86reg, int AddrReg );
 void MoveN64MemToX86regByte          ( BYTE** code, int x86reg, int AddrReg );
@@ -173,6 +174,7 @@ void MoveSxDMemToX86regByte          ( BYTE** code, int x86reg, int AddrReg );
 void MoveSxDMemToX86regHalf          ( BYTE** code, int x86reg, int AddrReg );
 void MoveSxVariableToX86regByte      ( BYTE** code, void *Variable, char *VariableName, int x86reg );
 void MoveSxVariableToX86regHalf      ( BYTE** code, void *Variable, char *VariableName, int x86reg );
+void MoveSxX86RegPtrDispToX86RegHalf ( BYTE** code, int AddrReg, BYTE Disp, int Destination );
 void MoveVariableDispToX86Reg        ( BYTE** code, void *Variable, char *VariableName, int x86Reg, int AddrReg, int Multiplier );
 void MoveVariableToX86reg            ( BYTE** code, void *Variable, char *VariableName, int x86reg );
 void MoveVariableToX86regByte        ( BYTE** code, void *Variable, char *VariableName, int x86reg );
@@ -189,6 +191,7 @@ void MoveX86regHalfToN64Mem          ( BYTE** code, int x86reg, int AddrReg );
 void MoveX86regHalfToDMem			 ( BYTE** code, int x86reg, int AddrReg );
 void MoveX86regHalfToVariable        ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void MoveX86regHalfToX86regPointer   ( BYTE** code, int x86reg, int AddrReg1, int AddrReg2 );
+void MoveX86regHalfToX86regPointerDisp( BYTE ** code, int Source, int AddrReg, BYTE Disp );
 void MoveX86regPointerToX86reg       ( BYTE** code, int AddrReg1, int AddrReg2, int x86reg );
 void MoveX86regPointerToX86regDisp8  ( BYTE** code, int AddrReg1, int AddrReg2, int x86reg, BYTE offset );
 void MoveX86regToMemory              ( BYTE** code, int x86reg, int AddrReg, DWORD Disp );
@@ -207,6 +210,7 @@ void MoveZxN64MemToX86regHalf        ( BYTE** code, int x86reg, int AddrReg );
 void MoveZxDMemToX86regHalf          ( BYTE** code, int x86reg, int AddrReg );
 void MoveZxVariableToX86regByte      ( BYTE** code, void *Variable, char *VariableName, int x86reg );
 void MoveZxVariableToX86regHalf      ( BYTE** code, void *Variable, char *VariableName, int x86reg );
+void MoveZxX86RegPtrDispToX86RegHalf ( BYTE** code, int AddrReg, BYTE Disp, int Destination );
 void MulX86reg                       ( BYTE** code, int x86reg );
 void NotX86Reg                       ( BYTE** code, int x86Reg );
 void OrConstToVariable               ( BYTE** code, DWORD Const, void * Variable, char * VariableName );
@@ -335,86 +339,86 @@ void fpuSubRegPop			         ( BYTE** code, int x86reg );
 #define _MMX_SHUFFLE(a, b, c, d)	\
 	((BYTE)(((a) << 6) | ((b) << 4) | ((c) << 2) | (d)))
 
-void MmxMoveRegToReg( BYTE** code, int Dest, int Source );
-void MmxMoveQwordRegToVariable( BYTE** code, int Dest, void * Variable, char * VariableName );
-void MmxMoveQwordVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
-void MmxPandRegToReg( BYTE** code, int Dest, int Source );
-void MmxPandnRegToReg( BYTE** code, int Dest, int Source );
+void MmxMoveRegToReg				( BYTE** code, int Dest, int Source );
+void MmxMoveQwordRegToVariable		( BYTE** code, int Dest, void * Variable, char * VariableName );
+void MmxMoveQwordVariableToReg		( BYTE** code, int Dest, void * Variable, char * VariableName );
+void MmxPandRegToReg				( BYTE** code, int Dest, int Source );
+void MmxPandnRegToReg				( BYTE** code, int Dest, int Source );
 /*void MmxPandVariableToReg(void* Variable, char* VariableName, int Dest);*/
-void MmxPorRegToReg( BYTE** code, int Dest, int Source );
+void MmxPorRegToReg					( BYTE** code, int Dest, int Source );
 /*void MmxPorVariableToReg(void* Variable, char* VariableName, int Dest);
 void MmxXorRegToReg(int Dest, int Source);*/
-void MmxShuffleMemoryToReg( BYTE** code, int Dest, void* Variable, char* VariableName, BYTE Immed );
-void MmxPmullwRegToReg( BYTE** code, int Dest, int Source );
+void MmxShuffleMemoryToReg			( BYTE** code, int Dest, void* Variable, char* VariableName, BYTE Immed );
+void MmxPmullwRegToReg				( BYTE** code, int Dest, int Source );
 /*void MmxPmullwVariableToReg(int Dest, void* Variable, char* VariableName);*/
-void MmxPmulhuwRegToReg( BYTE** code, int Dest, int Source );
-void MmxPmulhwRegToReg( BYTE** code, int Dest, int Source );
-void MmxPmulhwRegToVariable( BYTE** code, int Dest, void * Variable, char * VariableName );
-void MmxPsrlwImmed( BYTE** code,int Dest, BYTE Immed );
+void MmxPmulhuwRegToReg				( BYTE** code, int Dest, int Source );
+void MmxPmulhwRegToReg				( BYTE** code, int Dest, int Source );
+void MmxPmulhwRegToVariable			( BYTE** code, int Dest, void * Variable, char * VariableName );
+void MmxPsrlwImmed					( BYTE** code,int Dest, BYTE Immed );
 /*void MmxPsrawImmed(int Dest, BYTE Immed);*/
-void MmxPsllwImmed( BYTE** code, int Dest, BYTE Immed );
+void MmxPsllwImmed					( BYTE** code, int Dest, BYTE Immed );
 /*void MmxPaddswRegToReg(int Dest, int Source);
 void MmxPaddswVariableToReg(int Dest, void* Variable, char* VariableName);*/
-void MmxPaddwRegToReg( BYTE** code, int Dest, int Source );
+void MmxPaddwRegToReg				( BYTE** code, int Dest, int Source );
 /*void MmxPackSignedDwords(int Dest, int Source);
 void MmxUnpackLowWord(int Dest, int Source);
 void MmxUnpackHighWord(int Dest, int Source);
 void MmxCompareGreaterWordRegToReg(int Dest, int Source);*/
-void MmxCompareEqualWordRegToReg( BYTE** code, int Dest, int Source );
-void MmxEmptyMultimediaState( BYTE** code );
+void MmxCompareEqualWordRegToReg	( BYTE** code, int Dest, int Source );
+void MmxEmptyMultimediaState		( BYTE** code );
 
 enum SseDataType {
 	SseType_QuadWord
 };
 
-void SseMoveAlignedVariableToReg( BYTE** code, void * Variable, char * VariableName, int sseReg, int sseDataType, BOOL SS2Supported );
-void SseMoveAlignedRegToVariable( BYTE** code, int sseReg, void * Variable, char * VariableName, int sseDataType, BOOL SS2Supported );
+void SseMoveAlignedVariableToReg	( BYTE** code, void * Variable, char * VariableName, int sseReg, int sseDataType, BOOL SS2Supported );
+void SseMoveAlignedRegToVariable	( BYTE** code, int sseReg, void * Variable, char * VariableName, int sseDataType, BOOL SS2Supported );
 /*void SseMoveAlignedN64MemToReg(int sseReg, int AddrReg);
 void SseMoveAlignedRegToN64Mem(int sseReg, int AddrReg);*/
-void SseMoveLowRegToHighReg( BYTE** code, int Dest, int Source );
-void SseMoveHighRegToLowReg( BYTE** code, int Dest, int Source );
+void SseMoveLowRegToHighReg			( BYTE** code, int Dest, int Source );
+void SseMoveHighRegToLowReg			( BYTE** code, int Dest, int Source );
 /*void SseMoveUnalignedVariableToReg(void* Variable, char* VariableName, int sseReg);
 void SseMoveUnalignedRegToVariable(int sseReg, void* Variable, char* VariableName);
 void SseMoveUnalignedN64MemToReg(int sseReg, int AddrReg);
 void SseMoveUnalignedRegToN64Mem(int sseReg, int AddrReg);*/
-void SseMoveRegToReg( BYTE** code, int Dest, int Source, int sseDataType, BOOL SSE2Supported );
+void SseMoveRegToReg				( BYTE** code, int Dest, int Source, int sseDataType, BOOL SSE2Supported );
 /*void SseXorRegToReg(int Dest, int Source);*/
 
-void Sse2CompareEqualDWordRegToReg( BYTE** code, int Dest, int Source );
+void Sse2CompareEqualDWordRegToReg	( BYTE** code, int Dest, int Source );
 void Sse2CompareEqualDWordVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
-void Sse2CompareEqualWordRegToReg( BYTE** code, int Dest, int Source );
-void Sse2CompareGreaterWordRegToReg( BYTE** code, int Dest, int Source );
-void Sse2MoveQWordRegToReg( BYTE** code, int Dest, int Source );
-void Sse2MoveSxWordRegToDWordReg( BYTE** code, int Dest, int Source, BOOL SSE41Supported );
+void Sse2CompareEqualWordRegToReg	( BYTE** code, int Dest, int Source );
+void Sse2CompareGreaterWordRegToReg	( BYTE** code, int Dest, int Source );
+void Sse2MoveQWordRegToReg			( BYTE** code, int Dest, int Source );
+void Sse2MoveSxWordRegToDWordReg	( BYTE** code, int Dest, int Source, BOOL SSE41Supported );
 void Sse2PackSignedDWordRegToWordReg( BYTE** code, int Dest, int Source );
-void Sse2PadddRegToReg( BYTE** code, int Dest, int Source );
-void Sse2PadddVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
-void Sse2PadduswRegToReg( BYTE** code, int Dest, int Source );
-void Sse2PaddwRegToReg( BYTE** code, int Dest, int Source );
-void Sse2PandVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
-void Sse2PandRegToReg( BYTE** code, int Dest, int Source );
-void Sse2PandnRegToReg( BYTE** code, int Dest, int Source );
-void Sse2PmulldRegToReg( BYTE** code, int Dest, int Source );
-void Sse2PmullwRegToReg( BYTE** code, int Dest, int Source );
-void Sse2PmulhuwRegToReg( BYTE** code, int Dest, int Source );
-void Sse2PmulhuwVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
-void Sse2PmulhwRegToReg( BYTE** code, int Dest, int Source );
-void Sse2PorRegToReg( BYTE** code, int Dest, int Source );
-void Sse2PorVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
-void Sse2PslldImmed( BYTE** code, int Dest, BYTE Immed );
-void Sse2PsllwImmed( BYTE** code, int Dest, BYTE Immed );
-void Sse2PsradImmed( BYTE** code, int Dest, BYTE Immed );
-void Sse2PsrawImmed( BYTE** code, int Dest, BYTE Immed );
-void Sse2PsrldImmed( BYTE** code, int Dest, BYTE Immed );
-void Sse2PsrlwImmed( BYTE** code, int Dest, BYTE Immed );
-void Sse2PunpckHighWordsRegToReg(BYTE** code, int Dest, int Source);
-void Sse2PunpckLowWordsRegToReg( BYTE** code, int Dest, int Source );
-void Sse2PxorRegToReg( BYTE** code, int Dest, int Source );
-void Sse2ShuffleDWordsRegToReg( BYTE** code, int Dest, int Source, BYTE Immed );
-void Sse2ShuffleLowWordsMemoryToReg( BYTE** code, int Dest, void * Variable, char * VariableName, BYTE Immed );
-void Sse2ShuffleLowWordsRegToReg( BYTE** code, int Dest, int Source, BYTE Immed );
+void Sse2PadddRegToReg				( BYTE** code, int Dest, int Source );
+void Sse2PadddVariableToReg			( BYTE** code, int Dest, void * Variable, char * VariableName );
+void Sse2PadduswRegToReg			( BYTE** code, int Dest, int Source );
+void Sse2PaddwRegToReg				( BYTE** code, int Dest, int Source );
+void Sse2PandVariableToReg			( BYTE** code, int Dest, void * Variable, char * VariableName );
+void Sse2PandRegToReg				( BYTE** code, int Dest, int Source );
+void Sse2PandnRegToReg				( BYTE** code, int Dest, int Source );
+void Sse2PmulldRegToReg				( BYTE** code, int Dest, int Source );
+void Sse2PmullwRegToReg				( BYTE** code, int Dest, int Source );
+void Sse2PmulhuwRegToReg			( BYTE** code, int Dest, int Source );
+void Sse2PmulhuwVariableToReg		( BYTE** code, int Dest, void * Variable, char * VariableName );
+void Sse2PmulhwRegToReg				( BYTE** code, int Dest, int Source );
+void Sse2PorRegToReg				( BYTE** code, int Dest, int Source );
+void Sse2PorVariableToReg			( BYTE** code, int Dest, void * Variable, char * VariableName );
+void Sse2PslldImmed					( BYTE** code, int Dest, BYTE Immed );
+void Sse2PsllwImmed					( BYTE** code, int Dest, BYTE Immed );
+void Sse2PsradImmed					( BYTE** code, int Dest, BYTE Immed );
+void Sse2PsrawImmed					( BYTE** code, int Dest, BYTE Immed );
+void Sse2PsrldImmed					( BYTE** code, int Dest, BYTE Immed );
+void Sse2PsrlwImmed					( BYTE** code, int Dest, BYTE Immed );
+void Sse2PunpckHighWordsRegToReg	( BYTE** code, int Dest, int Source );
+void Sse2PunpckLowWordsRegToReg		( BYTE** code, int Dest, int Source );
+void Sse2PxorRegToReg				( BYTE** code, int Dest, int Source );
+void Sse2ShuffleDWordsRegToReg		( BYTE** code, int Dest, int Source, BYTE Immed );
+void Sse2ShuffleLowWordsMemoryToReg	( BYTE** code, int Dest, void * Variable, char * VariableName, BYTE Immed );
+void Sse2ShuffleLowWordsRegToReg	( BYTE** code, int Dest, int Source, BYTE Immed );
 void Sse2ShuffleHighWordsMemoryToReg( BYTE** code, int Dest, void * Variable, char * VariableName, BYTE Immed );
-void Sse2ShuffleHighWordsRegToReg( BYTE** code, int Dest, int Source, BYTE Immed );
+void Sse2ShuffleHighWordsRegToReg	( BYTE** code, int Dest, int Source, BYTE Immed );
 
 void Sse41PackUnsignedDWordRegToWordReg( BYTE** code, int Dest, int Source );
 void Sse41PBlendVariableToRegWithXMM0Mask( BYTE** code, int Dest, void * Variable, char * VariableName );
@@ -435,27 +439,27 @@ void SseShuffleReg(int Dest, int Source, BYTE Immed);*/
 
 void AvxCompareEqualDWordRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxCompareGreaterDWordRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
-void AvxVExtracti128RegToReg( BYTE** code , int Dest, int Src, BOOL msb );
-void AvxVInserti128RegToReg( BYTE** code, int Dest, int Src1, int Src2, BOOL msb );
+void AvxVExtracti128RegToReg		( BYTE** code , int Dest, int Src, BOOL msb );
+void AvxVInserti128RegToReg			( BYTE** code, int Dest, int Src1, int Src2, BOOL msb );
 void AvxVPackSignedDWordRegToWordReg128( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPackUnsignedDWordRegToWordReg128( BYTE** code, int Dest, int Src1, int Src2 );
-void AvxVPAdddRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
-void AvxVPAddwRegToReg128( BYTE** code, int Dest, int Src1, int Src2 );
-void AvxVPandnRegToReg128( BYTE** code, int Dest, int Src1, int Src2 );
-void AvxVPandnRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
-void AvxVPBlendvbRegToReg256( BYTE** code, int Dest, int Src1, int Src2, int Src3Mask );
+void AvxVPAdddRegToReg256			( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPAddwRegToReg128			( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPandnRegToReg128			( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPandnRegToReg256			( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPBlendvbRegToReg256		( BYTE** code, int Dest, int Src1, int Src2, int Src3Mask );
 void AvxVPBroadcastdVariableToReg256( BYTE** code, int Dest, void * Variable, char * VariableName );
 void AvxVPBroadcastwVariableToReg128( BYTE** code, int Dest, void * Variable, char * VariableName );
 void AvxVPMovesxWordReg128ToDwordReg256( BYTE** code, int Dest, int Source );
 void AvxVPMovesxWordVariableToDWordReg256( BYTE** code, int Dest, void * Variable, char * VariableName );
-void AvxVPMulldRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
-void AvxVPorRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
-void AvxVPunpckHighWordsRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
-void AvxVPunpckLowWordsRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
-void AvxVPSlldRegToReg256Immed( BYTE** code, int Dest, int Src, BYTE Immed );
-void AvxVPSradRegToReg256Immed( BYTE** code, int Dest, int Src, BYTE Immed );
-void AvxVPSrldRegToReg256Immed( BYTE** code, int Dest, int Src, BYTE Immed );
-void AvxVPxorRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPMulldRegToReg256			( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPorRegToReg256				( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPunpckHighWordsRegToReg256	( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPunpckLowWordsRegToReg256	( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPSlldRegToReg256Immed		( BYTE** code, int Dest, int Src, BYTE Immed );
+void AvxVPSradRegToReg256Immed		( BYTE** code, int Dest, int Src, BYTE Immed );
+void AvxVPSrldRegToReg256Immed		( BYTE** code, int Dest, int Src, BYTE Immed );
+void AvxVPxorRegToReg256			( BYTE** code, int Dest, int Src1, int Src2 );
 
 void x86_SetBranch8b(void* JumpByte, void* Destination);
 void x86_SetBranch32b(void* JumpByte, void* Destination);
