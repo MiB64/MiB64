@@ -348,9 +348,9 @@ void MmxPandnRegToReg				( BYTE** code, int Dest, int Source );
 void MmxPorRegToReg					( BYTE** code, int Dest, int Source );
 /*void MmxPorVariableToReg(void* Variable, char* VariableName, int Dest);
 void MmxXorRegToReg(int Dest, int Source);*/
-void MmxShuffleMemoryToReg			( BYTE** code, int Dest, void* Variable, char* VariableName, BYTE Immed );
+void MmxShuffleMemoryToReg			( BYTE** code, int Dest, void * Variable, char * VariableName, BYTE Immed );
 void MmxPmullwRegToReg				( BYTE** code, int Dest, int Source );
-/*void MmxPmullwVariableToReg(int Dest, void* Variable, char* VariableName);*/
+void MmxPmullwVariableToReg			( BYTE** code, int Dest, void * Variable, char * VariableName);
 void MmxPmulhuwRegToReg				( BYTE** code, int Dest, int Source );
 void MmxPmulhwRegToReg				( BYTE** code, int Dest, int Source );
 void MmxPmulhwRegToVariable			( BYTE** code, int Dest, void * Variable, char * VariableName );
@@ -400,6 +400,7 @@ void Sse2PandRegToReg				( BYTE** code, int Dest, int Source );
 void Sse2PandnRegToReg				( BYTE** code, int Dest, int Source );
 void Sse2PmulldRegToReg				( BYTE** code, int Dest, int Source );
 void Sse2PmullwRegToReg				( BYTE** code, int Dest, int Source );
+void Sse2PmullwVariableToReg		( BYTE** code, int Dest, void * Variable, char * VariableName );
 void Sse2PmulhuwRegToReg			( BYTE** code, int Dest, int Source );
 void Sse2PmulhuwVariableToReg		( BYTE** code, int Dest, void * Variable, char * VariableName );
 void Sse2PmulhwRegToReg				( BYTE** code, int Dest, int Source );

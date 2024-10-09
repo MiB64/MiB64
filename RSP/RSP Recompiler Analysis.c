@@ -78,8 +78,8 @@ BOOL IsNextRspInstructionMmx(DWORD PC) {
 	if ((RspOp.OP.I.rs & 0x10) != 0) {
 		switch (RspOp.OP.V.funct) {
 		case RSP_VECTOR_VMULF:
-		/*case RSP_VECTOR_VMUDN:
-		case RSP_VECTOR_VMUDH:*/
+		case RSP_VECTOR_VMUDN:
+		/*case RSP_VECTOR_VMUDH:*/
 			if (!IsVectorOpcodeRecompiledWithMMX(RspOp.OP.V.funct)) {
 				return FALSE;
 			}
@@ -166,19 +166,23 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 		RSP_LW_IMEM(PC, &RspOp.OP.Hex);
 
 		switch (RspOp.OP.I.op) {
- 		/*case RSP_REGIMM:
-			switch (RspOp.rt) {
-			case RSP_REGIMM_BLTZ:
+ 		case RSP_REGIMM:
+			switch (RspOp.OP.B.rt) {
+			/*case RSP_REGIMM_BLTZ:*/
 			case RSP_REGIMM_BGEZ:
-			case RSP_REGIMM_BLTZAL:
-			case RSP_REGIMM_BGEZAL:
+			/*case RSP_REGIMM_BLTZAL:
+			case RSP_REGIMM_BGEZAL:*/
+				if (Instruction_State == DELAY_SLOT) return TRUE;
 				Instruction_State = DO_DELAY_SLOT;
+				BranchTarget = (PC + ((short)RspOp.OP.B.offset << 2) + 4) & 0xFFC;
+				BranchImmed = (short)RspOp.OP.B.offset;
+				BranchMet = TRUE;
 				break;
 			default:
-				CompilerWarning("Unkown opcode in WriteToAccum\n%s",RSPOpcodeName(RspOp.Hex,PC));
+				RspCompilerWarning("Unkown opcode in WriteToAccum\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
 				return TRUE;
 			}
-			break;*/
+			break;
 		case RSP_SPECIAL:
 			switch (RspOp.OP.R.funct) {
 			case RSP_SPECIAL_SLL:
@@ -324,7 +328,7 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 			} else {
 				switch (RspOp.OP.I.rs) {
 				case RSP_COP2_CF:
-				/*case RSP_COP2_CT:*/
+				case RSP_COP2_CT:
 				case RSP_COP2_MT:
 				case RSP_COP2_MF:
 					break;
@@ -334,14 +338,14 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 				}
 			}
 			break;
-		/*case RSP_LB:
-		case RSP_LH:*/
+		/*case RSP_LB:*/
+		case RSP_LH:
 		case RSP_LW:
-		/*case RSP_LBU:
-		case RSP_LHU:*/
+		case RSP_LBU:
+		/*case RSP_LHU:*/
 		case RSP_SB:
 		case RSP_SH:
-		/*case RSP_SW:*/
+		case RSP_SW:
 			break;
 		case RSP_LC2:
 			switch (RspOp.OP.R.rd) {
@@ -506,19 +510,23 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 
 		switch (RspOp.OP.I.op) {
 
-		/*case RSP_REGIMM:
-			switch (RspOp.rt) {
+		case RSP_REGIMM:
+			switch (RspOp.OP.B.rt) {
 			case RSP_REGIMM_BLTZ:
 			case RSP_REGIMM_BGEZ:
-			case RSP_REGIMM_BLTZAL:
-			case RSP_REGIMM_BGEZAL:
+			/*case RSP_REGIMM_BLTZAL:
+			case RSP_REGIMM_BGEZAL:*/
+				if (Instruction_State == DELAY_SLOT) return TRUE;
 				Instruction_State = DO_DELAY_SLOT;
+				BranchTarget = (PC + ((short)RspOp.OP.B.offset << 2) + 4) & 0xFFC;
+				BranchImmed = (short)RspOp.OP.B.offset;
+				BranchMet = TRUE;
 				break;
 			default:
-				CompilerWarning("Unkown opcode in WriteToVectorDest\n%s",RSPOpcodeName(RspOp.Hex,PC));
+				RspCompilerWarning("Unkown opcode in WriteToVectorDest\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
 				return TRUE;
 			}
-			break;*/
+			break;
 		case RSP_SPECIAL:
 			switch (RspOp.OP.R.funct) {
 			case RSP_SPECIAL_SLL:
@@ -533,8 +541,8 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 			/*case RSP_SPECIAL_SUBU:
 			case RSP_SPECIAL_AND:*/
 			case RSP_SPECIAL_OR:
-			/*case RSP_SPECIAL_XOR:
-			case RSP_SPECIAL_NOR:*/
+			case RSP_SPECIAL_XOR:
+			/*case RSP_SPECIAL_NOR:*/
 			case RSP_SPECIAL_SLT:
 			/*case RSP_SPECIAL_SLTU:*/
 				break;
@@ -575,9 +583,9 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 		case RSP_SLTIU:*/
 		case RSP_ANDI:
 		case RSP_ORI:
-		/*case RSP_XORI:*/
+		case RSP_XORI:
 		case RSP_LUI:
-		/*case RSP_CP0:*/
+		case RSP_CP0:
 			break;
 
 		case RSP_CP2:
@@ -643,7 +651,7 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 					break;
 
 				case RSP_VECTOR_VMRG:
-				/*case RSP_VECTOR_VLT:*/
+				case RSP_VECTOR_VLT:
 				case RSP_VECTOR_VEQ:
 				case RSP_VECTOR_VNE:
 				case RSP_VECTOR_VGE:
@@ -665,9 +673,9 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 					break;
 				case RSP_COP2_MT:
 					break;
-/*				case RSP_COP2_MF:
-					if (DestReg == RspOp.rd) { return TRUE; }
-					break;*/
+				case RSP_COP2_MF:
+					if (DestReg == RspOp.OP.R.rd) { return TRUE; }
+					break;
 				default:
 					RspCompilerWarning("Unkown opcode in WriteToVectorDest\n%s",RSPOpcodeName(RspOp.OP.Hex,PC));
 					return TRUE;
@@ -705,7 +713,7 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 			break;
 		case RSP_SC2:
 			switch (RspOp.OP.R.rd) {
-			/*case RSP_LSC2_BV:*/
+			case RSP_LSC2_BV:
 			case RSP_LSC2_SV:
 			case RSP_LSC2_LV:
 			case RSP_LSC2_DV:
