@@ -932,6 +932,27 @@ void Sse2PmullwRegToReg(BYTE** code, int Dest, int Source) {
 	PUTDST8(*code, 0xC0 | x86Command);
 }
 
+void Sse2PmullwVariableToReg(BYTE** code, int Dest, void* Variable, char* VariableName) {
+	BYTE x86Command = 0;
+
+	RSP_CPU_Message("      pmullw %s, xmmword ptr %s", sse_Name(Dest), VariableName);
+
+	switch (Dest) {
+	case x86_XMM0: x86Command = 0x05; break;
+	case x86_XMM1: x86Command = 0x0D; break;
+	case x86_XMM2: x86Command = 0x15; break;
+	case x86_XMM3: x86Command = 0x1D; break;
+	case x86_XMM4: x86Command = 0x25; break;
+	case x86_XMM5: x86Command = 0x2D; break;
+	case x86_XMM6: x86Command = 0x35; break;
+	case x86_XMM7: x86Command = 0x3D; break;
+	}
+	PUTDST8(*code, 0x66);
+	PUTDST16(*code, 0xd50f);
+	PUTDST8(*code, x86Command);
+	PUTDST32(*code, Variable);
+}
+
 void Sse2PmulhuwRegToReg(BYTE** code, int Dest, int Source) {
 	BYTE x86Command = 0;
 
