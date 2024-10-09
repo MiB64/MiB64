@@ -450,10 +450,10 @@ void MmxPsrlwImmed(BYTE** code, int Dest, BYTE Immed) {
 	PUTDST8(*code, Immed);
 }
 
-/*void MmxPsrawImmed(int Dest, BYTE Immed) {
-	BYTE x86Command;
+void MmxPsrawImmed(BYTE** code, int Dest, BYTE Immed) {
+	BYTE x86Command = 0;
 
-	CPU_Message("      psraw %s, %i", mmx_Name(Dest), Immed);
+	RSP_CPU_Message("      psraw %s, %i", mmx_Name(Dest), Immed);
 
 	switch (Dest) {
 	case x86_MM0: x86Command = 0xE0; break;
@@ -466,10 +466,10 @@ void MmxPsrlwImmed(BYTE** code, int Dest, BYTE Immed) {
 	case x86_MM7: x86Command = 0xE7; break;
 	}	
 
-	PUTDST16(RecompPos,0x710f);
-	PUTDST8(RecompPos, x86Command);
-	PUTDST8(RecompPos, Immed);
-}*/
+	PUTDST16(*code,0x710f);
+	PUTDST8(*code, x86Command);
+	PUTDST8(*code, Immed);
+}
 
 void MmxPsllwImmed(BYTE** code, int Dest, BYTE Immed) {
 	BYTE x86Command = 0;

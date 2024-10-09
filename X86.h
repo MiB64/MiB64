@@ -354,8 +354,8 @@ void MmxPmullwRegToReg				( BYTE** code, int Dest, int Source );
 void MmxPmulhuwRegToReg				( BYTE** code, int Dest, int Source );
 void MmxPmulhwRegToReg				( BYTE** code, int Dest, int Source );
 void MmxPmulhwRegToVariable			( BYTE** code, int Dest, void * Variable, char * VariableName );
-void MmxPsrlwImmed					( BYTE** code,int Dest, BYTE Immed );
-/*void MmxPsrawImmed(int Dest, BYTE Immed);*/
+void MmxPsrlwImmed					( BYTE** code, int Dest, BYTE Immed );
+void MmxPsrawImmed					( BYTE** code, int Dest, BYTE Immed );
 void MmxPsllwImmed					( BYTE** code, int Dest, BYTE Immed );
 /*void MmxPaddswRegToReg(int Dest, int Source);
 void MmxPaddswVariableToReg(int Dest, void* Variable, char* VariableName);*/
@@ -453,11 +453,13 @@ void AvxVPBroadcastwVariableToReg128( BYTE** code, int Dest, void * Variable, ch
 void AvxVPMovesxWordReg128ToDwordReg256( BYTE** code, int Dest, int Source );
 void AvxVPMovesxWordVariableToDWordReg256( BYTE** code, int Dest, void * Variable, char * VariableName );
 void AvxVPMulldRegToReg256			( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPMullwRegToReg128          ( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPorRegToReg256				( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPunpckHighWordsRegToReg256	( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPunpckLowWordsRegToReg256	( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPSlldRegToReg256Immed		( BYTE** code, int Dest, int Src, BYTE Immed );
 void AvxVPSradRegToReg256Immed		( BYTE** code, int Dest, int Src, BYTE Immed );
+void AvxVPSrawRegToReg128Immed      ( BYTE** code, int Dest, int Src, BYTE Immed );
 void AvxVPSrldRegToReg256Immed		( BYTE** code, int Dest, int Src, BYTE Immed );
 void AvxVPxorRegToReg256			( BYTE** code, int Dest, int Src1, int Src2 );
 
