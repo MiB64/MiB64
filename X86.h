@@ -111,6 +111,7 @@ void DecX86reg                       ( BYTE** code, int x86Reg );
 void DivX86reg                       ( BYTE** code, int x86reg );
 void idivX86reg                      ( BYTE** code, int x86reg );
 void imulX86reg                      ( BYTE** code, int x86reg );
+void ImulX86RegToX86Reg				 ( BYTE** code, int Destination, int Source );
 void IncX86reg                       ( BYTE** code, int x86Reg );
 void JaeLabel8                       ( BYTE** code, char * Label, BYTE Value );
 void JaeLabel32                      ( BYTE** code, char * Label, DWORD Value );

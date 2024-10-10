@@ -888,6 +888,37 @@ void imulX86reg(BYTE** code, int x86reg) {
 	}
 }
 
+void ImulX86RegToX86Reg(BYTE** code, int Destination, int Source) {
+	BYTE x86Command = 0;
+
+	CPU_OR_RSP_Message(*code, "      imul %s, %s", x86_Name(Destination), x86_Name(Source));
+
+	switch (Source) {
+	case x86_EAX: x86Command = 0x00; break;
+	case x86_EBX: x86Command = 0x03; break;
+	case x86_ECX: x86Command = 0x01; break;
+	case x86_EDX: x86Command = 0x02; break;
+	case x86_ESI: x86Command = 0x06; break;
+	case x86_EDI: x86Command = 0x07; break;
+	case x86_ESP: x86Command = 0x04; break;
+	case x86_EBP: x86Command = 0x05; break;
+	}
+
+	switch (Destination) {
+	case x86_EAX: x86Command += 0xC0; break;
+	case x86_EBX: x86Command += 0xD8; break;
+	case x86_ECX: x86Command += 0xC8; break;
+	case x86_EDX: x86Command += 0xD0; break;
+	case x86_ESI: x86Command += 0xF0; break;
+	case x86_EDI: x86Command += 0xF8; break;
+	case x86_ESP: x86Command += 0xE0; break;
+	case x86_EBP: x86Command += 0xE8; break;
+	}
+
+	PUTDST16(*code, 0xAF0F);
+	PUTDST8(*code, x86Command);
+}
+
 void IncX86reg(BYTE** code, int x86Reg) {
 	CPU_OR_RSP_Message(*code, "      inc %s",x86_Name(x86Reg));
 	switch (x86Reg) {

@@ -338,7 +338,7 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 				}
 			}
 			break;
-		/*case RSP_LB:*/
+		case RSP_LB:
 		case RSP_LH:
 		case RSP_LW:
 		case RSP_LBU:
@@ -638,11 +638,12 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 				case RSP_VECTOR_VRCPH:
 				case RSP_VECTOR_VRCPL:
 				case RSP_VECTOR_VRCP:
+				case RSP_VECTOR_VRSQH:
+				case RSP_VECTOR_VRSQL:
 					if (DestReg == RspOp.OP.V.vt) { return TRUE; }
 					break;
 
 				case RSP_VECTOR_VCR:
-				/*case RSP_VECTOR_VRSQH:*/
 				case RSP_VECTOR_VCH:
 				case RSP_VECTOR_VCL:
 					if (DestReg == RspOp.OP.V.vs) { return TRUE; }
