@@ -361,10 +361,10 @@ void MmxPsllwImmed					( BYTE** code, int Dest, BYTE Immed );
 /*void MmxPaddswRegToReg(int Dest, int Source);
 void MmxPaddswVariableToReg(int Dest, void* Variable, char* VariableName);*/
 void MmxPaddwRegToReg				( BYTE** code, int Dest, int Source );
-/*void MmxPackSignedDwords(int Dest, int Source);
-void MmxUnpackLowWord(int Dest, int Source);
-void MmxUnpackHighWord(int Dest, int Source);
-void MmxCompareGreaterWordRegToReg(int Dest, int Source);*/
+void MmxPackSignedDwords			( BYTE** code, int Dest, int Source );
+void MmxUnpackLowWord				( BYTE** code, int Dest, int Source );
+void MmxUnpackHighWord				( BYTE** code, int Dest, int Source );
+/*void MmxCompareGreaterWordRegToReg(int Dest, int Source);*/
 void MmxCompareEqualWordRegToReg	( BYTE** code, int Dest, int Source );
 void MmxEmptyMultimediaState		( BYTE** code );
 
@@ -457,7 +457,9 @@ void AvxVPMovesxWordVariableToDWordReg256( BYTE** code, int Dest, void * Variabl
 void AvxVPMulldRegToReg256			( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPMullwRegToReg128          ( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPorRegToReg256				( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPunpckHighWordsRegToReg128	( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPunpckHighWordsRegToReg256	( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPunpckLowWordsRegToReg128	( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPunpckLowWordsRegToReg256	( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPSlldRegToReg256Immed		( BYTE** code, int Dest, int Src, BYTE Immed );
 void AvxVPSradRegToReg256Immed		( BYTE** code, int Dest, int Src, BYTE Immed );

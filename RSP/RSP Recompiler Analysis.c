@@ -79,7 +79,7 @@ BOOL IsNextRspInstructionMmx(DWORD PC) {
 		switch (RspOp.OP.V.funct) {
 		case RSP_VECTOR_VMULF:
 		case RSP_VECTOR_VMUDN:
-		/*case RSP_VECTOR_VMUDH:*/
+		case RSP_VECTOR_VMUDH:
 			if (!IsVectorOpcodeRecompiledWithMMX(RspOp.OP.V.funct)) {
 				return FALSE;
 			}
