@@ -80,10 +80,12 @@ void AdcX86regToVariable             ( BYTE** code, int x86reg, void * Variable,
 void AdcConstToVariable              ( BYTE** code, void *Variable, char *VariableName, BYTE Constant );
 void AdcConstToX86Reg                ( BYTE** code, int x86Reg, DWORD Const );
 void AdcVariableToX86reg             ( BYTE** code, int x86reg, void * Variable, char * VariableName );
+void AdcVariableToX86regHalf		 ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void AdcX86RegToX86Reg               ( BYTE** code, int Destination, int Source );
 void AddConstToVariable              ( BYTE** code, DWORD Const, void *Variable, char *VariableName );
 void AddConstToX86Reg                ( BYTE** code, int x86Reg, DWORD Const );
 void AddVariableToX86reg             ( BYTE** code, int x86reg, void * Variable, char * VariableName );
+void AddVariableToX86regHalf		 ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void AddX86regToVariable             ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void AddX86RegToX86Reg               ( BYTE** code, int Destination, int Source );
 void AddX86RegToX86RegHalf           ( BYTE** code, int Destination, int Source );

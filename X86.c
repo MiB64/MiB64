@@ -233,6 +233,24 @@ void AdcVariableToX86reg(BYTE** code, int x86reg, void * Variable, char * Variab
     PUTDST32(*code,Variable);
 }
 
+void AdcVariableToX86regHalf(BYTE** code, int x86reg, void* Variable, char* VariableName) {
+	CPU_OR_RSP_Message(*code, "      adc %s, word ptr [%s]", x86Half_Name(x86reg), VariableName);
+	PUTDST8(*code, 0x66);
+	switch (x86reg) {
+	case x86_EAX: PUTDST16(*code, 0x0513); break;
+	case x86_EBX: PUTDST16(*code, 0x1D13); break;
+	case x86_ECX: PUTDST16(*code, 0x0D13); break;
+	case x86_EDX: PUTDST16(*code, 0x1513); break;
+	case x86_ESI: PUTDST16(*code, 0x3513); break;
+	case x86_EDI: PUTDST16(*code, 0x3D13); break;
+	case x86_ESP: PUTDST16(*code, 0x2513); break;
+	case x86_EBP: PUTDST16(*code, 0x2D13); break;
+	default:
+		DisplayError("AdcVariableToX86reg\nUnknown x86 Register");
+	}
+	PUTDST32(*code, Variable);
+}
+
 void AdcX86RegToX86Reg(BYTE** code, int Destination, int Source) {
 	WORD x86Command = 0x0;
 
@@ -317,6 +335,24 @@ void AddVariableToX86reg(BYTE** code, int x86reg, void * Variable, char * Variab
 		DisplayError("AddVariableToX86reg\nUnknown x86 Register");
 	}
     PUTDST32(*code,Variable);
+}
+
+void AddVariableToX86regHalf(BYTE** code, int x86reg, void* Variable, char* VariableName) {
+	CPU_OR_RSP_Message(*code, "      add %s, word ptr [%s]", x86Half_Name(x86reg), VariableName);
+	PUTDST8(*code, 0x66);
+	switch (x86reg) {
+	case x86_EAX: PUTDST16(*code, 0x0503); break;
+	case x86_EBX: PUTDST16(*code, 0x1D03); break;
+	case x86_ECX: PUTDST16(*code, 0x0D03); break;
+	case x86_EDX: PUTDST16(*code, 0x1503); break;
+	case x86_ESI: PUTDST16(*code, 0x3503); break;
+	case x86_EDI: PUTDST16(*code, 0x3D03); break;
+	case x86_ESP: PUTDST16(*code, 0x2503); break;
+	case x86_EBP: PUTDST16(*code, 0x2D03); break;
+	default:
+		DisplayError("AddVariableToX86reg\nUnknown x86 Register");
+	}
+	PUTDST32(*code, Variable);
 }
 
 void AddX86regToVariable(BYTE** code, int x86reg, void * Variable, char * VariableName) {
