@@ -226,7 +226,7 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 
 		case RSP_BEQ:
 		case RSP_BNE:
-		/*case RSP_BLEZ:*/
+		case RSP_BLEZ:
 		case RSP_BGTZ:
 			if (Instruction_State == DELAY_SLOT) return TRUE;
 			Instruction_State = DO_DELAY_SLOT;
@@ -242,7 +242,7 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 		case RSP_ORI:
 		/*case RSP_XORI:*/
 		case RSP_LUI:
-		/*case RSP_CP0:*/
+		case RSP_CP0:
 			break;
 
 		case RSP_CP2:
@@ -292,9 +292,9 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 				case RSP_VECTOR_VXOR:
 				/*case RSP_VECTOR_VNXOR:
 				case RSP_VECTOR_VCR:
-				case RSP_VECTOR_VCH:
+				case RSP_VECTOR_VCH:*/
 				case RSP_VECTOR_VCL:
-				case RSP_VECTOR_VRCP:
+				/*case RSP_VECTOR_VRCP:
 				case RSP_VECTOR_VRCPL: // hope this is ok
 				case RSP_VECTOR_VRCPH:
 				case RSP_VECTOR_VRSQL:
@@ -458,9 +458,7 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 				return FALSE;
 			} else {
 				/* otherwise this is completely valid */
-/*				return BranchTaken;*/
-				LogMessage("TODO: WriteToAccum2 check branch, forward, valid");
-				return FALSE;
+				return BranchTaken;
 			}
 		}
 	} else {

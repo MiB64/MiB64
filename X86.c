@@ -180,6 +180,24 @@ void AdcX86regToVariable(BYTE** code, int x86reg, void * Variable, char * Variab
     PUTDST32(*code,Variable);
 }
 
+void AdcX86RegToVariableHalf(BYTE** code, void* Variable, char* VariableName, int x86reg) {
+	CPU_OR_RSP_Message(*code, "      adc word ptr [%s], %s", VariableName, x86Half_Name(x86reg));
+	PUTDST8(*code, 0x66);
+	switch (x86reg) {
+	case x86_EAX: PUTDST16(*code, 0x0511); break;
+	case x86_EBX: PUTDST16(*code, 0x1D11); break;
+	case x86_ECX: PUTDST16(*code, 0x0D11); break;
+	case x86_EDX: PUTDST16(*code, 0x1511); break;
+	case x86_ESI: PUTDST16(*code, 0x3511); break;
+	case x86_EDI: PUTDST16(*code, 0x3D11); break;
+	case x86_ESP: PUTDST16(*code, 0x2511); break;
+	case x86_EBP: PUTDST16(*code, 0x2D11); break;
+	default:
+		DisplayError("AddVariableToX86reg\nUnknown x86 Register");
+	}
+	PUTDST32(*code, Variable);
+}
+
 void AdcConstToVariable(BYTE** code,void *Variable, char *VariableName, BYTE Constant) {
 	CPU_OR_RSP_Message(*code, "      adc dword ptr [%s], %Xh", VariableName, Constant);
 	PUTDST16(*code,0x1583);
@@ -370,6 +388,24 @@ void AddX86regToVariable(BYTE** code, int x86reg, void * Variable, char * Variab
 		DisplayError("AddVariableToX86reg\nUnknown x86 Register");
 	}
     PUTDST32(*code,Variable);
+}
+
+void AddX86RegToVariableHalf(BYTE** code, void* Variable, char* VariableName, int x86reg) {
+	CPU_OR_RSP_Message(*code, "      add word ptr [%s], %s", VariableName, x86Half_Name(x86reg));
+	PUTDST8(*code, 0x66);
+	switch (x86reg) {
+	case x86_EAX: PUTDST16(*code, 0x0501); break;
+	case x86_EBX: PUTDST16(*code, 0x1D01); break;
+	case x86_ECX: PUTDST16(*code, 0x0D01); break;
+	case x86_EDX: PUTDST16(*code, 0x1501); break;
+	case x86_ESI: PUTDST16(*code, 0x3501); break;
+	case x86_EDI: PUTDST16(*code, 0x3D01); break;
+	case x86_ESP: PUTDST16(*code, 0x2501); break;
+	case x86_EBP: PUTDST16(*code, 0x2D01); break;
+	default:
+		DisplayError("AddVariableToX86reg\nUnknown x86 Register");
+	}
+	PUTDST32(*code, Variable);
 }
 
 void AddX86RegToX86Reg(BYTE** code, int Destination, int Source) {

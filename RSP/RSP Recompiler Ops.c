@@ -5365,8 +5365,8 @@ void CompileRsp_Vector_VMACF ( void ) {
 	int count, el, del;
 
 	BOOL bOptimize = ((RSPOpC.OP.V.element & 0x0f) >= 8) ? TRUE : FALSE;
-	/*BOOL bWriteToDest = WriteToVectorDest(RSPOpC.sa, CompilePC);
-	BOOL bWriteToAccum = WriteToAccum(EntireAccum, CompilePC);*/
+	BOOL bWriteToDest = WriteToVectorDest(RSPOpC.OP.V.vd, RspCompilePC);
+	BOOL bWriteToAccum = WriteToAccum(EntireAccum, RspCompilePC);
 
 	#ifndef CompileVmacf
 	InterpreterFallback((void*)RSP_Vector_VMACF,"RSP_Vector_VMACF"); return;
@@ -5374,7 +5374,11 @@ void CompileRsp_Vector_VMACF ( void ) {
 
 	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
-	/*if (bWriteToDest == TRUE)*/ {
+	if (bWriteToDest == FALSE && bWriteToAccum == FALSE) {
+		return;
+	}
+
+	if (bWriteToDest == TRUE) {
 		/*
 		 * Prepare for conditional moves
 		 */
@@ -5409,15 +5413,24 @@ void CompileRsp_Vector_VMACF ( void ) {
 		MoveX86RegToX86Reg(&RspRecompPos, x86_EDX, x86_ECX);
 		ShiftRightSignImmed(&RspRecompPos, x86_ECX, 16);
 
-		AddVariableToX86regHalf(&RspRecompPos, x86_EAX, &RSP_ACCUM_LOW.UHW[el], "RSP_ACCUM_LOW.UHW[el]");
-		AdcVariableToX86regHalf(&RspRecompPos, x86_EDX, &RSP_ACCUM_MID.UHW[el], "RSP_ACCUM_MID.UHW[el]");
-		AdcVariableToX86regHalf(&RspRecompPos, x86_ECX, &RSP_ACCUM_HIGH.UHW[el], "RSP_ACCUM_HIGH.UHW[el]");
+		if (bWriteToAccum == TRUE && bWriteToDest == FALSE) {
+			AddX86RegToVariableHalf(&RspRecompPos, &RSP_ACCUM_LOW.UHW[el], "RSP_ACCUM_LOW.UHW[el]", x86_EAX);
+			AdcX86RegToVariableHalf(&RspRecompPos, &RSP_ACCUM_MID.UHW[el], "RSP_ACCUM_MID.UHW[el]", x86_EDX);
+			AdcX86RegToVariableHalf(&RspRecompPos, &RSP_ACCUM_HIGH.UHW[el], "RSP_ACCUM_HIGH.UHW[el]", x86_ECX);
+		}
+		else {
+			AddVariableToX86regHalf(&RspRecompPos, x86_EAX, &RSP_ACCUM_LOW.UHW[el], "RSP_ACCUM_LOW.UHW[el]");
+			AdcVariableToX86regHalf(&RspRecompPos, x86_EDX, &RSP_ACCUM_MID.UHW[el], "RSP_ACCUM_MID.UHW[el]");
+			AdcVariableToX86regHalf(&RspRecompPos, x86_ECX, &RSP_ACCUM_HIGH.UHW[el], "RSP_ACCUM_HIGH.UHW[el]");
 
-		MoveX86regHalfToVariable(&RspRecompPos, x86_EAX, &RSP_ACCUM_LOW.UHW[el], "RSP_ACCUM_LOW.UHW[el]");
-		MoveX86regHalfToVariable(&RspRecompPos, x86_EDX, &RSP_ACCUM_MID.UHW[el], "RSP_ACCUM_MID.UHW[el]");
-		MoveX86regHalfToVariable(&RspRecompPos, x86_ECX, &RSP_ACCUM_HIGH.UHW[el], "RSP_ACCUM_HIGH.UHW[el]");
+			if (bWriteToAccum == TRUE) {
+				MoveX86regHalfToVariable(&RspRecompPos, x86_EAX, &RSP_ACCUM_LOW.UHW[el], "RSP_ACCUM_LOW.UHW[el]");
+				MoveX86regHalfToVariable(&RspRecompPos, x86_EDX, &RSP_ACCUM_MID.UHW[el], "RSP_ACCUM_MID.UHW[el]");
+				MoveX86regHalfToVariable(&RspRecompPos, x86_ECX, &RSP_ACCUM_HIGH.UHW[el], "RSP_ACCUM_HIGH.UHW[el]");
+			}
+		}
 
-		/*if (bWriteToDest == TRUE)*/ {
+		if (bWriteToDest == TRUE) {
 			AndConstToX86Reg(&RspRecompPos, x86_EDX, 0xFFFF);
 			ShiftLeftSignImmed(&RspRecompPos, x86_ECX, 16);
 			OrX86RegToX86Reg(&RspRecompPos, x86_EDX, x86_ECX);
