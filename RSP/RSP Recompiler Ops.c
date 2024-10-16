@@ -5360,6 +5360,118 @@ void CompileRsp_Vector_VMUDH ( void ) {
 	}
 }
 
+static BOOL Compile_Vector_VMACF_SSE2(BOOL writeToVectorDest, BOOL writeToAccum) {
+	char Reg[256];
+
+	/* Do our SSE checks here */
+	if (IsSseEnabled == FALSE || IsSse2Enabled == FALSE)
+		return FALSE;
+
+	// load vs and vt
+	sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vs);
+	SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vs].UHW[0], Reg, x86_XMM1, SseType_QuadWord, TRUE);
+
+	if ((RSPOpC.OP.V.element & 0xF) < 2) {
+		sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vt);
+		SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_Vect[RSPOpC.OP.V.vt].UHW[0], Reg, x86_XMM2, SseType_QuadWord, TRUE);
+	}
+	else if ((RSPOpC.OP.V.element & 0xF) >= 8) {
+		RSP_Element2Sse(x86_XMM2);
+	}
+	else {
+		RSP_MultiElement2Sse(x86_XMM2);
+	}
+
+	// 3 is low vs * vt
+	SseMoveRegToReg(&RspRecompPos, x86_XMM3, x86_XMM2, SseType_QuadWord, TRUE);
+	Sse2PmullwRegToReg(&RspRecompPos, x86_XMM3, x86_XMM1);
+
+	// 4 is low (vs * vt) << 1
+	SseMoveRegToReg(&RspRecompPos, x86_XMM4, x86_XMM3, SseType_QuadWord, TRUE);
+	Sse2PsllwImmed(&RspRecompPos, x86_XMM4, 1);
+
+	// 5 is unsigned low sum and 6 is signed low sum
+	SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_ACCUM_LOW.UHW[0], "RSP_ACCUM_LOW", x86_XMM6, SseType_QuadWord, TRUE);
+	SseMoveRegToReg(&RspRecompPos, x86_XMM5, x86_XMM6, SseType_QuadWord, TRUE);
+	Sse2PaddwRegToReg(&RspRecompPos, x86_XMM5, x86_XMM4);
+	Sse2PadduswRegToReg(&RspRecompPos, x86_XMM6, x86_XMM4);
+	if (writeToAccum) {
+		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM5, &RSP_ACCUM_LOW.UHW[0], "RSP_ACCUM_LOW", SseType_QuadWord, TRUE);
+	}
+
+	// compute carry in 5
+	Sse2CompareEqualWordRegToReg(&RspRecompPos, x86_XMM5, x86_XMM6);
+	Sse2CompareEqualDWordRegToReg(&RspRecompPos, x86_XMM6, x86_XMM6);
+	Sse2PandnRegToReg(&RspRecompPos, x86_XMM5, x86_XMM6);
+	Sse2PsrlwImmed(&RspRecompPos, x86_XMM5, 15);
+
+	// 2 is high vs * vt
+	Sse2PmulhwRegToReg(&RspRecompPos, x86_XMM2, x86_XMM1);
+
+	// 1 and 2 are the high part shifted to add to accum
+	SseMoveRegToReg(&RspRecompPos, x86_XMM1, x86_XMM2, SseType_QuadWord, TRUE);
+	Sse2PsrlwImmed(&RspRecompPos, x86_XMM3, 15);
+	Sse2PsllwImmed(&RspRecompPos, x86_XMM1, 1);
+	Sse2PorRegToReg(&RspRecompPos, x86_XMM1, x86_XMM3);
+
+	Sse2PsrawImmed(&RspRecompPos, x86_XMM2, 15);
+
+	// 0 and 1 are merged 32 bits of the high/mid parts of the mult result
+	SseMoveRegToReg(&RspRecompPos, x86_XMM0, x86_XMM1, SseType_QuadWord, TRUE);
+	Sse2PunpckLowWordsRegToReg(&RspRecompPos, x86_XMM0, x86_XMM2);
+	Sse2PunpckHighWordsRegToReg(&RspRecompPos, x86_XMM1, x86_XMM2);
+
+	// 4 and 5 are sign extended carry
+	Sse2MoveSxWordRegToDWordReg(&RspRecompPos, x86_XMM4, x86_XMM5, IsSse41Enabled);
+	Sse2ShuffleDWordsRegToReg(&RspRecompPos, x86_XMM5, x86_XMM5, _MMX_SHUFFLE(3, 2, 3, 2));
+	Sse2MoveSxWordRegToDWordReg(&RspRecompPos, x86_XMM5, x86_XMM5, IsSse41Enabled);
+
+	// add carry
+	Sse2PadddRegToReg(&RspRecompPos, x86_XMM0, x86_XMM4);
+	Sse2PadddRegToReg(&RspRecompPos, x86_XMM1, x86_XMM5);
+
+	// load in 4 and 5 high|mid accum
+	SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_ACCUM_HIGH.UHW[0], "RSP_ACCUM_HIGH", x86_XMM6, SseType_QuadWord, TRUE);
+	SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_ACCUM_MID.UHW[0], "RSP_ACCUM_MID", x86_XMM4, SseType_QuadWord, TRUE);
+	SseMoveRegToReg(&RspRecompPos, x86_XMM5, x86_XMM4, SseType_QuadWord, TRUE);
+	Sse2PunpckLowWordsRegToReg(&RspRecompPos, x86_XMM4, x86_XMM6);
+	Sse2PunpckHighWordsRegToReg(&RspRecompPos, x86_XMM5, x86_XMM6);
+
+	// add accum
+	Sse2PadddRegToReg(&RspRecompPos, x86_XMM0, x86_XMM4);
+	Sse2PadddRegToReg(&RspRecompPos, x86_XMM1, x86_XMM5);
+
+	int destAccumReg = x86_XMM0;
+
+	if (writeToVectorDest) {
+		if (writeToAccum) {
+			SseMoveRegToReg(&RspRecompPos, x86_XMM2, x86_XMM0, SseType_QuadWord, TRUE);
+			destAccumReg = x86_XMM2;
+		}
+		Sse2PackSignedDWordRegToWordReg(&RspRecompPos, x86_XMM0, x86_XMM1);
+		sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vd);
+		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM0, &RSP_Vect[RSPOpC.OP.V.vd].HW[0], Reg, SseType_QuadWord, TRUE);
+	}
+
+	if (writeToAccum) {
+		SseMoveRegToReg(&RspRecompPos, x86_XMM3, destAccumReg, SseType_QuadWord, TRUE);
+		SseMoveRegToReg(&RspRecompPos, x86_XMM4, x86_XMM1, SseType_QuadWord, TRUE);
+		Sse2PsradImmed(&RspRecompPos, x86_XMM3, 16);
+		Sse2PsradImmed(&RspRecompPos, x86_XMM4, 16);
+		Sse2PackSignedDWordRegToWordReg(&RspRecompPos, x86_XMM3, x86_XMM4);
+		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM3, &RSP_ACCUM_HIGH.UHW[0], "RSP_ACCUM_HIGH", SseType_QuadWord, TRUE);
+
+		Sse2PslldImmed(&RspRecompPos, destAccumReg, 16);
+		Sse2PslldImmed(&RspRecompPos, x86_XMM1, 16);
+		Sse2PsradImmed(&RspRecompPos, destAccumReg, 16);
+		Sse2PsradImmed(&RspRecompPos, x86_XMM1, 16);
+		Sse2PackSignedDWordRegToWordReg(&RspRecompPos, destAccumReg, x86_XMM1);
+		SseMoveAlignedRegToVariable(&RspRecompPos, destAccumReg, &RSP_ACCUM_MID.UHW[0], "RSP_ACCUM_MID", SseType_QuadWord, TRUE);
+	}
+
+	return TRUE;
+}
+
 void CompileRsp_Vector_VMACF ( void ) {
 	char Reg[256];
 	int count, el, del;
@@ -5375,6 +5487,10 @@ void CompileRsp_Vector_VMACF ( void ) {
 	RSP_CPU_Message("  %X %s",RspCompilePC,RSPOpcodeName(RSPOpC.OP.Hex,RspCompilePC));
 
 	if (bWriteToDest == FALSE && bWriteToAccum == FALSE) {
+		return;
+	}
+
+	if (TRUE == Compile_Vector_VMACF_SSE2(bWriteToDest, bWriteToAccum)) {
 		return;
 	}
 
