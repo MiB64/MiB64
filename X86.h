@@ -466,6 +466,7 @@ void AvxVPunpckHighWordsRegToReg256	( BYTE** code, int Dest, int Src1, int Src2 
 void AvxVPunpckLowWordsRegToReg128	( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPunpckLowWordsRegToReg256	( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPSlldRegToReg256Immed		( BYTE** code, int Dest, int Src, BYTE Immed );
+void AvxVPSllwRegToReg128Immed		( BYTE** code, int Dest, int Src, BYTE Immed );
 void AvxVPSradRegToReg256Immed		( BYTE** code, int Dest, int Src, BYTE Immed );
 void AvxVPSrawRegToReg128Immed      ( BYTE** code, int Dest, int Src, BYTE Immed );
 void AvxVPSrldRegToReg256Immed		( BYTE** code, int Dest, int Src, BYTE Immed );

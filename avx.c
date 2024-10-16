@@ -676,6 +676,39 @@ void AvxVPSlldRegToReg256Immed(BYTE** code, int Dest, int Src, BYTE Immed) {
 	PUTDST8(*code, Immed);
 }
 
+void AvxVPSllwRegToReg128Immed(BYTE** code, int Dest, int Src, BYTE Immed) {
+	BYTE x86Command = 0;
+	BYTE x86Dest = 0;
+
+	RSP_CPU_Message("      vpsllw %s, %s, %i", sse_Name(Dest), sse_Name(Src), Immed);
+
+	switch (Dest) {
+	case x86_XMM0: x86Dest = 0xf9; break;
+	case x86_XMM1: x86Dest = 0xf1; break;
+	case x86_XMM2: x86Dest = 0xe9; break;
+	case x86_XMM3: x86Dest = 0xe1; break;
+	case x86_XMM4: x86Dest = 0xd9; break;
+	case x86_XMM5: x86Dest = 0xd1; break;
+	case x86_XMM6: x86Dest = 0xc9; break;
+	case x86_XMM7: x86Dest = 0xc1; break;
+	}
+	switch (Src) {
+	case x86_XMM0: x86Command = 0xf0; break;
+	case x86_XMM1: x86Command = 0xf1; break;
+	case x86_XMM2: x86Command = 0xf2; break;
+	case x86_XMM3: x86Command = 0xf3; break;
+	case x86_XMM4: x86Command = 0xf4; break;
+	case x86_XMM5: x86Command = 0xf5; break;
+	case x86_XMM6: x86Command = 0xf6; break;
+	case x86_XMM7: x86Command = 0xf7; break;
+	}
+	PUTDST8(*code, 0xc5);
+	PUTDST8(*code, x86Dest);
+	PUTDST8(*code, 0x71);
+	PUTDST8(*code, x86Command);
+	PUTDST8(*code, Immed);
+}
+
 void AvxVPSradRegToReg256Immed(BYTE** code, int Dest, int Src, BYTE Immed) {
 	BYTE x86Command = 0;
 	BYTE x86Dest = 0;
