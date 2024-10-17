@@ -291,8 +291,8 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 				case RSP_VECTOR_VOR:
 				case RSP_VECTOR_VXOR:
 				/*case RSP_VECTOR_VNXOR:
-				case RSP_VECTOR_VCR:
-				case RSP_VECTOR_VCH:*/
+				case RSP_VECTOR_VCR:*/
+				case RSP_VECTOR_VCH:
 				case RSP_VECTOR_VCL:
 				/*case RSP_VECTOR_VRCP:
 				case RSP_VECTOR_VRCPL: // hope this is ok
