@@ -585,6 +585,36 @@ void Sse2CompareGreaterWordRegToReg(BYTE** code, int Dest, int Source) {
 	PUTDST8(*code, 0xC0 | x86Command);
 }
 
+void Sse2CompareGreaterDWordRegToReg(BYTE** code, int Dest, int Source) {
+	BYTE x86Command = 0;
+
+	RSP_CPU_Message("      pcmpgtd %s, %s", sse_Name(Dest), sse_Name(Source));
+
+	switch (Dest) {
+	case x86_XMM0: x86Command = 0 << 3; break;
+	case x86_XMM1: x86Command = 1 << 3; break;
+	case x86_XMM2: x86Command = 2 << 3; break;
+	case x86_XMM3: x86Command = 3 << 3; break;
+	case x86_XMM4: x86Command = 4 << 3; break;
+	case x86_XMM5: x86Command = 5 << 3; break;
+	case x86_XMM6: x86Command = 6 << 3; break;
+	case x86_XMM7: x86Command = 7 << 3; break;
+	}
+	switch (Source) {
+	case x86_XMM0: x86Command |= 0; break;
+	case x86_XMM1: x86Command |= 1; break;
+	case x86_XMM2: x86Command |= 2; break;
+	case x86_XMM3: x86Command |= 3; break;
+	case x86_XMM4: x86Command |= 4; break;
+	case x86_XMM5: x86Command |= 5; break;
+	case x86_XMM6: x86Command |= 6; break;
+	case x86_XMM7: x86Command |= 7; break;
+	}
+	PUTDST8(*code, 0x66);
+	PUTDST16(*code, 0x660f);
+	PUTDST8(*code, 0xC0 | x86Command);
+}
+
 void Sse2MoveQWordRegToReg(BYTE** code, int Dest, int Source) {
 	BYTE x86Command = 0;
 

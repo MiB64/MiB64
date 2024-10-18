@@ -393,6 +393,7 @@ void Sse2CompareEqualDWordRegToReg	( BYTE** code, int Dest, int Source );
 void Sse2CompareEqualDWordVariableToReg( BYTE** code, int Dest, void * Variable, char * VariableName );
 void Sse2CompareEqualWordRegToReg	( BYTE** code, int Dest, int Source );
 void Sse2CompareGreaterWordRegToReg	( BYTE** code, int Dest, int Source );
+void Sse2CompareGreaterDWordRegToReg( BYTE** code, int Dest, int Source );
 void Sse2MoveQWordRegToReg			( BYTE** code, int Dest, int Source );
 void Sse2MoveSxWordRegToDWordReg	( BYTE** code, int Dest, int Source, BOOL SSE41Supported );
 void Sse2PackSignedDWordRegToWordReg( BYTE** code, int Dest, int Source );
