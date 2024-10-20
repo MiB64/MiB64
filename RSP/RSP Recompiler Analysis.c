@@ -274,6 +274,10 @@ static DWORD WriteToAccum2 (int Location, int PC, BOOL RecursiveCall) {
 						if ((RspOp.OP.V.vs & 1) == 0) return TRUE;
 					}
 					break;
+				case RSP_VECTOR_VMACQ:
+					if ((Location & High16BitAccum) != 0) return TRUE;
+					if ((Location & Middle16BitAccum) != 0) return TRUE;
+					break;
 				case RSP_VECTOR_VMADL:
 				case RSP_VECTOR_VMADM:
 				case RSP_VECTOR_VMADN:
@@ -612,6 +616,9 @@ static BOOL WriteToVectorDest2 (DWORD DestReg, int PC, BOOL RecursiveCall) {
 					break;
 				case RSP_VECTOR_VRNDN:
 					if (DestReg == RspOp.OP.V.vt) { return TRUE; }
+					if (DestReg == RspOp.OP.V.vd) { return FALSE; }
+					break;
+				case RSP_VECTOR_VMACQ:
 					if (DestReg == RspOp.OP.V.vd) { return FALSE; }
 					break;
 				case RSP_VECTOR_VMADL:

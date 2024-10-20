@@ -446,12 +446,14 @@ void SseShuffleReg(int Dest, int Source, BYTE Immed);*/
 
 void AvxCompareEqualDWordRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxCompareGreaterDWordRegToReg256( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxCompareGreaterWordRegToReg128( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVExtracti128RegToReg		( BYTE** code , int Dest, int Src, BOOL msb );
 void AvxVInserti128RegToReg			( BYTE** code, int Dest, int Src1, int Src2, BOOL msb );
 void AvxVPackSignedDWordRegToWordReg128( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPackUnsignedDWordRegToWordReg128( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPAdddRegToReg256			( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPAddwRegToReg128			( BYTE** code, int Dest, int Src1, int Src2 );
+void AvxVPandRegToReg128			( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPandnRegToReg128			( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPandnRegToReg256			( BYTE** code, int Dest, int Src1, int Src2 );
 void AvxVPBlendvbRegToReg256		( BYTE** code, int Dest, int Src1, int Src2, int Src3Mask );
