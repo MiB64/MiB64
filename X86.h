@@ -108,7 +108,9 @@ void CompX86regToVariable            ( BYTE** code, int x86Reg, void * Variable,
 void CompVariableToX86reg	         ( BYTE** code, int x86Reg, void * Variable, char * VariableName );
 void CompX86RegToX86Reg              ( BYTE** code, int Destination, int Source );
 void CondMoveEqual                   ( BYTE** code, int Destination, int Source );
+void CondMoveNotEqual				 ( BYTE** code, int Destination, int Source );
 void CondMoveGreater                 ( BYTE** code, int Destination, int Source );
+void CondMoveGreaterEqual			 ( BYTE** code, int Destination, int Source );
 void CondMoveLess                    ( BYTE** code, int Destination, int Source );
 void Cwde                            ( BYTE** code );
 void DecX86reg                       ( BYTE** code, int x86Reg );
