@@ -6246,6 +6246,162 @@ void CompileRsp_Vector_VRNDN(void) {
 	}
 }
 
+static BOOL Compile_Vector_VMACQ_SSE2(BOOL writeToVectorDest, BOOL writeToAccum) {
+	char Reg[256];
+
+	/* Do our SSE checks here */
+	if (IsSseEnabled == FALSE || IsSse2Enabled == FALSE)
+		return FALSE;
+
+	SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_ACCUM_HIGH.UHW[0], "RSP_ACCUM_HIGH", x86_XMM3, SseType_QuadWord, TRUE);
+	SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_ACCUM_MID.UHW[0], "RSP_ACCUM_MID", x86_XMM1, SseType_QuadWord, TRUE);
+	SseMoveRegToReg(&RspRecompPos, x86_XMM2, x86_XMM1, SseType_QuadWord, TRUE);
+	Sse2PunpckHighWordsRegToReg(&RspRecompPos, x86_XMM2, x86_XMM3);
+	Sse2PunpckLowWordsRegToReg(&RspRecompPos, x86_XMM1, x86_XMM3);
+
+	// init the value to add to either 0x20 or -0x20 depending on the accumlator sign (in xmm3 and xmm4)
+	SseMoveRegToReg(&RspRecompPos, x86_XMM3, x86_XMM1, SseType_QuadWord, TRUE);
+	SseMoveRegToReg(&RspRecompPos, x86_XMM4, x86_XMM2, SseType_QuadWord, TRUE);
+	Sse2PsradImmed(&RspRecompPos, x86_XMM3, 30);
+	Sse2PsradImmed(&RspRecompPos, x86_XMM4, 30);
+	Sse2CompareEqualDWordRegToReg(&RspRecompPos, x86_XMM0, x86_XMM0); // xmm0=~0
+	Sse2PxorRegToReg(&RspRecompPos, x86_XMM3, x86_XMM0);
+	Sse2PxorRegToReg(&RspRecompPos, x86_XMM4, x86_XMM0);
+	Sse2PsrldImmed(&RspRecompPos, x86_XMM0, 31); // xmm0=1
+	Sse2PorRegToReg(&RspRecompPos, x86_XMM3, x86_XMM0);
+	Sse2PorRegToReg(&RspRecompPos, x86_XMM4, x86_XMM0);
+	Sse2PslldImmed(&RspRecompPos, x86_XMM3, 5);
+	Sse2PslldImmed(&RspRecompPos, x86_XMM4, 5);
+
+	// make it 0 when accumulator is in the [0,0x20] range (in xmm5 and xmm6)
+	SseMoveRegToReg(&RspRecompPos, x86_XMM5, x86_XMM1, SseType_QuadWord, TRUE);
+	SseMoveRegToReg(&RspRecompPos, x86_XMM6, x86_XMM2, SseType_QuadWord, TRUE);
+	Sse2PsradImmed(&RspRecompPos, x86_XMM5, 6);
+	Sse2PsradImmed(&RspRecompPos, x86_XMM6, 6);
+	Sse2PxorRegToReg(&RspRecompPos, x86_XMM7, x86_XMM7);
+	Sse2CompareEqualDWordRegToReg(&RspRecompPos, x86_XMM5, x86_XMM7);
+	Sse2CompareEqualDWordRegToReg(&RspRecompPos, x86_XMM6, x86_XMM7);
+	Sse2PandnRegToReg(&RspRecompPos, x86_XMM5, x86_XMM3);
+	Sse2PandnRegToReg(&RspRecompPos, x86_XMM6, x86_XMM4);
+
+	// make it 0 too if bit 0x20 is set in accumulator (in xmm3 and xmm4)
+	Sse2PslldImmed(&RspRecompPos, x86_XMM0, 5); // xmm0=0x20
+	SseMoveRegToReg(&RspRecompPos, x86_XMM3, x86_XMM1, SseType_QuadWord, TRUE);
+	SseMoveRegToReg(&RspRecompPos, x86_XMM4, x86_XMM2, SseType_QuadWord, TRUE);
+	Sse2PandRegToReg(&RspRecompPos, x86_XMM3, x86_XMM0);
+	Sse2PandRegToReg(&RspRecompPos, x86_XMM4, x86_XMM0);
+	Sse2CompareEqualDWordRegToReg(&RspRecompPos, x86_XMM3, x86_XMM7);
+	Sse2CompareEqualDWordRegToReg(&RspRecompPos, x86_XMM4, x86_XMM7);
+	Sse2PandRegToReg(&RspRecompPos, x86_XMM3, x86_XMM5);
+	Sse2PandRegToReg(&RspRecompPos, x86_XMM4, x86_XMM6);
+
+	// add result to accumulator
+	Sse2PadddRegToReg(&RspRecompPos, x86_XMM1, x86_XMM3);
+	Sse2PadddRegToReg(&RspRecompPos, x86_XMM2, x86_XMM4);
+
+	if (writeToAccum) {
+		SseMoveRegToReg(&RspRecompPos, x86_XMM3, x86_XMM1, SseType_QuadWord, TRUE);
+		SseMoveRegToReg(&RspRecompPos, x86_XMM4, x86_XMM2, SseType_QuadWord, TRUE);
+		Sse2PsradImmed(&RspRecompPos, x86_XMM3, 16);
+		Sse2PsradImmed(&RspRecompPos, x86_XMM4, 16);
+		Sse2PackSignedDWordRegToWordReg(&RspRecompPos, x86_XMM3, x86_XMM4);
+
+		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM3, &RSP_ACCUM_HIGH.UHW[0], "RSP_ACCUM_HIGH", SseType_QuadWord, TRUE);
+
+		int reg1 = x86_XMM1;
+		int reg2 = x86_XMM2;
+		if (WriteToVectorDest) {
+			SseMoveRegToReg(&RspRecompPos, x86_XMM3, x86_XMM1, SseType_QuadWord, TRUE);
+			SseMoveRegToReg(&RspRecompPos, x86_XMM4, x86_XMM2, SseType_QuadWord, TRUE);
+			reg1 = x86_XMM3;
+			reg2 = x86_XMM4;
+		}
+		Sse2PslldImmed(&RspRecompPos, reg1, 16);
+		Sse2PslldImmed(&RspRecompPos, reg2, 16);
+		Sse2PsradImmed(&RspRecompPos, reg1, 16);
+		Sse2PsradImmed(&RspRecompPos, reg2, 16);
+		Sse2PackSignedDWordRegToWordReg(&RspRecompPos, reg1, reg2);
+
+		SseMoveAlignedRegToVariable(&RspRecompPos, reg1, &RSP_ACCUM_MID.UHW[0], "RSP_ACCUM_MID", SseType_QuadWord, TRUE);
+	}
+
+	if (writeToVectorDest) {
+		Sse2PsradImmed(&RspRecompPos, x86_XMM1, 1);
+		Sse2PsradImmed(&RspRecompPos, x86_XMM2, 1);
+		Sse2PackSignedDWordRegToWordReg(&RspRecompPos, x86_XMM1, x86_XMM2);
+		Sse2PsrawImmed(&RspRecompPos, x86_XMM1, 4);
+		Sse2PsllwImmed(&RspRecompPos, x86_XMM1, 4);
+
+		sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vd);
+		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM1, &RSP_Vect[RSPOpC.OP.V.vd].UHW[0], Reg, SseType_QuadWord, TRUE);
+	}
+
+	return TRUE;
+}
+
+static BOOL Compile_Vector_VMACQ_AVX(BOOL writeToVectorDest, BOOL writeToAccum) {
+	char Reg[256];
+
+	/* Do our SSE checks here */
+	if (IsAvxEnabled == FALSE || IsAvx2Enabled == FALSE || IsSseEnabled == FALSE || IsSse2Enabled == FALSE)
+		return FALSE;
+
+	SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_ACCUM_HIGH.UHW[0], "RSP_ACCUM_HIGH", x86_XMM3, SseType_QuadWord, TRUE);
+	SseMoveAlignedVariableToReg(&RspRecompPos, &RSP_ACCUM_MID.UHW[0], "RSP_ACCUM_MID", x86_XMM1, SseType_QuadWord, TRUE);
+	AvxVPunpckHighWordsRegToReg256(&RspRecompPos, x86_YMM4, x86_YMM1, x86_YMM3);
+	AvxVPunpckLowWordsRegToReg256(&RspRecompPos, x86_YMM3, x86_YMM1, x86_YMM3);
+	AvxVInserti128RegToReg(&RspRecompPos, x86_YMM1, x86_YMM3, x86_XMM4, TRUE);
+
+	// init the value to add to either 0x20 or -0x20 depending on the accumlator sign (in ymm2)
+	AvxVPSradRegToReg256Immed(&RspRecompPos, x86_YMM2, x86_YMM1, 30);
+	AvxCompareEqualDWordRegToReg256(&RspRecompPos, x86_YMM0, x86_YMM0, x86_YMM0); // ymm0=~0
+	AvxVPxorRegToReg256(&RspRecompPos, x86_YMM2, x86_YMM2, x86_YMM0);
+	AvxVPSrldRegToReg256Immed(&RspRecompPos, x86_YMM7, x86_YMM0, 31); // ymm7=1
+	AvxVPorRegToReg256(&RspRecompPos, x86_YMM2, x86_YMM2, x86_YMM7);
+	AvxVPSlldRegToReg256Immed(&RspRecompPos, x86_YMM2, x86_YMM2, 5);
+
+	// make it 0 when accumulator is in the [0,0x20] range (in ymm2)
+	AvxVPSradRegToReg256Immed(&RspRecompPos, x86_YMM3, x86_YMM1, 6);
+	AvxVPxorRegToReg256(&RspRecompPos, x86_YMM6, x86_YMM6, x86_YMM6);
+	AvxCompareEqualDWordRegToReg256(&RspRecompPos, x86_YMM3, x86_YMM3, x86_YMM6);
+	AvxVPandnRegToReg256(&RspRecompPos, x86_YMM2, x86_YMM3, x86_YMM2);
+
+	// make it 0 too if bit 0x20 is set in accumulator (in ymm3)
+	AvxVPSlldRegToReg256Immed(&RspRecompPos, x86_YMM7, x86_YMM7, 5); // ymm7=0x20
+	AvxVPandRegToReg256(&RspRecompPos, x86_YMM3, x86_YMM1, x86_YMM7);
+	AvxCompareEqualDWordRegToReg256(&RspRecompPos, x86_YMM3, x86_YMM3, x86_YMM7);
+	AvxVPandnRegToReg256(&RspRecompPos, x86_YMM2, x86_YMM3, x86_YMM2);
+
+	// add result to accumulator
+	AvxVPAdddRegToReg256(&RspRecompPos, x86_YMM1, x86_YMM1, x86_YMM2);
+
+	if (writeToAccum) {
+		AvxVPSlldRegToReg256Immed(&RspRecompPos, x86_YMM2, x86_YMM1, 16);
+		AvxVPSradRegToReg256Immed(&RspRecompPos, x86_YMM2, x86_YMM2, 16);
+		AvxVExtracti128RegToReg(&RspRecompPos, x86_XMM3, x86_YMM2, TRUE);
+		AvxVPackSignedDWordRegToWordReg128(&RspRecompPos, x86_XMM2, x86_XMM2, x86_XMM3);
+		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM2, &RSP_ACCUM_MID.UHW[0], "RSP_ACCUM_MID", SseType_QuadWord, TRUE);
+
+		AvxVPSradRegToReg256Immed(&RspRecompPos, x86_YMM2, x86_YMM1, 16);
+		AvxVExtracti128RegToReg(&RspRecompPos, x86_XMM3, x86_YMM2, TRUE);
+		AvxVPackSignedDWordRegToWordReg128(&RspRecompPos, x86_XMM2, x86_XMM2, x86_XMM3);
+		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM2, &RSP_ACCUM_HIGH.UHW[0], "RSP_ACCUM_HIGH", SseType_QuadWord, TRUE);
+	}
+
+	if (writeToVectorDest) {
+		AvxVPSradRegToReg256Immed(&RspRecompPos, x86_YMM1, x86_YMM1, 1);
+		AvxVExtracti128RegToReg(&RspRecompPos, x86_XMM2, x86_YMM1, TRUE);
+		AvxVPackSignedDWordRegToWordReg128(&RspRecompPos, x86_XMM1, x86_XMM1, x86_XMM2);
+		Sse2PsrawImmed(&RspRecompPos, x86_XMM1, 4);
+		Sse2PsllwImmed(&RspRecompPos, x86_XMM1, 4);
+
+		sprintf(Reg, "RSP_Vect[%i]", RSPOpC.OP.V.vd);
+		SseMoveAlignedRegToVariable(&RspRecompPos, x86_XMM1, &RSP_Vect[RSPOpC.OP.V.vd].UHW[0], Reg, SseType_QuadWord, TRUE);
+	}
+
+	return TRUE;
+}
+
 void CompileRsp_Vector_VMACQ ( void ) {
 	char Reg[256];
 	int count, el;
@@ -6263,13 +6419,13 @@ void CompileRsp_Vector_VMACQ ( void ) {
 		return;
 	}
 
-	/*if (TRUE == Compile_Vector_VRNDN_AVX(bWriteToDest, bWriteToAccum)) {
+	if (TRUE == Compile_Vector_VMACQ_AVX(bWriteToDest, bWriteToAccum)) {
 		return;
 	}
 
-	if (TRUE == Compile_Vector_VRNDN_SSE2(bWriteToDest, bWriteToAccum)) {
+	if (TRUE == Compile_Vector_VMACQ_SSE2(bWriteToDest, bWriteToAccum)) {
 		return;
-	}*/
+	}
 
 	XorX86RegToX86Reg(&RspRecompPos, x86_EDX, x86_EDX);
 	MoveConstToX86reg(&RspRecompPos, 0x7FFF, x86_ESI);
