@@ -209,7 +209,7 @@ void AdcConstToX86Reg (BYTE** code, int x86Reg, DWORD Const) {
 	CPU_OR_RSP_Message(*code, "      adc %s, %Xh",x86_Name(x86Reg),Const);
 	if ((Const & 0xFFFFFF80) != 0 && (Const & 0xFFFFFF80) != 0xFFFFFF80) {
 		switch (x86Reg) {
-		case x86_EAX: PUTDST16(*code,0xD081); break;
+		case x86_EAX: PUTDST8(*code,0x15); break;
 		case x86_EBX: PUTDST16(*code,0xD381); break;
 		case x86_ECX: PUTDST16(*code,0xD181); break;
 		case x86_EDX: PUTDST16(*code,0xD281); break;
@@ -229,6 +229,37 @@ void AdcConstToX86Reg (BYTE** code, int x86Reg, DWORD Const) {
 		case x86_EDI: PUTDST16(*code,0xD783); break;
 		case x86_ESP: PUTDST16(*code,0xD483); break;
 		case x86_EBP: PUTDST16(*code,0xD583); break;
+		}
+		PUTDST8(*code, Const);
+	}
+}
+
+void AdcConstToX86RegHalf(BYTE** code, int x86Reg, WORD Const) {
+	CPU_OR_RSP_Message(*code, "      adc %s, %Xh", x86Half_Name(x86Reg), Const);
+	PUTDST8(*code, 0x66);
+	if ((Const & 0xFF80) != 0 && (Const & 0xFF80) != 0xFF80) {
+		switch (x86Reg) {
+		case x86_EAX: PUTDST8(*code, 0x15); break;
+		case x86_EBX: PUTDST16(*code, 0xD381); break;
+		case x86_ECX: PUTDST16(*code, 0xD181); break;
+		case x86_EDX: PUTDST16(*code, 0xD281); break;
+		case x86_ESI: PUTDST16(*code, 0xD681); break;
+		case x86_EDI: PUTDST16(*code, 0xD781); break;
+		case x86_ESP: PUTDST16(*code, 0xD481); break;
+		case x86_EBP: PUTDST16(*code, 0xD581); break;
+		}
+		PUTDST32(*code, Const);
+	}
+	else {
+		switch (x86Reg) {
+		case x86_EAX: PUTDST16(*code, 0xD083); break;
+		case x86_EBX: PUTDST16(*code, 0xD383); break;
+		case x86_ECX: PUTDST16(*code, 0xD183); break;
+		case x86_EDX: PUTDST16(*code, 0xD283); break;
+		case x86_ESI: PUTDST16(*code, 0xD683); break;
+		case x86_EDI: PUTDST16(*code, 0xD783); break;
+		case x86_ESP: PUTDST16(*code, 0xD483); break;
+		case x86_EBP: PUTDST16(*code, 0xD583); break;
 		}
 		PUTDST8(*code, Const);
 	}
