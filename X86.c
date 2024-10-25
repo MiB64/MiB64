@@ -205,6 +205,14 @@ void AdcConstToVariable(BYTE** code,void *Variable, char *VariableName, BYTE Con
 	PUTDST8(*code,Constant);
 }
 
+void AdcConstToVariableHalf(BYTE** code, void* Variable, char* VariableName, BYTE Constant) {
+	CPU_OR_RSP_Message(*code, "      adc word ptr [%s], %Xh", VariableName, Constant);
+	PUTDST8(*code, 0x66);
+	PUTDST16(*code, 0x1583);
+	PUTDST32(*code, Variable);
+	PUTDST8(*code, Constant);
+}
+
 void AdcConstToX86Reg (BYTE** code, int x86Reg, DWORD Const) {
 	CPU_OR_RSP_Message(*code, "      adc %s, %Xh",x86_Name(x86Reg),Const);
 	if ((Const & 0xFFFFFF80) != 0 && (Const & 0xFFFFFF80) != 0xFFFFFF80) {

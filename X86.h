@@ -78,6 +78,7 @@ BOOL IsAVX2Supported(void);
 
 void AdcX86regToVariable             ( BYTE** code, int x86reg, void * Variable, char * VariableName );
 void AdcConstToVariable              ( BYTE** code, void *Variable, char *VariableName, BYTE Constant );
+void AdcConstToVariableHalf			 ( BYTE** code, void *Variable, char *VariableName, BYTE Constant );
 void AdcConstToX86Reg                ( BYTE** code, int x86Reg, DWORD Const );
 void AdcConstToX86RegHalf			 ( BYTE** code, int x86Reg, WORD Const );
 void AdcVariableToX86reg             ( BYTE** code, int x86reg, void * Variable, char * VariableName );
